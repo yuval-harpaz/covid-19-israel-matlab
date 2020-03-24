@@ -1,5 +1,5 @@
 
-type = 'Confirmed'; % 'Confirmed','Deaths','Recovered'
+type = 'confirmed'; % 'confirmed','deaths'
 
 [dataMatrix] = readCoronaData(type);
 

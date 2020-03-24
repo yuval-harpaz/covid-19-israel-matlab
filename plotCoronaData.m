@@ -23,10 +23,10 @@ elseif nargin < 3
 end
 
 %% check for right data types/capitalization
-if ~(strcmpi(type,'Confirmed') || strcmp(type,'Deaths') || strcmp(type,'Recovered'))
+if ~(strcmpi(type,'confirmed') || strcmpi(type,'deaths'))
     warning('This type does not exist. Please choose either Confirmed, Deaths, or Recovered.')
 end
-type = regexprep(lower(type),'(\<[a-z])','${upper($1)}');
+type = lower(type);
 
 %% choose countries
 if sum(strcmp(chosenCountries,'all')) || sum(strcmp(chosenCountries{1},'all'))
@@ -43,12 +43,10 @@ ax = gca;
 
 plot(timeVector,cell2mat(mergedData(rowNums,2)))
 
-if strcmp(type,'Confirmed')
+if strcmpi(type,'confirmed')
     ylabel('#confirmed cases')
-elseif strcmp(type,'Deaths')
+elseif strcmpi(type,'deaths')
     ylabel('#deaths')
-elseif strcmp(type,'Recovered')
-    ylabel('#recovered cases')
 else
     warning('Unknown type. Cannot annotate plot.')
 end
@@ -62,12 +60,10 @@ ax = gca;
 
 plot(timeVector(2:end),diff(cell2mat(mergedData(rowNums,2)),1,2))
 
-if strcmp(type,'Confirmed')
+if strcmpi(type,'confirmed')
     ylabel('increase #confirmed cases per day')
-elseif strcmp(type,'Deaths')
+elseif strcmpi(type,'deaths')
     ylabel('increase #deaths per day')
-elseif strcmp(type,'Recovered')
-    ylabel('increase #recovered cases per day')
 else
     warning('Unknown type. Cannot annotate plot.')
 end

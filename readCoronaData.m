@@ -13,15 +13,15 @@ function [dataMatrix] = readCoronaData(type)
 
 %% get online resource and check for right data types/capitalization
 if ~nargin
-    type = 'Confirmed'; %Deaths, Recovered
+    type = 'confirmed'; %Deaths, Recovered
 else
-    if ~(strcmpi(type,'Confirmed') || strcmp(type,'Deaths') || strcmp(type,'Recovered'))
-        warning('This type does not exist. Please choose either Confirmed, Deaths, or Recovered. Running code for Confirmed cases.')
+    if ~(strcmpi(type,'confirmed') || strcmpi(type,'deaths'))
+        warning('This type does not exist. Please choose either confirmed, or deaths. Running code for confirmed cases.')
         type = 'Confirmed';
     end
-    type = regexprep(lower(type),'(\<[a-z])','${upper($1)}');
+    type = lower(type);
 end
-filename = ['https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-',type,'.csv'];
+filename = ['https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_',type,'_global.csv'];
 
 f = webread(filename);
 
