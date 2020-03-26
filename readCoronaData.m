@@ -39,7 +39,7 @@ for nIdx = 1:length(delimiterIdx)-1
         dataMatrix{m,n} =  f(1:delimiterIdx(nIdx)-1); %only do this for the first time
     else
         if n == 1
-            if contains(f(delimiterIdx(nIdx-1)-2),char(13)) %no state/province
+            if contains(f(delimiterIdx(nIdx-1)-1),newline) %no state/province
                 dataMatrix{m,n} = ''; %set state/province to empty
                 
                 if contains(f(delimiterIdx(nIdx-1)+1:delimiterIdx(nIdx)-1),'"') %there is a comma within country
@@ -52,18 +52,18 @@ for nIdx = 1:length(delimiterIdx)-1
                 n = n+1;
             else %includes state/province
                 lineBreakData = f(delimiterIdx(nIdx-2):delimiterIdx(nIdx-1));
-                lineBreakIdx = strfind(lineBreakData,char(13));
+                lineBreakIdx = strfind(lineBreakData,newline);
                 
                 if contains(lineBreakData(lineBreakIdx+2:end-1),'"') %there is a comma within state/province
                     lineBreakData = f(delimiterIdx(nIdx-2):delimiterIdx(nIdx)-1);
-                    lineBreakIdx = strfind(lineBreakData,char(13));
+                    lineBreakIdx = strfind(lineBreakData,newline);
                     dataMatrix{m-1,end} = lineBreakData(2:lineBreakIdx-1);%fix last entry from previous row
                     dataMatrix{m,n} = lineBreakData(lineBreakIdx+3:end-1);
                     dataMatrix{m,n+1} =  f(delimiterIdx(nIdx)+1:delimiterIdx(nIdx+1)-1);
                     delimiterIdx(nIdx) = NaN;
                 else
                     dataMatrix{m-1,end} = lineBreakData(2:lineBreakIdx-1);%fix last entry from previous row
-                    dataMatrix{m,n} = lineBreakData(lineBreakIdx+2:end-1);
+                    dataMatrix{m,n} = lineBreakData(lineBreakIdx+1:end-1);
                     dataMatrix{m,n+1} = f(delimiterIdx(nIdx-1)+1:delimiterIdx(nIdx)-1);
                 end
                 
@@ -79,8 +79,12 @@ for nIdx = 1:length(delimiterIdx)-1
         
     end
     
+    if n == 60
+        a = 0;
+    end
+    
     % find end of first row
-    if m == 1 && contains(dataMatrix{m,n},char(13))
+    if m == 1 && contains(dataMatrix{m,n},newline)
         colNums = nIdx;
         n = 0;
         m = m+1;
