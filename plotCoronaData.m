@@ -37,11 +37,13 @@ else
     end
 end
 
+dataMatrix = cell2mat(mergedData(rowNums,2));
+
 %% plotting abs number
 figure,
 ax = gca;
 
-plot(timeVector,cell2mat(mergedData(rowNums,2)))
+plot(timeVector,dataMatrix)
 
 if strcmpi(type,'confirmed')
     ylabel('#confirmed cases')
@@ -53,14 +55,17 @@ else
     warning('Unknown type. Cannot annotate plot.')
 end
 
-legend(mergedData(rowNums,1),'Location','northwest')
+text(repmat(timeVector(end),[size(dataMatrix,1) 1]),dataMatrix(:,end),mergedData(rowNums,1))
 ax.FontSize = 16;
 
 %% plotting change
+
+casesPerDay = diff(dataMatrix,1,2);
+
 figure,
 ax = gca;
 
-plot(timeVector(2:end),diff(cell2mat(mergedData(rowNums,2)),1,2))
+plot(timeVector(2:end),casesPerDay)
 
 if strcmpi(type,'confirmed')
     ylabel('increase #confirmed cases per day')
@@ -72,6 +77,6 @@ else
     warning('Unknown type. Cannot annotate plot.')
 end
 
-legend(mergedData(rowNums,1),'Location','northwest')
+text(repmat(timeVector(end),[size(dataMatrix,1) 1]),casesPerDay(:,end),mergedData(rowNums,1))
 ax.FontSize = 16;
 
