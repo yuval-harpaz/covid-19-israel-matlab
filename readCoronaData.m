@@ -15,7 +15,7 @@ function [dataMatrix] = readCoronaData(type)
 if ~nargin
     type = 'confirmed'; %Deaths, Recovered
 else
-    if ~(strcmpi(type,'confirmed') || strcmpi(type,'deaths'))
+    if ~(strcmpi(type,'confirmed') || strcmpi(type,'deaths') || strcmpi(type,'recovered'))
         warning('This type does not exist. Please choose either confirmed, or deaths. Running code for confirmed cases.')
         type = 'Confirmed';
     end

@@ -23,7 +23,7 @@ elseif nargin < 3
 end
 
 %% check for right data types/capitalization
-if ~(strcmpi(type,'confirmed') || strcmpi(type,'deaths'))
+if ~(strcmpi(type,'confirmed') || strcmpi(type,'deaths') || strcmpi(type,'recovered'))
     warning('This type does not exist. Please choose either Confirmed, Deaths, or Recovered.')
 end
 type = lower(type);
@@ -47,6 +47,8 @@ if strcmpi(type,'confirmed')
     ylabel('#confirmed cases')
 elseif strcmpi(type,'deaths')
     ylabel('#deaths')
+elseif strcmpi(type,'recovered')
+    ylabel('#recovered')
 else
     warning('Unknown type. Cannot annotate plot.')
 end
@@ -64,6 +66,8 @@ if strcmpi(type,'confirmed')
     ylabel('increase #confirmed cases per day')
 elseif strcmpi(type,'deaths')
     ylabel('increase #deaths per day')
+elseif strcmpi(type,'recovered')
+    ylabel('increase #recovered per day')
 else
     warning('Unknown type. Cannot annotate plot.')
 end
