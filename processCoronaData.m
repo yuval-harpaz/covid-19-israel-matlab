@@ -13,6 +13,7 @@ function [dataTable,timeVector,mergedData] = processCoronaData(dataMatrix)
 
 %% convert array "dataMatrix" to a nice table
 varNames = dataMatrix(1,:);
+varNames = strrep(varNames,'/','_');
 dataTable = cell2table(dataMatrix(2:end,:),'VariableNames',varNames);
 
 %% change variable types
