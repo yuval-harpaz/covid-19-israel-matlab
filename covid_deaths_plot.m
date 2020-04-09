@@ -1,7 +1,7 @@
 % plot 30 largest countries + Israel
 alwaysShow = {'China','Korea, South','Japan','Singapore','Israel'};
  %'largest' 'most_deaths' 'most_deaths_daily' 'most_deaths_norm' 'most_deaths_daily_norm'
-  method = 'most_deaths_daily_norm';      
+  method = 'most_deaths_norm';      
         
 nCountries = 31;
 showDateEvery = 7; % days
