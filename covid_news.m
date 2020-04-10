@@ -53,7 +53,7 @@ y(1:size(deaths,1),1:nCountries,4) = [zeros(1,nCountries);...
     diff(deaths(:,order{4}(1:nCountries))./mil(order{4}(1:nCountries)))];
 iXtick = fliplr(length(timeVector):-showDateEvery:1);
 %% plot
-figure('units','normalized','position',[0,0,1,1])
+fig1 = figure('units','normalized','position',[0,0,1,1])
 for iPlot = 1:4
     subplot(2,2,iPlot)
     h = plot(y(:,:,iPlot),'linewidth',1.5,'marker','.');
@@ -99,7 +99,7 @@ for iPlot = 1:4
     end
     ytickformat('%,d')
 end
-
+saveas(fig1,'covid-19_data_analysis/docs/highest.png')
 
 %% old
 
