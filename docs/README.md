@@ -6,6 +6,6 @@ For the 10 most affected countries click [here](highest_countries.html)<br>
 Realigned curves for top 20 countries [here](realigned.html)<br>
 
 ### Acknowledgements
-Loading, processing and plotting the data from the John Hopkins COVID-19 database. The data is automatically read from the online repository, thus, you need a The data can be found here: https://github.com/CSSEGISandData/COVID-19.
-adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)
+The COVID-19 data is taken from the John Hopkins COVID-19 database. The data can be found [here](https://github.com/CSSEGISandData/COVID-19).
+Adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)
 
