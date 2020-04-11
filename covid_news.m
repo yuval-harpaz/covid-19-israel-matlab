@@ -99,6 +99,31 @@ for iPlot = 1:4
     end
     set(gca,'FontSize',11)
 end
+%% most active
+fig3 = figure('units','normalized','position',[0,0,0.5,0.5])
+h = plot(y(:,:,iPlot),'linewidth',1,'marker','.','MarkerSize',8);
+ax = ancestor(h, 'axes');
+ax{1}.YAxis.Exponent = 0;
+xlim([0 size(deaths,1)+20])
+box off
+grid on
+xlabel('Weeks')
+set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
+xlim([42 length(timeVector)])
+title('Daily deaths per million')
+ymax = max(y(end,:,iPlot))*1.1;
+ylabel('Deaths per million')
+ylim([0 ymax])
+ytickformat('%,d')
+yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
+[~,yOrd] = sort(y(end,:,iPlot),'descend');
+for iAnn = 1:nCountries
+    x = size(deaths,1);
+    txt = text(x,yt(iAnn),mergedData{order{iPlot}(iAnn)},...
+        'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
+end
+set(gca,'FontSize',11)
+saveas(fig3,'docs/active.png')
 %%
 saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
 saveas(fig1,'docs/highest.png')
