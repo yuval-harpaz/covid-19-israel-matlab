@@ -1,14 +1,11 @@
-# covid-19_data_analysis
+# COVID-19 data analysis
+### Automatically generated charts showing daily updates of COVID-19 deaths
+This is an open-source project using Matlab tools to generate images from online available data. It is mainly concerned with death rates, because it is hard to compare countries for any other measurement. The number of confirmed cases for instance, is biased by the number of tests run by different countries.
 <br>
 For the 10 most affected countries click [here](highest_countries.html)<br>
 Realigned curves for top 20 countries [here](realigned.html)<br>
 
-[![View Load COVID-19 case data from John Hopkins database on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://se.mathworks.com/matlabcentral/fileexchange/74589-load-covid-19-case-data-from-john-hopkins-database)
-## Load COVID-19 case data from John Hopkins database
+### Acknowledgements
 Loading, processing and plotting the data from the John Hopkins COVID-19 database. The data is automatically read from the online repository, thus, you need a The data can be found here: https://github.com/CSSEGISandData/COVID-19.
 adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)
-## How to (see runAll.m):
-type = 'Confirmed'; % 'Confirmed','Deaths','Recovered'
-[dataMatrix] = readCoronaData(type);
-[dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);
-plotCoronaData(timeVector,mergedData,{'Denmark','US','Germany','China'},type);
+
