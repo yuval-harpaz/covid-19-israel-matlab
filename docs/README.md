@@ -4,7 +4,7 @@ This is an open-source project using Matlab tools to generate images from online
 <br>
 For the 10 most affected countries click [here](highest_countries.html)<br>
 Realigned curves for top 20 countries [here](realigned.html)<br>
-[](active.png)
+![most active countries](active.png)
 ### Acknowledgements
 The COVID-19 data is taken from the John Hopkins COVID-19 database. The data can be found [here](https://github.com/CSSEGISandData/COVID-19).<br>
 Adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)
