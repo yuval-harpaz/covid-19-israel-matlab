@@ -6,7 +6,7 @@ This is an open-source project using Matlab tools to generate images from online
 Countries with the heaviest death toll per million people
 ![most active countries](active.png)
 ### More plots
-For the 10 most affected countries click [here](highest_countries.html)<br>
+For the 10 most affected countries by different criteria click [here](highest_countries.html)<br>
 Realigned curves for top 20 countries [here](realigned.html)<br>
 Stay safe     ![falafel](W3CSSTemplateFiles/falafel_trans.png)
 ### Acknowledgements
