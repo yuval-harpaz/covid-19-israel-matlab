@@ -1,11 +1,5 @@
-% % plot 30 largest countries + Israel
-% alwaysShow = {'China','Korea, South','Japan','Singapore','Israel'};
-%  %'largest' 'most_deaths' 'most_deaths_daily' 'most_deaths_norm' 'most_deaths_daily_norm'
-%   method = 'most_deaths_norm';      
-%         
-% nCountries = 31;
-% 
-% zer = 1; % how many deaths per million to count as day zero
+% show the worst countries by different criteria
+cd ~/covid-19_data_analysis/
 nCountries = 10;
 showDateEvery = 7; % days
 warning off
@@ -56,17 +50,10 @@ iXtick = fliplr(length(timeVector):-showDateEvery:1);
 fig1 = figure('units','normalized','position',[0,0,1,1])
 for iPlot = 1:4
     subplot(2,2,iPlot)
-    h = plot(y(:,:,iPlot),'linewidth',1.5,'marker','.');
+    h = plot(y(:,:,iPlot),'linewidth',1,'marker','.','MarkerSize',8);
     ax = ancestor(h, 'axes');
     ax{1}.YAxis.Exponent = 0;
     % ann = [order(1:9);nCountries];
-    for iAnn = 1:nCountries
-        %     if nanmax(aligned(:,iAnn)) > 1
-        x = size(deaths,1);
-        txt = text(x,y(end,iAnn,iPlot),mergedData{order{iPlot}(iAnn)},...
-            'Color',h(iAnn).Color);
-        %     end
-    end
     xlim([0 size(deaths,1)+20])
     box off
     grid on
@@ -80,26 +67,41 @@ for iPlot = 1:4
         case 1
             title('Deaths')
             ylabel('Deaths')
+            ymax = max(y(end,:,iPlot))*1.1;
         case 2
             title('Deaths per million')
             ylabel('Deaths per million')
             ymax = sort(y(end,:,iPlot));
             ymax = ymax(end-1)*1.1;
-            ylim([0 ymax])
-            text(x,ymax,[mergedData{order{iPlot}(1)},' (',str(round(y(end,1,iPlot))),')'],...
-                'Color',h(1).Color);
+%             text(x,ymax,[mergedData{order{iPlot}(1)},' (',str(round(y(end,1,iPlot))),')'],...
+%                 'Color',h(1).Color);
         case 3
             title('Daily deaths')
             ylabel('Deaths')
+            ymax = max(max(y(:,:,iPlot)))*1.1;
         case 4
             title('Daily deaths per million')
             ymax = max(y(end,:,iPlot))*1.1;
-            ylim([0 ymax])
             ylabel('Deaths per million')
     end
+    ylim([0 ymax])
     ytickformat('%,d')
+    yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
+    [~,yOrd] = sort(y(end,:,iPlot),'descend');
+    for iAnn = 1:nCountries
+        %     if nanmax(aligned(:,iAnn)) > 1
+        x = size(deaths,1);
+%         txt = text(x,y(end,iAnn,iPlot),mergedData{order{iPlot}(iAnn)},...
+%             'Color',h(iAnn).Color);
+        txt = text(x,yt(iAnn),mergedData{order{iPlot}(iAnn)},...
+            'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
+        %     end
+    end
+    set(gca,'FontSize',11)
 end
-saveas(fig1,'covid-19_data_analysis/docs/highest.png')
+%%
+saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+saveas(fig1,'docs/highest.png')
 
 %% old
 
