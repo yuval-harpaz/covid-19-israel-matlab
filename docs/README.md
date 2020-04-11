@@ -1,5 +1,5 @@
 # covid-19_data_analysis
-See main page [here](https://yuval-harpaz.github.io/covid-19_data_analysis/)
+See on github [here](https://github.com/yuval-harpaz/covid-19_data_analysis)
 <br>
 For most affected countries click [here](highest_countries.md)
 <br>
