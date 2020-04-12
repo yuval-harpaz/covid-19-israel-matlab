@@ -9,6 +9,7 @@ Countries with the heaviest death toll per million people
 For the 10 most affected countries by different criteria click [here](highest_countries.html)<br>
 Realigned curves for top 20 countries [here](realigned.html)<br>
 Stay safe     ![falafel](W3CSSTemplateFiles/falafel_trans.png)
+### Last updated for 11.04.2020
 ### Acknowledgements
 The COVID-19 data is taken from the John Hopkins COVID-19 database. The data can be found [here](https://github.com/CSSEGISandData/COVID-19).<br>
 Adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)
