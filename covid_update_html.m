@@ -43,7 +43,9 @@ fid = fopen(fName,'w');
 fwrite(fid,txt);
 fclose(fid);
 %% push
-
+!git add -A
+!git commit -m "daily update"
+! git push
 %% old
 
 % 

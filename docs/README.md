@@ -8,6 +8,7 @@ Countries with the heaviest death toll per million people
 ### More plots
 For the 10 most affected countries by different criteria click [here](highest_countries.html)<br>
 Realigned curves for top 20 countries [here](realigned.html)<br>
+To compare Israel to other countries [here](myCountry.html)<br>
 Stay safe     ![falafel](W3CSSTemplateFiles/falafel_trans.png)
 ### Last updated for 11.04.2020
 ### Acknowledgements

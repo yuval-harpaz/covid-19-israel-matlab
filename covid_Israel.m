@@ -32,24 +32,16 @@ for iCou = 1:length(country)
 end
 [isx,idxc] = ismember(country,pop.Country_orDependency_);
 if any(isx == 0)
-    country(~ismember(country,pop.Country_orDependency_))
+    %country(~ismember(country,pop.Country_orDependency_));
     error('missing country')
 end
 mil = pop.Population_2020_(idxc)/10^6;
 norm = cases./mil';
-% figure;
-% plot(norm)
-% 
-% aligned = nan(size(norm));
-% for iState = 1:nCountries
-%     start = find(norm(:,iState) > zer,1);
-%     aligned(1:size(norm,1)-start+1,iState) = norm(start:end,iState);
-% end
-% [~,order] = sort(nanmax(norm),'descend');
+
 %% plot bars
 
 [y, iy] = sort(cellfun(@max, mergedData(:,2)),'descend');
-KOMP = mergedData(iy,1);
+%KOMP = mergedData(iy,1);
 [~,isMy] = ismember(myCountry,mergedData(:,1));
 isMy = iy == isMy;
 yLog = log10(y);
@@ -73,6 +65,7 @@ title('מספר מתים למדינה')
 ylim([0 max(y)*1.05])
 ylabel('מתים')
 box off
+text(2,y(1)*1.05,[mergedData{iy(1),1},' - ',str(y(1))],'FontSize',12)
 
 subplot(3,1,2)
 bar(yLog)
@@ -83,10 +76,10 @@ title('מספר מתים למדינה (סולם לוגריתמי)')
 ylim([0 max(yLog)*1.05])
 ylabel('מתים')
 box off
-
+text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(y(1))],'FontSize',12)
 
 [y, iy] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx)*10^6,'descend');
-KOMP(:,2) = mergedData(iy,1);
+%KOMP(:,2) = mergedData(iy,1);
 [~,isMy] = ismember(myCountry,mergedData(:,1));
 isMy = iy == isMy;
 yLog = log10(y);
@@ -102,7 +95,8 @@ set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'F
 ylabel('מתים למליון')
 ylim([0 max(yLog)*1.05])
 title('מתים למליון (סולם לוגריתמי)');
-box off
+box
+text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(round(y(1)))],'FontSize',12)
 %% align
 
 aligned = nan(length(timeVector),length(mergedData));
@@ -122,7 +116,7 @@ yMy = aligned(tMy,iCol);
 [yTo,order] = sort(yT,'descend');
 yToNan = yTo;
 yToNan(yTo ~= yMy) = nan;
-figure;
+fig5 = figure('units','normalized','position',[0,0.25,1,0.7]);
 bar(yTo)
 hold on
 bar(yToNan,'r')
@@ -130,43 +124,52 @@ cou = mergedData(farther(order));
 set(gca,'XTick',1:length(yTo),'XTickLabel',cou,'ygrid','on')
 xtickangle(90)
 box off
+title({'מצב המדינות שהיו במקום של ישראל היום',[str(tMy), ' יום מנפטר אחד למליון']})
+ylabel('מתים למליון')
+set(gca,'FontSize',13)
 % [~,order] = sort(nanmax(nrm),'descend');
 %% plot lines
-fig4 = figure('units','normalized','position',[0,0,0.5,1]);
+fig6 = figure('units','normalized','position',[0,0,0.5,1]);
+annot = [20;length(farther)];
+[yo,order] = sort(max(aligned(:,farther)),'descend');
+yl = 1.05*yo([1,annot(1)]);
 for iPlot = 1:2
     subplot(2,1,iPlot)
-    h = plot(aligned(:,order),'linewidth',1,'marker','.','MarkerSize',8);
-    xlim([0 find(~any(~isnan(aligned),2),1)+5])
+    h = plot(aligned(:,farther(order)),'linewidth',1,'marker','.','MarkerSize',8);
+    xl = find(~any(~isnan(aligned),2),1)-14;
+    xlim([0 xl])
     box off
     grid on
-    ylabel('Deaths per million')
-    xlabel('Days from country day zero (1 death per million)')
-    
+    ylabel('מתים למליון')
+    xlabel('מספר ימים מיום האפס של כל מדינה (מת אחד למליון)')
     set(gca,'XTick',iXtick,'XTickLabel',iXtick)
+    ylim([0 yl(iPlot)])
     if iPlot == 1
-        for iAnn = 1:length(country)
-            x = find(~isnan(aligned(:,order(iAnn))),1,'last');
-            text(x,aligned(x,order(iAnn)),country{order(iAnn)},...
-                'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
-        end
-        title({'Deaths per million, realigned'})
+        jj = 1:annot(iPlot);
+        title({'מתים למליון, מיושר'})
     else
-        ymax = median(nanmax(aligned))*1.1;
-        ylim([0 ymax])
-        for iAnn = 1:length(country)
-            x = find(~isnan(aligned(:,order(iAnn))),1,'last');
-            if aligned(x,order(iAnn)) > ymax
-                x = find(aligned(:,order(iAnn)) < ymax,1,'last')
-            end
-            y = aligned(x,order(iAnn));
-            text(x,y,country{order(iAnn)},...
-                'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
-        end
-        title({'Deaths per million, realigned (zoomed-in)'})
+        jj = annot(1):annot(2)
+        title({'מתים למליון, מיושר (זום-אין)'})
     end
-     set(gca,'FontSize',11)
+    for iAnn = jj
+        x = find(~isnan(aligned(:,farther(order(iAnn)))),1,'last');
+        text(x,yo(iAnn),mergedData{farther(order(iAnn)),1},...
+            'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
+    end
+    iChina = find(ismember(mergedData(:,1),'China'));
+    text(xl,max(aligned(:,iChina)),'China',...
+        'FontSize',10,'Color',h(find(farther == iChina)).Color,'FontWeight','bold');
+    hold on
+    plot(aligned(:,iCol),'k','linewidth',2,'marker','.','MarkerSize',12)
+    text(tMy,yMy,myCountry,'color','k','FontSize',16,'FontWeight','bold'); % 'BackgroundColor','y'
+    set(gca,'FontSize',11)
 end
 %% save
-% saveas(fig4,['archive/realigned_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-% saveas(fig4,'docs/realigned.png')
-% 
+saveas(fig6,['archive/realignedMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+saveas(fig6,'docs/realignedMyCountry.png')
+saveas(fig5,['archive/realignedTodayMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+saveas(fig5,'docs/realignedTodayMyCountry.png')
+saveas(fig4,['archive/barsMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+saveas(fig4,'docs/barsMyCountry.png')
+
+%
