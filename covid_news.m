@@ -101,7 +101,7 @@ for iPlot = 1:4
     set(gca,'FontSize',11)
 end
 %% most active
-fig3 = figure('units','normalized','position',[0,0,0.5,0.5])
+fig3 = figure('units','normalized','position',[0,0,0.5,0.5]);
 h = plot(y(:,:,iPlot),'linewidth',1,'marker','.','MarkerSize',8);
 ax = ancestor(h, 'axes');
 ax{1}.YAxis.Exponent = 0;
@@ -127,8 +127,8 @@ set(gca,'FontSize',11)
 for iSmall = 1:length(small)
     h(small(iSmall)).LineStyle = ':';
 end
-saveas(fig3,'docs/active.png')
 %%
+saveas(fig3,'docs/active.png')
 saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
 saveas(fig1,'docs/highest.png')
 

@@ -55,12 +55,12 @@ counter0 = findstr(txt,'כיום,');
 count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;
 txt = [txt(1:counter0-1),'כיום, ',str(count),' ',txt(counter1:end)];
 fid = fopen(fName,'w');
-fwrite(fid,txt);
+fwrite(fid,unicode2native(txt));
 fclose(fid);
 %% push
 !git add -A
 !git commit -m "daily update"
-! git push
+!git push
 %% old
 
 % 
