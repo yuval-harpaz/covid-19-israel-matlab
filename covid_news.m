@@ -53,16 +53,16 @@ for iPlot = 1:4
     h = plot(y(:,:,iPlot),'linewidth',1,'marker','.','MarkerSize',8);
     ax = ancestor(h, 'axes');
     ax{1}.YAxis.Exponent = 0;
-    % ann = [order(1:9);nCountries];
     xlim([0 size(deaths,1)+20])
     box off
     grid on
-    
     xlabel('Weeks')
-    % title(['Deaths up to ',datestr(timeVector(end))])
     set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
     xlim([42 length(timeVector)])
-    %title(titles{iPlot});
+    small = find(mil(order{iPlot}(1:size(y,2))) < 1);
+    for iSmall = 1:length(small)
+        h(small(iSmall)).LineStyle = ':';
+    end
     switch iPlot
         case 1
             title('Deaths')
@@ -83,6 +83,7 @@ for iPlot = 1:4
             title('Daily deaths per million')
             ymax = max(y(end,:,iPlot))*1.1;
             ylabel('Deaths per million')
+            
     end
     ylim([0 ymax])
     ytickformat('%,d')
@@ -123,6 +124,9 @@ for iAnn = 1:nCountries
         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
 end
 set(gca,'FontSize',11)
+for iSmall = 1:length(small)
+    h(small(iSmall)).LineStyle = ':';
+end
 saveas(fig3,'docs/active.png')
 %%
 saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])

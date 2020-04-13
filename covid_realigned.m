@@ -62,7 +62,10 @@ for iPlot = 1:2
     grid on
     ylabel('Deaths per million')
     xlabel('Days from country day zero (1 death per million)')
-    
+    small = find(mil(order(1:size(y,2))) < 1);
+    for iSmall = 1:length(small)
+        h(small(iSmall)).LineStyle = ':';
+    end
     set(gca,'XTick',iXtick,'XTickLabel',iXtick)
     if iPlot == 1
         for iAnn = 1:length(country)
@@ -77,7 +80,7 @@ for iPlot = 1:2
         for iAnn = 1:length(country)
             x = find(~isnan(aligned(:,order(iAnn))),1,'last');
             if aligned(x,order(iAnn)) > ymax
-                x = find(aligned(:,order(iAnn)) < ymax,1,'last')
+                x = find(aligned(:,order(iAnn)) < ymax,1,'last');
             end
             y = aligned(x,order(iAnn));
             text(x,y,country{order(iAnn)},...

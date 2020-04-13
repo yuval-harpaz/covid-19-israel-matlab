@@ -61,7 +61,7 @@ h2 = bar(yNan,'r')
 plot(find(isMy),yNan(isMy),'or','MarkerSize',10)
 set(gca,'YTick',10.^yt(2:end),'YTickLabel',10.^yt(2:end),'ygrid','on','XTickLabel',[],'FontSize',13)
 legend([h1(1),h2(1)],'העולם','ישראל')
-title('מספר מתים למדינה')
+title(['מספר מתים למדינה',',',' ישראל במקום ה ',str(find(isMy))])
 ylim([0 max(y)*1.05])
 ylabel('מתים')
 box off
@@ -72,7 +72,7 @@ bar(yLog)
 hold on
 bar(yLogNan,'r')
 set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'FontSize',13)
-title('מספר מתים למדינה (סולם לוגריתמי)')
+title('מספר מתים למדינה (אותם הנתונים בסולם לוגריתמי)')
 ylim([0 max(yLog)*1.05])
 ylabel('מתים')
 box off
@@ -94,7 +94,7 @@ bar(yLogNan,'r')
 set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'FontSize',13)
 ylabel('מתים למליון')
 ylim([0 max(yLog)*1.05])
-title('מתים למליון (סולם לוגריתמי)');
+title(['מתים למליון (סולם לוגריתמי)',',',' ישראל במקום ה ',str(find(isMy))])
 box
 text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(round(y(1)))],'FontSize',12)
 %% align
@@ -164,6 +164,7 @@ for iPlot = 1:2
     text(tMy,yMy,myCountry,'color','k','FontSize',16,'FontWeight','bold'); % 'BackgroundColor','y'
     set(gca,'FontSize',11)
 end
+
 %% save
 saveas(fig6,['archive/realignedMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
 saveas(fig6,'docs/realignedMyCountry.png')

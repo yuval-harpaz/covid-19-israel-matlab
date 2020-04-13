@@ -42,6 +42,21 @@ txt(iDate-6:iDate+3) = date;
 fid = fopen(fName,'w');
 fwrite(fid,txt);
 fclose(fid);
+% Israel
+fName = 'docs/myCountry.html';
+fid = fopen(fName,'r');
+txt = fread(fid);
+fclose(fid);
+txt = native2unicode(txt');
+iDate = findstr(txt,'2020');
+txt(iDate-6:iDate+3) = date;
+counter1 = findstr(txt,'יום ממוות אחד');
+counter0 = findstr(txt,'כיום,');
+count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;
+txt = [txt(1:counter0-1),'כיום, ',str(count),' ',txt(counter1:end)];
+fid = fopen(fName,'w');
+fwrite(fid,txt);
+fclose(fid);
 %% push
 !git add -A
 !git commit -m "daily update"
