@@ -5,7 +5,7 @@
 ### Load COVID-19 case data from John Hopkins database and plot charts with Matlab
 The data is automatically read from the online repository. The data can be found [here](https://github.com/CSSEGISandData/COVID-19)
 ## How to read the data:
-``` matlab
+``` python
 [dataMatrix] = readCoronaData('deaths');
 [dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);
 ```
