@@ -31,9 +31,15 @@ if ~ismember(yest,vent.date)
         makoDate(ii,1) = datetime(str2num(datestr(datetime('today'),'yyyy')),... % year
             str2num(makoDateCell{ii,2}),str2num(makoDateCell{ii,1}));
     end
-    error('ignore today')
+    if length(makoDate) ~= length(makoNum)
+        error('error retrieving vents')
+    end
     if ~ismember(yest,makoDate)
         error('yesterday isnt in Mako bar')
+    end
+    if makoDate(end) == datetime('today')
+        makoDate(end) = [];
+        makoNum(end) = [];
     end
     lastOkay = find(ismember(makoDate,vent.date),1,'last');
     h = height(vent);
