@@ -5,7 +5,6 @@ showDateEvery = 7; % days
 warning off
 disp('Reading tables...')
 pop = readtable('population.csv','delimiter',',');
-
 type = 'deaths';
 [dataMatrix] = readCoronaData(type);
 [dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);
@@ -15,10 +14,6 @@ for iCou = 1:length(mergedData)
 end
 warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
-% plotCoronaData(timeVector,mergedData,{alwaysShow,'US','Germany','China'},type);
-%covid = readtable('covid.csv');
-
-
 deaths = nan(length(timeVector),length(mergedData));
 for iCou = 1:length(mergedData)
     deaths(1:length(timeVector),iCou) = mergedData{iCou,2};
@@ -28,7 +23,12 @@ end
 mil = pop.Population_2020_(idx)'/10^6;
 stillZero = mergedData(deaths(end,:) == 0,1);
 newDeaths = mergedData(deaths(end-1,:) == 0 & deaths(end,:) > 0,1);
-newDeathPerMil = mergedData(deaths(end-1,:)./mil < 1 & deaths(end,:)./mil >= 1,1);
+% newDeathPerMil = mergedData(deaths(end-1,:)./mil < 1 & deaths(end,:)./mil >= 1,1);
+% deaths(end,:)./mil-deaths(end-1,:)./mil
+newDeathPerMil = [zeros(1,length(mergedData));diff(deaths./mil)];
+smallAll = find(mil < 1);
+newDeathPerMil(:,smallAll) = movmean(newDeathPerMil(:,smallAll),5);
+
 order = cell(4,1);
 y = nan(length(timeVector),nCountries,4);
 [~,order{1}] = sort(deaths(end,:),'descend'); % most deaths
@@ -41,14 +41,15 @@ y(1:size(deaths,1),1:nCountries,2) = deaths(:,order{2}(1:nCountries))...
 [~,order{3}] = sort(deaths(end,:)-deaths(end-1,:),'descend'); % largest increase
 %titles{3,1} = 'Daily deaths';
 y(1:size(deaths,1),1:nCountries,3) = [zeros(1,nCountries);diff(deaths(:,order{3}(1:nCountries)))];
-[~,order{4}] = sort(deaths(end,:)./mil-deaths(end-1,:)./mil,'descend'); % largest increase per million
+[~,order{4}] = sort(newDeathPerMil(end,:),'descend'); % largest increase per million
 %titles{4,1} = 'Daily deaths per million';
-y(1:size(deaths,1),1:nCountries,4) = [zeros(1,nCountries);...
-    diff(deaths(:,order{4}(1:nCountries))./mil(order{4}(1:nCountries)))];
+y(1:size(deaths,1),1:nCountries,4) = newDeathPerMil(:,order{4}(1:nCountries));
+%     diff(deaths(:,order{4}(1:nCountries))./mil(order{4}(1:nCountries)))];
 iXtick = fliplr(length(timeVector):-showDateEvery:1);
 %% plot
-fig1 = figure('units','normalized','position',[0,0,1,1])
+fig1 = figure('units','normalized','position',[0,0,1,1]);
 for iPlot = 1:4
+    small = find(mil(order{iPlot}(1:size(y,2))) < 1);
     subplot(2,2,iPlot)
     h = plot(y(:,:,iPlot),'linewidth',1,'marker','.','MarkerSize',8);
     ax = ancestor(h, 'axes');
@@ -59,7 +60,6 @@ for iPlot = 1:4
     xlabel('Weeks')
     set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
     xlim([42 length(timeVector)])
-    small = find(mil(order{iPlot}(1:size(y,2))) < 1);
     for iSmall = 1:length(small)
         h(small(iSmall)).LineStyle = ':';
     end
@@ -68,35 +68,33 @@ for iPlot = 1:4
             title('Deaths')
             ylabel('Deaths')
             ymax = max(y(end,:,iPlot))*1.1;
+            yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
         case 2
             title('Deaths per million')
             ylabel('Deaths per million')
             ymax = sort(y(end,:,iPlot));
             ymax = ymax(end-1)*1.1;
-%             text(x,ymax,[mergedData{order{iPlot}(1)},' (',str(round(y(end,1,iPlot))),')'],...
-%                 'Color',h(1).Color);
+            yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
+            text(x,mean(yt(1:2)),str(round(max(max(y(:,:,iPlot))))),...
+            'FontSize',10,'Color',h(1).Color,'FontWeight','bold');
         case 3
             title('Daily deaths')
             ylabel('Deaths')
             ymax = max(max(y(:,:,iPlot)))*1.1;
+            yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
         case 4
             title('Daily deaths per million')
             ymax = max(y(end,:,iPlot))*1.1;
+            yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
             ylabel('Deaths per million')
-            
     end
     ylim([0 ymax])
     ytickformat('%,d')
-    yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
     [~,yOrd] = sort(y(end,:,iPlot),'descend');
     for iAnn = 1:nCountries
-        %     if nanmax(aligned(:,iAnn)) > 1
         x = size(deaths,1);
-%         txt = text(x,y(end,iAnn,iPlot),mergedData{order{iPlot}(iAnn)},...
-%             'Color',h(iAnn).Color);
         txt = text(x,yt(iAnn),mergedData{order{iPlot}(iAnn)},...
             'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
-        %     end
     end
     set(gca,'FontSize',11)
 end
@@ -132,148 +130,3 @@ saveas(fig3,'docs/active.png')
 saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
 saveas(fig1,'docs/highest.png')
 
-%% old
-
-% 
-% switch method % which nCOuntries to take
-%     case 'most_deaths_daily' % worst yesterday
-%         lastDay = cellfun(@(x) x(end)-x(end-1), mergedData(:,2));
-%         [~, iworst] = sort(lastDay,'descend');
-%         country = mergedData(iworst(1:nCountries),1);
-%     case 'most_deaths'
-%         [~, iworst] = sort(cellfun(@max, mergedData(:,2)),'descend');
-%         country = mergedData(iworst(1:nCountries),1);
-%     case 'largest' % most populus countries
-%         country = pop.Country_orDependency_(1:nCountries);
-%     case 'most_deaths_norm' % most deatsh per million
-%         [~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
-%         [~, iworst] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx),'descend');
-%         country = mergedData(iworst(1:nCountries),1);
-%     case 'most_deaths_daily_norm' % worst yesterday per million
-%         [~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
-%         lastDay = cellfun(@(x) x(end)-x(end-1), mergedData(:,2));
-%         [~, iworst] = sort(lastDay./pop.Population_2020_(idx),'descend');
-%         country = mergedData(iworst(1:nCountries),1);
-%         
-% end
-% 
-% 
-% 
-% leftOut = alwaysShow(~ismember(alwaysShow,country));
-% if ~isempty(leftOut)
-%     country(end-length(leftOut)+1:end) = leftOut;
-% end
-% % ismember(country,mergedData(:,1))
-% 
-% 
-% norm = cases./mil';
-% % figure;
-% % plot(norm)
-% 
-% aligned = nan(size(norm));
-% for iState = 1:nCountries
-%     start = find(norm(:,iState) > zer,1);
-%     aligned(1:size(norm,1)-start+1,iState) = norm(start:end,iState);
-% end
-% 
-% % selected = ismember(country,{alwaysShow,'Italy','Spain','France','United Kingdom','Iran','Germany','China','Korea, South','US'});
-% % iSel = find(selected);
-% [~,order] = sort(nanmax(norm),'descend');
-% iMy = find(ismember(country,alwaysShow));
-% if any(norm(end,iMy) < zer)
-%     warning(['countries with less than ',num2str(zer),' deaths per million will not be visible:']) 
-%     disp(alwaysShow(norm(end,iMy) < zer));
-% end
-% %% plot
-% figure;
-% subplot(2,2,1)
-% plot(cases(:,order),'linewidth',1,'marker','.');
-% hold on
-% plot(cases(:,iMy),'linewidth',1.5,'marker','.');
-% % ann = [order(1:9);nCountries];
-% for iAnn = 1:nCountries
-% %     if nanmax(aligned(:,iAnn)) > 1
-%     x = size(cases,1);
-%     text(x,cases(x,iAnn),country{iAnn});
-% %     end
-% end
-% xlim([0 size(cases,1)+20])
-% box off
-% grid on
-% ylabel('Deaths')
-% xlabel(['Days from ',datestr(timeVector(1))])
-% title(['Deaths up to ',datestr(timeVector(end))])
-% set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
-% %plot(cases(:,iSel(order)),'linestyle','none','marker','.');
-% subplot(2,2,2)
-% plot(aligned(:,order),'linewidth',1,'marker','.');
-% hold on
-% plot(aligned(:,iMy),'linewidth',1.5,'marker','.');
-% for iAnn = 1:length(country)
-%     x = find(~isnan(aligned(:,order(iAnn))),1,'last');
-%     text(x,aligned(x,order(iAnn)),country{order(iAnn)});
-% end
-% 
-% xlim([0 find(~any(~isnan(aligned),2),1)+5])
-% box off
-% grid on
-% ylabel('Deaths per million')
-% xlabel('Days from country day zero (day zero = 1 death per million)')
-% title({'Deaths per million, alligned','time zero set to 1 death per million'})
-% set(gca,'XTick',iXtick,'XTickLabel',iXtick)
-% subplot(2,2,3)
-% y = diff(cases(:,order));
-% plot(y,'linewidth',1,'marker','.');
-% hold on
-% plot(y(:,iMy),'linewidth',1.5,'marker','.');
-% for iAnn = 1:length(country)
-%     x = size(y,1);
-%     text(x,y(x,iAnn),country{order(iAnn)});
-% end
-% xlim([0 size(cases,1)+20])
-% box off
-% grid on
-% ylabel('Deaths')
-% xlabel(['Days from ',datestr(timeVector(1))])
-% title(['Daily deaths up to ',datestr(timeVector(end))])
-% set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
-% 
-% subplot(2,2,4)
-% maxy = 50;
-% plot(aligned(:,order),'linewidth',1,'marker','.');
-% hold on
-% plot(aligned(:,iMy),'linewidth',1.5,'marker','.');
-% for iAnn = 1:length(country)
-%     x = find(~isnan(aligned(:,order(iAnn))),1,'last');
-%     if aligned(x,order(iAnn)) < maxy
-%         text(x,aligned(x,order(iAnn)),country{order(iAnn)});
-%     end
-% end
-% disp('done')
-% xlim([0 find(~any(~isnan(aligned),2),1)+5])
-% ylim([0 maxy])
-% box off
-% grid on
-% ylabel('Deaths per million')
-% xlabel('Days from country day zero (day zero = 1 death per million)')
-% title({'Deaths per million, alligned (zoomed in)','time zero set to 1 death per million'})
-% set(gcf,'Color',[0.8 0.95 1])
-% set(gca,'XTick',iXtick,'XTickLabel',iXtick)
-% 
-% 
-% % 
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'United States')) = {'US'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'South Korea')) = {'Korea, South'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'DR Congo')) = {'Congo (Kinshasa)'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'Congo')) = {'Congo (Brazzaville)'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'Myanmar')) = {'Burma'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'Czech Republic (Czechia)')) = {'Czechia'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'Taiwan')) = {'Taiwan*'};
-% % pop.Country_orDependency_(ismember(pop.Country_orDependency_,'State of Palestine')) = {'West Bank and Gaza'};
-% % pop.Country_orDependency_(contains(pop.Country_orDependency_,'voi')) = {['Cote d''','Ivoire']};
-% % pop(~ismember(pop.Country_orDependency_,mergedData(:,1)),:) = [];
-% % pop = pop(:,[2,3,6]);
-% % pop.Country_orDependency_{end+1,1} = 'Kosovo';
-% % pop.Population_2020_(end) = 1831463;
-% % pop.Density_P_Km__(end) = 159;
-% % writetable(pop,'population.csv','Delimiter',',','WriteVariableNames',true);
