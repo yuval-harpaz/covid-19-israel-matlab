@@ -1,6 +1,7 @@
 cd /media/innereye/1T/Repos/covid-19_data_analysis
 system ('wget https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv');
 ita = readtable('dpc-covid19-ita-andamento-nazionale.csv');
+!rm 'dpc-covid19-ita-'*
 dateIta = datetime(cellfun(@(x) x(1:10),ita.data,'UniformOutput',false));
 
 figure;
