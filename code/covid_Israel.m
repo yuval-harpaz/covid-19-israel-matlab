@@ -233,3 +233,6 @@ saveas(fig4,'docs/barsMyCountry.png')
 saveas(fig8,['archive/myCountry_',datestr(vent.date(end),'dd_mm_yyyy'),'.png'])
 saveas(fig8,'docs/myCountry.png')
 %
+
+%% משרד הבריאות
+txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
