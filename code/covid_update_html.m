@@ -57,14 +57,18 @@ count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;
 txt = [txt(1:counter0-1),'כיום, ',str(count),' ',txt(counter1:end)];
 idx = findstr(txt,'מצב התמותה');
 med = median(diff(isr.Deceased(end-4:end)));
-medPrev = median(diff(isr.Deceased(end-9:end-4)));
+% medPrev = median(diff(isr.Deceased(end-9:end-4)));
 ins = ['מצב התמותה - ', '(בחמשת הימים האחרונים)',' כ ',str(med),' נפטרים ליום ',];
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 
 idx = findstr(txt,'מצב המונשמים');
 med = median(diff(isr.Vent(end-4:end)));
-medPrev = median(diff(isr.Vent(end-9:end-4)));
-ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(med),' מונשמים יותר  ',];
+% medPrev = median(diff(isr.Vent(end-9:end-4)));
+if med >= 0
+    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(med),' מונשמים יותר  ',];
+else
+    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(-med),' מונשמים פחות',];
+end
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 
 fid = fopen(fName,'w');
