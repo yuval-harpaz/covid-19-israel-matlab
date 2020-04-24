@@ -1,31 +1,7 @@
 %% משרד הבריאות
 cd ~/covid-19_data_analysis/
 txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
-marker = {'corona-xl',41;...  % מקרים מאומתים
-    '<div class="corona-md">נפטרו</div>',115;...
-    '<div class="corona-md">החלימו</div>',116;...
-    '>מונשמים',51;...
-    'קשה<',46;...
-    'בינוני<',49;...
-    'קל<',45;...
-    'בית חולים<',52;...
-    'מלונית<',49;...
-    'טיפולי בית<',53};
-
 iSmaller = find(ismember(txt,'<'));
-for ii = 1:size(marker,1)
-    i0 = strfind(txt,marker{ii,1})+marker{ii,2};
-    i1 = iSmaller(find(iSmaller > i0,1))-1;
-    if length(i0) > 1
-        error('marker not unique')
-    end
-    if ~strcmp(txt(i0-1),'>')
-        error('before the number there should be a ">"')
-    end
-    
-    misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
-end
-misrad([2,3]) = misrad([3,2]);
 i0 = findstr(txt,'נכונה ל');
 i1 = findstr(txt,'בשעה');
 tStr = [txt(i0+9:i1-2),' ',txt(i1+5:iSmaller(find(iSmaller > i1,1))-1)];
@@ -41,16 +17,43 @@ if ~ismember(date,list.date)
     list.date(end+1) = date;
     warning on
     list{end,2:end} = misrad';
+    
+    marker = {'corona-xl',41;...  % מקרים מאומתים
+        '<div class="corona-md">נפטרו</div>',115;...
+        '<div class="corona-md">החלימו</div>',116;...
+        '>מונשמים',51;...
+        'קשה<',46;...
+        'בינוני<',49;...
+        'קל<',45;...
+        'בית חולים<',52;...
+        'מלונית<',49;...
+        'טיפולי בית<',53};
+    
+    
+    for ii = 1:size(marker,1)
+        i0 = strfind(txt,marker{ii,1})+marker{ii,2};
+        i1 = iSmaller(find(iSmaller > i0,1))-1;
+        if length(i0) > 1
+            error('marker not unique')
+        end
+        if ~strcmp(txt(i0-1),'>')
+            error('before the number there should be a ">"')
+        end
+        
+        misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
+    end
+    misrad([2,3]) = misrad([3,2]);
+    writetable(list,'Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
+    fid = fopen('Israel_ministry_of_health.csv','r');
+    txt = fread(fid);
+    fclose(fid);
+    txt = native2unicode(txt)';
+    txt = strrep(txt,'NaN','');
+    fid = fopen('Israel_ministry_of_health.csv','w');
+    fwrite(fid,txt);
+    fclose(fid);
 end
-writetable(list,'Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
-fid = fopen('Israel_ministry_of_health.csv','r');
-txt = fread(fid);
-fclose(fid);
-txt = native2unicode(txt)';
-txt = strrep(txt,'NaN','');
-fid = fopen('Israel_ministry_of_health.csv','w');
-fwrite(fid,txt);
-fclose(fid);
+
 
 
 
@@ -76,7 +79,7 @@ fclose(fid);
 % listNew.hospitalized(1:end-2) = nan;
 % listNew.hotel_isolation(1:end-2) = nan;
 % listNew.home_care(1:end-2) = nan;
-% 
+%
 % writetable(listNew,'Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
 
 
