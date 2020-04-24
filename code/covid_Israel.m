@@ -15,8 +15,8 @@ for iCou = 1:length(mergedData)
     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
 end
 iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
-pop = readtable('population.csv','delimiter',',');
-vent = readtable('Israel_ventilators.csv');
+pop = readtable('data/population.csv','delimiter',',');
+vent = readtable('data/Israel/Israel_ventilators.csv');
 yest = datetime('yesterday');
 if ~ismember(yest,vent.date)
     mako = urlread('https://corona.mako.co.il/');
@@ -45,7 +45,7 @@ if ~ismember(yest,vent.date)
     h = height(vent);
     vent.vent_used(h+1:h+length(makoDate)-lastOkay) = makoNum(lastOkay+1:end);
     vent.date(h+1:h+length(makoDate)-lastOkay) = makoDate(lastOkay+1:end);
-    writetable(vent,'Israel_ventilators.csv','delimiter',',','WriteVariableNames',true);
+    writetable(vent,'data/Israel/Israel_ventilators.csv','delimiter',',','WriteVariableNames',true);
 end
 rutIdan = urlread('https://raw.githubusercontent.com/idandrd/israel-covid19-data/master/IsraelCOVID19.csv');
 fid = fopen('tmp.csv','w');

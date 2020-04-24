@@ -4,7 +4,7 @@ nCountries = 10;
 showDateEvery = 7; % days
 warning off
 disp('Reading tables...')
-pop = readtable('population.csv','delimiter',',');
+pop = readtable('data/population.csv','delimiter',',');
 type = 'deaths';
 [dataMatrix] = readCoronaData(type);
 [dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);

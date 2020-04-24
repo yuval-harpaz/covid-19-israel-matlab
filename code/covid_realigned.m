@@ -13,7 +13,7 @@ for iCou = 1:length(mergedData)
     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
 end
 iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
-pop = readtable('population.csv','delimiter',',');
+pop = readtable('data/population.csv','delimiter',',');
 warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 % plotCoronaData(timeVector,mergedData,{alwaysShow,'US','Germany','China'},type);

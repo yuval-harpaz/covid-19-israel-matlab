@@ -1,3 +1,7 @@
+function covid_Israel_ministry(getHistory)
+if ~exist('getHistory','var')
+    getHistory = false;
+end
 %% משרד הבריאות
 cd ~/covid-19_data_analysis/
 txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
@@ -11,7 +15,7 @@ date = datetime(str2num(...
     tStr(1:find(ismember(tStr,'.'),1)-1),' ',...
     strrep(tStr(strfind(tStr,' ')+1:end),':',' '),' 0']));
 
-list = readtable('Israel_ministry_of_health.csv');
+list = readtable('data/Israel/Israel_ministry_of_health.csv');
 if ~ismember(date,list.date)
     warning off
     list.date(end+1) = date;
@@ -32,6 +36,7 @@ if ~ismember(date,list.date)
     
     for ii = 1:size(marker,1)
         i0 = strfind(txt,marker{ii,1})+marker{ii,2};
+        i0 = i0(1);
         i1 = iSmaller(find(iSmaller > i0,1))-1;
         if length(i0) > 1
             error('marker not unique')
@@ -44,19 +49,50 @@ if ~ismember(date,list.date)
     end
     misrad([2,3]) = misrad([3,2]);
     list{end,2:end} = misrad';
-    writetable(list,'Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
-    fid = fopen('Israel_ministry_of_health.csv','r');
-    txt = fread(fid);
-    fclose(fid);
-    txt = native2unicode(txt)';
-    txt = strrep(txt,'NaN','');
-    fid = fopen('Israel_ministry_of_health.csv','w');
-    fwrite(fid,txt);
-    fclose(fid);
+    nanwritetable(list);
+end
+
+if getHistory
+    system('wget https://govextra.gov.il/media/16870/covid19-data-israel.xlsx')
+    movefile('covid19-data-israel.xlsx','data/Israel/')
+    history = readtable('data/Israel/covid19-data-israel.xlsx');
+    history.Properties.VariableNames(:) = {'date','tests','confirmed','hospitalized_cumulative','critical','on_ventilator','deceased'};
+    history.date = history.date+duration([23,59,59]);
+    iNewDates = find(~ismember(history.date,list.date));
+    if ~isempty(iNewDates)
+        prevLength = height(list);
+        warning off
+        list.date(prevLength+1:prevLength+height(history)) = history.date;
+        list.hospitalized_cumulative(prevLength+1:prevLength+height(history)) = history.hospitalized_cumulative;
+        list.deceased(prevLength+1:prevLength+height(history)) = history.deceased;
+        list.confirmed(prevLength+1:prevLength+height(history)) = history.confirmed;
+        list.critical(prevLength+1:prevLength+height(history)) = history.critical;
+        list.on_ventilator(prevLength+1:prevLength+height(history)) = history.on_ventilator;
+        list.tests(prevLength+1:prevLength+height(history)) = history.tests;
+        list.recovered(prevLength+1:prevLength+height(history)) = nan;
+        list.severe(prevLength+1:prevLength+height(history)) = nan;
+        list.mild(prevLength+1:prevLength+height(history)) = nan;
+        list.hotel_isolation(prevLength+1:prevLength+height(history)) = nan;
+        list.home_care(prevLength+1:prevLength+height(history)) = nan;
+        list.hospitalized(prevLength+1:prevLength+height(history)) = nan;
+        warning on
+        nanwritetable(list);
+    end
 end
 
 
+function nanwritetable(list)
+writetable(list,'data/Israel/Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
+fid = fopen('data/Israel/Israel_ministry_of_health.csv','r');
+txt = fread(fid);
+fclose(fid);
+txt = native2unicode(txt)';
+txt = strrep(txt,'NaN','');
+fid = fopen('data/Israel/Israel_ministry_of_health.csv','w');
+fwrite(fid,txt);
+fclose(fid);
 
+%history.date = dateshift(history.date,'end','day')
 
 % !wget https://raw.githubusercontent.com/tsvikas/COVID-19-Israel-data/master/daily_reports/total_cases.csv
 % t = readtable('total_cases.csv','Delimiter',',');
