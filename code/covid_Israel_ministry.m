@@ -16,7 +16,7 @@ if ~ismember(date,list.date)
     warning off
     list.date(end+1) = date;
     warning on
-    list{end,2:end} = misrad';
+    
     
     marker = {'corona-xl',41;...  % מקרים מאומתים
         '<div class="corona-md">נפטרו</div>',115;...
@@ -43,6 +43,7 @@ if ~ismember(date,list.date)
         misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
     end
     misrad([2,3]) = misrad([3,2]);
+    list{end,2:end} = misrad';
     writetable(list,'Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
     fid = fopen('Israel_ministry_of_health.csv','r');
     txt = fread(fid);
