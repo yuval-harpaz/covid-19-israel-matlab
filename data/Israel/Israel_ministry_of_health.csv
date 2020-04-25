@@ -1,4 +1,4 @@
-date,confirmed,recovered,deceased,on_ventilator,critical,severe,mild,hospitalized,hotel_isolation,home_care,tests,hospitalized_cumulative
+date,confirmed,recovered,deceased,on_ventilator,critical,severe,mild,hospitalized,hotel_isolation,home_care,tests,hospitalized_xlsx
 26-Jan-2020 23:59:59,0,,0,0,0,,,,,,3,0
 27-Jan-2020 23:59:59,0,,0,0,0,,,,,,4,0
 28-Jan-2020 23:59:59,0,,0,0,0,,,,,,4,0
@@ -173,3 +173,4 @@ date,confirmed,recovered,deceased,on_ventilator,critical,severe,mild,hospitalize
 23-Apr-2020 22:00:00,14803,5611,192,109,139,102,8759,433,2565,6064,,
 24-Apr-2020 09:00:00,14882,5685,193,107,139,101,8764,421,2501,6102,,
 24-Apr-2020 20:00:00,15058,6003,194,102,137,102,9367,409,2374,5884,,
+25-Apr-2020 09:00:00,15148,6159,198,102,130,99,8562,413,2397,5916,0,0

@@ -48,7 +48,7 @@ if ~ismember(date,list.date)
         misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
     end
     misrad([2,3]) = misrad([3,2]);
-    list{end,2:end} = misrad';
+    list{end,2:end-2} = misrad';
     nanwritetable(list);
 end
 
@@ -56,14 +56,14 @@ if getHistory
     system('wget https://govextra.gov.il/media/16870/covid19-data-israel.xlsx')
     movefile('covid19-data-israel.xlsx','data/Israel/')
     history = readtable('data/Israel/covid19-data-israel.xlsx');
-    history.Properties.VariableNames(:) = {'date','tests','confirmed','hospitalized_cumulative','critical','on_ventilator','deceased'};
+    history.Properties.VariableNames(:) = {'date','tests','confirmed','hospitalized_xlsx','critical','on_ventilator','deceased'};
     history.date = history.date+duration([23,59,59]);
     iNewDates = find(~ismember(history.date,list.date));
     if ~isempty(iNewDates)
         prevLength = height(list);
         warning off
         list.date(prevLength+1:prevLength+height(history)) = history.date;
-        list.hospitalized_cumulative(prevLength+1:prevLength+height(history)) = history.hospitalized_cumulative;
+        list.hospitalized_xlsx(prevLength+1:prevLength+height(history)) = history.hospitalized_xlsx;
         list.deceased(prevLength+1:prevLength+height(history)) = history.deceased;
         list.confirmed(prevLength+1:prevLength+height(history)) = history.confirmed;
         list.critical(prevLength+1:prevLength+height(history)) = history.critical;
