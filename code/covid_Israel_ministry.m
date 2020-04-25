@@ -48,7 +48,7 @@ if ~ismember(date,list.date)
         misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
     end
     misrad([2,3]) = misrad([3,2]);
-    list{end,2:end-2} = misrad';
+    list{end,2:11} = misrad';
     nanwritetable(list);
 end
 
