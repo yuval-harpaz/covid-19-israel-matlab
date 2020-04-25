@@ -86,7 +86,7 @@ for iPlot = 1:4
             yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
         case 4
             title('Daily deaths per million')
-            ymax = max(y(end,:,iPlot))*1.5;
+            ymax = max(y(end,:,iPlot))*1.1;
             yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
             ylabel('Deaths per million')
     end
@@ -112,7 +112,7 @@ xlabel('Weeks')
 set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
 xlim([42 length(timeVector)])
 title('Daily deaths per million')
-ymax = max(y(end,:,iPlot))*1.5;
+ymax = max(y(end,:,iPlot))*1.1;
 ylabel('Deaths per million')
 ylim([0 ymax])
 ytickformat('%,d')
