@@ -1,14 +1,14 @@
 function covid_update_html(isr)
 % show the worst countries by different criteria
 cd ~/covid-19_data_analysis/
-highest = dir(['archive/highest*',datestr(datetime-1,'dd_mm_yyyy'),'*']);
-if isempty(highest)
-    error('run covid_news');
-end
-realigned = dir(['archive/realigned*',datestr(datetime-1,'dd_mm_yyyy'),'*']);
-if isempty(realigned)
-    error('run covid_realigned');
-end
+% highest = dir(['archive/highest*',datestr(datetime-1,'dd_mm_yyyy'),'*']);
+% if isempty(highest)
+%     error('run covid_news');
+% end
+% realigned = dir(['archive/realigned*',datestr(datetime-1,'dd_mm_yyyy'),'*']);
+% if isempty(realigned)
+%     error('run covid_realigned');
+% end
 yesterdate = datestr(datetime-1,'dd.mm.yyyy');
 % highest countries
 fName = 'docs/highest_countries.html'

@@ -1,5 +1,8 @@
-function isr = covid_Israel
+function isr = covid_Israel(saveFigs)
 % plot 20 most active countries
+if ~exist('saveFigs','var')
+    saveFigs = false;
+end
 cd ~/covid-19_data_analysis/
 myCountry = 'Israel';
 nCountries = 20;
@@ -224,13 +227,15 @@ for iPlot = 1:2
 end
 
 %% save
-saveas(fig6,['archive/realignedMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-saveas(fig6,'docs/realignedMyCountry.png')
-saveas(fig5,['archive/realignedTodayMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-saveas(fig5,'docs/realignedTodayMyCountry.png')
-saveas(fig4,['archive/barsMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-saveas(fig4,'docs/barsMyCountry.png')
-saveas(fig8,['archive/myCountry_',datestr(vent.date(end),'dd_mm_yyyy'),'.png'])
-saveas(fig8,'docs/myCountry.png')
+if saveFigs
+    % saveas(fig6,['archive/realignedMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+    saveas(fig6,'docs/realignedMyCountry.png')
+    % saveas(fig5,['archive/realignedTodayMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+    saveas(fig5,'docs/realignedTodayMyCountry.png')
+    % saveas(fig4,['archive/barsMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+    saveas(fig4,'docs/barsMyCountry.png')
+    % saveas(fig8,['archive/myCountry_',datestr(vent.date(end),'dd_mm_yyyy'),'.png'])
+    saveas(fig8,'docs/myCountry.png')
+end
 %
 

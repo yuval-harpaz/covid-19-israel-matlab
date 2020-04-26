@@ -1,4 +1,8 @@
+function y = covid_news(saveFigs)
 % show the worst countries by different criteria
+if ~exist('saveFigs','var')
+    saveFigs = false;
+end
 cd ~/covid-19_data_analysis/
 nCountries = 10;
 showDateEvery = 7; % days
@@ -76,7 +80,7 @@ for iPlot = 1:4
             ymax = ymax(end-1)*1.1;
             yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
             text(x,mean(yt(1:2)),str(round(max(max(y(:,:,iPlot))))),...
-            'FontSize',10,'Color',h(1).Color,'FontWeight','bold');
+                'FontSize',10,'Color',h(1).Color,'FontWeight','bold');
         case 3
             title('Daily deaths')
             ylabel('Deaths')
@@ -128,7 +132,9 @@ for iSmall = 1:length(small)
     h(small(iSmall)).LineStyle = ':';
 end
 %%
-saveas(fig3,'docs/active.png')
-saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-saveas(fig1,'docs/highest.png')
+if saveFigs
+    saveas(fig3,'docs/active.png')
+%     saveas(fig1,['archive/highest_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+    saveas(fig1,'docs/highest.png')
+end
 

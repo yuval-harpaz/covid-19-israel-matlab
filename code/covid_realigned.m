@@ -1,4 +1,8 @@
+function covid_realigned(y,saveFigs)
 % plot 20 most active countries
+if ~exist('saveFigs','var')
+    saveFigs = false;
+end
 cd ~/covid-19_data_analysis/
 nCountries = 20;
 showDateEvery = 7; % days
@@ -91,8 +95,10 @@ for iPlot = 1:2
      set(gca,'FontSize',11)
 end
 %% save
-saveas(fig2,['archive/realigned_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-saveas(fig2,'docs/realigned.png')
+if saveFigs
+%     saveas(fig2,['archive/realigned_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
+    saveas(fig2,'docs/realigned.png');
+end
 % subplot(2,1,2)
 % maxy = 50;
 % plot(aligned(:,order),'linewidth',1,'marker','.');
