@@ -10,7 +10,7 @@ For the 10 most affected countries by different criteria click [here](highest_co
 Realigned curves for top 20 countries [here](realigned.html)<br>
 To compare Israel to other countries [here](myCountry.html)<br>
 Stay safe     ![falafel](W3CSSTemplateFiles/falafel_trans.png)
-### Last updated for 25.04.2020
+### Last updated for 26.04.2020
 ### Acknowledgements
 The COVID-19 data is taken from the John Hopkins COVID-19 database. The data can be found [here](https://github.com/CSSEGISandData/COVID-19).<br>
 Adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)
