@@ -1,3 +1,23 @@
+
+
+system('telegram-cli -W --json -e "history @MOHreport 100" | tee tcoutput.txt');
+fid = fopen('~/tcoutput.txt');
+txt = fread(fid);
+fclose(fid);
+txtStr = native2unicode(txt');
+txtStr = strrep(txtStr,[27,91,75,62,32,13],'');
+strfind(txtStr,'_חדש_')
+% iGT = ismember(txtStr,'>');
+% iGT(strfind(txtStr,'>>>')) = false;
+% iGT(strfind(txtStr,'>>>')+1) = false;
+% iGT(strfind(txtStr,'>>>')+2) = false;
+% iGT(strfind(txtStr,'>>')) = false;
+% iGT(strfind(txtStr,'>>')+1) = false;
+% iGT = find(iGT);
+% jsonData = jsondecode(txtStr(iGT(1)+6:iGT(2)-2));
+% for ii = 1:length(jsonData)
+%     
+%%
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
 
 toPlot = {'hospitalized_xlsx','critical','deceased'};
@@ -15,6 +35,7 @@ for iLine = 1:length(toPlot)
 end
 legend(toPlot)
 
+txt = 
 
 xlsx = dateshift(list.date,'end','day')-list.date == duration([0,0,1]);
 figure;

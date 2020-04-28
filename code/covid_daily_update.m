@@ -1,6 +1,6 @@
 function covid_daily_update(saveFigs)
 if ~exist('saveFigs','var')
-    saveFigs = false;
+    saveFigs = true;
 end
 % prepare daily charts and push
 cd ~/covid-19_data_analysis/
