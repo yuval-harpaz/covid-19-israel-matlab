@@ -1,6 +1,6 @@
 
 
-[err,msg] = system('telegram-cli -W -N -e "history @MOHreport 10"');
+[err,msg] = system('telegram-cli -W -N -e "history @MOHreport 10000" | grep "_חדש_"');
 % fid = fopen('tcoutput.txt');
 % txt = fread(fid);
 % fclose(fid);
@@ -11,6 +11,27 @@ id = strfind(msg,';1m');
 iSpace = strfind(msg,' ');
 idLast = msg(id(end)+1:iSpace(find(iSpace > id(end),1))-2);
 system(['telegram-cli -W -N -e "load_document ',idLast,'"']);
+
+list = readtable('data/Israel/Israel_ministry_of_health.csv');
+download = dir('~/snap/telegram-cli/current/.telegram-cli/downloads/*.pdf');
+fName = {download(:).name}';
+javaaddpath('/home/innereye/Documents/MATLAB/pdfRead/iText-4.2.0-com.itextpdf.jar')
+for iFile = 1:length(fName)
+    pdf_text = pdfRead(['/home/innereye/snap/telegram-cli/current/.telegram-cli/downloads/',fName{iFile}]);
+    iSlash = find(ismember(pdf_text{1},'/'),1);
+    iDots = find(ismember(pdf_text{1},':'));
+    date = datetime([pdf_text{1}(iSlash-2:iSlash+7),' ',pdf_text{1}(iDots-2:iDots+2),':00']);
+    row = find(ismember(list.date,date));
+    if isempty(row)
+        disp([datestr(date),' not in list'])
+    else
+        if isnan(list{row,end})
+            error('NaN!')
+        else
+            disp(list{row,end})
+        end
+    end
+end
 % iGT = ismember(txtStr,'>');
 % iGT(strfind(txtStr,'>>>')) = false;
 % iGT(strfind(txtStr,'>>>')+1) = false;

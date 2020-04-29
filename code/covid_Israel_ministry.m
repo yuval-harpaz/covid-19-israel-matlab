@@ -65,6 +65,7 @@ if getHistory
     iNewDates = find(~ismember(history.date,list.date));
     if ~isempty(iNewDates)
         prevLength = height(list);
+        history = history(iNewDates,:);
         warning off
         list.date(prevLength+1:prevLength+height(history)) = history.date;
         list.hospitalized_xlsx(prevLength+1:prevLength+height(history)) = history.hospitalized_xlsx;
@@ -73,13 +74,15 @@ if getHistory
         list.critical(prevLength+1:prevLength+height(history)) = history.critical;
         list.on_ventilator(prevLength+1:prevLength+height(history)) = history.on_ventilator;
         list.tests(prevLength+1:prevLength+height(history)) = history.tests;
-        list.recovered(prevLength+1:prevLength+height(history)) = nan;
-        list.severe(prevLength+1:prevLength+height(history)) = nan;
-        list.mild(prevLength+1:prevLength+height(history)) = nan;
-        list.hotel_isolation(prevLength+1:prevLength+height(history)) = nan;
-        list.home_care(prevLength+1:prevLength+height(history)) = nan;
-        list.hospitalized(prevLength+1:prevLength+height(history)) = nan;
-        list.critical_cumulative(prevLength+1:prevLength+height(history)) = nan;
+        
+        list(prevLength+1:prevLength+height(history),[3,7:11,14]) = repmat({nan},height(history),7);
+%         list.recovered(prevLength+1:prevLength+height(history)) = nan;
+%         list.severe(prevLength+1:prevLength+height(history)) = nan;
+%         list.mild(prevLength+1:prevLength+height(history)) = nan;
+%         list.hotel_isolation(prevLength+1:prevLength+height(history)) = nan;
+%         list.home_care(prevLength+1:prevLength+height(history)) = nan;
+%         list.hospitalized(prevLength+1:prevLength+height(history)) = nan;
+%         list.critical_cumulative(prevLength+1:prevLength+height(history)) = nan;
         [~,order] = sort(list.date);
         list = list(order,:);
         warning on
