@@ -1,12 +1,16 @@
 
 
-system('telegram-cli -W --json -e "history @MOHreport 100" | tee tcoutput.txt');
-fid = fopen('~/tcoutput.txt');
-txt = fread(fid);
-fclose(fid);
-txtStr = native2unicode(txt');
-txtStr = strrep(txtStr,[27,91,75,62,32,13],'');
-strfind(txtStr,'_חדש_')
+[err,msg] = system('telegram-cli -W -N -e "history @MOHreport 10"');
+% fid = fopen('tcoutput.txt');
+% txt = fread(fid);
+% fclose(fid);
+% txtStr = native2unicode(txt');
+% txtStr = strrep(txtStr,[27,91,75,62,32,13],'');
+iDoc = strfind(msg,'_חדש_');
+id = strfind(msg,';1m');
+iSpace = strfind(msg,' ');
+idLast = msg(id(end)+1:iSpace(find(iSpace > id(end),1))-2);
+system(['telegram-cli -W -N -e "load_document ',idLast,'"']);
 % iGT = ismember(txtStr,'>');
 % iGT(strfind(txtStr,'>>>')) = false;
 % iGT(strfind(txtStr,'>>>')+1) = false;

@@ -53,8 +53,12 @@ if ~ismember(date,list.date)
 end
 
 if getHistory
-    system('wget https://govextra.gov.il/media/16870/covid19-data-israel.xlsx')
-    movefile('covid19-data-israel.xlsx','data/Israel/')
+    iLink = strfind(txt,'.xlsx');
+    iHref = strfind(txt,'href');
+    iHref = iHref(find(iHref < iLink,1,'last'));
+    link = ['https://govextra.gov.il/',txt(iHref+7:iLink+4)];
+    system(['wget ',link])
+    movefile(link(find(ismember(link,'/'),1,'last')+1:end),'data/Israel/covid19-data-israel.xlsx')
     history = readtable('data/Israel/covid19-data-israel.xlsx');
     history.Properties.VariableNames(:) = {'date','tests','confirmed','hospitalized_xlsx','critical','on_ventilator','deceased'};
     history.date = history.date+duration([23,59,59]);
@@ -75,6 +79,9 @@ if getHistory
         list.hotel_isolation(prevLength+1:prevLength+height(history)) = nan;
         list.home_care(prevLength+1:prevLength+height(history)) = nan;
         list.hospitalized(prevLength+1:prevLength+height(history)) = nan;
+        list.critical_cumulative(prevLength+1:prevLength+height(history)) = nan;
+        [~,order] = sort(list.date);
+        list = list(order,:);
         warning on
         nanwritetable(list);
     end
