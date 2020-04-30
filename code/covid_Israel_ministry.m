@@ -49,7 +49,7 @@ if ~ismember(date,list.date)
     end
     misrad([2,3]) = misrad([3,2]);
     list{end,2:11} = misrad';
-    list{end,12:14} = nan;
+    list{end,12:end} = nan;
     nanwritetable(list);
 end
 

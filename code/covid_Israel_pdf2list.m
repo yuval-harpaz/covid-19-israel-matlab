@@ -22,7 +22,7 @@ for iFile = 1:length(fName)
         numb = txt(nl2(1)+1:nl2(2)-1);
         numb = strrep(numb,'*','');
         numb = str2num(numb);
-        list{end,[8,7,4,6,5,14]} = numb;
+        list{end,[8,7,4,6,5,end]} = numb;
         item = strfind(txt,'םיתמואמ');
         list.confirmed(end) =  str2num(strrep(txt(item+10:...
             iNewline(find(iNewline > item,1))-1),',',''));
@@ -31,15 +31,17 @@ for iFile = 1:length(fName)
         nl2 = iNewline(find(iNewline > item,2));
         list.hospitalized(end) =  str2num(txt(nl2(1)+1:nl2(2)-1));
         iNow = regexp(txt,'תעכ');
-        jNow = 3;
-        list.recovered(end) = str2num(txt(iNow(jNow)+6:iNewline(find(iNewline > iNow(jNow),1))-1));
+        for kNow = 1:length(iNow)
+            try
+                txtNow = txt(iNow(kNow)+6:iNewline(find(iNewline > iNow(kNow),1))-1);
+            end
+        end
+        list.recovered(end) = str2num(txtNow);
         item = strfind(txt,'לופיט');
         nl2 = iNewline(find(iNewline < item,2,'last'));
         numb = regexp(txt(nl2(1)+1:nl2(2)-1),' ','split');
         list.home_care(end) = str2num(numb{1});
         list.hotel_isolation(end) = str2num(numb{2});
-        list.tests(end) = nan;
-        list.hospitalized_xlsx(row) = nan;
         nanwritetable(list)
     else
         if isnan(list{row,end})
