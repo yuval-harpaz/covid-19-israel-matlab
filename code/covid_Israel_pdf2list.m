@@ -45,13 +45,13 @@ for iFile = 1:length(fName)
         if isnan(list{row,end})
             txt = strrep(pdf_text{2},',','');
             warning off
-            list.date(end+1) = date;
+            %list.date(end+1) = date;
             iMitz = strfind(txt,'רבטצמ');
             iNewline = strfind(txt,newline);
             nl2 = iNewline(find(iNewline > iMitz,2));
             numb = txt(nl2(1)+1:nl2(2)-1);
             numb = strrep(numb,'*','');
-            numb = str2num(numb)
+            numb = str2num(numb);
             list{row,end} = numb(end);
             nanwritetable(list)
         else

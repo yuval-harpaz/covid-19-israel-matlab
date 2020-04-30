@@ -12,69 +12,79 @@ warning off
 disp('Reading tables...')
 type = 'deaths';
 [dataMatrix] = readCoronaData(type);
-[dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);
+[~,timeVector,mergedData] = processCoronaData(dataMatrix);
 for iCou = 1:length(mergedData)
     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
 end
 iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
 pop = readtable('data/population.csv','delimiter',',');
-vent = readtable('data/Israel/Israel_ventilators.csv');
-yest = datetime('yesterday');
-if ~ismember(yest,vent.date)
-    mako = urlread('https://corona.mako.co.il/');
-    iBar = strfind(mako,'var _barGraphValues');
-    mako = mako(iBar:end);
-    iBrac{1} = strfind(mako,'[');
-    iBrac{2} = strfind(mako,']');
-    makoNum = str2num(mako(iBrac{1}(1)+1:iBrac{2}(1)-1));
-    makoDateCell = regexp(mako(iBrac{1}(2)+1:iBrac{2}(2)-1),'\d*','match');
-    makoDateCell = reshape(makoDateCell,2,length(makoDateCell)/2)';
-    for ii = 1:length(makoDateCell)
-        makoDate(ii,1) = datetime(str2num(datestr(datetime('today'),'yyyy')),... % year
-            str2num(makoDateCell{ii,2}),str2num(makoDateCell{ii,1}));
-    end
-    if length(makoDate) ~= length(makoNum)
-        error('error retrieving vents')
-    end
-    if ~ismember(yest,makoDate)
-        error('yesterday isnt in Mako bar')
-    end
-    if makoDate(end) == datetime('today')
-        makoDate(end) = [];
-        makoNum(end) = [];
-    end
-    lastOkay = find(ismember(makoDate,vent.date),1,'last');
-    h = height(vent);
-    vent.vent_used(h+1:h+length(makoDate)-lastOkay) = makoNum(lastOkay+1:end);
-    vent.date(h+1:h+length(makoDate)-lastOkay) = makoDate(lastOkay+1:end);
-    writetable(vent,'data/Israel/Israel_ventilators.csv','delimiter',',','WriteVariableNames',true);
-end
-rutIdan = urlread('https://raw.githubusercontent.com/idandrd/israel-covid19-data/master/IsraelCOVID19.csv');
-fid = fopen('tmp.csv','w');
-fwrite(fid,unicode2native(rutIdan));
-fclose(fid);
-ri = readtable('tmp.csv');
-!rm tmp.csv
-ri = ri(ismember(ri.x_Date,vent.date),:);
-Date = vent.date;
-Vent = vent.vent_used;
-Deceased = ri.x_____Deceased;
-Sever = ri.x___Severe;
-isr = table(Date,Deceased,Vent,Sever);
+% vent = readtable('data/Israel/Israel_ventilators.csv');
+% yest = datetime('yesterday');
+% if ~ismember(yest,vent.date)
+%     mako = urlread('https://corona.mako.co.il/');
+%     iBar = strfind(mako,'var _barGraphValues');
+%     mako = mako(iBar:end);
+%     iBrac{1} = strfind(mako,'[');
+%     iBrac{2} = strfind(mako,']');
+%     makoNum = str2num(mako(iBrac{1}(1)+1:iBrac{2}(1)-1));
+%     makoDateCell = regexp(mako(iBrac{1}(2)+1:iBrac{2}(2)-1),'\d*','match');
+%     makoDateCell = reshape(makoDateCell,2,length(makoDateCell)/2)';
+%     for ii = 1:length(makoDateCell)
+%         makoDate(ii,1) = datetime(str2num(datestr(datetime('today'),'yyyy')),... % year
+%             str2num(makoDateCell{ii,2}),str2num(makoDateCell{ii,1}));
+%     end
+%     if length(makoDate) ~= length(makoNum)
+%         error('error retrieving vents')
+%     end
+%     if ~ismember(yest,makoDate)
+%         error('yesterday isnt in Mako bar')
+%     end
+%     if makoDate(end) == datetime('today')
+%         makoDate(end) = [];
+%         makoNum(end) = [];
+%     end
+%     lastOkay = find(ismember(makoDate,vent.date),1,'last');
+%     h = height(vent);
+%     vent.vent_used(h+1:h+length(makoDate)-lastOkay) = makoNum(lastOkay+1:end);
+%     vent.date(h+1:h+length(makoDate)-lastOkay) = makoDate(lastOkay+1:end);
+%     writetable(vent,'data/Israel/Israel_ventilators.csv','delimiter',',','WriteVariableNames',true);
+% end
+% rutIdan = urlread('https://raw.githubusercontent.com/idandrd/israel-covid19-data/master/IsraelCOVID19.csv');
+% fid = fopen('tmp.csv','w');
+% fwrite(fid,unicode2native(rutIdan));
+% fclose(fid);
+% ri = readtable('tmp.csv');
+% !rm tmp.csv
+% ri = ri(ismember(ri.x_Date,vent.date),:);
+% Date = vent.date;
+list = readtable('data/Israel/Israel_ministry_of_health.csv');
+Vent = list.on_ventilator;
+Deceased = list.deceased;
+Severe = list.severe;
+Date = list.date;
+isr = table(Date,Deceased,Vent,Severe);
 %% plot israel only
-ixt = unique([1,fliplr(length(vent.date):-showDateEvery:1)]);
+desiredDates = fliplr(dateshift(isr.Date(end),'end','day'):-7:dateshift(isr.Date(1),'end','day'));
+for iD = 1:length(desiredDates)
+    ixt(iD,1) = find(isr.Date < desiredDates(iD),1,'last');
+end
+% ixt = unique([1,fliplr(length(isr.Date):-showDateEvery:1)]);
 fig8 = figure('units','normalized','position',[0,0.25,0.4,0.6]);
-h1 = plot(vent.date,ri.x___Severe,'b','linewidth',1,'marker','.','MarkerSize',8);
+idx = ~isnan(isr.Severe);
+h1 = plot(isr.Date(idx),isr.Severe(idx),'b','linewidth',1);
 hold on
-h2 = plot(vent.date,vent.vent_used,'r','linewidth',1,'marker','.','MarkerSize',8);
-h3 = plot(vent.date,ri.x_____Deceased,'k','linewidth',1,'marker','.','MarkerSize',8);
-set(gca,'XTick',vent.date(ixt),'FontSize',13)
+idx = ~isnan(isr.Vent);
+h2 = plot(isr.Date(idx),isr.Vent(idx),'r','linewidth',1);
+idx = ~isnan(isr.Deceased);
+h3 = plot(isr.Date(idx),isr.Deceased(idx),'k','linewidth',1);
+set(gca,'XTick',dateshift(isr.Date(ixt),'start','day'),'FontSize',13)
+% xtickangle(45)
 grid on
 box off
-legend('חולים במצב קשה','מונשמים','מתים','location','northwest')
+legend('חולים במצב קשה','מונשמים','נפטרים','location','northwest')
 ylabel('מספר החולים')
-title(['מתים, מונשמים וחולים קשה עד ה ',datestr(vent.date(end),'dd.mm')])
+title(['המצב בבתי החולים עד ה- ',datestr(dateshift(isr.Date(end),'start','day'),'dd.mm')])
 %%
 warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
@@ -209,7 +219,7 @@ for iPlot = 1:2
         jj = 1:annot(iPlot);
         title({'מתים למליון, מיושר'})
     else
-        jj = annot(1):annot(2)
+        jj = annot(1):annot(2);
         title({'מתים למליון, מיושר (זום-אין)'})
     end
     for iAnn = jj

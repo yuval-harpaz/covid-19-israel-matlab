@@ -56,18 +56,27 @@ counter0 = findstr(txt,'כיום,');
 count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;
 txt = [txt(1:counter0-1),'כיום, ',str(count),' ',txt(counter1:end)];
 idx = findstr(txt,'מצב התמותה');
-med = median(diff(isr.Deceased(end-4:end)));
+daten = datenum(isr.Date);
+daten = daten-daten(1);
+last5 = find(daten > daten(end)-4,1);
+x = daten(last5:end);
+x = [ones(length(x),1) x];
+y = isr.Deceased(last5:end);
+b = x\y;
+%med = median(diff(isr.Deceased(end-4:end)));
 % medPrev = median(diff(isr.Deceased(end-9:end-4)));
-ins = ['מצב התמותה - ', '(בחמשת הימים האחרונים)',' כ ',str(med),' נפטרים ליום ',];
+ins = ['מצב התמותה - ', '(בחמשת הימים האחרונים)',' כ ',str(round(b(2))),' נפטרים ליום ',];
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 
 idx = findstr(txt,'מצב המונשמים');
-med = median(diff(isr.Vent(end-4:end)));
+y = isr.Vent(last5:end);
+b = x\y;
+mun5 = round(b(2));
 % medPrev = median(diff(isr.Vent(end-9:end-4)));
-if med >= 0
-    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(med),' מונשמים יותר  ',];
+if mun5 >= 0
+    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(mun5),' מונשמים יותר  ',];
 else
-    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(-med),' מונשמים פחות',];
+    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(-mun5),' מונשמים פחות',];
 end
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 

@@ -1,6 +1,6 @@
 function covid_Israel_ministry(getHistory)
 if ~exist('getHistory','var')
-    getHistory = false;
+    getHistory = true;
 end
 %% משרד הבריאות
 cd ~/covid-19_data_analysis/
@@ -49,6 +49,7 @@ if ~ismember(date,list.date)
     end
     misrad([2,3]) = misrad([3,2]);
     list{end,2:11} = misrad';
+    list{end,12:14} = nan;
     nanwritetable(list);
 end
 
@@ -59,36 +60,36 @@ if getHistory
     link = ['https://govextra.gov.il/',txt(iHref+7:iLink+4)];
     system(['wget ',link])
     movefile(link(find(ismember(link,'/'),1,'last')+1:end),'data/Israel/covid19-data-israel.xlsx')
-    history = readtable('data/Israel/covid19-data-israel.xlsx');
-    history.Properties.VariableNames(:) = {'date','tests','confirmed','hospitalized_xlsx','critical','on_ventilator','deceased'};
-    history.date = history.date+duration([23,59,59]);
-    iNewDates = find(~ismember(history.date,list.date));
-    if ~isempty(iNewDates)
-        prevLength = height(list);
-        history = history(iNewDates,:);
-        warning off
-        list.date(prevLength+1:prevLength+height(history)) = history.date;
-        list.hospitalized_xlsx(prevLength+1:prevLength+height(history)) = history.hospitalized_xlsx;
-        list.deceased(prevLength+1:prevLength+height(history)) = history.deceased;
-        list.confirmed(prevLength+1:prevLength+height(history)) = history.confirmed;
-        list.critical(prevLength+1:prevLength+height(history)) = history.critical;
-        list.on_ventilator(prevLength+1:prevLength+height(history)) = history.on_ventilator;
-        list.tests(prevLength+1:prevLength+height(history)) = history.tests;
-        
-        list(prevLength+1:prevLength+height(history),[3,7:11,14]) = repmat({nan},height(history),7);
-%         list.recovered(prevLength+1:prevLength+height(history)) = nan;
-%         list.severe(prevLength+1:prevLength+height(history)) = nan;
-%         list.mild(prevLength+1:prevLength+height(history)) = nan;
-%         list.hotel_isolation(prevLength+1:prevLength+height(history)) = nan;
-%         list.home_care(prevLength+1:prevLength+height(history)) = nan;
-%         list.hospitalized(prevLength+1:prevLength+height(history)) = nan;
-%         list.critical_cumulative(prevLength+1:prevLength+height(history)) = nan;
-        [~,order] = sort(list.date);
-        list = list(order,:);
-        warning on
-        nanwritetable(list);
-    end
 end
+%     history = readtable('data/Israel/covid19-data-israel.xlsx');
+%     history.Properties.VariableNames(:) = {'date','tests','confirmed','hospitalized_xlsx','critical','on_ventilator','deceased'};
+%     history.date = history.date+duration([23,59,59]);
+%     iNewDates = find(~ismember(history.date,list.date));
+%     if ~isempty(iNewDates)
+%         prevLength = height(list);
+%         history = history(iNewDates,:);
+%         warning off
+%         list.date(prevLength+1:prevLength+height(history)) = history.date;
+%         list.hospitalized_xlsx(prevLength+1:prevLength+height(history)) = history.hospitalized_xlsx;
+%         list.deceased(prevLength+1:prevLength+height(history)) = history.deceased;
+%         list.confirmed(prevLength+1:prevLength+height(history)) = history.confirmed;
+%         list.critical(prevLength+1:prevLength+height(history)) = history.critical;
+%         list.on_ventilator(prevLength+1:prevLength+height(history)) = history.on_ventilator;
+%         list.tests(prevLength+1:prevLength+height(history)) = history.tests;
+%         
+%         list(prevLength+1:prevLength+height(history),[3,7:11,14]) = repmat({nan},height(history),7);
+% %         list.recovered(prevLength+1:prevLength+height(history)) = nan;
+% %         list.severe(prevLength+1:prevLength+height(history)) = nan;
+% %         list.mild(prevLength+1:prevLength+height(history)) = nan;
+% %         list.hotel_isolation(prevLength+1:prevLength+height(history)) = nan;
+% %         list.home_care(prevLength+1:prevLength+height(history)) = nan;
+% %         list.hospitalized(prevLength+1:prevLength+height(history)) = nan;
+% %         list.critical_cumulative(prevLength+1:prevLength+height(history)) = nan;
+%         [~,order] = sort(list.date);
+%         list = list(order,:);
+%         warning on
+%         nanwritetable(list);
+%     end
 
 % 
 % function nanwritetable(list)
