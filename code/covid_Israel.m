@@ -79,6 +79,7 @@ h2 = plot(isr.Date(idx),isr.Vent(idx),'r','linewidth',1);
 idx = ~isnan(isr.Deceased);
 h3 = plot(isr.Date(idx),isr.Deceased(idx),'k','linewidth',1);
 set(gca,'XTick',dateshift(isr.Date(ixt),'start','day'),'FontSize',13)
+xlim([isr.Date(1)-1 isr.Date(end)+1])
 % xtickangle(45)
 grid on
 box off

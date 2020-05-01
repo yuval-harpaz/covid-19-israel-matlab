@@ -9,7 +9,9 @@ for iFile = 1:length(fName)
     pdf_text = pdfRead(['/media/innereye/1T/Docs/MOH/',fName{iFile}]);
     iSlash = find(ismember(pdf_text{1},'/'),1);
     iDots = find(ismember(pdf_text{1},':'));
-    date = datetime([pdf_text{1}(iSlash-2:iSlash+7),' ',pdf_text{1}(iDots-2:iDots+2),':00']);
+    datetxt = [pdf_text{1}(iSlash-2:iSlash+7),' ',pdf_text{1}(iDots-2:iDots+2),':00'];
+    datetxt([1,2,4,5]) = datetxt([4,5,1,2]);
+    date = datetime(datetxt);
     row = find(ismember(list.date,date));
     if isempty(row)
         disp([datestr(date),' not in list'])
