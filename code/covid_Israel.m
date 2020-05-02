@@ -85,7 +85,7 @@ grid on
 box off
 legend('חולים במצב קשה','מונשמים','נפטרים','location','northwest')
 ylabel('מספר החולים')
-title(['המצב בבתי החולים עד ה- ',datestr(dateshift(isr.Date(end),'start','day'),'dd.mm')])
+title(['המצב בבתי החולים עד ה- ',datestr(isr.Date(end),'dd/mm hh:MM')])
 %%
 warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
