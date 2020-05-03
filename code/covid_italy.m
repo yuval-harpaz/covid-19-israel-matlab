@@ -1,17 +1,17 @@
-function ita = covid_italy %#ok<STOUT>
+function [ita,popreg] = covid_italy %#ok<STOUT>
 cd ~/covid-19_data_analysis
-system ('wget https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni.csv')
+system ('wget https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni.csv');
 region = readtable('dpc-covid19-ita-regioni.csv');
 !rm 'dpc-covid19-ita-'*
 
 dateReg = datetime(cellfun(@(x) x(1:10),region.data,'UniformOutput',false));
-Date = unique(dateReg);
+Date = unique(dateReg); %#ok<NASGU>
 regName = strrep(strrep(unique(region.denominazione_regione),'P.A. ',''),' ','_');
 regName = strrep(regName,'-','_');
 regName = strrep(regName,'''','');
 nameStr = join(regName,',');
 
-popreg = readtable('data/Italy/Italy_population_by_region.csv'); %#ok<NASGU>
+popreg = readtable('data/Italy/Italy_population_by_region.csv'); 
 
 for iName = 1:length(regName)
      eval([regName{iName},' = region.deceduti(ismember(region.denominazione_regione,popreg.region{iName}));']);

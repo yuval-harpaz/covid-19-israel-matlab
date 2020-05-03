@@ -44,6 +44,8 @@ for iFile = 1:length(fName)
         numb = regexp(txt(nl2(1)+1:nl2(2)-1),' ','split');
         list.home_care(end) = str2num(numb{1});
         list.hotel_isolation(end) = str2num(numb{2});
+        [~,order] = sort(list.date);
+        list = list(order,:);
         nanwritetable(list)
     else
         if isnan(list{row,end})

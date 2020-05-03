@@ -1,60 +1,52 @@
-
-ita = covid_italy;
+cd ~/covid-19_data_analysis/
+threshold = 500;
+[ita,itaPop] = covid_italy;
 nyc = covid_nyc;
-
+nyc.PROBABLE_COUNT(isnan(nyc.PROBABLE_COUNT)) = 0;
+nyc.CONFIRMED_COUNT(isnan(nyc.CONFIRMED_COUNT)) = 0;
+[us,usPop,usDate] = covid_usa;
 % us_county = urlread('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv');
-
-us_county = urlread('https://raw.githubusercontent.com/jeffcore/covid-19-usa-by-state/master/COVID-19-Deaths-USA-By-County.csv');
-us_county = strrep(us_county,'-','_');
-us_county = strrep(us_county,'/20,','/2020,');
-fid = fopen('tmp.csv','w');
-fwrite(fid,us_county);
-fclose(fid);
-us_county = readtable('tmp.csv');
-% fips = unique(us_county.fips)
-us_county(end,:) = [];
-us_county(:,end) = [];
-% [vmax,order] = sort(us_county{:,end},'descend');
-%us_county = us_county(order,:);
-!rm tmp.csv
-pop = readtable('data/us_county_population.csv');
-
-[vmax,order] = sort(us_county{:,end}./pop.population,'descend');
-order(1:6) = []; % nans
-ustop = us_county(order(1:20),:);
-y = (us_county{order(1:20),4:end}./pop.population(order(1:20)))'*10^6;
-figure;
-h = plot(y);
-for ii = 1:10
-    text(length(y)-ii*3,y(end-ii*3,ii),...
-        [us_county.state{order(ii)},', ',us_county.county{order(ii)}],...
-        'color',h(ii).Color);
+[dataMatrix] = readCoronaData('deaths');
+[dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);
+for iCou = 1:length(mergedData)
+    mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
+    mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
 end
-box off
+pop = readtable('data/population.csv','delimiter',',');
+mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
+san_marino = mergedData{ismember(mergedData(:,1),'San Marino'),2}';
+[~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
+pop = pop(idx,:);
+dpm = cellfun(@nanmax, mergedData(:,2))./pop.Population_2020_*10^6;
+cou = find(dpm > threshold);
+sta = find(us{:,end}./usPop{:,2}*10^6 > threshold);
+reg = find(ita{end,2:end}./(itaPop{:,2}')*10^6 > threshold)';
+y = nan(length(timeVector),length(cou)+length(reg)+length(sta) + 2);
+y(ismember(timeVector,nyc.date_of_death),1) = cumsum(nyc.CONFIRMED_COUNT+nyc.PROBABLE_COUNT)./8.4;
+y(ismember(timeVector,nyc.date_of_death),2) = cumsum(nyc.CONFIRMED_COUNT)./8.4;
+y(ismember(timeVector,usDate),3:2+length(sta)) = us{sta,2:end}'./usPop{sta,2}'*10^6;
+trim = find(~ismember(ita{:,1},timeVector));
+ita(trim,:) = [];
+y(ismember(timeVector,ita.Date),7:6+length(reg)) = ita{:,1+reg}./itaPop{reg,2}'*10^6;
+for iCou = 1:length(cou)
+    y(:,14+iCou) = mergedData{cou(iCou),2}./pop.Population_2020_(cou(iCou))*10^6;
+end
+loc = [{'NYC Probable';'NYC'};us{sta,1};itaPop{reg,1};{mergedData{cou,1}}'];
+
+[~,order] = sort(y(end,:),'descend');
+y = y(:,order);
+loc = loc(order);
+
+figure;
+h = plot(timeVector,y);
+xlim(timeVector([40,end]))
+yt = max(max(y)):-max(max(y))/size(y,2):0;
+for ii = 1:length(yt)-1
+    text(timeVector(end),yt(ii),loc{ii},'color',h(ii).Color);
+end
+
 grid on
-set(gcf,'color','w')
-xlim([50 130])
-% 
-% t = readtable('/media/innereye/1T/Docs/co-est2019-annres.csv');
-% t(1,:) = [];
-% tStr = strrep(t{:,1},' County','');
-% tStr = strrep(tStr,' Parish','');
-% tStr = strrep(tStr,'Miami Dade','Miami_Dade');
-% county = cellfun(@(x) x(2:strfind(x,',')-1),tStr,'UniformOutput',false);
-% state = cellfun(@(x) x(strfind(x,',')+2:end),t{:,1},'UniformOutput',false);
-% % for ii = 1:100
-% %     if contains(t{ii,1},' County')
-% %         county{ii,1} = t{ii,1}(2:strfind(x,' County')-1);
-% %         state{ii,1} = t{ii,1}(strfind(x,' County')+9:end);
-% %     else
-% population = nan(height(us_county),1);
-% for ii = 1:height(us_county)
-%     idx = find(ismember(state,us_county.state{ii}) & ismember(county,us_county.county{ii}));
-%     if length(idx) == 1
-%         num = strrep(t{idx,2},',','');
-%         population(ii,1) = str2num(num{1});
-%     end
-% end
-% tt = us_county(:,2:3);
-% tt.population = population;
-% writetable(tt,'data/us_county_population.csv','Delimiter',',','WriteVariableNames',true)
+box off
+title('worst COVID-19 places')
+ylabel('Deaths per million')
+set(gca,'fontsize',13)
