@@ -8,12 +8,15 @@ txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/')
 iSmaller = find(ismember(txt,'<'));
 i0 = findstr(txt,'נכונה ל');
 i1 = findstr(txt,'בשעה');
-tStr = [txt(i0+9:i1-2),' ',txt(i1+5:iSmaller(find(iSmaller > i1,1))-1)];
-date = datetime(str2num(...
-    [tStr(find(ismember(tStr,'.'),1,'last')+1:strfind(tStr,' ')),...
-    tStr(find(ismember(tStr,'.'),1)+1:find(ismember(tStr,'.'),1,'last')-1),' ',...
-    tStr(1:find(ismember(tStr,'.'),1)-1),' ',...
-    strrep(tStr(strfind(tStr,' ')+1:end),':',' '),' 0']));
+tStr = [txt(i0+14:i1-2),' ',txt(i1+5:iSmaller(find(iSmaller > i1,1))-1)];
+% date = datetime(str2num(...
+%     [tStr(find(ismember(tStr,'.'),1,'last')+1:strfind(tStr,' ')),...
+%     tStr(find(ismember(tStr,'.'),1)+1:find(ismember(tStr,'.'),1,'last')-1),' ',...
+%     tStr(1:find(ismember(tStr,'.'),1)-1),' ',...
+%     strrep(tStr(strfind(tStr,' ')+1:end),':',' '),' 0']));
+iDots = strfind(tStr,':');
+date = datetime([2020,str2num(tStr(4:5)),str2num(tStr(1:2)),...
+    str2num(tStr(iDots-2:iDots-1)),str2num(tStr(iDots+1:iDots+2)),0]);
 
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
 if ~ismember(date,list.date)
@@ -36,11 +39,12 @@ if ~ismember(date,list.date)
     
     for ii = 1:size(marker,1)
         i0 = strfind(txt,marker{ii,1})+marker{ii,2};
-        i0 = i0(1);
-        i1 = iSmaller(find(iSmaller > i0,1))-1;
-        if length(i0) > 1
-            error('marker not unique')
+        if ii == 1
+            i0 = i0(2); % first i0 finds n tests
+        else
+            i0 = i0(1);
         end
+        i1 = iSmaller(find(iSmaller > i0,1))-1;
         if ~strcmp(txt(i0-1),'>')
             error('before the number there should be a ">"')
         end
