@@ -33,8 +33,7 @@ if ~ismember(date,list.date)
         'בינוני<',49;...
         'קל<',45;...
         'בית חולים<',52;...
-        'מלונית<',49;...
-        'טיפולי בית<',53};
+        'מלונית<',49};
     
     
     for ii = 1:size(marker,1)
@@ -52,8 +51,8 @@ if ~ismember(date,list.date)
         misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
     end
     misrad([2,3]) = misrad([3,2]);
-    list{end,2:11} = misrad';
-    list{end,12:end} = nan;
+    list{end,2:10} = misrad';
+    list{end,end} = nan;
     nanwritetable(list);
 end
 
