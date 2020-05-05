@@ -1,6 +1,5 @@
 function nyc = covid_nyc
 % https://www1.nyc.gov/site/doh/covid/covid-19-data.page
-
 nyc = urlread('https://raw.githubusercontent.com/nychealth/coronavirus-data/master/Deaths/probable-confirmed-dod.csv');
 strrep(nyc,'\n\n','\n')
 nyc = strrep(nyc,'/20,','/2020,');
