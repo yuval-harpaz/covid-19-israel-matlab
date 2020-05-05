@@ -30,8 +30,8 @@ newDeaths = mergedData(deaths(end-1,:) == 0 & deaths(end,:) > 0,1);
 % newDeathPerMil = mergedData(deaths(end-1,:)./mil < 1 & deaths(end,:)./mil >= 1,1);
 % deaths(end,:)./mil-deaths(end-1,:)./mil
 newDeathPerMil = [zeros(1,length(mergedData));diff(deaths./mil)];
-smallAll = find(mil < 1);
-newDeathPerMil(:,smallAll) = movmean(newDeathPerMil(:,smallAll),5);
+% smallAll = find(mil < 1);
+newDeathPerMil = movmean(newDeathPerMil,5);
 
 order = cell(4,1);
 y = nan(length(timeVector),nCountries,4);
@@ -90,7 +90,7 @@ for iPlot = 1:4
             yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
         case 4
             title('Daily deaths per million')
-            ymax = max(y(end,:,iPlot))*1.1;
+            ymax = max(y(end,:,iPlot))*1.5;
             yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
             ylabel('Deaths per million')
     end
@@ -116,7 +116,7 @@ xlabel('Weeks')
 set(gca,'XTick',iXtick,'XTickLabel',datestr(timeVector(iXtick),'dd.mm'))
 xlim([42 length(timeVector)])
 title('Daily deaths per million')
-ymax = max(y(end,:,iPlot))*1.1;
+ymax = max(y(end,:,iPlot))*1.5;
 ylabel('Deaths per million')
 ylim([0 ymax])
 ytickformat('%,d')
