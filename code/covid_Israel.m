@@ -129,7 +129,7 @@ fig4 = figure('units','normalized','position',[0,0,1,1]);
 subplot(3,1,1)
 h1 = bar(y);
 hold on
-h2 = bar(yNan,'r')
+h2 = bar(yNan,'r');
 plot(find(isMy),yNan(isMy),'or','MarkerSize',10)
 set(gca,'YTick',10.^yt(2:end),'YTickLabel',10.^yt(2:end),'ygrid','on','XTickLabel',[],'FontSize',13)
 legend([h1(1),h2(1)],'העולם','ישראל')
