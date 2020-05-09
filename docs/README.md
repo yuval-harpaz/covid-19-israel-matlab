@@ -3,7 +3,9 @@
 This is an open-source project using Matlab tools to generate images from online available data. It is mainly concerned with death rates, because it is hard to compare countries for any other measurement. The number of confirmed cases for instance, is biased by the number of tests run by different countries.
 <br>
 ### Most affected regions
-Countries with the heaviest death toll per million people
+Regions with the heaviest death toll per million people<br>
+We want to know at what death rate the population is saturated, and the virus stops sprreading. San Marino seem to be stabilizing at 1200 deaths per million, although in NYC are twice as high.<br>
+*New York City (NYC) publishes probable COVID-19 deaths in addition to confirmed deaths.
 ![most affected regions](worst_region.png)
 ### Most active countries
 Countries with the heaviest *daily* death toll per million people
