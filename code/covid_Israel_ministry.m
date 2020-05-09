@@ -51,6 +51,9 @@ if ~ismember(date,list.date)
         misrad(ii,1) = str2num(strrep(txt(i0:i1),',',''));
     end
     misrad([2,3]) = misrad([3,2]);
+    if misrad(7) == misrad(9)
+        misrad(7) = misrad(1)-misrad(2)-misrad(3)-misrad(5)-misrad(6);
+    end
     list{end,2:10} = misrad';
     list{end,end} = nan;
     nanwritetable(list);
