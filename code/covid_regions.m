@@ -1,62 +1,133 @@
 function covid_regions
 cd ~/covid-19_data_analysis/
-threshold = 750;
-[ita,itaPop] = covid_italy;
-nyc = covid_nyc;
-nyc.PROBABLE_COUNT(isnan(nyc.PROBABLE_COUNT)) = 0;
-nyc.CONFIRMED_COUNT(isnan(nyc.CONFIRMED_COUNT)) = 0;
-[us,usPop,usDate] = covid_usa;
-[esp,espPop,espDate] = covid_spain;
-% us_county = urlread('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv');
+threshold = 750; %plot results over this deaths per million
+
+%% Whole countries
+cellCount = 1;
 [dataMatrix] = readCoronaData('deaths');
-[dataTable,timeVector,mergedData] = processCoronaData(dataMatrix);
+[~,date{cellCount},mergedData] = processCoronaData(dataMatrix);
+date{cellCount} = date{cellCount}';
 for iCou = 1:length(mergedData)
     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
 end
-pop = readtable('data/population.csv','delimiter',',');
-mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
-san_marino = mergedData{ismember(mergedData(:,1),'San Marino'),2}';
-[~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
-pop = pop(idx,:);
-dpm = cellfun(@nanmax, mergedData(:,2))./pop.Population_2020_*10^6;
-cou = find(dpm > threshold);
-sta = find(us{:,end}./usPop{:,2}*10^6 > threshold);
-reg = find(ita{end,2:end}./(itaPop{:,2}')*10^6 > threshold)';
-trim = find(~ismember(ita{:,1},timeVector));
-ita(trim,:) = [];
-spa = find(esp{:,end}./espPop.Var2*10^6 > threshold);
-lengths = [2,length(sta),length(reg),length(spa),length(cou)];
-y = nan(length(timeVector),sum(lengths));
-y(ismember(timeVector,nyc.date_of_death),1) = cumsum(nyc.CONFIRMED_COUNT+nyc.PROBABLE_COUNT)./8.4;
-y(ismember(timeVector,nyc.date_of_death),2) = cumsum(nyc.CONFIRMED_COUNT)./8.4;
-y(ismember(timeVector,usDate),3:2+lengths(2)) = us{sta,2:end}'./usPop{sta,2}'*10^6;
-y(ismember(timeVector,ita.Date),sum(lengths(1:2))+1:sum(lengths(1:3))) = ...
-    ita{:,1+reg}./itaPop{reg,2}'*10^6;
-y(ismember(timeVector,espDate),sum(lengths(1:3))+1:sum(lengths(1:4))) = ...
-    esp{spa,2:end}'./espPop{spa,2}'*10^6;
-for iCou = 1:length(cou)
-    y(:,sum(lengths(1:4))+iCou) = mergedData{cou(iCou),2}./pop.Population_2020_(cou(iCou))*10^6;
+popCou = readtable('data/population.csv','delimiter',',');
+mergedData(~ismember(mergedData(:,1),popCou.Country_orDependency_),:) = [];
+[~,idx] = ismember(mergedData(:,1),popCou.Country_orDependency_);
+deceased{cellCount} = nan(length(date{cellCount}),length(idx));
+for ii = 1:length(idx)
+    deceased{cellCount}(:,ii) = mergedData{ii,2};
 end
-loc = [{'NYC Probable';'NYC'};us{sta,1};itaPop{reg,1};espPop.Var1(spa);{mergedData{cou,1}}'];
+pop{cellCount} = popCou(idx,:);
+country{cellCount} = pop{cellCount}{:,1};
+% dpm = cellfun(@nanmax, mergedData(:,2))./pop.Population_2020_*10^6;
+% cou = find(dpm > threshold);
+%% NYC
+cellCount = cellCount+1;
+[date{cellCount,1},popNYC,nyc,nycp] = covid_nyc;
+pop{cellCount,1} = table({'NYC_Confirmed';'NYC_Probable'},[popNYC;popNYC]);
+deceased{cellCount,1} = [nyc,nycp];
+country{cellCount,1} = repmat({'US'},size(pop{cellCount},1),1);
+%% USA states
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_usa;
+deceased{cellCount} = deceased{cellCount}{:,2:end}';
+pop{cellCount}{:,1} = strrep(pop{cellCount}{:,1},'Georgia','Georgia US');
+country{cellCount,1} = repmat({'US'},size(pop{cellCount},1),1);
+%sta = find(us{:,end}./usPop{:,2}*10^6 > threshold);
+%% spain
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
+deceased{cellCount} = deceased{cellCount}{:,2:end}';
+country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
+% trim = ~ismember(espDate,timeVector);
+% esp(:,trim) = [];
+% spa = find(esp{:,end}./espPop.Var2*10^6 > threshold);
+% us_county = urlread('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv');
 
-[~,order] = sort(nanmax(y(end-3:end,:)),'descend');
+%% Italy
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_italy;
+deceased{cellCount} = deceased{cellCount}{:,:};
+country{cellCount} = repmat({'Italy'},size(pop{cellCount},1),1);
+% reg = find(ita{end,2:end}./(itaPop{:,2}')*10^6 > threshold)';
+% trim = ~ismember(ita{:,1},timeVector);
+% ita(trim,:) = [];
+
+%% save a table
+badChar = {'P.A. ','';...
+    '''','';...
+    'ó','o';...
+    '-',' ';...
+    '(','';...
+    ')','';...
+    '*','';...
+    '_',' '};
+Date = {};
+Region = {};
+Country = {};
+Population = [];
+for ii = 1:length(date)
+    Date =[Date;date{ii}];
+    for iBad = 1:length(badChar)
+        pop{ii}{:,1} = strrep(pop{ii}{:,1},badChar{iBad,1},badChar{iBad,2});
+    end
+    Region = [Region;pop{ii}{:,1}];
+    Country = [Country;country{ii}];
+    Population = [Population;pop{ii}{:,2}];
+end
+
+if length(Region) > length(unique(Region))
+    error('Region is not unique');
+end
+Date = unique(Date);
+
+for ii = 1:length(deceased)
+    if size(pop{ii},1) ~= size(deceased{ii},2)
+        error(['bad matrix size for',num2str(ii)])
+    end
+end
+% for iReg = 1:length(Region)
+%     eval(['Var',num2str(iReg),' = nan(length(
+Date_ = cellstr(datestr(Date,'mmm_dd_yyyy'));
+list = table(Country,Region,Population);
+for ii = 1:length(Date)
+    eval(['list.',Date_{ii},' = nan(length(Region),1);']);
+end
+for ii = 1:length(deceased)
+    iDate = find(ismember(Date,date{ii}));
+    iReg = ismember(Region,pop{ii}{:,1});
+    list{iReg,iDate+3} = deceased{ii}';
+%     list{
+end
+ignore = find(Date > dateshift(datetime('now'),'start','day'),1);
+if ~isempty(ignore)
+    list(:,ignore+3:end) = [];
+    Date(ignore:end) = [];
+end
+nanwritetable(list,'data/regions.csv');
+%% sort and plot
+
+
+y = list{:,4:end}'./list.Population'*10^6;
+[~,order] = sort(nanmax(y),'descend');
 y = y(:,order);
-loc = loc(order);
+loc = list{order,2};
 loc{ismember(loc,'New York')} = 'New York Sate';
-iXtick = fliplr(length(timeVector):-7:1);
+iXtick = fliplr(length(Date):-7:1);
+nLines = find(nanmax(y) > threshold,1,'last');
 
 fig10 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
-h = plot(timeVector,y);
-xlim(10+timeVector([30,end]))
-yt = max(max(y)):-max(max(y))/size(y,2):0;
-for ii = 1:length(yt)-1
-    text(timeVector(end),yt(ii),loc{ii},'color',h(ii).Color);
+h = plot(Date,y(:,1:nLines));
+xlim(10+Date([30,end]))
+yt = max(max(y)):-max(max(y))/nLines:0;
+for ii = 1:nLines
+    text(Date(end),yt(ii),loc{ii},'color',h(ii).Color);
 end
 grid on
 box off
 title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' deaths per million']})
 ylabel('Deaths per million')
-set(gca,'fontsize',13,'XTick',timeVector(iXtick))
+set(gca,'fontsize',13,'XTick',Date(iXtick))
 xtickangle(30)
 saveas(fig10,'docs/worst_region.png')

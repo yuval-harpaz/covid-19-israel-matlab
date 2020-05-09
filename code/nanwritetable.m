@@ -1,10 +1,13 @@
-function nanwritetable(list)
-writetable(list,'data/Israel/Israel_ministry_of_health.csv','WriteVariableNames',true,'Delimiter',',');
-fid = fopen('data/Israel/Israel_ministry_of_health.csv','r');
+function nanwritetable(list,fName)
+if ~exist(fName,'var')
+    fName = 'data/Israel/Israel_ministry_of_health.csv';
+end
+writetable(list,fName,'WriteVariableNames',true,'Delimiter',',');
+fid = fopen(fName,'r');
 txt = fread(fid);
 fclose(fid);
-txt = native2unicode(txt)';
+txt = native2unicode(txt)'; %#ok<N2UNI>
 txt = strrep(txt,'NaN','');
-fid = fopen('data/Israel/Israel_ministry_of_health.csv','w');
+fid = fopen(fName,'w');
 fwrite(fid,txt);
 fclose(fid);
