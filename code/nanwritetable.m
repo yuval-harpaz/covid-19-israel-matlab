@@ -1,5 +1,5 @@
 function nanwritetable(list,fName)
-if ~exist(fName,'var')
+if ~exist('fName','var')
     fName = 'data/Israel/Israel_ministry_of_health.csv';
 end
 writetable(list,fName,'WriteVariableNames',true,'Delimiter',',');
