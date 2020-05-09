@@ -1,5 +1,5 @@
-cd covid-19_data_analysis/
-vent = readtable('Israel_ventilators.csv');
+cd ~/covid-19_data_analysis/
+vent = readtable('data/Israel/Israel_ventilators.csv');
 
 %t0 = [14,24,height(vent)-10,height(vent)-5];
 t0 = [14,height(vent)-5];
