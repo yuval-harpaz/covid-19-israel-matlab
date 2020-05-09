@@ -7,7 +7,7 @@ cd ~/covid-19_data_analysis/
 y = covid_news(saveFigs);
 covid_realigned(y,saveFigs)
 covid_Israel_ministry;
-% covid_Israel_pdf2list;
+covid_regions;
 isr = covid_Israel(saveFigs);
 if saveFigs
     covid_update_html(isr);
