@@ -1,3 +1,4 @@
+function covid_regions
 cd ~/covid-19_data_analysis/
 threshold = 750;
 [ita,itaPop] = covid_italy;
@@ -39,20 +40,23 @@ for iCou = 1:length(cou)
 end
 loc = [{'NYC Probable';'NYC'};us{sta,1};itaPop{reg,1};espPop.Var1(spa);{mergedData{cou,1}}'];
 
-[~,order] = sort(y(end,:),'descend');
+[~,order] = sort(nanmax(y(end-3:end,:)),'descend');
 y = y(:,order);
 loc = loc(order);
+loc{ismember(loc,'New York')} = 'New York Sate';
+iXtick = fliplr(length(timeVector):-7:1);
 
-figure;
+fig10 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
 h = plot(timeVector,y);
-xlim(timeVector([40,end]))
+xlim(10+timeVector([30,end]))
 yt = max(max(y)):-max(max(y))/size(y,2):0;
 for ii = 1:length(yt)-1
     text(timeVector(end),yt(ii),loc{ii},'color',h(ii).Color);
 end
-
 grid on
 box off
-title('worst COVID-19 places')
+title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' deaths per million']})
 ylabel('Deaths per million')
-set(gca,'fontsize',13)
+set(gca,'fontsize',13,'XTick',timeVector(iXtick))
+xtickangle(30)
+saveas(fig10,'docs/worst_region.png')
