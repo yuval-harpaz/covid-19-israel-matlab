@@ -60,6 +60,6 @@ if getHistory
     iHref = strfind(txt,'href');
     iHref = iHref(find(iHref < iLink,1,'last'));
     link = ['https://govextra.gov.il/',txt(iHref+7:iLink+4)];
-    system(['wget ',link])
+    [~,~] = system(['wget ',link]);
     movefile(link(find(ismember(link,'/'),1,'last')+1:end),'data/Israel/covid19-data-israel.xlsx')
 end

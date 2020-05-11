@@ -212,3 +212,21 @@ end
 %%
 
 
+crit = movmean(list.critical,7,'omitnan');
+hosp = movmean(list.hospitalized,7,'omitnan');
+seve = movmean(list.severe,7,'omitnan');
+mild = hosp-crit-seve;
+figure;
+fill([list.date;flipud(list.date)],[crit+seve+mild;flipud(crit+seve)],[0.7 0.7 0.7],'LineStyle','none')
+hold on
+fill([list.date;flipud(list.date)],[crit+seve;flipud(crit)],[0.5 0.5 0.5],'LineStyle','none')
+fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
+plot(list.date,list.deceased,'k')
+legend('mild                קל','severe          בינוני','critical          קשה','deceased  נפטרים')
+box off
+xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
+set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(hosp))
+xtickangle(30)
+grid on
+xlim([list.date(1) list.date(end)])
+title('Hospitalized by severity מאושפזים לפי חומרה')
