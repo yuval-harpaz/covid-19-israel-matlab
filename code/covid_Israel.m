@@ -20,33 +20,59 @@ end
 iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
 pop = readtable('data/population.csv','delimiter',',');
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
-Vent = list.on_ventilator;
-Deceased = list.deceased;
-Severe = list.severe;
-Date = list.date;
-isr = table(Date,Deceased,Vent,Severe);
+% Vent = list.on_ventilator;
+% Deceased = list.deceased;
+% Critical = list.severe;
+% Date = list.date;
+% isr = table(Date,Deceased,Vent,Critical);
 %% plot israel only
-desiredDates = fliplr(dateshift(isr.Date(end),'end','day'):-7:dateshift(isr.Date(1),'end','day'));
+desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
 for iD = 1:length(desiredDates)
-    ixt(iD,1) = find(isr.Date < desiredDates(iD),1,'last');
+    ixt(iD,1) = find(list.date < desiredDates(iD),1,'last');
 end
 % ixt = unique([1,fliplr(length(isr.Date):-showDateEvery:1)]);
-fig8 = figure('units','normalized','position',[0,0.25,0.4,0.6]);
-idx = ~isnan(isr.Severe);
-h1 = plot(isr.Date(idx),isr.Severe(idx),'b','linewidth',1);
+fig8 = figure('units','normalized','position',[0,0.25,0.8,0.6]);
+idx = ~isnan(list.severe);
+subplot(1,2,1)
+h1 = plot(list.date(idx),list.severe(idx),'color',[0.7 0.7 0.3],'linewidth',1);
 hold on
-idx = ~isnan(isr.Vent);
-h2 = plot(isr.Date(idx),isr.Vent(idx),'r','linewidth',1);
-idx = ~isnan(isr.Deceased);
-h3 = plot(isr.Date(idx),isr.Deceased(idx),'k','linewidth',1);
-set(gca,'XTick',dateshift(isr.Date(ixt),'start','day'),'FontSize',13)
-xlim([isr.Date(1)-1 isr.Date(end)+1])
+h2 = plot(list.date(idx),list.critical(idx),'b','linewidth',1);
+idx = ~isnan(list.on_ventilator);
+h3 = plot(list.date(idx),list.on_ventilator(idx),'r','linewidth',1);
+idx = ~isnan(list.deceased);
+h4 = plot(list.date(idx),list.deceased(idx),'k','linewidth',1);
+set(gca,'XTick',dateshift(list.date(ixt),'start','day'),'FontSize',13)
+xlim([list.date(1)-1 list.date(end)+1])
 % xtickangle(45)
 grid on
 box off
-legend('חולים במצב קשה','מונשמים','נפטרים','location','northwest')
+legend('חולים במצב בינוני','חולים במצב קשה','מונשמים','נפטרים','location','northwest')
 ylabel('מספר החולים')
-title(['המצב בבתי החולים עד ה- ',datestr(isr.Date(end),'dd/mm hh:MM')])
+title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
+xtickangle(30)
+
+subplot(1,2,2)
+crit = movmean(list.critical,7,'omitnan');
+hosp = movmean(list.hospitalized,7,'omitnan');
+seve = movmean(list.severe,7,'omitnan');
+mild = hosp-crit-seve;
+vent = movmean(list.on_ventilator,7,'omitnan');
+
+fill([list.date;flipud(list.date)],[crit+seve+mild;flipud(crit+seve)],[0.9 0.9 0.9],'LineStyle','none')
+hold on
+fill([list.date;flipud(list.date)],[crit+seve;flipud(crit)],[0.7 0.7 0.7],'LineStyle','none')
+fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.5 0.5 0.5],'LineStyle','none')
+fill([list.date;flipud(list.date)],[vent;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
+plot(list.date,list.deceased,'k')
+legend('mild                קל','severe          בינוני','critical          קשה',...
+    'on vent    מונשמים','deceased  נפטרים','location','northwest')
+box off
+xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
+set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(hosp))
+xtickangle(30)
+grid on
+xlim([list.date(1) list.date(end)])
+title('Hospitalized by severity מאושפזים לפי חומרה')
 %%
 warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
@@ -212,21 +238,4 @@ end
 %%
 
 
-crit = movmean(list.critical,7,'omitnan');
-hosp = movmean(list.hospitalized,7,'omitnan');
-seve = movmean(list.severe,7,'omitnan');
-mild = hosp-crit-seve;
-figure;
-fill([list.date;flipud(list.date)],[crit+seve+mild;flipud(crit+seve)],[0.7 0.7 0.7],'LineStyle','none')
-hold on
-fill([list.date;flipud(list.date)],[crit+seve;flipud(crit)],[0.5 0.5 0.5],'LineStyle','none')
-fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
-plot(list.date,list.deceased,'k')
-legend('mild                קל','severe          בינוני','critical          קשה','deceased  נפטרים')
-box off
-xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
-set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(hosp))
-xtickangle(30)
-grid on
-xlim([list.date(1) list.date(end)])
-title('Hospitalized by severity מאושפזים לפי חומרה')
+

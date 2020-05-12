@@ -1,22 +1,16 @@
-function covid_update_html(isr)
+function covid_update_html
 % show the worst countries by different criteria
 cd ~/covid-19_data_analysis/
-% highest = dir(['archive/highest*',datestr(datetime-1,'dd_mm_yyyy'),'*']);
-% if isempty(highest)
-%     error('run covid_news');
-% end
-% realigned = dir(['archive/realigned*',datestr(datetime-1,'dd_mm_yyyy'),'*']);
-% if isempty(realigned)
-%     error('run covid_realigned');
-% end
+
+list = readtable('data/Israel/Israel_ministry_of_health.csv');
 yesterdate = datestr(datetime-1,'dd.mm.yyyy');
 % highest countries
-fName = 'docs/highest_countries.html'
+fName = 'docs/highest_countries.html';
 fid = fopen(fName,'r');
 txt = fread(fid);
 fclose(fid);
 txt = native2unicode(txt');
-iDate = findstr(txt,'2020');
+iDate = strfind(txt,'2020');
 txt(iDate-6:iDate+3) = yesterdate;
 fid = fopen(fName,'w');
 fwrite(fid,txt);
@@ -27,7 +21,7 @@ fid = fopen(fName,'r');
 txt = fread(fid);
 fclose(fid);
 txt = native2unicode(txt');
-iDate = findstr(txt,'2020');
+iDate = strfind(txt,'2020');
 txt(iDate-6:iDate+3) = yesterdate;
 fid = fopen(fName,'w');
 fwrite(fid,txt);
@@ -38,7 +32,7 @@ fid = fopen(fName,'r');
 txt = fread(fid);
 fclose(fid);
 txt = native2unicode(txt');
-iDate = findstr(txt,'2020');
+iDate = strfind(txt,'2020');
 txt(iDate-6:iDate+3) = yesterdate;
 fid = fopen(fName,'w');
 fwrite(fid,txt);
@@ -49,30 +43,29 @@ fid = fopen(fName,'r');
 txt = fread(fid);
 fclose(fid);
 txt = native2unicode(txt');
-iDate = findstr(txt,'2020');
+iDate = strfind(txt,'2020');
 txt(iDate-6:iDate+3) = yesterdate;
-counter1 = findstr(txt,'יום ממוות אחד');
-counter0 = findstr(txt,'כיום,');
+counter1 = strfind(txt,'יום ממוות אחד');
+counter0 = strfind(txt,'כיום,');
 count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;
 txt = [txt(1:counter0-1),'כיום, ',str(count),' ',txt(counter1:end)];
-idx = findstr(txt,'מצב התמותה');
-daten = datenum(isr.Date);
+idx = strfind(txt,'מצב התמותה');
+daten = datenum(list.date);
 daten = daten-daten(1);
 last5 = find(daten > daten(end)-4,1);
 x = daten(last5:end);
 x = [ones(length(x),1) x];
-y = isr.Deceased(last5:end);
+y = list.deceased(last5:end);
 b = x\y;
-%med = median(diff(isr.Deceased(end-4:end)));
-% medPrev = median(diff(isr.Deceased(end-9:end-4)));
+
 ins = ['מצב התמותה - ', '(בחמשת הימים האחרונים)',' כ ',str(round(b(2))),' נפטרים ליום ',];
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 
-idx = findstr(txt,'מצב המונשמים');
-y = isr.Vent(last5:end);
+idx = strfind(txt,'מצב המונשמים');
+y = list.on_ventilator(last5:end);
 b = x\y;
 mun5 = round(b(2));
-% medPrev = median(diff(isr.Vent(end-9:end-4)));
+
 if mun5 >= 0
     ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(mun5),' מונשמים יותר  ',];
 else

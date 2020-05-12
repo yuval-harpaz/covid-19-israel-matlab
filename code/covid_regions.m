@@ -20,8 +20,7 @@ for ii = 1:length(idx)
 end
 pop{cellCount} = popCou(idx,:);
 country{cellCount} = pop{cellCount}{:,1};
-% dpm = cellfun(@nanmax, mergedData(:,2))./pop.Population_2020_*10^6;
-% cou = find(dpm > threshold);
+
 %% NYC
 cellCount = cellCount+1;
 [date{cellCount,1},popNYC,nyc,nycp] = covid_nyc;
@@ -34,25 +33,18 @@ cellCount = cellCount+1;
 deceased{cellCount} = deceased{cellCount}{:,2:end}';
 pop{cellCount}{:,1} = strrep(pop{cellCount}{:,1},'Georgia','Georgia US');
 country{cellCount,1} = repmat({'US'},size(pop{cellCount},1),1);
-%sta = find(us{:,end}./usPop{:,2}*10^6 > threshold);
+
 %% spain
 cellCount = cellCount+1;
 [deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
 deceased{cellCount} = deceased{cellCount}{:,2:end}';
 country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
-% trim = ~ismember(espDate,timeVector);
-% esp(:,trim) = [];
-% spa = find(esp{:,end}./espPop.Var2*10^6 > threshold);
-% us_county = urlread('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv');
 
 %% Italy
 cellCount = cellCount+1;
 [deceased{cellCount},pop{cellCount},date{cellCount}] = covid_italy;
 deceased{cellCount} = deceased{cellCount}{:,:};
 country{cellCount} = repmat({'Italy'},size(pop{cellCount},1),1);
-% reg = find(ita{end,2:end}./(itaPop{:,2}')*10^6 > threshold)';
-% trim = ~ismember(ita{:,1},timeVector);
-% ita(trim,:) = [];
 
 %% save a table
 badChar = {'P.A. ','';...

@@ -8,8 +8,8 @@ y = covid_news(saveFigs);
 covid_regions;
 covid_realigned(y,saveFigs)
 covid_Israel_ministry;
-isr = covid_Israel(saveFigs);
+covid_Israel(saveFigs);
 if saveFigs
-    covid_update_html(isr);
+    covid_update_html;
 end
 
