@@ -105,7 +105,7 @@ y = list{:,4:end}'./list.Population'*10^6;
 [~,order] = sort(nanmax(y),'descend');
 y = y(:,order);
 loc = list{order,2};
-loc{ismember(loc,'New York')} = 'New York Sate';
+loc{ismember(loc,'New York')} = 'New York State';
 iXtick = fliplr(length(Date):-7:1);
 nLines = find(nanmax(y) > threshold,1,'last');
 
