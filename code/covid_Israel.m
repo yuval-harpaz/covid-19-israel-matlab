@@ -1,4 +1,4 @@
-function isr = covid_Israel(saveFigs)
+function covid_Israel(saveFigs)
 % plot 20 most active countries
 if ~exist('saveFigs','var')
     saveFigs = false;
@@ -28,25 +28,31 @@ list = readtable('data/Israel/Israel_ministry_of_health.csv');
 %% plot israel only
 desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
 for iD = 1:length(desiredDates)
-    ixt(iD,1) = find(list.date < desiredDates(iD),1,'last');
+    ixt(iD,1) = find(list.date < desiredDates(iD),1,'last'); %#ok<AGROW>
 end
 % ixt = unique([1,fliplr(length(isr.Date):-showDateEvery:1)]);
 fig8 = figure('units','normalized','position',[0,0.25,0.8,0.6]);
-idx = ~isnan(list.severe);
 subplot(1,2,1)
-h1 = plot(list.date(idx),list.severe(idx),'color',[0.7 0.7 0.3],'linewidth',1);
+idx = ~isnan(list.hospitalized);
+plot(list.date(idx),list.hospitalized(idx),'color',[0.9 0.9 0.1],'linewidth',1);
 hold on
-h2 = plot(list.date(idx),list.critical(idx),'b','linewidth',1);
+plot(list.date(idx),list.hospitalized(idx)-list.critical(idx)-list.severe(idx),...
+    'color',[0 1 0],'linewidth',1);
+idx = ~isnan(list.severe);
+plot(list.date(idx),list.severe(idx),'color',[0.7 0.7 0.3],'linewidth',1);
+idx = ~isnan(list.critical);
+plot(list.date(idx),list.critical(idx),'b','linewidth',1);
 idx = ~isnan(list.on_ventilator);
-h3 = plot(list.date(idx),list.on_ventilator(idx),'r','linewidth',1);
+plot(list.date(idx),list.on_ventilator(idx),'r','linewidth',1);
 idx = ~isnan(list.deceased);
-h4 = plot(list.date(idx),list.deceased(idx),'k','linewidth',1);
+plot(list.date(idx),list.deceased(idx),'k','linewidth',1);
+
 set(gca,'XTick',dateshift(list.date(ixt),'start','day'),'FontSize',13)
 xlim([list.date(1)-1 list.date(end)+1])
 % xtickangle(45)
 grid on
 box off
-legend('חולים במצב בינוני','חולים במצב קשה','מונשמים','נפטרים','location','northwest')
+legend('מאושפזים','קל','בינוני','קשה','מונשמים','נפטרים','location','northwest')
 ylabel('מספר החולים')
 title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
 xtickangle(30)
