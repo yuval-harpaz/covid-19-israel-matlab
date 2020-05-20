@@ -1,5 +1,6 @@
 function [date,pop,deceased,deceased_probable] = covid_nyc
-nyc = urlread('https://raw.githubusercontent.com/nychealth/coronavirus-data/master/Deaths/probable-confirmed-dod.csv');
+% nyc = urlread('https://raw.githubusercontent.com/nychealth/coronavirus-data/master/Deaths/probable-confirmed-dod.csv');
+nyc = urlread('https://raw.githubusercontent.com/nychealth/coronavirus-data/master/deaths/probable-confirmed-dod.csv');
 nyc = strrep(nyc,'/20,','/2020,');
 fid = fopen('tmp.csv','w');
 fwrite(fid,nyc);
