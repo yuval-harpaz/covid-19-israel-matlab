@@ -9,7 +9,7 @@ nyc = readtable('tmp.csv');
 !rm tmp.csv
 nyc.PROBABLE_COUNT(isnan(nyc.PROBABLE_COUNT)) = 0;
 nyc.CONFIRMED_COUNT(isnan(nyc.CONFIRMED_COUNT)) = 0;
-date = nyc.date_of_death;
+date = nyc.DATE_OF_DEATH;
 pop = 8399000;
 deceased = cumsum(nyc.CONFIRMED_COUNT);
 deceased_probable = deceased + cumsum(nyc.PROBABLE_COUNT);
