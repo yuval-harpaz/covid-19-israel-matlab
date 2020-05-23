@@ -52,7 +52,7 @@ xlim([list.date(1)-1 list.date(end)+1])
 % xtickangle(45)
 grid on
 box off
-legend('מאושפזים','קל','בינוני','קשה','מונשמים','נפטרים','location','northwest')
+legend('מאושפזים','קל','בינוני','קשה','מונשמים','נפטרים','location','northeast')
 ylabel('מספר החולים')
 title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
 xtickangle(30)
