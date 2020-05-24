@@ -242,6 +242,6 @@ if saveFigs
     saveas(fig8,'docs/myCountry.png')
 end
 %%
-
+covid_israel_timna_hosp;
 
 
