@@ -1,5 +1,5 @@
 function covid_israel_timna_hosp(plt)
-if ~exist(plt,'var')
+if ~exist('plt','var')
     plt = false;
 end
 cd ~/covid-19_data_analysis/
