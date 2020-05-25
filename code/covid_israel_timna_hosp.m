@@ -36,6 +36,57 @@ if plt
     legend('mild','hospitalized','severe','critical')
 end
 
+%% regions in israel
+
+% json = urlread('https://data.gov.il/api/action/datastore_search?resource_id=d07c0771-01a8-43b2-96cc-c6154e7fa9bd&limit=100000000');
+% % fid = fopen('data/Israel/corona_hospitalization_ver_001.json','w');
+% % fwrite(fid,json);
+% % fclose(fid);
+% json = strrep(json,'NULL','0');
+% json = strrep(json,'<15','0');
+% struc = jsondecode(json);
+% %struc.result.records(:).date = 
+% %recordsCell = struct2cell(struc.result.records)';
+% rowDate = datetime(cellfun(@(x) x(1:10),{struc.result.records.date}','UniformOutput',false));
+% rowAccum = cellfun(@str2num,{struc.result.records(:).accumulated_hospitalized}');
+% rowNew = [struc.result.records(:).new_hospitalized_on_date]';
+% date = unique(rowDate);
+% for ii = 1:length(date)
+%     accum(ii,1) = sum(rowAccum(rowDate == date(ii)));
+%     new(ii,1) = sum(rowNew(rowDate == date(ii)));
+% end
+% tAccum = table(date,accum,new);
+% rowTownCode = [struc.result.records(:).town_code]';
+% % רחובות
+% rowTown = {struc.result.records(:).town}';
+% reh = struct2table(struc.result.records(ismember(rowTown,'רחובות')));
+% [~,order] = sort(reh.date);
+% reh = reh(order,:);
+% agas = reh.agas_code;
+% agas(cellfun(@isempty,agas)) = [];
+% agas = cellfun(@(x) x,agas)
+% agas = unique(agas);
+% reh.date = datetime(cellfun(@(x) x(1:10),reh.date,'UniformOutput',false));
+% clear accum new
+% for ii = 1:length(date)
+%     accumR1(ii,1) = reh.accumulated_hospitalized(reh.date == date(ii) & cellfun();
+%     new(ii,1) = rowNew(rowDate == date(ii) & rowTownCode == 8400);
+% end
+% rehovot = table(date,accum,new);
+% 
+% records = table(date);
+% varName = {'hospitalized','hosp_female_percent','hosp_age_mean','hosp_age_sd',...
+%     'on_ventilator','vent_female_percent','vent_age_mean','vent_age_sd',...
+%     'mild','mild_female_percent','mild_age_mean','mild_age_sd',...
+%     'severe','severe_female_percent','severe_age_mean','severe_age_sd',...
+%     'critical','crit_female_percent','crit_age_mean','crit_age_sd'};
+% for ii = 1:length(varName)
+%     eval(['records.',varName{ii},' = cellfun(@str2num,recordsCell(:,ii+2));'])
+%     eval(['records.',varName{ii},'(records.',varName{ii},' == 0) = nan;']);
+% end
+
+
+%%
 % list = readtable('~/covid-19_data_analysis/data/Israel/Israel_ministry_of_health.csv');
 % 
 % figure;

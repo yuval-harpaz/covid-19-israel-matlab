@@ -71,7 +71,7 @@ fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.5 0.5 0.5],'LineS
 fill([list.date;flipud(list.date)],[vent;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
 plot(list.date,list.deceased,'k')
 legend('mild                קל','severe          בינוני','critical          קשה',...
-    'on vent    מונשמים','deceased  נפטרים','location','northwest')
+    'on vent    מונשמים','deceased  נפטרים','location','northeast')
 box off
 xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
 set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(hosp))
