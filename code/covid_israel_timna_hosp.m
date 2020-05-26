@@ -36,9 +36,29 @@ if plt
     legend('mild','hospitalized','severe','critical')
 end
 
+% gender
+female = records.vent_female_percent(end)*records.on_ventilator(end)/100;
+female = [female;records.crit_female_percent(end)*records.critical(end)/100-female;...
+    records.severe_female_percent(end)*records.severe(end)/100;...
+    records.mild_female_percent(end)*records.mild(end)/100];
+male = (100-records.vent_female_percent(end))*records.on_ventilator(end)/100;
+male = [male;(100-records.crit_female_percent(end))*records.critical(end)/100-male;...
+    (100-records.severe_female_percent(end))*records.severe(end)/100;...
+    (100-records.mild_female_percent(end))*records.mild(end)/100];
+y = round([male,female]);
+ratio = sqrt(sum(y));
+ratio = max(ratio)./ratio;
+figure;
+for ip = 1:2
+    % bar([male,female]','stack')
+    subplot(1,2,ip)
+    p = pie(round(y(:,ip)));
+    xlim([-ratio(ip) ratio(ip)])
+end
+legend('s','f')
 %% regions in israel
 
-% json = urlread('https://data.gov.il/api/action/datastore_search?resource_id=d07c0771-01a8-43b2-96cc-c6154e7fa9bd&limit=100000000');
+% json = urlread('https://data.gov.il/api/action/datastore_search?resource_id=05571ef1-8f23-4a04-bd1c-0a59dec013fd&limit=100000000');
 % % fid = fopen('data/Israel/corona_hospitalization_ver_001.json','w');
 % % fwrite(fid,json);
 % % fclose(fid);
