@@ -59,6 +59,43 @@ end
 % rowTownCode = [struc.result.records(:).town_code]';
 % % רחובות
 % rowTown = {struc.result.records(:).town}';
+% town = unique(rowTown);
+% clear acc accRest
+% for iTown = 1:length(town)
+%     tt = struct2table(struc.result.records(ismember(rowTown,town{iTown})));
+%     tt.date = datetime(cellfun(@(x) x(1:10),tt.date,'UniformOutput',false));
+%     if isequal(unique(tt.date),sort(tt.date))
+%         [~,idx] = ismember(tt.date,date);
+%         acc(1:length(date),iTown) = nan;
+%         acc(idx,iTown) = cellfun(@str2num, tt.accumulated_hospitalized);
+%         accRest (1,iTown) = nan;
+%     else
+%         try
+%             isAgas = ~cellfun(@isempty, tt.agas_code);
+%             ttRest = tt(isAgas,:);
+%             tt(isAgas,:) = [];
+%             if ~isequal(unique(tt.date),sort(tt.date))
+%                 error('not unique');
+%             end
+%             [~,idx] = ismember(tt.date,date);
+%             acc(1:length(date),iTown) = nan;
+%             acc(idx,iTown) = cellfun(@str2num, tt.accumulated_hospitalized);
+%             accRest(1,iTown) = sum(cellfun(@str2num,ttRest.accumulated_hospitalized));
+%         catch
+%             acc(1:length(date),iTown) = nan;
+%             for id = 1:length(date)
+%                 a = tt.accumulated_hospitalized(ismember(tt.date,date(id)));
+%                 if ~isempty(a)
+%                     acc(id,iTown) = sum(cellfun(@str2num,a));
+%                 end
+%             end
+%             accRest(1,iTown) = nansum(acc(:,iTown));
+%         end
+%     end
+% end
+% 
+% 
+% 
 % reh = struct2table(struc.result.records(ismember(rowTown,'רחובות')));
 % [~,order] = sort(reh.date);
 % reh = reh(order,:);
