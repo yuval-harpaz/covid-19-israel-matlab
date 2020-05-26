@@ -1,4 +1,4 @@
-function covid_israel_timna_hosp(plt)
+function covid_israel_timna_hosp
 if ~exist('plt','var')
     plt = false;
 end
@@ -26,15 +26,15 @@ for ii = 1:length(varName)
     eval(['records.',varName{ii},'(records.',varName{ii},' == 0) = nan;']);
 end
 nanwritetable(records,'data/Israel/corona_hospitalization_ver_001.csv');
-if plt
-    figure;
-    plot(records.date,records.mild_female_percent)
-    hold on
-    plot(records.date,records.hosp_female_percent)
-    plot(records.date,records.severe_female_percent)
-    plot(records.date,records.crit_female_percent)
-    legend('mild','hospitalized','severe','critical')
-end
+% if plt
+%     figure;
+%     plot(records.date,records.mild_female_percent)
+%     hold on
+%     plot(records.date,records.hosp_female_percent)
+%     plot(records.date,records.severe_female_percent)
+%     plot(records.date,records.crit_female_percent)
+%     legend('mild','hospitalized','severe','critical')
+% end
 
 % gender
 female = records.vent_female_percent(end)*records.on_ventilator(end)/100;
@@ -48,14 +48,19 @@ male = [male;(100-records.crit_female_percent(end))*records.critical(end)/100-ma
 y = round([male,female]);
 ratio = sqrt(sum(y));
 ratio = max(ratio)./ratio;
-figure;
+per = round(100*sum(y)/sum(sum(y)));
+titles = {['מאושפזים ',str(per(1)),'%'],['מאושפזות ',str(per(2)),'%']};
+fig = figure;
 for ip = 1:2
     % bar([male,female]','stack')
     subplot(1,2,ip)
     p = pie(round(y(:,ip)));
     xlim([-ratio(ip) ratio(ip)])
+    title(titles{ip})
 end
-legend('s','f')
+colormap([231,71,51;244,162,97;233,196,106;42,157,143]./255);
+legend('מונשמים','קשה','בינוני','קל',[350,275,10,10])
+saveas(fig,'docs/Israel_gender.png')
 %% regions in israel
 
 % json = urlread('https://data.gov.il/api/action/datastore_search?resource_id=05571ef1-8f23-4a04-bd1c-0a59dec013fd&limit=100000000');
