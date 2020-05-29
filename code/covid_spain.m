@@ -3,7 +3,7 @@ if nargin == 0
     plt = false;
 end
 cd ~/covid-19_data_analysis/
-
+% https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm
 esp = urlread('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv');
 fid = fopen('tmp.csv','w');
 fwrite(fid,esp);
