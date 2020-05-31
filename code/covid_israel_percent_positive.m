@@ -2,15 +2,20 @@ cd ~/covid-19_data_analysis/
 t = readtable('data/Israel/covid19-data-israel.xlsx');
 %;[t{end,1}+1:datetime('today')]']; %#ok<NBRAK>
 
-todayPos = [13;nan;4;10;14;32;24;64;101;14];
-yesterdayTests = [5969;nan;5010;2266;3605;5198;6606;6432;5312;1825];
-todayTests = [3203;nan;579;704;2580;3999;4007;4182;1403;671];
-totalPos = [16683;nan;16712;16717;16734;16757;16793;16872;16987;17012];
+todayPos = [13;nan;4;10;14;32;24;64;101;14;53];
+yesterdayTests = [5969;nan;5010;2266;3605;5198;6606;6432;5312;1825;1012];
+todayTests = [3203;nan;579;704;2580;3999;4007;4182;1403;671;2874];
+totalPos = [16683;nan;16712;16717;16734;16757;16793;16872;16987;17012;17071];
 yesterdayPos = totalPos-todayPos;
-telegram = table([datetime('21-May-2020'):datetime('21-May-2020')+length(yesterdayPos)-1]',...
+chartTests = [6023;4999;704;3621;5244;6791;6633;5324;1825;1012;2874];
+chartPercentNew = [0.3;0.4;0.6;0.4;0.4;0.7;0.6;1.4;6.2;2.8;1.8];
+telegramAll = table([datetime('21-May-2020'):datetime('21-May-2020')+length(yesterdayPos)-1]',...
     [yesterdayTests(2:end);todayTests(end)],...
-    [diff(yesterdayPos);todayPos(end)]);
-telegram.Properties.VariableNames = {'date','tests','new'};
+    [diff(yesterdayPos);todayPos(end)],chartTests,chartPercentNew);
+telegram = telegramAll(:,1);
+telegram.tests = chartTests;
+telegram.new = [diff(yesterdayPos);todayPos(end)];
+telegram.Properties.VariableNames{1} = 'date';
 
 
 date = t{2:end,1};
