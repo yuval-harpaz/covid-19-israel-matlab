@@ -11,7 +11,8 @@ i1 = findstr(txt,'בשעה');
 tStr = [txt(i0+14:i1-2),' ',txt(i1+5:iSmaller(find(iSmaller > i1,1))-1)];
 
 iDots = strfind(tStr,':');
-date = datetime([2020,str2num(tStr(4:5)),str2num(tStr(1:2)),...
+iDot = strfind(tStr,'.');
+date = datetime([2020,str2num(tStr(iDot(1)+1:iDot(2)-1)),str2num(tStr(1:iDot(1)-1)),...
     str2num(tStr(iDots-2:iDots-1)),str2num(tStr(iDots+1:iDots+2)),0]);
 
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
