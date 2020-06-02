@@ -54,12 +54,12 @@ fig = figure;
 for ip = 1:2
     % bar([male,female]','stack')
     subplot(1,2,ip)
-    p = pie(round(y(:,ip)));
+    ph{ip} = pie(round(y(:,ip)));
     xlim([-ratio(ip) ratio(ip)])
     title(titles{ip})
 end
 colormap([231,71,51;244,162,97;233,196,106;42,157,143]./255);
-legend('מונשמים','קשה','בינוני','קל',[350,275,10,10])
+legend(ph{1}([1,3,5,7]),'מונשמים','קשה','בינוני','קל',[350,275,10,10])
 saveas(fig,'docs/Israel_gender.png')
 %% regions in israel
 
