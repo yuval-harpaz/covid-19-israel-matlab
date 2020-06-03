@@ -1,5 +1,5 @@
 cd ~/covid-19_data_analysis/
-t = readtable('data/Israel/covid19-data-israel.xlsx');
+t = readtable('data/Israel/covid19-data-israel.csv');
 %;[t{end,1}+1:datetime('today')]']; %#ok<NBRAK>
 
 todayPos = [13;nan;4;10;14;32;24;64;101;14;53;72;67];
