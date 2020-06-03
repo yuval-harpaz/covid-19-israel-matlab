@@ -46,6 +46,10 @@ male = [male;(100-records.crit_female_percent(end))*records.critical(end)/100-ma
     (100-records.severe_female_percent(end))*records.severe(end)/100;...
     (100-records.mild_female_percent(end))*records.mild(end)/100];
 y = round([male,female]);
+cm = [231,71,51;244,162,97;233,196,106;42,157,143]./255;
+zer = sum(y,2) == 0;
+cm(zer,:) = [];
+[~,legendIn] = max(sum(y > 0));
 ratio = sqrt(sum(y));
 ratio = max(ratio)./ratio;
 per = round(100*sum(y)/sum(sum(y)));
@@ -58,8 +62,11 @@ for ip = 1:2
     xlim([-ratio(ip) ratio(ip)])
     title(titles{ip})
 end
-colormap([231,71,51;244,162,97;233,196,106;42,157,143]./255);
-legend(ph{1}([1,3,5,7]),'מונשמים','קשה','בינוני','קל',[350,275,10,10])
+colormap(cm);
+ih = [1,3,5,7];
+ih(zer) = [];
+legText = {'מונשמים','קשה','בינוני','קל'};
+legend(ph{legendIn}(ih),legText,[350,275,10,10])
 saveas(fig,'docs/Israel_gender.png')
 %% regions in israel
 
