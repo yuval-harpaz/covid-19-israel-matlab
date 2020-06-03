@@ -242,6 +242,10 @@ if saveFigs
     saveas(fig8,'docs/myCountry.png')
 end
 %%
-covid_israel_timna_hosp;
+try
+    covid_israel_timna_hosp;
+catch
+    warning('unable to plot gender data')
+end
 
 
