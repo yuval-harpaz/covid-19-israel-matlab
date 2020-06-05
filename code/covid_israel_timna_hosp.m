@@ -68,12 +68,37 @@ ih(zer) = [];
 legText = {'מונשמים','קשה','בינוני','קל'};
 legend(ph{legendIn}(ih),legText,[350,275,10,10])
 saveas(fig,'docs/Israel_gender.png')
+
+%%
+history = cell(2,1);
+history{2} = records.vent_female_percent(:).*records.on_ventilator(:)/100;
+history{2}(:,2) = records.crit_female_percent(:).*records.critical(:)/100-history{2};...
+history{2}(:,3) = records.severe_female_percent(:).*records.severe(:)/100;
+history{2}(:,4) = records.mild_female_percent(:).*records.mild(:)/100;
+history{1} = (100-records.vent_female_percent(:)).*records.on_ventilator(:)/100;
+history{1}(:,2) = (100-records.crit_female_percent(:)).*records.critical(:)/100-history{1};...
+history{1}(:,3) = (100-records.severe_female_percent(:)).*records.severe(:)/100;
+history{1}(:,4) = (100-records.mild_female_percent(:)).*records.mild(:)/100;
+titles = {'מאושפזים ','מאושפזות '};
+figure;
+for ip = 1:2
+    subplot(1,2,ip)
+    h = bar(date,history{ip},1,'stack','LineStyle','none');
+    for ic = 1:4
+        h(ic).FaceColor = cm(ic,:);
+    end
+    box off
+    ylim([0 550])
+    title(titles{ip})
+end
+legend(legText,'location','northeast')
 %% regions in israel
 
+
 % json = urlread('https://data.gov.il/api/action/datastore_search?resource_id=05571ef1-8f23-4a04-bd1c-0a59dec013fd&limit=100000000');
-% % fid = fopen('data/Israel/corona_hospitalization_ver_001.json','w');
-% % fwrite(fid,json);
-% % fclose(fid);
+% fid = fopen('data/Israel/corona_hospitalization_ver_001.json','w');
+% fwrite(fid,json);
+% fclose(fid);
 % json = strrep(json,'NULL','0');
 % json = strrep(json,'<15','0');
 % struc = jsondecode(json);
