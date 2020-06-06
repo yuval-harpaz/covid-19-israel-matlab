@@ -1,6 +1,6 @@
 function covid_Israel_ministry_old(getHistory)
 if ~exist('getHistory','var')
-    getHistory = false;
+    getHistory = true;
 end
 %% משרד הבריאות
 cd ~/covid-19_data_analysis/
