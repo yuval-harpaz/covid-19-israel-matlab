@@ -31,7 +31,7 @@ switch source
             regDeath = cellfun(@(x) str2num(strrep(x{end-2},'.','')), regexp(rows,' ','split'));
             esp{:,end+1} = regDeath;
             date = [date;datePDF];
-            writetable(esp,'tmp.csv','WriteVariableNames',false)
+            writetable(esp,'data/spain.csv','WriteVariableNames',false)
         end
         
 end
