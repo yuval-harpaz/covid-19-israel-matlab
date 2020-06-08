@@ -1,21 +1,40 @@
-function [esp,pop,date] = covid_spain(plt)
-if nargin == 0
-    plt = false;
-end
+function [esp,pop,date] = covid_spain
+plt = 0;
+source = 'mscbs'; % or 'datadista'
 cd ~/covid-19_data_analysis/
-% https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/situacionActual.htm
-esp = urlread('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv');
-fid = fopen('tmp.csv','w');
-fwrite(fid,esp);
-fclose(fid);
 
-esp = readtable('tmp.csv');
-date = datetime(strrep(cellfun(@(x) x([6:8,9:10,5,1:4]),esp{1,3:end},'UniformOutput',false),'-','/'))';
-esp(1,:) = [];
-esp(:,1) = [];
-writetable(esp,'tmp.csv','WriteVariableNames',false)
-esp = readtable('tmp.csv');
-!rm tmp.csv
+switch source
+    case 'datadista'
+        esp = urlread('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv');
+        fid = fopen('tmp.csv','w');
+        fwrite(fid,esp);
+        fclose(fid);
+        
+        esp = readtable('tmp.csv');
+        date = datetime(strrep(cellfun(@(x) x([6:8,9:10,5,1:4]),esp{1,3:end},'UniformOutput',false),'-','/'))';
+        esp(1,:) = [];
+        esp(:,1) = [];
+        writetable(esp,'tmp.csv','WriteVariableNames',false)
+        esp = readtable('tmp.csv');
+        !rm tmp.csv
+    case 'mscbs'
+        esp = readtable('data/spain.csv');
+        !wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_129_COVID-19.pdf
+        javaaddpath(which('/iText-4.2.0-com.itextpdf.jar'))
+        pdf = pdfRead('data/spain.pdf');
+        date = datetime('04-Mar-2020');
+        date = (date:date+size(esp,2)-2)';
+        datePDF = datetime(pdf{1}(strfind(pdf{1},'(COVID-19)')+12:strfind(pdf{1},'(COVID-19)')+21),'InputFormat','dd.MM.yyyy');
+        if ~ismember(datePDF,date)
+            txt = pdf{2}(strfind(pdf{2},'Andaluc'):strfind(pdf{2},'ESPA')-2);
+            rows = regexp(txt,'\n','split')';
+            regDeath = cellfun(@(x) str2num(strrep(x{end-2},'.','')), regexp(rows,' ','split'));
+            esp{:,end+1} = regDeath;
+            date = [date;datePDF];
+            writetable(esp,'tmp.csv','WriteVariableNames',false)
+        end
+        
+end
 
 
 pop = readtable('data/spain_population.csv','ReadVariableNames',false);
@@ -41,7 +60,7 @@ if plt
     box off
     grid on
     set(gcf,'color','w')
-%     xlim(date([length(date)-28 length(date)]))
+    %     xlim(date([length(date)-28 length(date)]))
 end
 
 %% another source
@@ -80,10 +99,10 @@ end
 %     h = plot(Date,y);
 %     for ii = 1:10
 %         text(Date(end-5),y(end,ii),regionSorted(ii),'color',h(ii).Color);
-%         
+%
 %     end
 %     box off
 %     grid on
 %     set(gcf,'color','w')
 % end
-% 
+%
