@@ -18,12 +18,20 @@ switch source
         esp = readtable('tmp.csv');
         !rm tmp.csv
     case 'mscbs'
+        day1 = datetime('04-Mar-2020');
         esp = readtable('data/spain.csv');
-        !wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_129_COVID-19.pdf
+        dayLast = days(datetime('today')-day1)+34;
+        [err,msg] = system(['wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_',str(dayLast),'_COVID-19.pdf']);
+        if contains(msg,'ERROR 404')
+            dayLast = dayLast-1;
+            [err,msg] = system(['wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_',str(dayLast),'_COVID-19.pdf']);
+            if contains(msg,'ERROR 404')
+                error('spain not found')
+            end
+        end
         javaaddpath(which('/iText-4.2.0-com.itextpdf.jar'))
         pdf = pdfRead('data/spain.pdf');
-        date = datetime('04-Mar-2020');
-        date = (date:date+size(esp,2)-2)';
+        date = (day1:day1+size(esp,2)-2)';
         datePDF = datetime(pdf{1}(strfind(pdf{1},'(COVID-19)')+12:strfind(pdf{1},'(COVID-19)')+21),'InputFormat','dd.MM.yyyy');
         if ~ismember(datePDF,date)
             txt = pdf{2}(strfind(pdf{2},'Andaluc'):strfind(pdf{2},'ESPA')-2);
