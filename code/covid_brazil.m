@@ -22,7 +22,8 @@ end
 city(order(1:10))
 figure;plot(date,y(:,order(1:10)))
     
-state = unique(bra.state);
+[state,b] = unique(bra.state);
+firstCity = bra.city(b)
 yy = nan(length(date),length(state));
 for ii = 1:length(state)
     iState = ismember(bra.state,state{ii});
@@ -42,6 +43,9 @@ state(order(1:10))
 pop = [881935,3337357,4144597,845731,14873064,9132078,3015268,4018650,7018354,...
     7075181,21168791,2778986,3484466,8602865,4018127,9557071,3273227,11433957,...
     17264943,3506853,1777225,605761,11377239,7164788,2298696,45919049,1572866]';
-
+ypm = yy./pop'*10^6;
 figure;
-plot(date,yy./pop'*10^6)
+h = plot(date,ypm)
+for ii = 1:length(pop)
+    text(date(end),ypm(end,ii),firstCity{ii},'Color',h(ii).Color)
+end

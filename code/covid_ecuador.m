@@ -1,27 +1,25 @@
 cd ~/covid-19_data_analysis/
-error('wrong table')
-ecu = urlread('https://raw.githubusercontent.com/andrab/ecuacovid/master/datos_crudos/defunciones/provincias.csv');
+
+ecu = urlread('https://raw.githubusercontent.com/andrab/ecuacovid/master/datos_crudos/muertes/por_fecha/provincias_por_dia.csv');
 % strrep(nyc,'\n\n','\n')
 % nyc = strrep(nyc,'/20,','/2020,');
 fid = fopen('tmp.csv','w');
 fwrite(fid,ecu);
 fclose(fid);
 ecu = readtable('tmp.csv');
-!rm tmp.
+!rm tmp.*
 
-prov = unique(ecu.provincia);
-date = unique(ecu.created_at);
-for jj = 1:length(prov)
-    pop(jj,1) = ecu.poblacion(find(ismember(ecu.provincia,prov{jj}),1));
-end
-for ii = 1:length(prov)
-    dd(1:length(date),ii) = ecu.total(ismember(ecu.provincia,prov{ii}));
-end
-dd = cumsum(dd);
-yy = dd./pop'*10^6;
-[~,order] = sort(y(end,:),'descend');
+prov = ecu.Var1(2:end,1);
+date = datetime(ecu{1,5:end})';
+population = cellfun(@str2num, ecu{2:end,2});
+pop = table(prov,population);
+
+deceased = cellfun(@str2num, ecu{2:end,5:end})';
+
+yy = deceased./population'*10^6;
+[~,order] = sort(yy(end,:),'descend');
 yy = yy(:,order);
 dd = dd(:,order);
-prov = prov(order);
+prov = pop.prov(order);
 figure;
-plot(dd)
+plot(yy)
