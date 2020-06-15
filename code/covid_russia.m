@@ -1,4 +1,7 @@
-function [y,pop,date] = covid_russia;
+function [y,pop,date] = covid_russia(plt)
+if nargin == 0
+    plt = false;
+end
 % only got 3 regions, too many non-latin script
 cd ~/covid-19_data_analysis
 [~,~] = system ('wget https://raw.githubusercontent.com/jeetiss/covid19-russia/master/docs/timeseries.json');
@@ -20,5 +23,8 @@ for ii = 1:length(date)
     y(ii,2) = str2num(region.Moscow_region(ii).deaths);
     y(ii,3) = str2num(region.Saint_Petersburg(ii).deaths);
 end
-figure;
-plot(date,y./pop{:,2}'*10^6);
+if plt
+    figure;
+    plot(date,y./pop{:,2}'*10^6);
+    legend(strrep(pop{:,1},'_',' '))
+end

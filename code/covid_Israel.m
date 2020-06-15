@@ -20,11 +20,7 @@ end
 iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
 pop = readtable('data/population.csv','delimiter',',');
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
-% Vent = list.on_ventilator;
-% Deceased = list.deceased;
-% Critical = list.severe;
-% Date = list.date;
-% isr = table(Date,Deceased,Vent,Critical);
+
 %% plot israel only
 desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
 for iD = 1:length(desiredDates)
@@ -105,63 +101,63 @@ norm = cases./mil';
 
 %% plot bars
 
-[y, iy] = sort(cellfun(@max, mergedData(:,2)),'descend');
-%KOMP = mergedData(iy,1);
-[~,isMy] = ismember(myCountry,mergedData(:,1));
-isMy = iy == isMy;
-yLog = log10(y);
-yLog(yLog <= 0.1) = 0.1;
-yt = 1:floor(max(yLog));
-yLogNan = yLog;
-yLogNan(~isMy) = nan;
-yNan = y;
-yNan(~isMy) = nan;
+% [y, iy] = sort(cellfun(@max, mergedData(:,2)),'descend');
+% %KOMP = mergedData(iy,1);
+% [~,isMy] = ismember(myCountry,mergedData(:,1));
+% isMy = iy == isMy;
+% yLog = log10(y);
+% yLog(yLog <= 0.1) = 0.1;
+% yt = 1:floor(max(yLog));
+% yLogNan = yLog;
+% yLogNan(~isMy) = nan;
+% yNan = y;
+% yNan(~isMy) = nan;
 
 
-fig4 = figure('units','normalized','position',[0,0,1,1]);
-subplot(3,1,1)
-h1 = bar(y);
-hold on
-h2 = bar(yNan,'r');
-plot(find(isMy),yNan(isMy),'or','MarkerSize',10)
-set(gca,'YTick',10.^yt(2:end),'YTickLabel',10.^yt(2:end),'ygrid','on','XTickLabel',[],'FontSize',13)
-legend([h1(1),h2(1)],'העולם','ישראל')
-title(['מספר מתים למדינה',',',' ישראל במקום ה ',str(find(isMy))])
-ylim([0 max(y)*1.05])
-ylabel('מתים')
-box off
-text(2,y(1)*1.05,[mergedData{iy(1),1},' - ',str(y(1))],'FontSize',12)
-
-subplot(3,1,2)
-bar(yLog)
-hold on
-bar(yLogNan,'r')
-set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'FontSize',13)
-title('מספר מתים למדינה (אותם הנתונים בסולם לוגריתמי)')
-ylim([0 max(yLog)*1.05])
-ylabel('מתים')
-box off
-text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(y(1))],'FontSize',12)
-
-[y, iy] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx)*10^6,'descend');
-%KOMP(:,2) = mergedData(iy,1);
-[~,isMy] = ismember(myCountry,mergedData(:,1));
-isMy = iy == isMy;
-yLog = log10(y);
-yLog(yLog <= 0.1) = 0.1;
-yt = 1:floor(max(yLog));
-yLogNan = yLog;
-yLogNan(~isMy) = nan;
-subplot(3,1,3)
-bar(yLog);
-hold on
-bar(yLogNan,'r')
-set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'FontSize',13)
-ylabel('מתים למליון')
-ylim([0 max(yLog)*1.05])
-title(['מתים למליון (סולם לוגריתמי)',',',' ישראל במקום ה ',str(find(isMy))])
-box
-text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(round(y(1)))],'FontSize',12)
+% fig4 = figure('units','normalized','position',[0,0,1,1]);
+% subplot(3,1,1)
+% h1 = bar(y);
+% hold on
+% h2 = bar(yNan,'r');
+% plot(find(isMy),yNan(isMy),'or','MarkerSize',10)
+% set(gca,'YTick',10.^yt(2:end),'YTickLabel',10.^yt(2:end),'ygrid','on','XTickLabel',[],'FontSize',13)
+% legend([h1(1),h2(1)],'העולם','ישראל')
+% title(['מספר מתים למדינה',',',' ישראל במקום ה ',str(find(isMy))])
+% ylim([0 max(y)*1.05])
+% ylabel('מתים')
+% box off
+% text(2,y(1)*1.05,[mergedData{iy(1),1},' - ',str(y(1))],'FontSize',12)
+% 
+% subplot(3,1,2)
+% bar(yLog)
+% hold on
+% bar(yLogNan,'r')
+% set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'FontSize',13)
+% title('מספר מתים למדינה (אותם הנתונים בסולם לוגריתמי)')
+% ylim([0 max(yLog)*1.05])
+% ylabel('מתים')
+% box off
+% text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(y(1))],'FontSize',12)
+% 
+% [y, iy] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx)*10^6,'descend');
+% %KOMP(:,2) = mergedData(iy,1);
+% [~,isMy] = ismember(myCountry,mergedData(:,1));
+% isMy = iy == isMy;
+% yLog = log10(y);
+% yLog(yLog <= 0.1) = 0.1;
+% yt = 1:floor(max(yLog));
+% yLogNan = yLog;
+% yLogNan(~isMy) = nan;
+% subplot(3,1,3)
+% bar(yLog);
+% hold on
+% bar(yLogNan,'r')
+% set(gca,'YTick',[0.1,yt],'YTickLabel',[0,10.^yt],'ygrid','on','XTickLabel',[],'FontSize',13)
+% ylabel('מתים למליון')
+% ylim([0 max(yLog)*1.05])
+% title(['מתים למליון (סולם לוגריתמי)',',',' ישראל במקום ה ',str(find(isMy))])
+% box
+% text(2,yLog(1)*1.05,[mergedData{iy(1),1},' - ',str(round(y(1)))],'FontSize',12)
 %% align
 
 aligned = nan(length(timeVector),length(mergedData));
@@ -181,17 +177,17 @@ yMy = aligned(tMy,iCol);
 [yTo,order] = sort(yT,'descend');
 yToNan = yTo;
 yToNan(yTo ~= yMy) = nan;
-fig5 = figure('units','normalized','position',[0,0.25,1,0.7]);
-bar(yTo)
-hold on
-bar(yToNan,'r')
-cou = mergedData(farther(order));
-set(gca,'XTick',1:length(yTo),'XTickLabel',cou,'ygrid','on')
-xtickangle(90)
-box off
-title({'מצב המדינות שהיו במקום של ישראל היום',[str(tMy), ' יום מנפטר אחד למליון']})
-ylabel('מתים למליון')
-set(gca,'FontSize',13)
+% fig5 = figure('units','normalized','position',[0,0.25,1,0.7]);
+% bar(yTo)
+% hold on
+% bar(yToNan,'r')
+% cou = mergedData(farther(order));
+% set(gca,'XTick',1:length(yTo),'XTickLabel',cou,'ygrid','on')
+% xtickangle(90)
+% box off
+% title({'מצב המדינות שהיו במקום של ישראל היום',[str(tMy), ' יום מנפטר אחד למליון']})
+% ylabel('מתים למליון')
+% set(gca,'FontSize',13)
 % [~,order] = sort(nanmax(nrm),'descend');
 %% plot lines
 fig6 = figure('units','normalized','position',[0,0,0.5,1]);
@@ -235,9 +231,9 @@ if saveFigs
     % saveas(fig6,['archive/realignedMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
     saveas(fig6,'docs/realignedMyCountry.png')
     % saveas(fig5,['archive/realignedTodayMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-    saveas(fig5,'docs/realignedTodayMyCountry.png')
+    % saveas(fig5,'docs/realignedTodayMyCountry.png')
     % saveas(fig4,['archive/barsMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-    saveas(fig4,'docs/barsMyCountry.png')
+    % saveas(fig4,'docs/barsMyCountry.png')
     % saveas(fig8,['archive/myCountry_',datestr(vent.date(end),'dd_mm_yyyy'),'.png'])
     saveas(fig8,'docs/myCountry.png')
 end

@@ -46,10 +46,32 @@ cellCount = cellCount+1;
 deceased{cellCount} = deceased{cellCount}{:,:};
 country{cellCount} = repmat({'Italy'},size(pop{cellCount},1),1);
 
+%% Brazil
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_brazil;
+country{cellCount} = repmat({'Brazil'},size(pop{cellCount},1),1);
+%% Ecuador
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_ecuador;
+country{cellCount} = repmat({'Ecuador'},size(pop{cellCount},1),1);
+%% Russia
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_russia;
+country{cellCount} = repmat({'Russia'},size(pop{cellCount},1),1);
+%% Mexico
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_mexico;
+country{cellCount} = repmat({'Mexico'},size(pop{cellCount},1),1);
 %% save a table
 badChar = {'P.A. ','';...
     '''','';...
     'ó','o';...
+    'á','a';...
+    'í','i';...
+    'é','e';...
+    'ã','a';...
+    'ñ','n';...
+    'ô','o';...
     '-',' ';...
     '(','';...
     ')','';...
@@ -60,6 +82,9 @@ Region = {};
 Country = {};
 Population = [];
 for ii = 1:length(date)
+    iNaT = isnat(date{ii});
+    date{ii}(iNaT) = [];
+    deceased{ii}(iNaT,:) = [];
     Date =[Date;date{ii}];
     for iBad = 1:length(badChar)
         pop{ii}{:,1} = strrep(pop{ii}{:,1},badChar{iBad,1},badChar{iBad,2});
@@ -73,14 +98,11 @@ if length(Region) > length(unique(Region))
     error('Region is not unique');
 end
 Date = unique(Date);
-
 for ii = 1:length(deceased)
     if size(pop{ii},1) ~= size(deceased{ii},2)
         error(['bad matrix size for',num2str(ii)])
     end
 end
-% for iReg = 1:length(Region)
-%     eval(['Var',num2str(iReg),' = nan(length(
 Date_ = cellstr(datestr(Date,'mmm_dd_yyyy'));
 list = table(Country,Region,Population);
 for ii = 1:length(Date)
@@ -90,7 +112,6 @@ for ii = 1:length(deceased)
     iDate = find(ismember(Date,date{ii}));
     iReg = ismember(Region,pop{ii}{:,1});
     list{iReg,iDate+3} = deceased{ii}';
-%     list{
 end
 ignore = find(Date > dateshift(datetime('now'),'start','day'),1);
 if ~isempty(ignore)
