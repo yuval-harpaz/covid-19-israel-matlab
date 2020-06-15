@@ -29,9 +29,12 @@ stillZero = mergedData(deaths(end,:) == 0,1);
 newDeaths = mergedData(deaths(end-1,:) == 0 & deaths(end,:) > 0,1);
 % newDeathPerMil = mergedData(deaths(end-1,:)./mil < 1 & deaths(end,:)./mil >= 1,1);
 % deaths(end,:)./mil-deaths(end-1,:)./mil
-newDeathPerMil = [zeros(1,length(mergedData));diff(deaths./mil)];
+newDeathPerMil = zeros(size(deaths)); %[zeros(1,length(mergedData));diff(deaths./mil)];
 % smallAll = find(mil < 1);
-newDeathPerMil = movmean(newDeathPerMil,5);
+%newDeathPerMil = movmean(newDeathPerMil,7);
+for iEnd = 1:size(deaths,1)-7
+    newDeathPerMil(end-iEnd+1,:) = mean(diff(deaths(end-6-iEnd:end-iEnd+1,:))./mil);
+end
 
 order = cell(4,1);
 y = nan(length(timeVector),nCountries,4);
@@ -42,9 +45,13 @@ y(1:size(deaths,1),1:nCountries,1) = deaths(:,order{1}(1:nCountries));
 %titles{2,1} = 'Deaths per million';
 y(1:size(deaths,1),1:nCountries,2) = deaths(:,order{2}(1:nCountries))...
     ./mil(order{2}(1:nCountries));
-[~,order{3}] = sort(deaths(end,:)-deaths(end-1,:),'descend'); % largest increase
+deathsSm = nan(size(deaths)); %movmean(deaths,7);
+for iEnd = 1:size(deaths,1)-6
+    deathsSm(end-iEnd+1,:) = mean(deaths(end-5-iEnd:end-iEnd+1,:));
+end
+[~,order{3}] = sort(deathsSm(end,:)-deathsSm(end-1,:),'descend'); % largest increase
 %titles{3,1} = 'Daily deaths';
-y(1:size(deaths,1),1:nCountries,3) = [zeros(1,nCountries);diff(deaths(:,order{3}(1:nCountries)))];
+y(1:size(deaths,1),1:nCountries,3) = [zeros(1,nCountries);diff(deathsSm(:,order{3}(1:nCountries)))];
 [~,order{4}] = sort(newDeathPerMil(end,:),'descend'); % largest increase per million
 %titles{4,1} = 'Daily deaths per million';
 y(1:size(deaths,1),1:nCountries,4) = newDeathPerMil(:,order{4}(1:nCountries));
