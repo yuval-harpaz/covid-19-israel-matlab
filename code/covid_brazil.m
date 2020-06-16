@@ -13,14 +13,25 @@ iTot = ismember(bra.state,'TOTAL');
 braTot = bra(iTot,:);
 bra(iTot,:) = [];
 date = braTot.date;
+if iscell(date)
+    date = datetime(date);
+end
+braDate = bra.date;
+if iscell(braDate)
+    braDate = datetime(braDate);
+end
+deaths = bra.deaths;
+if iscell(deaths)
+    deaths = cellfun(@str2num , deaths);
+end
 [state,~] = unique(bra.state);
 yy = nan(length(date),length(state));
 for ii = 1:length(state)
     iState = ismember(bra.state,state{ii});
     for iDate = 1:length(date)
-        jDate = find(ismember(bra.date,date(iDate)) & iState);
+        jDate = find(ismember(braDate,date(iDate)) & iState);
         if ~isempty(jDate)
-            yy(iDate,ii) = nansum(bra.deaths(jDate));
+            yy(iDate,ii) = nansum(deaths(jDate));
         end
     end
 end

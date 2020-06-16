@@ -39,6 +39,7 @@ switch source
             rows = regexp(txt,'\n','split')';
             rows = strrep(rows,'.','');
             rows = strrep(rows,native2unicode([194,160]),'');
+            rows = strtrim(rows)
             regDeath = cellfun(@(x) str2num(x{end-1}), regexp(rows,' ','split'));
             esp{:,end+1} = regDeath;
             date = [date;datePDF];

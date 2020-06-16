@@ -62,6 +62,11 @@ country{cellCount} = repmat({'Russia'},size(pop{cellCount},1),1);
 cellCount = cellCount+1;
 [deceased{cellCount},pop{cellCount},date{cellCount}] = covid_mexico;
 country{cellCount} = repmat({'Mexico'},size(pop{cellCount},1),1);
+%% UK (London)
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_uk;
+country{cellCount} = repmat({'UK'},size(pop{cellCount},1),1);
+
 %% save a table
 badChar = {'P.A. ','';...
     '''','';...
