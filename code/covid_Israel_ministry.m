@@ -1,7 +1,7 @@
 function covid_Israel_ministry
 %% משרד הבריאות
 cd ~/covid-19_data_analysis/
-%% get history
+%% get hiSmallerory
 
 txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
 ext = '.csv';
@@ -17,8 +17,49 @@ end
 !awk -F'"' -v OFS='' '{ for (i=2; i<=NF; i+=2) gsub(",", "", $i) } 1' data/Israel/covid19-data-israel.csv >> data/Israel/tmp.csv
 movefile('data/Israel/tmp.csv','data/Israel/covid19-data-israel.csv')
 
-%%
-% ! google-chrome https://datadashboard.health.gov.il/COVID-19/?utm_source=go.gov.il&utm_medium=referral
-% pause(4)
-% ! gnome-screenshot -w -f dashboard.png
-% img = imread('dashboard.png');
+%% get control panel
+!google-chrome https://datadashboard.health.gov.il/COVID-19/?utm_source=go.gov.il&utm_medium=referral && sleep 5 && xdotool key ctrl+s && sleep 3 && xdotool key Return && sleep 3 && xdotool key Return
+%% process text
+cd ~/covid-19_data_analysis/
+list = readtable('data/Israel/Israel_ministry_of_health.csv');
+fid = fopen('/home/innereye/Downloads/קורונה - לוח בקרה.html', 'r');
+txt = fread(fid)';
+fclose(fid);
+txt = native2unicode(txt);
+vars = list.Properties.VariableNames(2:end);
+
+ta = strfind(txt,'total-amount');
+ta = ta(2+[1,3:5]);
+iVar = [1,4,3,2];
+iSmaller = strfind(txt,'<');
+misrad = nan(size(vars));
+for ii = 1:length(ta)
+    misrad(1,iVar(ii)) = str2num(strrep(txt(ta(ii)+14:iSmaller(find(iSmaller > ta(ii),1))-1),',',''));
+end
+marker = {
+        'קשה',39;...
+        'בינוני',42;...
+        '',nan;...
+        'בי"ח',40;...
+        'קהילה',48};
+
+for ii = 1:size(marker,1)
+    if ~isempty(marker{ii,1})
+        i0 = strfind(txt,marker{ii,1})+marker{ii,2};
+        i0 = i0(1);
+        i1 = iSmaller(find(iSmaller > i0,1))-1;
+        if ~strcmp(txt(i0-1),'>')
+            error('before the number there should be a ">"')
+        end
+        misrad(1,4+ii) = str2num(strrep(txt(i0:i1),',',''));
+    end
+end
+misrad(7) = misrad(1)-misrad(2)-misrad(3)-misrad(5)-misrad(6);
+idx = strfind(txt,'|');
+date = datetime(txt(idx+14:idx+18),'InputFormat','hh:mm');
+newRow = table(date);
+for iV = 1:length(vars)
+    eval(['newRow.',vars{iV},' = misrad(iV);'])
+end
+list(end+1,:) = newRow;
+nanwritetable(list);
