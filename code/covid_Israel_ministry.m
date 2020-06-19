@@ -26,40 +26,49 @@ fid = fopen('/home/innereye/Downloads/קורונה - לוח בקרה.html', 'r')
 txt = fread(fid)';
 fclose(fid);
 txt = native2unicode(txt);
-vars = list.Properties.VariableNames(2:end);
 
-ta = strfind(txt,'total-amount');
-ta = ta(2+[1,3:5]);
-iVar = [1,4,3,2];
-iSmaller = strfind(txt,'<');
-misrad = nan(size(vars));
-for ii = 1:length(ta)
-    misrad(1,iVar(ii)) = str2num(strrep(txt(ta(ii)+14:iSmaller(find(iSmaller > ta(ii),1))-1),',',''));
-end
-marker = {
+idx = strfind(txt,'|');
+iDay = find(ismember(txt,'>') & 1:length(txt) < idx,1,'last')+1;
+day = str2num(txt(iDay:iDay+1));
+month = find(cellfun(@(x) contains(txt(iDay:idx),x),{'ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'}'));
+date = datetime([2020,month,day,str2num(txt(idx+14:idx+15)),str2num(txt(idx+17:idx+18)),0]);
+% date = datetime(str(txt(idx+14:idx+18),'InputFormat','hh:mm');
+if ~ismember(date,list.date)
+    vars = list.Properties.VariableNames(2:end);
+    
+    ta = strfind(txt,'total-amount');
+    ta = ta(2+[1,3:5]);
+    iVar = [1,4,3,2];
+    iSmaller = strfind(txt,'<');
+    misrad = nan(size(vars));
+    for ii = 1:length(ta)
+        misrad(1,iVar(ii)) = str2num(strrep(txt(ta(ii)+14:iSmaller(find(iSmaller > ta(ii),1))-1),',',''));
+    end
+    marker = {
         'קשה',39;...
         'בינוני',42;...
         '',nan;...
         'בי"ח',40;...
         'קהילה',48};
-
-for ii = 1:size(marker,1)
-    if ~isempty(marker{ii,1})
-        i0 = strfind(txt,marker{ii,1})+marker{ii,2};
-        i0 = i0(1);
-        i1 = iSmaller(find(iSmaller > i0,1))-1;
-        if ~strcmp(txt(i0-1),'>')
-            error('before the number there should be a ">"')
+    
+    for ii = 1:size(marker,1)
+        if ~isempty(marker{ii,1})
+            i0 = strfind(txt,marker{ii,1})+marker{ii,2};
+            i0 = i0(1);
+            i1 = iSmaller(find(iSmaller > i0,1))-1;
+            if ~strcmp(txt(i0-1),'>')
+                error('before the number there should be a ">"')
+            end
+            misrad(1,4+ii) = str2num(strrep(txt(i0:i1),',',''));
         end
-        misrad(1,4+ii) = str2num(strrep(txt(i0:i1),',',''));
     end
+    misrad(7) = misrad(1)-misrad(2)-misrad(3)-misrad(5)-misrad(6);
+    
+    
+    newRow = table(date);
+    for iV = 1:length(vars)
+        eval(['newRow.',vars{iV},' = misrad(iV);'])
+    end
+    list(end+1,:) = newRow;
+    nanwritetable(list);
 end
-misrad(7) = misrad(1)-misrad(2)-misrad(3)-misrad(5)-misrad(6);
-idx = strfind(txt,'|');
-date = datetime(txt(idx+14:idx+18),'InputFormat','hh:mm');
-newRow = table(date);
-for iV = 1:length(vars)
-    eval(['newRow.',vars{iV},' = misrad(iV);'])
-end
-list(end+1,:) = newRow;
-nanwritetable(list);
