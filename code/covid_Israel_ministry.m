@@ -19,6 +19,7 @@ movefile('data/Israel/tmp.csv','data/Israel/covid19-data-israel.csv')
 
 %% get control panel
 !google-chrome https://datadashboard.health.gov.il/COVID-19/?utm_source=go.gov.il&utm_medium=referral && sleep 5 && xdotool key ctrl+s && sleep 3 && xdotool key Return && sleep 3 && xdotool key Return
+pause(5)
 %% process text
 cd ~/covid-19_data_analysis/
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
