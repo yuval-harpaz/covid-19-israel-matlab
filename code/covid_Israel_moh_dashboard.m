@@ -19,4 +19,4 @@ for fi = field(2:end)'
     eval(['t.',fi{1},' = vec;'])
 end
 
-discharged = diff(t.Counthospitalized)-t.new_hospitalized
+discharged = t.Counthospitalized-t.Counthospitalized_without_release-t.CountDeath;
