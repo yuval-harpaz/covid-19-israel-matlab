@@ -32,7 +32,7 @@ switch source
         javaaddpath(which('/iText-4.2.0-com.itextpdf.jar'))
         pdf = pdfRead('data/spain.pdf');
         date = (day1:day1+size(esp,2)-2)';
-        datePDF = datetime(pdf{1}(strfind(pdf{1},'(COVID')+12:strfind(pdf{1},'(COVID')+21),'InputFormat','dd.MM.yyyy');
+        datePDF = datetime(strrep(pdf{1}(strfind(pdf{1},'(COVID')+12:strfind(pdf{1},'(COVID')+21),' ',''),'InputFormat','dd.MM.yyyy');
         
         if ~ismember(datePDF,date) && ~isnat(datePDF) && length(datePDF) == 1
             txt = pdf{2}(strfind(pdf{2},'Andaluc'):strfind(pdf{2},'ESPA')-2);
