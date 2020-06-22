@@ -1,5 +1,5 @@
 ## covid-19_data_analysis
-# See main page [here](https://yuval-harpaz.github.io/covid-19_data_analysis/)
+# See main page [here](https://yuval-harpaz.github.io/covid-19-israel-matlab/)
 
 ### This repository was adapted from [aahr](https://github.com/aahr/covid-19_data_analysis)<br>
 ### Load COVID-19 case data from John Hopkins database and plot charts with Matlab
