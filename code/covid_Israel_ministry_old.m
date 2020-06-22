@@ -3,7 +3,7 @@ if ~exist('getHistory','var')
     getHistory = true;
 end
 %% משרד הבריאות
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
 iSmaller = find(ismember(txt,'<'));
 i0 = findstr(txt,'נכונה ל');

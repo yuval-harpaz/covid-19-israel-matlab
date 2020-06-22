@@ -1,5 +1,5 @@
 function covid_regions
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 threshold = 750; %plot results over this deaths per million
 
 %% Whole countries

@@ -1,6 +1,6 @@
 function covid_Israel_ministry
 %% משרד הבריאות
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 %% get hiSmallerory
 
 txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
@@ -21,7 +21,7 @@ movefile('data/Israel/tmp.csv','data/Israel/covid19-data-israel.csv')
 !google-chrome https://datadashboard.health.gov.il/COVID-19/?utm_source=go.gov.il&utm_medium=referral && sleep 5 && xdotool key ctrl+s && sleep 3 && xdotool key Return && sleep 3 && xdotool key Return
 pause(5)
 %% process text
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
 fid = fopen('/home/innereye/Downloads/קורונה - לוח בקרה.html', 'r');
 txt = fread(fid)';

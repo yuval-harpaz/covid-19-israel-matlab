@@ -3,7 +3,7 @@ function covid_realigned(y,saveFigs)
 if ~exist('saveFigs','var')
     saveFigs = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 nCountries = 20;
 showDateEvery = 7; % days
 zer = 1; % how many deaths per million to count as day zero

@@ -2,7 +2,7 @@ function [deceased,pop,date] = covid_mexico(plt)
 if nargin == 0
     plt = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 mex = urlread('https://raw.githubusercontent.com/mariorz/covid19-mx-time-series/master/data/covid19_deaths_mx.csv');
 fid = fopen('tmp.csv','w');
 fwrite(fid,mex);

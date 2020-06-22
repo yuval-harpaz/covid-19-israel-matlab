@@ -2,7 +2,7 @@ function covid_israel_timna_hosp
 if ~exist('plt','var')
     plt = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 
 json = urlread('https://data.gov.il/api/action/datastore_search?resource_id=e4bf0ab8-ec88-4f9b-8669-f2cc78273edd');
 fid = fopen('data/Israel/corona_hospitalization_ver_001.json','w');
@@ -181,7 +181,7 @@ legend(legText,'location','northeast')
 
 
 %%
-% list = readtable('~/covid-19_data_analysis/data/Israel/Israel_ministry_of_health.csv');
+% list = readtable('~/covid-19-israel-matlab/data/Israel/Israel_ministry_of_health.csv');
 % 
 % figure;
 % idx = ~isnan(list.on_ventilator);

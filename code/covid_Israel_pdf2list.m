@@ -1,5 +1,5 @@
 function covid_Israel_pdf2list
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
 %download = dir('~/snap/telegram-cli/current/.telegram-cli/downloads/*.pdf');
 download = dir('/media/innereye/1T/Docs/MOH/*.pdf');

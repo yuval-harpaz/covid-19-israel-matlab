@@ -1,5 +1,5 @@
 
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 records = readtable('data/Israel/corona_hospitalization_ver_001.csv');
 
 list = readtable('data/Israel/Israel_ministry_of_health.csv');

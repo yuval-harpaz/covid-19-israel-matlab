@@ -1,4 +1,4 @@
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 vent = readtable('data/Israel/Israel_ventilators.csv');
 
 %t0 = [14,24,height(vent)-10,height(vent)-5];

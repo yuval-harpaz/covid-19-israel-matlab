@@ -3,7 +3,7 @@ function y = covid_news(saveFigs)
 if ~exist('saveFigs','var')
     saveFigs = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 nCountries = 10;
 showDateEvery = 7; % days
 warning off

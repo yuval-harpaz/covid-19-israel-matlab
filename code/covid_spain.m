@@ -1,7 +1,7 @@
 function [esp,pop,date] = covid_spain
 plt = 0;
 source = 'mscbs'; % or 'datadista'
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 
 switch source
     case 'datadista'
@@ -80,7 +80,7 @@ end
 % if nargin == 0
 %     plt = false;
 % end
-% cd ~/covid-19_data_analysis/
+% cd ~/covid-19-israel-matlab/
 % esp = urlread('https://raw.githubusercontent.com/victorvicpal/COVID19_es/master/data/final_data/dataCOVID19_es.csv');
 % fid = fopen('tmp.csv','w');
 % fwrite(fid,esp);

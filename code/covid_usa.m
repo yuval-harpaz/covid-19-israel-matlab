@@ -2,7 +2,7 @@ function [us_state,pop,date] = covid_usa(plt)
 if nargin == 0
     plt = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 
 % us_county = urlread('https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv');
 us_state = urlread('https://raw.githubusercontent.com/jeffcore/covid-19-usa-by-state/master/COVID-19-Deaths-USA-By-State.csv');

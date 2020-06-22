@@ -1,6 +1,6 @@
 function covid_update_html
 % show the worst countries by different criteria
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
 yesterdate = datestr(datetime-1,'dd.mm.yyyy');

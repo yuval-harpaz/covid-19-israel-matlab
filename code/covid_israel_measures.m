@@ -1,4 +1,4 @@
-list = readtable('~/covid-19_data_analysis/data/Israel/Israel_ministry_of_health.csv');
+list = readtable('~/covid-19-israel-matlab/data/Israel/Israel_ministry_of_health.csv');
 idx = ~isnan(list.hospitalized);
 
 Start = datetime({'08-Mar-2020','12-Mar-2020','14-Mar-2020','19-Mar-2020','15-Mar-2020',...

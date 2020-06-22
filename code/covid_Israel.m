@@ -3,7 +3,7 @@ function covid_Israel(saveFigs)
 if ~exist('saveFigs','var')
     saveFigs = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
 nCountries = 20;
 showDateEvery = 7; % days

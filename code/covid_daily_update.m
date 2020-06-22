@@ -3,7 +3,7 @@ if ~exist('saveFigs','var')
     saveFigs = true;
 end
 % prepare daily charts and push
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 y = covid_news(saveFigs);
 covid_regions;
 covid_realigned(y,saveFigs)

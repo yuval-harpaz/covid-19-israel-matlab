@@ -2,7 +2,7 @@ function [deceased,pop,date] = covid_ecuador(plt)
 if nargin == 0
     plt = false;
 end
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 ecu = urlread('https://raw.githubusercontent.com/andrab/ecuacovid/master/datos_crudos/muertes/por_fecha/provincias_por_dia.csv');
 fid = fopen('tmp.csv','w');
 fwrite(fid,ecu);

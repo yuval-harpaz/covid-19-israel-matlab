@@ -1,5 +1,5 @@
 function [ita,popreg,date] = covid_italy 
-cd ~/covid-19_data_analysis
+cd ~/covid-19-israel-matlab
 [~,~] = system ('wget https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-regioni/dpc-covid19-ita-regioni.csv');
 region = readtable('dpc-covid19-ita-regioni.csv');
 !rm 'dpc-covid19-ita-'*

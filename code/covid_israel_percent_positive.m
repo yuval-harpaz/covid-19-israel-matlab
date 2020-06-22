@@ -1,5 +1,5 @@
 readTimna = false;
-cd ~/covid-19_data_analysis/
+cd ~/covid-19-israel-matlab/
 t = readtable('data/Israel/covid19-data-israel.csv');
 %;[t{end,1}+1:datetime('today')]']; %#ok<NBRAK>
 

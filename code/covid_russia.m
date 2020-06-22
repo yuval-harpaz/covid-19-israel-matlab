@@ -3,7 +3,7 @@ if nargin == 0
     plt = false;
 end
 % only got 3 regions, too many non-latin script
-cd ~/covid-19_data_analysis
+cd ~/covid-19-israel-matlab
 [~,~] = system ('wget https://raw.githubusercontent.com/jeetiss/covid19-russia/master/docs/timeseries.json');
 
 fid = fopen('timeseries.json','r');
