@@ -73,3 +73,4 @@ if ~ismember(date,list.date)
     list(end+1,:) = newRow;
     nanwritetable(list);
 end
+covid_Israel_moh_dashboard;
