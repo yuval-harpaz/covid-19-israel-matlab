@@ -237,5 +237,6 @@ try
 catch
     warning('unable to plot gender data')
 end
-covid_israel_percent_positive(1)
+covid_israel_percent_positive(1);
+
 
