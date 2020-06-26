@@ -34,7 +34,8 @@ if saveFigs
     iPos = strfind(txt,'% מהתוצאות');
     iSpace = iSpace(find(iSpace < iPos,1,'last'):find(iSpace > iPos,1));
     txt = [txt(1:iSpace(1)),pp,txt(iSpace(2):end)];
-    txt(iDate-6:iDate+3) = yesterdate;
+    txt = unicode2native(txt);
+    % txt(iDate-6:iDate+3) = yesterdate;
     fid = fopen(fName,'w');
     fwrite(fid,txt);
     fclose(fid);
