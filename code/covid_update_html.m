@@ -4,6 +4,7 @@ cd ~/covid-19-israel-matlab/
 
 list = readtable('data/Israel/Israel_ministry_of_health.csv');
 yesterdate = datestr(datetime-1,'dd.mm.yyyy');
+today = datestr(datetime,'dd.mm.yyyy');
 % highest countries
 fName = 'docs/highest_countries.html';
 fid = fopen(fName,'r');
@@ -44,7 +45,7 @@ txt = fread(fid);
 fclose(fid);
 txt = native2unicode(txt');
 iDate = strfind(txt,'2020');
-txt(iDate-6:iDate+3) = yesterdate;
+txt(iDate-6:iDate+3) = today;
 % counter1 = strfind(txt,'יום ממוות אחד');
 % counter0 = strfind(txt,'כיום,');
 % count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;

@@ -228,13 +228,7 @@ end
 
 %% save
 if saveFigs
-    % saveas(fig6,['archive/realignedMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
     saveas(fig6,'docs/realignedMyCountry.png')
-    % saveas(fig5,['archive/realignedTodayMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-    % saveas(fig5,'docs/realignedTodayMyCountry.png')
-    % saveas(fig4,['archive/barsMyCountry_',datestr(timeVector(end),'dd_mm_yyyy'),'.png'])
-    % saveas(fig4,'docs/barsMyCountry.png')
-    % saveas(fig8,['archive/myCountry_',datestr(vent.date(end),'dd_mm_yyyy'),'.png'])
     saveas(fig8,'docs/myCountry.png')
 end
 %%
@@ -243,5 +237,5 @@ try
 catch
     warning('unable to plot gender data')
 end
-
+covid_israel_percent_positive
 
