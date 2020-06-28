@@ -103,6 +103,7 @@ for iPlot = 1:4
     end
     ylim([0 ymax])
     ytickformat('%,d')
+    xtickangle(30)
     [~,yOrd] = sort(y(end,:,iPlot),'descend');
     for iAnn = 1:nCountries
         x = size(deaths,1);
@@ -127,6 +128,7 @@ ymax = max(y(end,:,iPlot))*1.5;
 ylabel('Deaths per million')
 ylim([0 ymax])
 ytickformat('%,d')
+xtickangle(30)
 yt = fliplr(ymax/nCountries:ymax/nCountries:ymax);
 [~,yOrd] = sort(y(end,:,iPlot),'descend');
 for iAnn = 1:nCountries
