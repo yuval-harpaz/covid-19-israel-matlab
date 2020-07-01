@@ -25,3 +25,7 @@ xlabel('Antibodies (%)')
 ylabel('Deaths Per Million')
 set(gca,'FontSize',13)
 title('Predicting serology tests outcome in Israel')
+
+% eng = [145000;122000;28000;51000]./55980000*100;
+% eng(:,2) = flipud([25546;30908;34793;37368]./55.980000);
+% scatter(eng(:,1),eng(:,2),20,'fill','g')
