@@ -3,7 +3,15 @@ function covid_Israel_ministry
 cd ~/covid-19-israel-matlab/
 %% get hiSmallerory
 
-txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
+try
+    txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
+catch
+    !wget -O tmp.html http://govextra.gov.il/ministry-of-health/corona/corona-virus/
+    fid = fopen('tmp.html', 'r');
+    txt = fread(fid);
+    fclose(fid);
+    txt = native2unicode(txt');
+end
 ext = '.csv';
 iLink = strfind(txt,'.csv');
 iHref = strfind(txt,'href');
