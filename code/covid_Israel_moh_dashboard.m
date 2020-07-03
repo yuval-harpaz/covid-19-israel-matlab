@@ -21,7 +21,7 @@ bad = cellfun(@(x) str2double(x(13)),{json(iTests).data.date}');
 bad(1:find(tests_positive == 0,1)-1) = true;
 data = table(date,tests,tests_positive);
 data = data(~bad,:);
-tests0 = sum(tests(1:find(tests_positive == 0,1)-1))
+tests0 = sum(tests(1:find(tests_positive == 0,1)-1));
 data.tests_cumulative = cumsum(data.tests)+tests0;
 clear date tests positive_tests
 iTable = find(ismember({json(:).id},'table'));
