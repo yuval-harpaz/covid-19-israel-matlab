@@ -1,6 +1,6 @@
 function covid_loop
-tic
 while true
+    disp(datetime)
     cd ~/covid-19-israel-matlab/
     try
         listPre = readtable('data/Israel/Israel_ministry_of_health.csv');
@@ -8,16 +8,15 @@ while true
         listPost = readtable('data/Israel/Israel_ministry_of_health.csv');
         if ~isequal(listPre(end,1),listPost(end,1))
             covid_Israel(1);
-            if saveFigs
-                covid_update_html;
-            end
+            covid_update_html;
+            close all
         end
         wait = 60*60*3;
-    catch
-        disp('error!')
+    catch me
+        disp(['ERROR ',me.message])
         wait = 60*30;
     end
     pause(wait)
-    toc
 end
 
+    
