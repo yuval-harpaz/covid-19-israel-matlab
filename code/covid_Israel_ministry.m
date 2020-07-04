@@ -6,7 +6,7 @@ cd ~/covid-19-israel-matlab/
 try
     txt = urlread('https://govextra.gov.il/ministry-of-health/corona/corona-virus/');
 catch
-    !wget -O tmp.html http://govextra.gov.il/ministry-of-health/corona/corona-virus/
+    [~,~] = system('wget -O tmp.html http://govextra.gov.il/ministry-of-health/corona/corona-virus/');
     fid = fopen('tmp.html', 'r');
     txt = fread(fid);
     fclose(fid);
@@ -26,7 +26,7 @@ end
 movefile('data/Israel/tmp.csv','data/Israel/covid19-data-israel.csv')
 
 %% get control panel
-!google-chrome --incognito https://datadashboard.health.gov.il/COVID-19/?utm_source=go.gov.il&utm_medium=referral && sleep 10 && xdotool key ctrl+s && sleep 3 && xdotool key Return && sleep 3 && xdotool key Return
+[~,~] = system('google-chrome --incognito https://datadashboard.health.gov.il/COVID-19/?utm_source=go.gov.il&utm_medium=referral && sleep 10 && xdotool key ctrl+s && sleep 3 && xdotool key Return && sleep 3 && xdotool key Return');
 pause(5)
 %% process text
 cd ~/covid-19-israel-matlab/

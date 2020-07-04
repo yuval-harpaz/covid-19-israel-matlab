@@ -10,6 +10,7 @@ while true
             covid_Israel(1);
             covid_update_html;
             close all
+            disp('updated');
         end
         wait = 60*60*3;
     catch me
