@@ -22,7 +22,7 @@ if saveFigs
     saveas(fig,'docs/percent_positive.png');
     
     % update html
-    list.date(idx(end))
+%     list.date(idx(end))
     pp = str(round(100*list.tests_positive(idx(end))./list.tests(idx(end)),1));
     % date = datestr(list.date(idx(end)));
     fName = 'docs/myCountry.html';
@@ -43,7 +43,7 @@ end
 % hold on
 % scatter(datetime('18-Apr-2020'),2.7,'fill','k')
 % legend('בדיקות','בדיקות חיוביות','18-Apr')
-fig1 = figure('position',[50,50,800,500]);
+fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
 yyaxis left
 plot(list.date(idx),list.new_hospitalized(idx));
 ylabel('new hospitalized')

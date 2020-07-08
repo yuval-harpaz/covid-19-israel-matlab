@@ -78,7 +78,9 @@ fid = fopen(fName,'w');
 fwrite(fid,unicode2native(txt));
 fclose(fid);
 %% push
-!git add -A
-!git commit -m "daily update"
-!git push
+
+[~,~] = system('git add -A');
+[~,~] = system('git commit -m "daily update"');
+[~,~] = system('git pull');
+[~,~] = system('git push');
 %% old
