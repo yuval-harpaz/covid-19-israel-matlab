@@ -36,7 +36,7 @@ txt = fread(fid)';
 fclose(fid);
 txt = native2unicode(txt);
 
-idx = strfind(txt,'|');
+idx = min(strfind(txt,'|'));
 iDay = find(ismember(txt,'>') & 1:length(txt) < idx,1,'last')+1;
 day = str2num(txt(iDay:iDay+1));
 month = find(cellfun(@(x) contains(txt(iDay:idx),x),{'ינו','פבר','מרץ','אפר','מאי','יונ','יול','אוג','ספט','אוק','נוב','דצמ'}'));
