@@ -9,7 +9,6 @@ switch source
         fid = fopen('tmp.csv','w');
         fwrite(fid,esp);
         fclose(fid);
-        
         esp = readtable('tmp.csv');
         date = datetime(strrep(cellfun(@(x) x([6:8,9:10,5,1:4]),esp{1,3:end},'UniformOutput',false),'-','/'))';
         esp(1,:) = [];
@@ -29,7 +28,7 @@ switch source
                 error('spain not found')
             end
         end
-        javaaddpath(which('/iText-4.2.0-com.itextpdf.jar'))
+        javaaddpath(which('/iText-4.2.0-com.itextpdf.jar'));
         pdf = pdfRead('data/spain.pdf');
         date = (day1:day1+size(esp,2)-2)';
         datePDF = datetime(strrep(pdf{1}(strfind(pdf{1},'(COVID')+12:strfind(pdf{1},'(COVID')+21),' ',''),'InputFormat','dd.MM.yyyy');
@@ -39,7 +38,7 @@ switch source
             rows = regexp(txt,'\n','split')';
             rows = strrep(rows,'.','');
             rows = strrep(rows,native2unicode([194,160]),'');
-            rows = strtrim(rows)
+            rows = strtrim(rows);
             regDeath = cellfun(@(x) str2num(x{end-1}), regexp(rows,' ','split'));
             esp{:,end+1} = regDeath;
             date = [date;datePDF];

@@ -35,10 +35,10 @@ pop{cellCount}{:,1} = strrep(pop{cellCount}{:,1},'Georgia','Georgia US');
 country{cellCount,1} = repmat({'US'},size(pop{cellCount},1),1);
 
 %% spain
-% cellCount = cellCount+1;
-% [deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
-% deceased{cellCount} = deceased{cellCount}{:,2:end}';
-% country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
+cellCount = cellCount+1;
+[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
+deceased{cellCount} = deceased{cellCount}{:,2:end}';
+country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
 
 %% Italy
 cellCount = cellCount+1;
@@ -126,26 +126,26 @@ end
 nanwritetable(list,'data/regions.csv');
 %% sort and plot
 
-
+listDate = datetime(strrep(list.Properties.VariableNames(4:end),'_','-'),'InputFormat','MMM-dd-yyyy');
 y = list{:,4:end}'./list.Population'*10^6;
 [~,order] = sort(nanmax(y),'descend');
 y = y(:,order);
 loc = list{order,2};
 loc{ismember(loc,'New York')} = 'New York State';
-iXtick = fliplr(length(Date):-7:1);
+iXtick = fliplr(length(listDate):-7:1);
 nLines = find(nanmax(y) > threshold,1,'last');
 
 fig10 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
-h = plot(Date,y(:,1:nLines));
-xlim(10+Date([30,end]))
+h = plot(listDate,y(:,1:nLines));
+xlim(10+listDate([30,end]))
 yt = max(max(y)):-max(max(y))/nLines:0;
 for ii = 1:nLines
-    text(Date(end),yt(ii),loc{ii},'color',h(ii).Color);
+    text(listDate(end),yt(ii),loc{ii},'color',h(ii).Color);
 end
 grid on
 box off
 title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' deaths per million']})
 ylabel('Deaths per million')
-set(gca,'fontsize',13,'XTick',Date(iXtick))
+set(gca,'fontsize',13,'XTick',listDate(iXtick))
 xtickangle(30)
 saveas(fig10,'docs/worst_region.png')
