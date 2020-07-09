@@ -20,7 +20,7 @@ switch source
     case 'mscbs'
         day1 = datetime('04-Mar-2020');
         esp = readtable('data/spain.csv');
-        dayLast = days(datetime('today')-day1)+34;
+        dayLast = days(datetime('today')-day1)+32;
         [err,msg] = system(['wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_',str(dayLast),'_COVID-19.pdf']);
         if contains(msg,'ERROR 404')
             dayLast = dayLast-1;
