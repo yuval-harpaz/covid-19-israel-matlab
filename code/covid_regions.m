@@ -35,10 +35,10 @@ pop{cellCount}{:,1} = strrep(pop{cellCount}{:,1},'Georgia','Georgia US');
 country{cellCount,1} = repmat({'US'},size(pop{cellCount},1),1);
 
 %% spain
-cellCount = cellCount+1;
-[deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
-deceased{cellCount} = deceased{cellCount}{:,2:end}';
-country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
+% cellCount = cellCount+1;
+% [deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
+% deceased{cellCount} = deceased{cellCount}{:,2:end}';
+% country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
 
 %% Italy
 cellCount = cellCount+1;
