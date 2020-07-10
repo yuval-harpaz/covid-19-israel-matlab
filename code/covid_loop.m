@@ -2,6 +2,7 @@ function covid_loop
 while true
     disp(datetime)
     cd ~/covid-19-israel-matlab/
+    [~,~] = system('git pull');
     try
         listPre = readtable('data/Israel/Israel_ministry_of_health.csv');
         covid_Israel_ministry;
