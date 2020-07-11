@@ -28,6 +28,12 @@ if contains(listName,'dashboard_timeseries')
     list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
     i1 = find(~isnan(list.hospitalized),1);
     list = list(i1:end,:);
+    fid = fopen('data/Israel/dashboard.json','r');
+    txt = fread(fid)';
+    fclose(fid);
+    txt = native2unicode(txt);
+    json = jsondecode(txt);
+    list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+3/24;
 end
 
 %% plot israel only
