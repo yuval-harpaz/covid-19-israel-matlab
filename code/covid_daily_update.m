@@ -8,7 +8,7 @@ y = covid_news(saveFigs);
 covid_regions;
 covid_realigned(y,saveFigs)
 covid_Israel_ministry;
-covid_Israel(saveFigs);
+covid_Israel(saveFigs,'data/Israel/dashboard_timeseries.csv');
 if saveFigs
     covid_update_html;
 end

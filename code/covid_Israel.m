@@ -1,7 +1,10 @@
-function covid_Israel(saveFigs)
+function covid_Israel(saveFigs,listName)
 % plot 20 most active countries
 if ~exist('saveFigs','var')
     saveFigs = false;
+end
+if ~exist('listName','var')
+    listName = 'data/Israel/Israel_ministry_of_health.csv';
 end
 cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
@@ -18,7 +21,14 @@ for iCou = 1:length(mergedData)
 end
 iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
 pop = readtable('data/population.csv','delimiter',',');
-list = readtable('data/Israel/Israel_ministry_of_health.csv');
+list = readtable(listName);
+if contains(listName,'dashboard_timeseries')
+    list.Properties.VariableNames([6,8:11]) = {'hospitalized','critical','severe','mild','on_ventilator'};
+    list.deceased = nan(height(list),1);
+    list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
+    i1 = find(~isnan(list.hospitalized),1);
+    list = list(i1:end,:);
+end
 
 %% plot israel only
 desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
@@ -44,6 +54,7 @@ plot(list.date(idx),list.deceased(idx),'k','linewidth',1);
 
 set(gca,'XTick',dateshift(list.date(ixt),'start','day'),'FontSize',13)
 xlim([list.date(1)-1 list.date(end)+1])
+ylim([0 max(list.hospitalized)+20])
 % xtickangle(45)
 grid on
 box off
@@ -78,10 +89,11 @@ legend('mild                קל','severe          בינוני','critical      
     'on vent    מונשמים','deceased  נפטרים','location','northeast')
 box off
 xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
-set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(hosp))
+set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(list.hospitalized)+20)
 xtickangle(30)
 grid on
 xlim([list.date(1) list.date(end)])
+ylim([0 max(list.hospitalized)+20])
 title('Hospitalized by severity מאושפזים לפי חומרה')
 %%
 warning on

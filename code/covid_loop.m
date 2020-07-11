@@ -8,7 +8,7 @@ while true
         covid_Israel_ministry;
         listPost = readtable('data/Israel/Israel_ministry_of_health.csv');
         if ~isequal(listPre(end,1),listPost(end,1))
-            covid_Israel(1);
+            covid_Israel(1,'data/Israel/dashboard_timeseries.csv');
             covid_update_html;
             close all
             disp('updated');
