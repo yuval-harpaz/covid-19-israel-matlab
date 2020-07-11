@@ -9,21 +9,22 @@ lastValid = find(~isnan(list.new_hospitalized),1,'last');
 idx = 27:lastValid;
 fig = figure('position',[50,50,800,500]);
 yyaxis left
-plot(list.date(idx),list.tests(idx));
+plot(list.date(idx),list.tests_result(idx));
 ylabel('tests')
 ax = gca;
 ax.YRuler.Exponent = 0;
 yyaxis right
-plot(list.date(idx),round(100*list.tests_positive(idx)./list.tests(idx),1))
+plot(list.date(idx),round(100*list.tests_positive(idx)./list.tests_result(idx),1))
 ylabel('positive tests (%)')
 set(gca,'ygrid', 'on','fontsize',13)
 box off
+xlim([list.date(idx(1))-1 list.date(idx(end))+1]);
 if saveFigs
     saveas(fig,'docs/percent_positive.png');
     
     % update html
 %     list.date(idx(end))
-    pp = str(round(100*list.tests_positive(idx(end))./list.tests(idx(end)),1));
+    pp = str(round(100*list.tests_positive(idx(end))./list.tests_result(idx(end)),1));
     % date = datestr(list.date(idx(end)));
     fName = 'docs/myCountry.html';
     fid = fopen(fName,'r');
@@ -51,6 +52,7 @@ ax = gca;
 ax.YRuler.Exponent = 0;
 
 yyaxis right
-plot(list.date(idx),round(100*list.tests_positive(idx)./list.tests(idx),1))
+plot(list.date(idx),round(100*list.tests_positive(idx)./list.tests_result(idx),1))
 ylabel('positive tests (%)')
 set(gca,'ygrid', 'on','fontsize',13)
+xlim([list.date(idx(1))-1 list.date(idx(end))+1]);

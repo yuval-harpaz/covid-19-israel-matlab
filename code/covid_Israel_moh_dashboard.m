@@ -16,12 +16,13 @@ json = jsondecode(txt);
 iTests = find(ismember({json(:).id},'tests_positive'));
 date = datetime(cellfun(@(x) x(1:10),{json(iTests).data.date}','UniformOutput',false));
 tests = [json(iTests).data.amount]';
+tests_result = [json(iTests).data.amountVirusDiagnosis]';
 tests_positive = [json(iTests).data.positiveAmount]';
 bad = cellfun(@(x) str2double(x(13)),{json(iTests).data.date}');
 bad(1:find(tests_positive == 0,1)-1) = true;
-data = table(date,tests,tests_positive);
+data = table(date,tests,tests_result,tests_positive);
 data = data(~bad,:);
-if ~isequal(data(end,1:3),dataPrev(end,1:3))
+if ~isequal(data(end,1:4),dataPrev(end,1:4))
     tests0 = sum(tests(1:find(tests_positive == 0,1)-1));
     data.tests_cumulative = cumsum(data.tests)+tests0;
     clear date tests positive_tests

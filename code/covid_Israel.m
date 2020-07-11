@@ -23,7 +23,7 @@ iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
 pop = readtable('data/population.csv','delimiter',',');
 list = readtable(listName);
 if contains(listName,'dashboard_timeseries')
-    list.Properties.VariableNames([6,8:11]) = {'hospitalized','critical','severe','mild','on_ventilator'};
+    list.Properties.VariableNames([7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
     list.deceased = nan(height(list),1);
     list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
     i1 = find(~isnan(list.hospitalized),1);
@@ -100,7 +100,6 @@ warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 [~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
 [~, iworst] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx),'descend');
-
 country = mergedData(iworst(1:nCountries),1);
 iMy = find(ismember(country,myCountry));
 if ~isempty(iMy)
@@ -113,14 +112,12 @@ for iCou = 1:length(country)
 end
 [isx,idxc] = ismember(country,pop.Country_orDependency_);
 if any(isx == 0)
-    %country(~ismember(country,pop.Country_orDependency_));
     error('missing country')
 end
 mil = pop.Population_2020_(idxc)/10^6;
 norm = cases./mil'; %#ok<NASGU>
 
 %% align
-
 aligned = nan(length(timeVector),length(mergedData));
 for iState = 1:size(aligned,2)
     [~,idx1] = ismember(mergedData(iState,1),pop.Country_orDependency_);
@@ -138,18 +135,7 @@ yMy = aligned(tMy,iCol);
 [yTo,order] = sort(yT,'descend'); %#ok<ASGLU>
 yToNan = yTo;
 yToNan(yTo ~= yMy) = nan; %#ok<NASGU>
-% fig5 = figure('units','normalized','position',[0,0.25,1,0.7]);
-% bar(yTo)
-% hold on
-% bar(yToNan,'r')
-% cou = mergedData(farther(order));
-% set(gca,'XTick',1:length(yTo),'XTickLabel',cou,'ygrid','on')
-% xtickangle(90)
-% box off
-% title({'מצב המדינות שהיו במקום של ישראל היום',[str(tMy), ' יום מנפטר אחד למליון']})
-% ylabel('מתים למליון')
-% set(gca,'FontSize',13)
-% [~,order] = sort(nanmax(nrm),'descend');
+
 %% plot lines
 fig6 = figure('units','normalized','position',[0,0,0.5,1]);
 annot = [20;length(farther)];
@@ -193,11 +179,6 @@ if saveFigs
     saveas(fig8,'docs/myCountry.png')
 end
 %%
-% try
-%     covid_israel_timna_hosp;
-% catch
-%     warning('unable to plot gender data')
-% end
 covid_israel_percent_positive(saveFigs);
 
 
