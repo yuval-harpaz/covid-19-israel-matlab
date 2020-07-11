@@ -97,8 +97,9 @@ switch method
         if any(misrad(1:3) > list{end,2:4}) && jDate > list{end,1}
             warning off
             list.date(end+1) = jDate;
+            warning on
             list{end,2:end} = misrad;
-             nanwritetable(list,'data/Israel/Israel_ministry_of_health.csv');
+            nanwritetable(list,'data/Israel/Israel_ministry_of_health.csv');
         end
         %data.CountEasyStatus(end)
 end
