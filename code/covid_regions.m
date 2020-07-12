@@ -137,15 +137,28 @@ nLines = find(nanmax(y) > threshold,1,'last');
 
 fig10 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
 h = plot(listDate,y(:,1:nLines));
-xlim(10+listDate([30,end]))
+xlim(listDate([40,end]))
 yt = max(max(y)):-max(max(y))/nLines:0;
-for ii = 1:nLines
-    text(listDate(end),yt(ii),loc{ii},'color',h(ii).Color);
-end
 grid on
 box off
 title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' deaths per million']})
 ylabel('Deaths per million')
 set(gca,'fontsize',13,'XTick',listDate(iXtick))
+set(gcf,'Color',[0.85 0.85 0.85])
 xtickangle(30)
+% col = reshape([h(1:7).Color],3,7)';
+col = jet(7);
+country = list.Country(order(1:nLines));
+countryU = unique(country);
+colorIndex = mod((0:length(countryU)-1),length(col))+1;
+[~,iCou] = ismember(country,countryU);
+countryColor = col(colorIndex(iCou),:);
+for ii = 1:nLines
+    h(ii).Color = countryColor(ii,:);
+    text(listDate(end),yt(ii),loc{ii},'color',h(ii).Color);
+end
+for ic = 1:length(countryU)
+    text(listDate(47),yt(1)-75*ic,countryU{ic},'color',col(colorIndex(ic),:))
+end
+set(gcf,'Color',[0.85 0.85 0.85],'position',[0.05 0.05 0.9 0.8])
 saveas(fig10,'docs/worst_region.png')

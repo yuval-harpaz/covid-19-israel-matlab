@@ -19,13 +19,21 @@ switch source
     case 'mscbs'
         day1 = datetime('04-Mar-2020');
         esp = readtable('data/spain.csv');
-        dayLast = days(datetime('today')-day1)+32;
-        [err,msg] = system(['wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_',str(dayLast),'_COVID-19.pdf']);
-        if contains(msg,'ERROR 404')
-            dayLast = dayLast-1;
+        found = false;
+        n = 34;
+        while ~found
+            n = n-1;
+            dayLast = days(datetime('today')-day1)+n;
+            if dayLast < 159
+                error('should have found 159 pdf')
+            end
             [err,msg] = system(['wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_',str(dayLast),'_COVID-19.pdf']);
-            if contains(msg,'ERROR 404')
-                error('spain not found')
+            if ~contains(msg,'ERROR 404')
+%             dayLast = dayLast-1;
+%             [err,msg] = system(['wget -O data/spain.pdf https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Actualizacion_',str(dayLast),'_COVID-19.pdf']);
+%             if contains(msg,'ERROR 404')
+%                 error('spain not found')
+                found = true;
             end
         end
         javaaddpath(which('/iText-4.2.0-com.itextpdf.jar'));
