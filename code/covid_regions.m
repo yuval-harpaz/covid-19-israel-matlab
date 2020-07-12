@@ -124,7 +124,7 @@ if ~isempty(ignore)
     Date(ignore:end) = [];
 end
 nanwritetable(list,'data/regions.csv');
-%% sort and plot
+%% sort 
 
 listDate = datetime(strrep(list.Properties.VariableNames(4:end),'_','-'),'InputFormat','MMM-dd-yyyy');
 y = list{:,4:end}'./list.Population'*10^6;
@@ -134,17 +134,21 @@ loc = list{order,2};
 loc{ismember(loc,'New York')} = 'New York State';
 iXtick = fliplr(length(listDate):-7:1);
 nLines = find(nanmax(y) > threshold,1,'last');
-
+%% plot
 fig10 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
-h = plot(listDate,y(:,1:nLines));
+for ii = 1:nLines
+    notNan = ~isnan(y(:,ii));
+    h(ii) = plot(listDate(notNan),y(notNan,ii));
+    hold on
+end
 xlim(listDate([40,end]))
 yt = max(max(y)):-max(max(y))/nLines:0;
 grid on
 box off
 title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' deaths per million']})
 ylabel('Deaths per million')
-set(gca,'fontsize',13,'XTick',listDate(iXtick))
-set(gcf,'Color',[0.85 0.85 0.85])
+set(gca,'fontsize',13,'XTick',listDate(iXtick),'position',[0.13 0.12 0.7 0.8])
+set(gcf,'Color',[0.65 0.65 0.65])
 xtickangle(30)
 % col = reshape([h(1:7).Color],3,7)';
 col = jet(7);
@@ -158,7 +162,7 @@ for ii = 1:nLines
     text(listDate(end),yt(ii),loc{ii},'color',h(ii).Color);
 end
 for ic = 1:length(countryU)
-    text(listDate(47),yt(1)-75*ic,countryU{ic},'color',col(colorIndex(ic),:))
+    text(listDate(17),100+yt(1)-75*ic,countryU{ic},'color',col(colorIndex(ic),:))
 end
-set(gcf,'Color',[0.85 0.85 0.85],'position',[0.05 0.05 0.9 0.8])
+%% save
 saveas(fig10,'docs/worst_region.png')
