@@ -148,7 +148,7 @@ box off
 title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' deaths per million']})
 ylabel('Deaths per million')
 set(gca,'fontsize',13,'XTick',listDate(iXtick),'position',[0.13 0.12 0.7 0.8])
-set(gcf,'Color',[0.65 0.65 0.65])
+set(gcf,'Color',[0.65 0.65 0.65],'InvertHardcopy', 'off')
 xtickangle(30)
 % col = reshape([h(1:7).Color],3,7)';
 col = jet(7);
