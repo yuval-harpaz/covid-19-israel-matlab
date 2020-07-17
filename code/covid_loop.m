@@ -1,7 +1,12 @@
-function covid_loop
+function covid_loop(waitDef)
+if nargin == 0
+    waitDef = 60*60;
+end
 while true
     disp(datetime)
     cd ~/covid-19-israel-matlab/
+    [~,~] = system('git add -A');
+    [~,~] = system('git commit -m "loop"');
     [~,~] = system('git pull');
     try
         listPre = readtable('data/Israel/Israel_ministry_of_health.csv');
@@ -13,7 +18,7 @@ while true
             close all
             disp('updated');
         end
-        wait = 60*60*3;
+        wait = waitDef;
     catch me
         disp(['ERROR ',me.message])
         wait = 60*30;
