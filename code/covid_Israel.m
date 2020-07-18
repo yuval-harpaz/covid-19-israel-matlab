@@ -4,7 +4,8 @@ if ~exist('saveFigs','var')
     saveFigs = false;
 end
 if ~exist('listName','var')
-    listName = 'data/Israel/Israel_ministry_of_health.csv';
+    %listName = 'data/Israel/Israel_ministry_of_health.csv';
+    listName = 'data/Israel/dashboard_timeseries.csv';
 end
 cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
@@ -73,7 +74,7 @@ legNum = {str(list.hospitalized(iLast)),...
     str(list.on_ventilator(iLast)),...
     str(list.deceased(iLast))};
 legend([legHeb{1},' (',legNum{1},')'],[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
-    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','northeast')
+    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','north')
 ylabel('מספר החולים')
 title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
 xtickangle(30)
@@ -92,7 +93,7 @@ fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.5 0.5 0.5],'LineS
 fill([list.date;flipud(list.date)],[vent;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
 plot(list.date,list.deceased,'k')
 legend('mild                קל','severe          בינוני','critical          קשה',...
-    'on vent    מונשמים','deceased  נפטרים','location','northeast')
+    'on vent    מונשמים','deceased  נפטרים','location','north')
 box off
 xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
 set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(list.hospitalized)+20)
