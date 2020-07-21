@@ -1,3 +1,5 @@
+cd /media/innereye/1T/Repos/covid-19-israel-matlab/data/Israel
+listDaily = readtable('daily.csv');
 x = listDaily.positive;
 x(89:96) = 0.75;
 y = movmean(listDaily.critical,[3,3]);
@@ -22,3 +24,49 @@ plot(listDaily.date,listDaily.hospitalized,'r')
 plot(listDaily.date,yy,'k--')
 legend('positive tests (%)','new hospitalized patients','predicted new hospitalized, as 13*positive tests 3 days before')
 
+%% dashboard
+listD = readtable('dashboard_timeseries.csv');
+listD.CountDeath(isnan(listD.CountDeath)) = 0;
+dpm = listD.CountDeath/9097000*10^6;
+ds2 = movmean(dpm,[3 3]);
+%i1 = find(~isnan(ds2),1);
+ps2 = listD.tests_positive./listD.tests_result*100;
+ps2(106:113)
+ps2(106:113) = 0.7;
+
+[xc,lag] = xcorr(ps2,dpm);
+figure;
+plot(lag,xc)
+ps2(1:22) = 0;
+b = ps2(1:end-15)\ds2(16:end);
+pred3 = [zeros(15,1);ps2(1:end-15)*b];
+pred3(1:37) = 0;
+figure;
+plot(listD.date,listD.tests_positive./listD.tests_result*100)
+hold on
+plot(listD.date,dpm,'r')
+plot(listD.date,pred3,'k--')
+title('Israel')
+legend('positive tests (%)','deaths per million',...
+    ['predicted as ',str(round(b,2)),' of positive 16 days before'],...
+    'predicted as 0.12 of positive 16 days before')
+ylim([0 13])
+box off
+grid on
+box off
+grid on
+%ylim([0 30])
+
+figure;
+plot(listD.date,cumsum(dpm),'r')
+hold on
+plot(listD.date,cumsum(pred3),'k--')
+title('Israel')
+
+legend('positive tests (%)','deaths per million',...
+    ['predicted as ',str(round(b,2)),' of positive 16 days before'],...
+    'predicted as 0.12 of positive 16 days before')
+box off
+grid on
+box off
+grid on
