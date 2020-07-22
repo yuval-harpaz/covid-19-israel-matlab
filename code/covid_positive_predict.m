@@ -39,6 +39,7 @@ figure;
 plot(lag,xc)
 ps2(1:22) = 0;
 b = ps2(1:end-15)\ds2(16:end);
+
 pred3 = [zeros(15,1);ps2(1:end-15)*b];
 pred3(1:37) = 0;
 figure;
@@ -65,6 +66,41 @@ title('Israel')
 
 legend('positive tests (%)','deaths per million',...
     ['predicted as ',str(round(b,2)),' of positive 16 days before'],...
+    'predicted as 0.12 of positive 16 days before')
+box off
+grid on
+box off
+grid on
+%% intercept
+b = [ones(length(ps2)-15,1),ps2(1:end-15)]\ds2(16:end);
+b(1) = 0.056;
+
+pred4 = [zeros(15,1);[ones(length(ps2),1),ps2]*b];
+pred4(1:37) = 0;
+figure;
+plot(listD.date,listD.tests_positive./listD.tests_result*100)
+hold on
+plot(listD.date,dpm,'r')
+d = [listD.date;(listD.date(end)+1:listD.date(end)+15)'];
+plot(d,pred4,'k--')
+title('Daily deaths per million')
+legend('positive tests (%)','deaths per million',...
+    ['predicted as ',str(round(b(2),2)),' of positive 16 days before'],...
+    'predicted as 0.12 of positive 16 days before')
+ylim([0 13])
+box off
+grid on
+box off
+grid on
+%ylim([0 30])
+
+figure;
+plot(listD.date,cumsum(dpm),'r')
+hold on
+plot(d,cumsum(pred4),'k--')
+title('Cumulative deaths per million')
+legend('deaths per million',...
+    ['predicted as ',str(round(b(2),2)),' of positive 16 days before'],...
     'predicted as 0.12 of positive 16 days before')
 box off
 grid on
