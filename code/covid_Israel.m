@@ -79,13 +79,32 @@ ylabel('מספר החולים')
 title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
 xtickangle(30)
 
-subplot(1,2,2)
-crit = movmean(list.critical,7,'omitnan');
-hosp = movmean(list.hospitalized,7,'omitnan');
-seve = movmean(list.severe,7,'omitnan');
+yy = list.critical;
+y = movmean(yy,7,'omitnan');
+y(end-1:end) = yy(end-1:end);
+y(end-2) = mean(yy(end-3:end-1));
+y(end-3) = mean(yy(end-5:end-1));
+crit = y;
+yy = list.hospitalized;
+y = movmean(yy,7,'omitnan');
+y(end-1:end) = yy(end-1:end);
+y(end-2) = mean(yy(end-3:end-1));
+y(end-3) = mean(yy(end-5:end-1));
+hosp = y;
+yy = list.severe;
+y = movmean(yy,7,'omitnan');
+y(end-1:end) = yy(end-1:end);
+y(end-2) = mean(yy(end-3:end-1));
+y(end-3) = mean(yy(end-5:end-1));
+seve = y;
 mild = hosp-crit-seve;
-vent = movmean(list.on_ventilator,7,'omitnan');
-
+yy = list.on_ventilator;
+y = movmean(yy,7,'omitnan');
+y(end-1:end) = yy(end-1:end);
+y(end-2) = mean(yy(end-3:end-1));
+y(end-3) = mean(yy(end-5:end-1));
+vent = y;
+subplot(1,2,2)
 fill([list.date;flipud(list.date)],[crit+seve+mild;flipud(crit+seve)],[0.9 0.9 0.9],'LineStyle','none')
 hold on
 fill([list.date;flipud(list.date)],[crit+seve;flipud(crit)],[0.7 0.7 0.7],'LineStyle','none')
