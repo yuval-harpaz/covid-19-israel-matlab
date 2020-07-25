@@ -40,16 +40,12 @@ endTrain = length(deathSmooth)-14;
 bP = [ones(endTrain-15,1),positiveTestSmooth(1:endTrain-15)]\deathSmooth(16:endTrain);
 predPositive = [zeros(15,1);[ones(length(positiveTestSmooth),1),positiveTestSmooth]*bP];
 
-% newHosp = listD.new_hospitalized;
-% newHospSmooth = movmean(newHosp,[3 3]);
-% [xc,lag] = xcorr(deathSmooth(1:endTrain),newHospSmooth(1:endTrain));
-%figure;
-%plot(lag,xc)
-% [~,iMax] = max(xc);
-% lagH = lag(iMax);
-% bH = [ones(endTrain-lagH+1,1),movmean(newHospSmooth(1:endTrain-lagH+1),[3 3])]\deathSmooth(lagH:endTrain);
-% predHosp = movmean([zeros(lagH-1,1);[ones(length(positiveTests),1),newHospSmooth]*bH],[3 3]);
-% predHosp(1:37) = 0;
+
+hosp = readtable('~/Downloads/national_totals.csv');
+dH = [date(24:end);(date(end)+1:date(end)+4)'];
+predH = cellfun(@str2num, hosp.Hospitalised)*0.02 - 0.5;
+predH(predH < 0) = 0;
+predPositive(predPositive == 0) = nan;
 %% plot
 dP = [date;(date(end)+1:date(end)+15)'];
 % dH = [listD.date;(listD.date(end)+1:listD.date(end)+lagH-1)'];
@@ -69,10 +65,11 @@ title('Two predictors for death rate')
 figure;
 plot(dP,predPositive,'k--')
 hold on
+plot(dH,predH,'b--')
 % plot(dH,predHosp,'b--')
 plot(date,deaths,'r')
-title('Daily deaths')
-legend('predicted by new cases/tests','daily deaths','location','northwest')
+title('predict daily deaths for Australia')
+legend('predicted by new cases/tests','predicted by total hospitalized','daily deaths','location','northwest')
 ylim([0 10])
 box off
 grid on

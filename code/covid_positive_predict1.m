@@ -60,28 +60,15 @@ box off
 grid on
 ylabel('deaths')
 
-%% old
-% listDaily = readtable('daily.csv');
-% x = listDaily.positive;
-% x(89:96) = 0.75;
-% y = movmean(listDaily.critical,[3,3]);
-% fac = x(1:80)\y(12:91);
-% yy = [zeros(11,1);fac*x(1:end-11)];
-% figure;
-% plot(listDaily.date,listDaily.positive,'b')
-% hold on
-% plot(listDaily.date,listDaily.critical,'r')
-% plot(listDaily.date,yy,'k--')
-% 
-% 
-% y = movmean(listDaily.hospitalized,[3,3]);
-% train = [51:87,95:112];
-% 
-% fac = x(train)\y(3+train);
-% yy = [zeros(3,1);fac*movmean(x(1:end-3),[3 3])];
-% figure;
-% plot(listDaily.date,listDaily.positive,'b')
-% hold on
-% plot(listDaily.date,listDaily.hospitalized,'r')
-% plot(listDaily.date,yy,'k--')
-% legend('positive tests (%)','new hospitalized patients','predicted new hospitalized, as 13*positive tests 3 days before')
+%% hospitalized, not new hospitalized
+listD.Counthospitalized(isnan(listD.Counthospitalized)) = 0;
+hosp = listD.Counthospitalized;
+hospSmooth = movmean(hosp,[3 3]);
+[xc,lag] = xcorr(deathSmooth(1:endTrain),hospSmooth(1:endTrain));
+figure;
+plot(lag,xc)
+[~,iMax] = max(xc);
+lagHt = lag(iMax);
+bHt = [ones(endTrain-lagHt+1,1),movmean(hospSmooth(1:endTrain-lagHt+1),[3 3])]\deathSmooth(lagHt:endTrain);
+predHospTot = movmean([zeros(lagHt-1,1);[ones(length(positiveTests),1),hospSmooth]*bHt],[3 3]);
+predHospTot(1:37) = 0;
