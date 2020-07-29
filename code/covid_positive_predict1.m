@@ -72,3 +72,30 @@ lagHt = lag(iMax);
 bHt = [ones(endTrain-lagHt+1,1),movmean(hospSmooth(1:endTrain-lagHt+1),[3 3])]\deathSmooth(lagHt:endTrain);
 predHospTot = movmean([zeros(lagHt-1,1);[ones(length(positiveTests),1),hospSmooth]*bHt],[3 3]);
 predHospTot(1:37) = 0;
+
+weekend = (listD.tests_result(80:end)-movmean(listD.tests_result(80:end),[3 3]))\posd(80:end);
+
+figure;
+plot(listD.date,positiveTests)
+hold on
+plot(listD.date,positiveTests+(listD.tests_result-movmean(listD.tests_result,[3 3]))*weekend);
+
+%% מאגר מידע
+clear json
+ii = 0;
+read = true;
+while read
+    tic;
+    json{ii/100000+1} = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=dcf999c1-d394-4b57-a5e0-9d014a62e046&limit=100000&offset=',str(ii)]);
+    if length(json{ii/100000+1}) > 10000
+        json{ii/100000+1} = strrep(json{ii/100000+1},'NULL','2020-01-01');
+        json{ii/100000+1} = jsondecode(json{ii/100000+1});
+        ii = ii+100000;
+        toc;
+    else
+        read = false;
+        json = json{1:end-1};
+        disp('done')
+    end
+end
+
