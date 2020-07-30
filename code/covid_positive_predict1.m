@@ -98,4 +98,72 @@ while read
         disp('done')
     end
 end
-
+for ij = 1:length(json)
+    clear cell*
+    cellDate = {json{ij}.result.records(:).test_date}';
+    cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
+    cellDateU = unique(cellDate);
+    for ii = 1:length(cellDateU)
+        cellPosFirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','Yes'));
+        cellPosNotfirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','No'));
+        cellNegFirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','שלילי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','Yes'));
+        cellNegNotfirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','שלילי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','No'));
+        cellPosmargFirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי גבולי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','Yes'));
+        cellPosmargNotfirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי גבולי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','No'));
+        cellUncertainFirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','לא ודאי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','Yes'));
+        cellUncertainNotfirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','לא ודאי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','No'));
+        cellErrFirst(ii,1) = sum(contains({json{ij}.result.records(:).corona_result}','פסול') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','Yes'));
+        cellErrNotfirst(ii,1) = sum(contains({json{ij}.result.records(:).corona_result}','פסול') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).is_first_Test}','No'));
+    end
+    tables{ij,1} = table(cellDateU,cellNegFirst,cellPosFirst,cellPosmargFirst,cellUncertainFirst,cellErrFirst,...
+        cellNegNotfirst,cellPosNotfirst,cellPosmargNotfirst,cellUncertainNotfirst,cellErrNotfirst);
+    IEprog(ij)
+end
+date = [];
+for ij = 1:length(json)
+    date = [date;tables{ij}.cellDateU];
+end
+date = unique(date);
+neg_first = zeros(length(date),1);
+pos_first = zeros(length(date),1);
+posmarg_first = zeros(length(date),1);
+uncertain_first = zeros(length(date),1);
+err_first = zeros(length(date),1);
+neg_notfirst = zeros(length(date),1);
+pos_notfirst = zeros(length(date),1);
+posmarg_notfirst = zeros(length(date),1);
+uncertain_notfirst = zeros(length(date),1);
+err_notfirst = zeros(length(date),1);
+t = table(date,neg_first,pos_first,posmarg_first,uncertain_first,err_first,...
+    neg_notfirst,pos_notfirst,posmarg_notfirst,uncertain_notfirst,err_notfirst);
+for iDate = 1:length(date)
+    for ij = 1:length(tables)
+        row = find(ismember(tables{ij}.cellDateU,date(iDate)));
+        if ~isempty(row)
+            t{iDate,2:end} = t{iDate,2:end}+tables{ij}{row,2:end};
+        end
+    end
+end
+t(1,:) = [];
+writetable(t,'data/Israel/tests.csv','delimiter',',','WriteVariableNames',true)
+    
