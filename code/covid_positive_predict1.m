@@ -94,7 +94,7 @@ while read
         toc;
     else
         read = false;
-        json = json{1:end-1};
+        json = json(1:end-1);
         disp('done')
     end
 end
