@@ -178,3 +178,84 @@ figure;
 plot(t.date,cumsum(t.pos_first+t.posmarg_first))  % [t.pos_first,t.posmarg_first,t.uncertain_first,t.err_first],'stacked','linestyle','none')
 hold on
 plot(listD.date,cumsum(listD.tests_positive))
+
+allPos = (t.pos_first+t.pos_notfirst+t.posmarg_first+t.posmarg_notfirst)./sum(t{:,2:end},2)*100;
+allPos(79:82) = 2;
+allPos = movmean(allPos,[3 3]);
+
+bPa = [ones(97,1),allPos(1:112-15)]\deathSmooth(44:endTrain);
+predPositiveA = [zeros(15,1);[ones(length(allPos),1),allPos]*bPa];
+figure;
+plot(listD.date,listD.CountDeath);
+hold on
+plot(t.date(16):t.date(16)+length(predPositiveA)-1,predPositiveA)
+
+%% 
+clear json
+ii = 0;
+read = true;
+while read
+    tic;
+    json{ii/100000+1} = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=d337959a-020a-4ed3-84f7-fca182292308&limit=100000&offset=',str(ii)]);
+    if length(json{ii/100000+1}) > 10000
+        %json{ii/100000+1} = strrep(json{ii/100000+1},'NULL',' ');
+        json{ii/100000+1} = jsondecode(json{ii/100000+1});
+        ii = ii+100000;
+        toc;
+    else
+        read = false;
+        json = json(1:end-1);
+        disp('done')
+    end
+end
+for ij = 1:length(json)
+    clear cell*
+    cellDate = {json{ij}.result.records(:).test_date}';
+    cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
+    cellDateU = unique(cellDate);
+    for ii = 1:length(cellDateU)
+        cellPosOld(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).age_60_and_above}','Yes'));
+        cellPosNotold(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).age_60_and_above}','No'));
+        cellNegOld(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','שלילי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).age_60_and_above}','Yes'));
+        cellNegNotold(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','שלילי') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).age_60_and_above}','No'));
+        cellOtherOld(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','אחר') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).age_60_and_above}','Yes'));
+        cellOtherNotold(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','אחר') & ...
+            cellDate == cellDateU(ii) & ...
+            ismember({json{ij}.result.records(:).age_60_and_above}','No'));
+    end
+    tables{ij,1} = table(cellDateU,cellPosOld,cellPosNotold,cellNegOld,cellNegNotold,cellOtherOld,cellOtherNotold);
+    IEprog(ij)
+end
+
+date = [];
+for ij = 1:length(json)
+    date = [date;tables{ij}.cellDateU];
+end
+date = unique(date);
+neg_old = zeros(length(date),1);
+pos_old = zeros(length(date),1);
+other_old = zeros(length(date),1);
+neg_notold = zeros(length(date),1);
+pos_notold = zeros(length(date),1);
+other_notold = zeros(length(date),1);
+t = table(date,neg_old,pos_old,other_old,neg_notold,pos_notold,other_notold);   
+for iDate = 1:length(date)
+    for ij = 1:length(tables)
+        row = find(ismember(tables{ij}.cellDateU,date(iDate)));
+        if ~isempty(row)
+            t{iDate,2:end} = t{iDate,2:end}+tables{ij}{row,2:end};
+        end
+    end
+end
+t(1,:) = [];
+writetable(t,'data/Israel/tests.csv','delimiter',',','WriteVariableNames',true)
