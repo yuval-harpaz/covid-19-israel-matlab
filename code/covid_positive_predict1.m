@@ -1,4 +1,4 @@
-cd /media/innereye/1T/Repos/covid-19-israel-matlab/data/Israel
+cd ~/covid-19-israel-matlab/data/Israel
 %pop = 9097000;
 listD = readtable('dashboard_timeseries.csv');
 listD.CountDeath(isnan(listD.CountDeath)) = 0;
@@ -166,4 +166,15 @@ for iDate = 1:length(date)
 end
 t(1,:) = [];
 writetable(t,'data/Israel/tests.csv','delimiter',',','WriteVariableNames',true)
-    
+%% 
+t = readtable('tests.csv');
+figure;
+bar(t.date,[t.pos_first,t.posmarg_first,t.uncertain_first,t.err_first],'stacked','linestyle','none')
+hold on
+plot(listD.date,listD.tests_positive)
+legend('positive','marginally positive','uncertain','error')
+
+figure;
+plot(t.date,cumsum(t.pos_first+t.posmarg_first))  % [t.pos_first,t.posmarg_first,t.uncertain_first,t.err_first],'stacked','linestyle','none')
+hold on
+plot(listD.date,cumsum(listD.tests_positive))
