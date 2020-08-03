@@ -77,7 +77,7 @@ legend([legHeb{1},' (',legNum{1},')'],[legHeb{2},' (',legNum{2},')'],[legHeb{3},
     [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','north')
 ylabel('מספר החולים')
 title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
-xtickangle(30)
+xtickangle(90)
 
 yy = list.critical;
 y = movmean(yy,7,'omitnan');
@@ -116,7 +116,7 @@ legend('mild                קל','severe          בינוני','critical      
 box off
 xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
 set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(list.hospitalized)+20)
-xtickangle(30)
+xtickangle(90)
 grid on
 xlim([list.date(1) list.date(end)])
 ylim([0 max(list.hospitalized)+20])
