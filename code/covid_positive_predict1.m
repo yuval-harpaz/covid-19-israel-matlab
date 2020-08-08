@@ -214,26 +214,15 @@ for ij = 1:length(json)
     cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
     cellDateU = unique(cellDate);
     for ii = 1:length(cellDateU)
-        cellPosOld(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
-            cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).age_60_and_above}','Yes'));
-        cellPosNotold(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
-            cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).age_60_and_above}','No'));
-        cellNegOld(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','שלילי') & ...
-            cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).age_60_and_above}','Yes'));
-        cellNegNotold(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','שלילי') & ...
-            cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).age_60_and_above}','No'));
-        cellOtherOld(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','אחר') & ...
-            cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).age_60_and_above}','Yes'));
-        cellOtherNotold(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','אחר') & ...
-            cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).age_60_and_above}','No'));
+        cellPos(ii,1) = sum(ismember(cellDate,cellDateU(ii)) & ...
+            ismember({json{ij}.result.records(:).corona_result}','חיובי'));
+        cellNeg(ii,1) = sum(ismember(cellDate,cellDateU(ii)) & ...
+            ismember({json{ij}.result.records(:).corona_result}','שלילי'));
+        cellOther(ii,1) = sum(ismember(cellDate,cellDateU(ii)) & ...
+            ismember({json{ij}.result.records(:).corona_result}','אחר'));
+        
     end
-    tables{ij,1} = table(cellDateU,cellPosOld,cellPosNotold,cellNegOld,cellNegNotold,cellOtherOld,cellOtherNotold);
+    tables{ij,1} = table(cellDateU,cellPos,cellNeg,cellOther);
     IEprog(ij)
 end
 
@@ -242,13 +231,10 @@ for ij = 1:length(json)
     date = [date;tables{ij}.cellDateU];
 end
 date = unique(date);
-neg_old = zeros(length(date),1);
-pos_old = zeros(length(date),1);
-other_old = zeros(length(date),1);
-neg_notold = zeros(length(date),1);
-pos_notold = zeros(length(date),1);
-other_notold = zeros(length(date),1);
-t = table(date,neg_old,pos_old,other_old,neg_notold,pos_notold,other_notold);   
+neg = zeros(length(date),1);
+pos = zeros(length(date),1);
+other = zeros(length(date),1);
+t = table(date,pos,neg,other);   
 for iDate = 1:length(date)
     for ij = 1:length(tables)
         row = find(ismember(tables{ij}.cellDateU,date(iDate)));
@@ -257,5 +243,5 @@ for iDate = 1:length(date)
         end
     end
 end
-t(1,:) = [];
-writetable(t,'data/Israel/tests.csv','delimiter',',','WriteVariableNames',true)
+% t(1,:) = [];
+% writetable(t,'data/Israel/tests.csv','delimiter',',','WriteVariableNames',true)
