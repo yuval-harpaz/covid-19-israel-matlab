@@ -101,12 +101,12 @@ end
 for ij = 1:length(json)
     clear cell*
     cellDate = {json{ij}.result.records(:).test_date}';
-    cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
+    cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate); %#ok<*ST2NM>
     cellDateU = unique(cellDate);
     for ii = 1:length(cellDateU)
         cellPosFirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
             cellDate == cellDateU(ii) & ...
-            ismember({json{ij}.result.records(:).is_first_Test}','Yes'));
+            ismember({json{ij}.result.records(:).is_first_Test}','Yes')); %#ok<*SAGROW>
         cellPosNotfirst(ii,1) = sum(ismember({json{ij}.result.records(:).corona_result}','חיובי') & ...
             cellDate == cellDateU(ii) & ...
             ismember({json{ij}.result.records(:).is_first_Test}','No'));
@@ -213,16 +213,31 @@ for ij = 1:length(json)
     cellDate = {json{ij}.result.records(:).test_date}';
     cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
     cellDateU = unique(cellDate);
+    cough = ismember({json{ij}.result.records(:).cough}','1');
+    fever = ismember({json{ij}.result.records(:).fever}','1');
+    sore = ismember({json{ij}.result.records(:).sore_throat}','1');
+    breath = ismember({json{ij}.result.records(:).shortness_of_breath}','1');
+    head = ismember({json{ij}.result.records(:).head_ache}','1');
+    positive = ismember({json{ij}.result.records(:).corona_result}','חיובי');
+    negative = ismember({json{ij}.result.records(:).corona_result}','שלילי');
+    other = ismember({json{ij}.result.records(:).corona_result}','אחר');
     for ii = 1:length(cellDateU)
-        cellPos(ii,1) = sum(ismember(cellDate,cellDateU(ii)) & ...
-            ismember({json{ij}.result.records(:).corona_result}','חיובי'));
-        cellNeg(ii,1) = sum(ismember(cellDate,cellDateU(ii)) & ...
-            ismember({json{ij}.result.records(:).corona_result}','שלילי'));
-        cellOther(ii,1) = sum(ismember(cellDate,cellDateU(ii)) & ...
-            ismember({json{ij}.result.records(:).corona_result}','אחר'));
-        
+        today = ismember(cellDate,cellDateU(ii));
+        cellPos(ii,1) = sum(today & positive);
+        cellNeg(ii,1) = sum(today & negative);
+        cellCoughPos(ii,1) = sum(today & positive & cough);
+        cellCoughNeg(ii,1) = sum(today & negative & cough);
+        cellFeverPos(ii,1) = sum(today & positive & fever);
+        cellFeverNeg(ii,1) = sum(today & negative & fever);
+        cellSorePos(ii,1) = sum(today & positive & sore);
+        cellSoreNeg(ii,1) = sum(today & negative & sore);
+        cellBreathPos(ii,1) = sum(today & positive & breath);
+        cellBreatNeg(ii,1) = sum(today & negative & breath);
+        cellHeadPos(ii,1) = sum(today & positive & head);
+        cellHeadNeg(ii,1) = sum(today & negative & head);
     end
-    tables{ij,1} = table(cellDateU,cellPos,cellNeg,cellOther);
+    tables{ij,1} = table(cellDateU,cellPos,cellNeg,cellCoughPos,cellCoughNeg,...
+        cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,cellHeadPos,cellHeadNeg);
     IEprog(ij)
 end
 
@@ -232,9 +247,19 @@ for ij = 1:length(json)
 end
 date = unique(date);
 neg = zeros(length(date),1);
-pos = zeros(length(date),1);
-other = zeros(length(date),1);
-t = table(date,pos,neg,other);   
+pos = neg;
+cough_pos = neg;
+cough_neg = neg;
+fever_pos = neg;
+fever_neg = neg;
+sorethroat_pos = neg;
+sorethroat_neg = neg;
+shortbreath_pos = neg;
+shortbreath_neg = neg;
+headache_pos = neg;
+headache_neg = neg;
+t = table(date,pos,neg,cough_pos,cough_neg,fever_pos,fever_neg,sorethroat_pos,...
+    sorethroat_neg,shortbreath_pos,shortbreath_neg,headache_pos,headache_neg);
 for iDate = 1:length(date)
     for ij = 1:length(tables)
         row = find(ismember(tables{ij}.cellDateU,date(iDate)));
@@ -243,5 +268,102 @@ for iDate = 1:length(date)
         end
     end
 end
-% t(1,:) = [];
-% writetable(t,'data/Israel/tests.csv','delimiter',',','WriteVariableNames',true)
+
+figure;
+plot(t.date,100*t.pos./(t.pos+t.neg))
+hold on
+plot(t.date,100*t.cough_pos./(t.pos+t.neg))
+plot(t.date,100*t.cough_neg./(t.pos+t.neg))
+
+figure;
+plot(t.date,100*t.pos./(t.pos+t.neg),'b')
+hold on
+plot(t.date,movmean(100*t.cough_pos./t.pos,[3 3]))
+plot(t.date,movmean(100*t.fever_pos./t.pos,[3 3]))
+plot(t.date,movmean(100*t.sorethroat_pos./t.pos,[3 3]))
+plot(t.date,movmean(100*t.shortbreath_pos./t.pos,[3 3]))
+plot(t.date,movmean(100*t.headache_pos./t.pos,[3 3]))
+legend('positive tests','cough','fever','sore throat','short beath','headache')
+ylim([0 50])
+grid on
+xlim([t.date(1) t.date(end)])
+ylabel('%')
+title('ratio of symptoms for positive tests')
+
+writetable(t,'data/Israel/symptoms.csv','delimiter',',','WriteVariableNames',true)
+% !echo "symptoms,02-Aug-2020,1200000" >> data/Israel/log.txt
+
+%% 
+cd ~/covid-19-israel-matlab/data/Israel
+listD = readtable('dashboard_timeseries.csv');
+listD.CountDeath(isnan(listD.CountDeath)) = 0;
+listD.new_hospitalized(isnan(listD.new_hospitalized)) = 0;
+endTrain = find(ismember(listD.date,datetime([2020,6,30])));
+deaths = listD.CountDeath;
+deathSmooth = movmean(deaths,[3 3]);
+positiveTests = listD.tests_positive./listD.tests_result*100;
+positiveTests(106:113) = 0.7; % ignore Gymnasia spike
+positiveTestSmooth = movmean(positiveTests,[3 3]);
+% endTrain = length(deathSmooth)-14;
+bP = [ones(endTrain-15,1),positiveTestSmooth(1:endTrain-15)]\deathSmooth(16:endTrain);
+predPositive = movmean([zeros(15,1);[ones(length(positiveTests),1),positiveTests]*bP],[3 3]);
+predPositive(1:37) = 0;
+
+newHosp = listD.new_hospitalized;
+newHospSmooth = movmean(newHosp,[3 3]);
+[xc,lag] = xcorr(deathSmooth(1:endTrain),newHospSmooth(1:endTrain));
+[~,iMax] = max(xc);
+lagH = lag(iMax);
+bH = [ones(endTrain-lagH+1,1),movmean(newHospSmooth(1:endTrain-lagH+1),[3 3])]\deathSmooth(lagH:endTrain);
+predHosp = movmean([zeros(lagH-1,1);[ones(length(positiveTests),1),newHospSmooth]*bH],[3 3]);
+predHosp(1:37) = 0;
+
+sym = readtable('symptoms.csv');
+shortSmooth = movmean(sym.shortbreath_pos,[3 3]);
+lagS = 16;
+[~,endTrainSym] = ismember(listD.date(endTrain),sym.date);
+tmp = shortSmooth(22:endTrainSym-lagS+1);
+bS = [ones(length(tmp),1),tmp]\...
+    deathSmooth(days(sym.date(1)-listD.date(1))+lagS+21:endTrain);
+predSym = [zeros(lagS-1,1);[ones(length(shortSmooth),1),shortSmooth]*bS];
+%predSym(1:37) = 0;
+
+dP = [listD.date;(listD.date(end)+1:listD.date(end)+15)'];
+dH = [listD.date;(listD.date(end)+1:listD.date(end)+lagH-1)'];
+dS = [sym.date;(sym.date(end)+1:sym.date(end)+lagS-1)'];
+
+figure('units','normalized','position',[0,0.25,1,0.5]);
+subplot(1,2,1)
+plot(dP,predPositive,'k--')
+hold on
+plot(dH,predHosp,'b--')
+plot(dS,predSym,'g--')
+plot(listD.date,deaths,'r')
+title('Daily deaths per million')
+legend('predicted by tests','predicted by hospitalizations','predicted by short breath','total deaths','location','northwest')
+ylim([0 13])
+box off
+grid on
+ylabel('deaths')
+
+subplot(1,2,2)
+plot(dP,cumsum(predPositive),'k--')
+hold on
+plot(dH,cumsum(predHosp),'b--')
+plot(dS,cumsum(predSym),'g--')
+plot(listD.date,cumsum(deaths),'r')
+title('Cumulative deaths per million')
+legend('predicted by tests','predicted by hospitalizations','predicted by short breath','total deaths','location','northwest')
+box off
+grid on
+ylabel('deaths')
+
+
+%%
+shortSmooth = movmean(sym.pos./(sym.pos+sym.neg),[3 3]);
+lagS = 16;
+[~,endTrainSym] = ismember(listD.date(endTrain),sym.date);
+tmp = shortSmooth(22:endTrainSym-lagS+1);
+bS = [ones(length(tmp),1),tmp]\...
+    deathSmooth(days(sym.date(1)-listD.date(1))+lagS+21:endTrain);
+predSym = [zeros(lagS-1,1);[ones(length(shortSmooth),1),shortSmooth]*bS];
