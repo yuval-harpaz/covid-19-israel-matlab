@@ -74,3 +74,6 @@ plot(list.date(idx),posSmooth,'linewidth',2,'linestyle','-');
 ylabel('positive tests (%)')
 set(gca,'ygrid', 'on','fontsize',13)
 xlim([list.date(idx(1))-1 list.date(idx(end))+1]);
+if saveFigs
+    saveas(fig1,'docs/positiveVShosp.png');
+end

@@ -13,17 +13,17 @@ nCountries = 20;
 
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
-fig = covid_plot(mergedData,timeVector,nCountries,'d',1,myCountry);
-
-showDateEvery = 7; % days
-zer = 1; % how many deaths per million to count as day zero
-warning off
-
-for iCou = 1:length(mergedData)
-    mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
-    mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
-end
-iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
+fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
+fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
+% showDateEvery = 7; % days
+% zer = 1; % how many deaths per million to count as day zero
+% warning off
+% 
+% for iCou = 1:length(mergedData)
+%     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
+%     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
+% end
+% iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
 pop = readtable('data/population.csv','delimiter',',');
 list = readtable(listName);
 if contains(listName,'dashboard_timeseries')
@@ -145,66 +145,67 @@ if any(isx == 0)
 end
 mil = pop.Population_2020_(idxc)/10^6;
 norm = cases./mil'; %#ok<NASGU>
-
-%% align
-aligned = nan(length(timeVector),length(mergedData));
-for iState = 1:size(aligned,2)
-    [~,idx1] = ismember(mergedData(iState,1),pop.Country_orDependency_);
-    nrm = mergedData{iState,2}./pop.Population_2020_(idx1)*10^6;
-    start = find(nrm > zer,1);
-    if ~isempty(start)
-        aligned(1:size(aligned,1)-start+1,iState) = nrm(start:end);
-    end
-end
-iCol = find(ismember(mergedData(:,1),myCountry));
-tMy = find(isnan(aligned(:,iCol)),1)-1;
-farther = find(~isnan(aligned(tMy,:)));
-yT = aligned(tMy,farther);
-yMy = aligned(tMy,iCol);
-[yTo,order] = sort(yT,'descend'); %#ok<ASGLU>
-yToNan = yTo;
-yToNan(yTo ~= yMy) = nan; %#ok<NASGU>
+% 
+% %% align
+% aligned = nan(length(timeVector),length(mergedData));
+% for iState = 1:size(aligned,2)
+%     [~,idx1] = ismember(mergedData(iState,1),pop.Country_orDependency_);
+%     nrm = mergedData{iState,2}./pop.Population_2020_(idx1)*10^6;
+%     start = find(nrm > zer,1);
+%     if ~isempty(start)
+%         aligned(1:size(aligned,1)-start+1,iState) = nrm(start:end);
+%     end
+% end
+% iCol = find(ismember(mergedData(:,1),myCountry));
+% tMy = find(isnan(aligned(:,iCol)),1)-1;
+% farther = find(~isnan(aligned(tMy,:)));
+% yT = aligned(tMy,farther);
+% yMy = aligned(tMy,iCol);
+% [yTo,order] = sort(yT,'descend'); %#ok<ASGLU>
+% yToNan = yTo;
+% yToNan(yTo ~= yMy) = nan; %#ok<NASGU>
 
 %% plot lines
-fig6 = figure('units','normalized','position',[0,0,0.5,1]);
-annot = [20;length(farther)];
-[yo,order] = sort(max(aligned(:,farther)),'descend');
-yl = 1.05*yo([1,annot(1)]);
-for iPlot = 1:2
-    subplot(2,1,iPlot)
-    h = plot(aligned(:,farther(order)),'linewidth',1,'marker','.','MarkerSize',8);
-    xl = find(~any(~isnan(aligned),2),1)-14;
-    xlim([0 xl])
-    box off
-    grid on
-    ylabel('מתים למליון')
-    xlabel('מספר ימים מיום האפס של כל מדינה (מת אחד למליון)')
-    set(gca,'XTick',iXtick,'XTickLabel',iXtick)
-    ylim([0 yl(iPlot)])
-    if iPlot == 1
-        jj = 1:annot(iPlot);
-        title({'מתים למליון, מיושר'})
-    else
-        jj = annot(1):annot(2);
-        title({'מתים למליון, מיושר (זום-אין)'})
-    end
-    for iAnn = jj
-        x = find(~isnan(aligned(:,farther(order(iAnn)))),1,'last');
-        text(x,yo(iAnn),mergedData{farther(order(iAnn)),1},...
-            'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
-    end
-    iChina = find(ismember(mergedData(:,1),'China'));
-    text(xl,max(aligned(:,iChina)),'China',...
-        'FontSize',10,'Color',h(find(farther == iChina)).Color,'FontWeight','bold'); %#ok<FNDSB>
-    hold on
-    plot(aligned(:,iCol),'k','linewidth',2,'marker','.','MarkerSize',12)
-    text(tMy,yMy,myCountry,'color','k','FontSize',16,'FontWeight','bold'); % 'BackgroundColor','y'
-    set(gca,'FontSize',11)
-end
+% fig6 = figure('units','normalized','position',[0,0,0.5,1]);
+% annot = [20;length(farther)];
+% [yo,order] = sort(max(aligned(:,farther)),'descend');
+% yl = 1.05*yo([1,annot(1)]);
+% for iPlot = 1:2
+%     subplot(2,1,iPlot)
+%     h = plot(aligned(:,farther(order)),'linewidth',1,'marker','.','MarkerSize',8);
+%     xl = find(~any(~isnan(aligned),2),1)-14;
+%     xlim([0 xl])
+%     box off
+%     grid on
+%     ylabel('מתים למליון')
+%     xlabel('מספר ימים מיום האפס של כל מדינה (מת אחד למליון)')
+%     set(gca,'XTick',iXtick,'XTickLabel',iXtick)
+%     ylim([0 yl(iPlot)])
+%     if iPlot == 1
+%         jj = 1:annot(iPlot);
+%         title({'מתים למליון, מיושר'})
+%     else
+%         jj = annot(1):annot(2);
+%         title({'מתים למליון, מיושר (זום-אין)'})
+%     end
+%     for iAnn = jj
+%         x = find(~isnan(aligned(:,farther(order(iAnn)))),1,'last');
+%         text(x,yo(iAnn),mergedData{farther(order(iAnn)),1},...
+%             'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
+%     end
+%     iChina = find(ismember(mergedData(:,1),'China'));
+%     text(xl,max(aligned(:,iChina)),'China',...
+%         'FontSize',10,'Color',h(find(farther == iChina)).Color,'FontWeight','bold'); %#ok<FNDSB>
+%     hold on
+%     plot(aligned(:,iCol),'k','linewidth',2,'marker','.','MarkerSize',12)
+%     text(tMy,yMy,myCountry,'color','k','FontSize',16,'FontWeight','bold'); % 'BackgroundColor','y'
+%     set(gca,'FontSize',11)
+% end
 
 %% save
 if saveFigs
-    saveas(fig6,'docs/realignedMyCountry.png')
+    saveas(fig6,'docs/dpmMyCountry.png')
+    saveas(fig7,'docs/ddpmMyCountry.png')
     saveas(fig8,'docs/myCountry.png')
 end
 %%
