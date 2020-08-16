@@ -10,12 +10,15 @@ end
 cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
 nCountries = 20;
+
+[dataMatrix] = readCoronaData('deaths');
+[~,timeVector,mergedData] = processCoronaData(dataMatrix);
+fig = covid_plot(mergedData,timeVector,nCountries,'d',1,myCountry);
+
 showDateEvery = 7; % days
 zer = 1; % how many deaths per million to count as day zero
 warning off
-type = 'deaths';
-[dataMatrix] = readCoronaData(type);
-[~,timeVector,mergedData] = processCoronaData(dataMatrix);
+
 for iCou = 1:length(mergedData)
     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;

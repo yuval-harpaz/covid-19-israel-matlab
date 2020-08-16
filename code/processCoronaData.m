@@ -26,16 +26,18 @@ end
 dataTable = cell2table(dataMatrix(2:end,:),'VariableNames',varNames);
 
 %% change variable types
-for m = 1:size(dataMatrix,1)
-    for n = 1:size(dataMatrix,2)
-        
-        if m == 1 && n>=5
-            dataMatrix{m,n} = datetime(dataMatrix{m,n},'InputFormat','MM/dd/yy');
-        elseif m > 1 && n >=3
-            dataMatrix{m,n} = str2double(dataMatrix{m,n});
-        end
-    end
-end
+dataMatrix(1,5:end) = cellfun(@(x) datetime(x,'InputFormat','MM/dd/yy'),...
+    dataMatrix(1,5:end),'UniformOutput',false);
+% for m = 1:size(dataMatrix,1)
+%     for n = 1:size(dataMatrix,2)
+%         
+%         if m == 1 && n>=5
+%             dataMatrix{m,n} = datetime(dataMatrix{m,n},'InputFormat','MM/dd/yy');
+%         elseif m > 1 && n >=3
+%             dataMatrix{m,n} = str2double(dataMatrix{m,n});
+%         end
+%     end
+% end
 
 %% get time vector
 for n = 5:size(dataMatrix,2)
