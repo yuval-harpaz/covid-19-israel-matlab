@@ -2,7 +2,7 @@ function covid_update_html
 % show the worst countries by different criteria
 cd ~/covid-19-israel-matlab/
 
-list = readtable('data/Israel/Israel_ministry_of_health.csv');
+list = readtable('data/Israel/dashboard_timeseries.csv');
 yesterdate = datestr(datetime-1,'dd.mm.yyyy');
 today = datestr(datetime,'dd.mm.yyyy');
 % highest countries
@@ -51,26 +51,33 @@ txt(iDate-6:iDate+3) = today;
 % count = datenum(datetime('today'))-datenum(datetime('22-Jan-2020'))-65;
 % txt = [txt(1:counter0-1),'כיום, ',str(count),' ',txt(counter1:end)];
 idx = strfind(txt,'מצב התמותה');
-daten = datenum(list.date);
-daten = daten-daten(1);
-last5 = find(daten > daten(end)-4,1);
-x = daten(last5:end);
+% daten = datenum(list.date);
+% daten = daten-daten(1);
+% last5 = find(daten > daten(end)-4,1);
+ list.CountDeath(isnan(list.CountDeath)) = 0;
+y = cumsum(list.CountDeath);
+y = y(end-7:end-1);
+x = (1:7)';
 x = [ones(length(x),1) x];
-y = list.deceased(last5:end);
+% y = list.deceased(last5:end);
 b = x\y;
 
-ins = ['מצב התמותה - ', '(בחמשת הימים האחרונים)',' כ ',str(round(b(2))),' נפטרים ליום ',];
+ins = ['מצב התמותה - ', '(בשבעת הימים האחרונים)',' כ ',str(round(b(2))),' נפטרים ליום ',];
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 
 idx = strfind(txt,'מצב המונשמים');
-y = list.on_ventilator(last5:end);
-b = x\y;
-mun5 = round(b(2));
 
-if mun5 >= 0
-    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(mun5),' מונשמים יותר  ',];
+
+list.CountBreath(isnan(list.CountBreath)) = 0;
+y = list.CountBreath(end-7:end-1);
+% y = list.CountBreath(last5:end);
+b = x\y;
+mun7 = round(b(2));
+
+if mun7 >= 0
+    ins = ['מצב המונשמים - ', '(בשבעת הימים האחרונים)',' כל יום יש כ ',str(mun7),' מונשמים יותר  ',];
 else
-    ins = ['מצב המונשמים - ', '(בחמשת הימים האחרונים)',' כל יום יש כ ',str(-mun5),' מונשמים פחות',];
+    ins = ['מצב המונשמים - ', '(בשבעת הימים האחרונים)',' כל יום יש כ ',str(-mun7),' מונשמים פחות',];
 end
 txt = [txt(1:idx-1),ins,txt(idx+find(ismember(txt(idx:end),'<'),1)-1:end)];
 
