@@ -1,58 +1,75 @@
-clear json
+clear
+cd ~/covid-19-israel-matlab/data/Israel
+fid = fopen('data/Israel/log.txt','r');
+txt = fread(fid);
+fclose(fid);
+txt = native2unicode(txt');
+% lastRead = str2num(txt(find(ismember(txt,','),1,'last')+1:find(ismember(txt,newline),1,'last')-1));
+% ii = lastRead-100000;
+tt = readtable('symptoms.csv');
+
 ii = 0;
 read = true;
+tables = {};
+json = {};
+id = false;
 while read
     tic;
-    json{ii/100000+1} = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=d337959a-020a-4ed3-84f7-fca182292308&limit=100000&offset=',str(ii)]);
-    if length(json{ii/100000+1}) > 10000
+    json = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=d337959a-020a-4ed3-84f7-fca182292308&limit=100000&offset=',str(ii)]);
+    if length(json) > 10000
         %json{ii/100000+1} = strrep(json{ii/100000+1},'NULL',' ');
-        json{ii/100000+1} = jsondecode(json{ii/100000+1});
+        json = jsondecode(json);
+        clear cell*
+        cellDate = {json.result.records(:).test_date}';
+        cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
+        cellDateU = unique(cellDate);
+        cough = ismember({json.result.records(:).cough}','1');
+        fever = ismember({json.result.records(:).fever}','1');
+        sore = ismember({json.result.records(:).sore_throat}','1');
+        breath = ismember({json.result.records(:).shortness_of_breath}','1');
+        head = ismember({json.result.records(:).head_ache}','1');
+        positive = ismember({json.result.records(:).corona_result}','חיובי');
+        negative = ismember({json.result.records(:).corona_result}','שלילי');
+        other = ismember({json.result.records(:).corona_result}','אחר');
+        cellID = [json.result.records(:).x_id]';
+        if any(ismember(find(id),cellID))
+            warning([str(sum(ismember(find(id),cellID))),' duplicates!'])
+        end
+        id(cellID,1) = true;
+        for jj = 1:length(cellDateU)
+            today = ismember(cellDate,cellDateU(jj));
+            cellPos(jj,1) = sum(today & positive);
+            cellNeg(jj,1) = sum(today & negative);
+            cellCoughPos(jj,1) = sum(today & positive & cough);
+            cellCoughNeg(jj,1) = sum(today & negative & cough);
+            cellFeverPos(jj,1) = sum(today & positive & fever);
+            cellFeverNeg(jj,1) = sum(today & negative & fever);
+            cellSorePos(jj,1) = sum(today & positive & sore);
+            cellSoreNeg(jj,1) = sum(today & negative & sore);
+            cellBreathPos(jj,1) = sum(today & positive & breath);
+            cellBreatNeg(jj,1) = sum(today & negative & breath);
+            cellHeadPos(jj,1) = sum(today & positive & head);
+            cellHeadNeg(jj,1) = sum(today & negative & head);
+        end
+        tables{end+1,1} = table(cellDateU,cellPos,cellNeg,cellCoughPos,cellCoughNeg,...
+            cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,cellHeadPos,cellHeadNeg);
         ii = ii+100000;
-        toc;
+        disp(datestr(cellDateU(1)))
     else
         read = false;
-        json = json(1:end-1);
+        %json = json(1:end-1);
         disp('done')
     end
 end
-for ij = 1:length(json)
-    clear cell*
-    cellDate = {json{ij}.result.records(:).test_date}';
-    cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
-    cellDateU = unique(cellDate);
-    cough = ismember({json{ij}.result.records(:).cough}','1');
-    fever = ismember({json{ij}.result.records(:).fever}','1');
-    sore = ismember({json{ij}.result.records(:).sore_throat}','1');
-    breath = ismember({json{ij}.result.records(:).shortness_of_breath}','1');
-    head = ismember({json{ij}.result.records(:).head_ache}','1');
-    positive = ismember({json{ij}.result.records(:).corona_result}','חיובי');
-    negative = ismember({json{ij}.result.records(:).corona_result}','שלילי');
-    other = ismember({json{ij}.result.records(:).corona_result}','אחר');
-    for ii = 1:length(cellDateU)
-        today = ismember(cellDate,cellDateU(ii));
-        cellPos(ii,1) = sum(today & positive);
-        cellNeg(ii,1) = sum(today & negative);
-        cellCoughPos(ii,1) = sum(today & positive & cough);
-        cellCoughNeg(ii,1) = sum(today & negative & cough);
-        cellFeverPos(ii,1) = sum(today & positive & fever);
-        cellFeverNeg(ii,1) = sum(today & negative & fever);
-        cellSorePos(ii,1) = sum(today & positive & sore);
-        cellSoreNeg(ii,1) = sum(today & negative & sore);
-        cellBreathPos(ii,1) = sum(today & positive & breath);
-        cellBreatNeg(ii,1) = sum(today & negative & breath);
-        cellHeadPos(ii,1) = sum(today & positive & head);
-        cellHeadNeg(ii,1) = sum(today & negative & head);
-    end
-    tables{ij,1} = table(cellDateU,cellPos,cellNeg,cellCoughPos,cellCoughNeg,...
-        cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,cellHeadPos,cellHeadNeg);
-    IEprog(ij)
-end
+
+
 
 date = [];
-for ij = 1:length(json)
+for ij = 1:length(tables)
     date = [date;tables{ij}.cellDateU];
 end
 date = unique(date);
+
 neg = zeros(length(date),1);
 pos = neg;
 cough_pos = neg;
@@ -97,7 +114,72 @@ xlim([t.date(1) t.date(end)])
 ylabel('%')
 title('ratio of symptoms for positive tests')
 
-writetable(t,'data/Israel/symptoms.csv','delimiter',',','WriteVariableNames',true)
+writetable(t,'symptoms.csv','delimiter',',','WriteVariableNames',true)
+
+
+listD = readtable('dashboard_timeseries.csv');
+listD.CountDeath(isnan(listD.CountDeath)) = 0;
+listD.new_hospitalized(isnan(listD.new_hospitalized)) = 0;
+
+figure;
+plot(listD.date,listD.CountDeath)
+hold on
+plot(t.date,100*t.pos./(t.pos+t.neg))
+plot(t.date,(100*t.pos./(t.pos+t.neg))./(t.fever_pos./t.pos))
+
+symp = (t.fever_pos+t.cough_pos)/2;
+%symp = t.cough_pos;
+figure;
+plot(listD.date,movmean(listD.CountDeath,[3 3]))
+hold on
+plot(12+t.date,movmean(100*t.pos./(t.pos+t.neg),[3 3]))
+plot(12+t.date,movmean((100*t.pos./(t.pos+t.neg))./(symp./t.pos),[3 3])/2.5)
+
+
+endTrain = find(ismember(listD.date,datetime([2020,6,30])));
+deaths = listD.CountDeath;
+deathSmooth = movmean(deaths,[3 3]);
+positiveTests = listD.tests_positive./listD.tests_result*100;
+positiveTests(106:113) = 0.7; % ignore Gymnasia spike
+positiveTestSmooth = movmean(positiveTests,[3 3]);
+% endTrain = length(deathSmooth)-14;
+bP = [ones(endTrain-15,1),positiveTestSmooth(1:endTrain-15)]\deathSmooth(16:endTrain);
+predPositive = movmean([zeros(15,1);[ones(length(positiveTests),1),positiveTests]*bP],[3 3]);
+predPositive(1:37) = 0;
+
+
+% for ij = 1:length(json)
+%     clear cell*
+%     cellDate = {json{ij}.result.records(:).test_date}';
+%     cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
+%     cellDateU = unique(cellDate);
+%     cough = ismember({json{ij}.result.records(:).cough}','1');
+%     fever = ismember({json{ij}.result.records(:).fever}','1');
+%     sore = ismember({json{ij}.result.records(:).sore_throat}','1');
+%     breath = ismember({json{ij}.result.records(:).shortness_of_breath}','1');
+%     head = ismember({json{ij}.result.records(:).head_ache}','1');
+%     positive = ismember({json{ij}.result.records(:).corona_result}','חיובי');
+%     negative = ismember({json{ij}.result.records(:).corona_result}','שלילי');
+%     other = ismember({json{ij}.result.records(:).corona_result}','אחר');
+%     for ii = 1:length(cellDateU)
+%         today = ismember(cellDate,cellDateU(ii));
+%         cellPos(ii,1) = sum(today & positive);
+%         cellNeg(ii,1) = sum(today & negative);
+%         cellCoughPos(ii,1) = sum(today & positive & cough);
+%         cellCoughNeg(ii,1) = sum(today & negative & cough);
+%         cellFeverPos(ii,1) = sum(today & positive & fever);
+%         cellFeverNeg(ii,1) = sum(today & negative & fever);
+%         cellSorePos(ii,1) = sum(today & positive & sore);
+%         cellSoreNeg(ii,1) = sum(today & negative & sore);
+%         cellBreathPos(ii,1) = sum(today & positive & breath);
+%         cellBreatNeg(ii,1) = sum(today & negative & breath);
+%         cellHeadPos(ii,1) = sum(today & positive & head);
+%         cellHeadNeg(ii,1) = sum(today & negative & head);
+%     end
+%     tables{ij,1} = table(cellDateU,cellPos,cellNeg,cellCoughPos,cellCoughNeg,...
+%         cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,cellHeadPos,cellHeadNeg);
+%     IEprog(ij)
+% end
 
 
 % cd ~/covid-19-israel-matlab/data/Israel
@@ -294,7 +376,6 @@ writetable(t,'data/Israel/symptoms.csv','delimiter',',','WriteVariableNames',tru
 % 
 %% 
 
-% !echo "symptoms,02-Aug-2020,1200000" >> data/Israel/log.txt
 
 %% 
 % cd ~/covid-19-israel-matlab/data/Israel

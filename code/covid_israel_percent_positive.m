@@ -44,6 +44,7 @@ ylabel('new hospitalized')
 ax = gca;
 ax.YRuler.Exponent = 0;
 
+
 yyaxis right
 plot(list.date(idx),pos)
 hold on
@@ -81,3 +82,23 @@ if saveFigs
     fclose(fid);
 end
 
+deathSmooth = movmean(list.CountDeath,[3 3]);
+deathSmooth(end) = nan;
+deathSmooth(end-1) = mean(list.CountDeath(end-4:end-1));
+deathSmooth(end-2) = mean(list.CountDeath(end-5:end-1));
+deathSmooth(end-3) = mean(list.CountDeath(end-6:end-1));
+fig2 = figure('position',[50,50,800,500]);
+plot(list.date,list.CountDeath,':k','linewidth',1)
+hold on
+plot(list.date,deathSmooth,'k','linewidth',2)
+plot(list.date(idx)+12,posSmooth*1.5,'linewidth',2)
+plot(list.date(idx)+12,hospSmooth/10,'linewidth',2)
+legend('Deaths','Deaths (7 day average)','Deaths predicted by %positive x 1.5',...
+    'Deaths predicted by new hospitalized / 10','location','Northwest')
+grid on
+box off
+ylabel('Deaths')
+title('Perdicting daily deaths in Israel 12 days ahead')
+iTick = find(list.date == dateshift(list.date,'start','month'));
+set(gca,'fontsize',13,'XTick',[list.date(iTick);list.date(end-1);list.date(end)+11])
+xtickangle(90)
