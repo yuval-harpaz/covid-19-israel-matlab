@@ -86,7 +86,7 @@ deathSmooth = movmean(list.CountDeath,[3 3]);
 deathSmooth(end) = nan;
 deathSmooth(end-1) = mean(list.CountDeath(end-4:end-1));
 deathSmooth(end-2) = mean(list.CountDeath(end-5:end-1));
-deathSmooth(end-3) = mean(list.CountDeath(end-6:end-1
+deathSmooth(end-3) = mean(list.CountDeath(end-6:end-1));
 lag = 12;
 fig2 = figure('position',[50,50,800,500]);
 plot(list.date,list.CountDeath,':k','linewidth',1)
