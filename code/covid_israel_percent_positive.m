@@ -91,14 +91,16 @@ fig2 = figure('position',[50,50,800,500]);
 plot(list.date,list.CountDeath,':k','linewidth',1)
 hold on
 plot(list.date,deathSmooth,'k','linewidth',2)
-plot(list.date(idx)+12,posSmooth*1.5,'linewidth',2)
-plot(list.date(idx)+12,hospSmooth/10,'linewidth',2)
-legend('Deaths','Deaths (7 day average)','Deaths predicted by %positive x 1.5',...
-    'Deaths predicted by new hospitalized / 10','location','Northwest')
+hh = plot(list.date(idx(1:end-9))+12,hospSmooth(1:end-9)/10,'linewidth',2);
+hp = plot(list.date(idx(1:end-9))+12,posSmooth(1:end-9)*1.5,'linewidth',2);
+plot(list.date(idx(end-8:end))+12,hospSmooth(end-8:end)/10,':','linewidth',2,'Color',hh.Color)
+plot(list.date(idx(end-8:end))+12,posSmooth(end-8:end)*1.5,':','linewidth',2,'Color',hp.Color)
+legend('Deaths','Deaths (7 day average)','Deaths predicted by new hospitalized / 10',...
+    'Deaths predicted by %positive x 1.5','location','Northwest')
 grid on
 box off
 ylabel('Deaths')
-title('Perdicting daily deaths in Israel 12 days ahead')
+title('Predicting daily deaths in Israel 12 days ahead')
 iTick = find(list.date == dateshift(list.date,'start','month'));
 set(gca,'fontsize',13,'XTick',[list.date(iTick);list.date(end-1);list.date(end)+11])
 xtickangle(90)
