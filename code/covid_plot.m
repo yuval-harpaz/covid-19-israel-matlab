@@ -34,23 +34,20 @@ switch criterion
         isNeg = y < 0;
         y(isNeg) = nan;
         isJump = y > 20;
+        isJump(211,83) = true;  % Israel's little jump
         jump = nan(size(y));
         jump(isJump) = y(isJump);
         y(isJump) = nan;
-%         isJump = diff(y(2:end,:))-diff(y(1:end-1,:));
-%         isJump(isinf(isJump)) = 0;
-%         isJump(isnan(isJump)) = 0;
-%         isJump = [false(2,size(y,2));isJump > 20];
         tit = 'Daily deaths per million';
 end
 y(y < 0) = 0;
 y = movmean(y,[6 0],'omitnan');
 if exist('isNeg','var')
     y(isNeg) = nan;
-    y(isJump) = jump(isJump);
+    %y(isJump) = jump(isJump);
 end
 
-[~,order] = sort(mean(y(end-criterionDays+1:end,:),1),'descend'); % most deaths
+[~,order] = sort(nanmean(y(end-criterionDays+1:end,:),1),'descend'); % most deaths
 [~,iMustHave] = ismember(iMustHave,order);
 y = y(:,order);
 fig = figure('units','normalized','position',[0,0,0.5,0.5]);
