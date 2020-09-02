@@ -103,6 +103,6 @@ box off
 ylabel('Deaths')
 title('Predicting daily deaths in Israel 12 days ahead')
 iTick = find(list.date(1:end-1) == dateshift(list.date(1:end-1),'start','month'));
-set(gca,'fontsize',13,'XTick',[list.date(iTick);list.date(end-1);list.date(end)+11])
+set(gca,'fontsize',13,'XTick',unique([list.date(iTick);list.date(end-1);list.date(end)+11]))
 xtickangle(90)
 xlim([list.date(idx(1)) list.date(idx(end))+lag])
