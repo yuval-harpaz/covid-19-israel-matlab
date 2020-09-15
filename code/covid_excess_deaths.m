@@ -6,6 +6,8 @@ week = readtable('lmsWeek.xlsx','sheet','2020','Range','B14:L65','ReadVariableNa
 monthAll = readtable('lmsMonth.xlsx','Range','B10:V21','ReadVariableNames',false);
 month70 = readtable('lmsMonth.xlsx','Range','B28:V39','ReadVariableNames',false);
 %from https://www.cbs.gov.il/he/publications/DocLib/2020/yarhon0720/b1.xls'
+month70.Var21(8) = sum(week{32:34,end})/21*31;
+monthAll.Var21(8) = sum(week{32:34,2})/21*31;
 pop = table((2009:2020)',...
     1000*[7485.6;7623.6;7765.8;7910.5;8059.5;8215.7;8380.1;8546.0;8713.3;8882.8;9054.0;9212.8]);
 % correct for medical improvement
@@ -27,10 +29,11 @@ death{4} = month70{:,11:end};
 lims = [2000 4500;2000 4500;250 550;250 550];
 
 yl = {'Deaths','Deaths','Deaths per Million','Deaths per Million'};
-tit = {'All ages',' Over 70','All ages','Over 70'};
+tit = {'תמותה, כל הגילאים','תמותה, מעל 70','תמותה למליון, כל הגילאים','תמותה למליון, מעל 70','עודף תמותה למליון, כל הגילאים','עודף תמותה למליון, מעל 70'};
+
 figure('units','normalized','position',[0,0,0.65,0.65]);
 for ip = 1:4
-    subplot(2,2,ip)
+    subplot(3,2,ip)
     h = plot(death{ip}./nrm(:,ip)');
     col = colormap(jet(11));
     for ii = 1:11
@@ -39,6 +42,15 @@ for ip = 1:4
             h(ii).LineWidth = 2;
         end
     end
+    if ip > 2
+        dpm = death{ip}./nrm(:,3)';
+        medmonth = median(dpm(:,1:end-1),2);
+        predmonth = pred(11,ip-2)-median(pred(1:10,ip-2))+medmonth;
+        %yy = death{ip}./nrm(:,3)'-pred(:,ip-2)';
+        hold on
+%         hb = plot(mean(pred(:,ip-2))+median(yy,2),'k--');
+        hb = plot(predmonth,'k--');
+    end
     xlim([1 12])
     ylim(lims(ip,:));
     xlabel('month')
@@ -46,9 +58,6 @@ for ip = 1:4
     title(tit{ip})
     grid on
     box off
-    if ip == 2
-        legend(num2str((2010:2020)'),[900 415 0.1 0.2]);
-    end
     set(gca,'XTick',1:12)
 end
 
@@ -59,9 +68,9 @@ for im = 3:12
 end
 covid(covid == 0) = nan;
 %%
-figure('units','normalized','position',[0,0,0.65,0.35]);
+% figure('units','normalized','position',[0,0,0.65,0.35]);
 for ip = 1:2
-    subplot(1,2,ip)
+    subplot(3,2,4+ip)
     yy = death{ip}./nrm(:,3)'-pred(:,ip)';
     yy = yy - nanmedian(yy,2);
     h = plot(yy);
@@ -76,7 +85,7 @@ for ip = 1:2
     %ylim(lims(ip,:));
     xlabel('month')
     ylabel('Deaths per million')
-    title(tit{ip})
+    title(tit{ip+4})
     grid on
     box off
     if ip == 2
@@ -85,6 +94,7 @@ for ip = 1:2
     set(gca,'XTick',1:12)
     if ip == 1
         hold on
-        plot(covid,'k','linewidth',2)
+        hc = plot(covid,'k','linewidth',2)
     end
 end
+legend([h;hb;hc],[cellstr(num2str((2010:2020)'));{'צפי';'קורונה'}],[900 415 0.1 0.2]);
