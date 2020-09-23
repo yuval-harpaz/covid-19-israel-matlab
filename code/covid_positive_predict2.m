@@ -28,9 +28,13 @@ while read
         sore = ismember({json.result.records(:).sore_throat}','1');
         breath = ismember({json.result.records(:).shortness_of_breath}','1');
         head = ismember({json.result.records(:).head_ache}','1');
+        nosym = sum([cough,fever,sore,breath,head],2) == 0;
         positive = ismember({json.result.records(:).corona_result}','חיובי');
         negative = ismember({json.result.records(:).corona_result}','שלילי');
         other = ismember({json.result.records(:).corona_result}','אחר');
+        age = nan(size(other));
+        age(ismember({json.result.records(:).age_60_and_above}','Yes')) = 1;
+        age(ismember({json.result.records(:).age_60_and_above}','No')) = 0;
         cellID = [json.result.records(:).x_id]';
         if any(ismember(find(id),cellID))
             warning([str(sum(ismember(find(id),cellID))),' duplicates!'])
@@ -50,9 +54,15 @@ while read
             cellBreatNeg(jj,1) = sum(today & negative & breath);
             cellHeadPos(jj,1) = sum(today & positive & head);
             cellHeadNeg(jj,1) = sum(today & negative & head);
+            cellNosymPos(jj,1) = sum(today & positive & nosym);
+            cellNosymNeg(jj,1) = sum(today & negative & nosym);
+            cellOver60(jj,1) = sum(today & age == 1);
+            cellBelow60(jj,1) = sum(today & age == 0);
+            cellNoAge(jj,1) = sum(today & isnan(age));
         end
         tables{end+1,1} = table(cellDateU,cellPos,cellNeg,cellCoughPos,cellCoughNeg,...
-            cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,cellHeadPos,cellHeadNeg);
+            cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,...
+            cellHeadPos,cellHeadNeg,cellNosymPos,cellNosymNeg,cellOver60,cellBelow60,cellNoAge);
         ii = ii+100000;
         disp(datestr(cellDateU(1)))
     else
@@ -82,8 +92,14 @@ shortbreath_pos = neg;
 shortbreath_neg = neg;
 headache_pos = neg;
 headache_neg = neg;
+nosymptoms_pos = neg;
+nosymptoms_neg = neg;
+ageover60 = neg;
+agebelow60 = neg;
+agenull = neg;
 t = table(date,pos,neg,cough_pos,cough_neg,fever_pos,fever_neg,sorethroat_pos,...
-    sorethroat_neg,shortbreath_pos,shortbreath_neg,headache_pos,headache_neg);
+    sorethroat_neg,shortbreath_pos,shortbreath_neg,headache_pos,headache_neg,...
+    nosymptoms_pos,nosymptoms_neg,ageover60,agebelow60,agenull);
 for iDate = 1:length(date)
     for ij = 1:length(tables)
         row = find(ismember(tables{ij}.cellDateU,date(iDate)));
