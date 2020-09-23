@@ -116,26 +116,66 @@ plot(t.date,100*t.cough_pos./(t.pos+t.neg))
 plot(t.date,100*t.cough_neg./(t.pos+t.neg))
 
 figure;
-plot(t.date,100*t.pos./(t.pos+t.neg),'b')
+bar(t.date,100*t.pos./(t.pos+t.neg),'b')
 hold on
 plot(t.date,movmean(100*t.cough_pos./t.pos,[3 3]))
 plot(t.date,movmean(100*t.fever_pos./t.pos,[3 3]))
 plot(t.date,movmean(100*t.sorethroat_pos./t.pos,[3 3]))
 plot(t.date,movmean(100*t.shortbreath_pos./t.pos,[3 3]))
 plot(t.date,movmean(100*t.headache_pos./t.pos,[3 3]))
-legend('positive tests','cough','fever','sore throat','short beath','headache')
-ylim([0 50])
+plot(t.date,movmean(100*t.nosymptoms_pos./t.pos,[3 3]))
+legend('בדיקות חיוביות מתוך סך הבדיקות','חיוביים עם שיעול','חיוביים עם חום',...
+    'חיוביים עם כאב גרון','חיוביים עם קוצר נשימה','חיוביים עם כאב ראש','חיוביים ללא סימפטומים',...
+    'location','north');
+ylim([0 80])
 grid on
-xlim([t.date(1) t.date(end)])
+% xlim([t.date(1) t.date(end)])
 ylabel('%')
-title('ratio of symptoms for positive tests')
-
+title('שיעור הנבדקים החיוביים בעלי תסמינים')
+box off
+xlim([datetime(2020,6,1) t.date(end)])
 writetable(t,'symptoms.csv','delimiter',',','WriteVariableNames',true)
 
+figure;
+plot(t.date,t.agebelow60)
+hold on
+plot(t.date,t.ageover60)
+plot(t.date,t.agenull)
+legend('below 60','over 60','null')
+
+figure;
+plot(t.date,t.agebelow60)
+hold on
+plot(t.date,t.ageover60)
+plot(t.date,t.agenull)
+legend('below 60','over 60','null')
+
+over60 = t.ageover60./t.agebelow60;
+figure;
+plot(t.date,100-100*movmean(over60,[3 3],'omitnan'))
+xlim([datetime(2020,6,1) t.date(end)])
+ylabel('%')
+title('שיעור הנבדקים החיוביים מתחת לגיל 60')
+box off
+grid on
+ylim([50 95])
 
 listD = readtable('dashboard_timeseries.csv');
 listD.CountDeath(isnan(listD.CountDeath)) = 0;
 listD.new_hospitalized(isnan(listD.new_hospitalized)) = 0;
+
+t.ageover60(t.ageover60 == 0) = nan;
+figure
+plot(listD.date,movmean(listD.CountDeath,[3 3]))
+hold on
+plot(t.date+10,movmean(t.ageover60,[3 3])/125)
+plot(t.date+10,movmean((t.pos-t.nosymptoms_pos),[3 3])./50)
+legend('deaths','positive over 60 / 150','positive with symptoms / 50')
+box off
+grid on
+title('Predict deaths by positive tests 10 days before')
+ylabel('Daily deaths')
+
 
 figure;
 plot(listD.date,listD.CountDeath)
