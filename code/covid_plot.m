@@ -58,6 +58,9 @@ if ~isempty(iMustHave)
     for im = 1:length(iMustHave)
         hm(im) = plot(timeVector,y(:,iMustHave(im)),'linewidth',1,'marker','.','MarkerSize',8);
         hm(im).Color = [0 0 0];
+        if iMustHave(im) <= nCountries
+            h(iMustHave(im)).Color = [0 0 0];
+        end
     end
 else
     hm = [];
@@ -79,7 +82,7 @@ for iAnn = 1:nCountries
     text(x,yt(iAnn),mergedData{order(iAnn)},...
         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
 end
-if ~isempty(hm)
+if ~isempty(hm) && any(iMustHave > nCountries)
     if length(hm) == 1
         ya = 0;
     else
