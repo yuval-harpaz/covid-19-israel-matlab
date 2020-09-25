@@ -6,8 +6,8 @@ week = readtable('lmsWeek.xlsx','sheet','2020','Range','B14:L65','ReadVariableNa
 monthAll = readtable('lmsMonth.xlsx','Range','B10:V21','ReadVariableNames',false);
 month70 = readtable('lmsMonth.xlsx','Range','B28:V39','ReadVariableNames',false);
 %from https://www.cbs.gov.il/he/publications/DocLib/2020/yarhon0720/b1.xls'
-month70.Var21(8) = sum(week{32:34,end})/21*31;
-monthAll.Var21(8) = sum(week{32:34,2})/21*31;
+% month70.Var21(8) = sum(week{32:34,end})/21*31;
+% monthAll.Var21(8) = sum(week{32:34,2})/21*31;
 pop = table((2009:2020)',...
     1000*[7485.6;7623.6;7765.8;7910.5;8059.5;8215.7;8380.1;8546.0;8713.3;8882.8;9054.0;9212.8]);
 % correct for medical improvement
@@ -28,10 +28,10 @@ death{3} = monthAll{:,11:end};
 death{4} = month70{:,11:end};
 lims = [2000 4500;2000 4500;250 550;250 550];
 
-yl = {'Deaths','Deaths','Deaths per Million','Deaths per Million'};
+yl = {'תמותה','תמותה','תמותה למליון','תמותה למליון'};
 tit = {'תמותה, כל הגילאים','תמותה, מעל 70','תמותה למליון, כל הגילאים','תמותה למליון, מעל 70','עודף תמותה למליון, כל הגילאים','עודף תמותה למליון, מעל 70'};
 
-figure('units','normalized','position',[0,0,0.65,0.65]);
+figure('units','normalized','position',[0,0,0.65,0.8]);
 for ip = 1:4
     subplot(3,2,ip)
     h = plot(death{ip}./nrm(:,ip)');
@@ -53,7 +53,7 @@ for ip = 1:4
     end
     xlim([1 12])
     ylim(lims(ip,:));
-    xlabel('month')
+    xlabel('חודש')
     ylabel(yl{ip})
     title(tit{ip})
     grid on
@@ -72,7 +72,7 @@ covid(covid == 0) = nan;
 for ip = 1:2
     subplot(3,2,4+ip)
     yy = death{ip}./nrm(:,3)'-pred(:,ip)';
-    yy = yy - nanmedian(yy,2);
+    yy = yy - median(yy(:,1:end-1),2);
     h = plot(yy);
     col = colormap(jet(11));
     for ii = 1:11
@@ -83,8 +83,8 @@ for ip = 1:2
     end
     xlim([1 12])
     %ylim(lims(ip,:));
-    xlabel('month')
-    ylabel('Deaths per million')
+    xlabel('חודש')
+    ylabel('תמותה למליון')
     title(tit{ip+4})
     grid on
     box off
@@ -94,7 +94,10 @@ for ip = 1:2
     set(gca,'XTick',1:12)
     if ip == 1
         hold on
-        hc = plot(covid,'k','linewidth',2)
+        hc = plot(covid(1:8),'k','linewidth',2);
     end
+    ylim([-50 50])
+    set(gca,'YTick',-40:20:40)
 end
 legend([h;hb;hc],[cellstr(num2str((2010:2020)'));{'צפי';'קורונה'}],[900 415 0.1 0.2]);
+niftarim = readtable('~/Downloads/corona_deceased_ver_0034.csv');
