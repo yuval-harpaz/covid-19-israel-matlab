@@ -1,4 +1,4 @@
-function fig = covid_plot(mergedData,timeVector,nCountries,criterion,criterionDays,mustHave,ymax)
+function fig = covid_plot(mergedData,timeVector,nCountries,criterion,criterionDays,mustHave,ymax,dashboard)
 cd ~/covid-19-israel-matlab/
 % showDateEvery = 7; % days
 warning off
@@ -10,6 +10,7 @@ end
 warning on
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 deaths = nan(length(timeVector),length(mergedData));
+
 for iCou = 1:length(mergedData)
     deaths(1:length(timeVector),iCou) = mergedData{iCou,2};
 end
@@ -18,6 +19,16 @@ end
 mil = pop.Population_2020_(idx)'/10^6;
 [~,iMustHave] = ismember(mustHave,mergedData(:,1));
 iMustHave(isempty(iMustHave)) = [];
+if ~exist('dashboard','var')
+    dashboard = true;
+end
+if dashboard
+    listD = readtable('data/Israel/dashboard_timeseries.csv');
+    listD.CountDeath(isnan(listD.CountDeath)) = 0;
+    [isDate,iDate] = ismember(listD.date,timeVector);
+    deaths(iDate(isDate),iMustHave) = listD.CountDeath(isDate);
+    deaths(iDate(isDate),iMustHave) = cumsum(deaths(iDate(isDate),iMustHave));
+end
 
 switch criterion
     case 'd'
@@ -34,7 +45,9 @@ switch criterion
         isNeg = y < 0;
         y(isNeg) = nan;
         isJump = y > 20;
-        isJump(211,83) = true;  % Israel's little jump
+        if ~dashboard
+            isJump(211,83) = true;  % Israel's little jump
+        end
         jump = nan(size(y));
         jump(isJump) = y(isJump);
         y(isJump) = nan;
