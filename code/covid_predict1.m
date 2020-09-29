@@ -3,10 +3,11 @@ json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2
 json = jsondecode(json);
 t = json.result.records;
 t = struct2table(t);
-pos2death = cellfun(@str2num,strrep({t.Time_between_positive_and_death}','NULL','0'));
-bad = pos2death < 1 | ismember({t.gender}','לא ידוע');
-gender = {t.gender}';
-male = ismember(gender(~bad),'זכר');
+pos2death = cellfun(@str2num,strrep(t.Time_between_positive_and_death,'NULL','0'));
+% pos2death = cellfun(@str2num,strrep({t.Time_between_positive_and_death}','NULL','0'));
+bad = pos2death < 1 | ismember(t.gender,'לא ידוע');
+% gender = {t.gender}';
+male = ismember(t.gender(~bad),'זכר');
 pos2death = pos2death(~bad);
 
 m = hist(pos2death(male),3.5:7:160);
@@ -31,16 +32,25 @@ listD.CountDeath(isnan(listD.CountDeath)) = 0;
 %     pred(ii:ii+length(prob)-1) = pred(ii:ii+length(prob)-1) + (prob*(symp.pos(ii)-symp.nosymptoms_pos(ii)))';
 % end
 pred = conv(symp.pos-symp.nosymptoms_pos,prob);
-
 figure;
 h(1) = plot(listD.date,listD.CountDeath,'b.');
 hold on
 h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-h(3) = plot(symp.date(2):symp.date(1)+length(pred),pred/40,'k');
+h(3) = plot(symp.date+14,movmean((symp.pos-symp.nosymptoms_pos)/50,[3 3]),'k');
+h(4) = plot(symp.date(2):symp.date(1)+length(pred),pred/45,'r');
+legend(h(2:4),'deaths','positive with symptoms / 50, 14 days before','positive with symptoms / 45, conv')
+grid on
+box off
 
-
-
-
+yy = symp.pos./(symp.pos+symp.neg);
+pred = conv(yy,prob);
+figure;
+h(1) = plot(listD.date,listD.CountDeath,'b.');
+hold on
+h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+h(3) = plot(symp.date+14,movmean(yy*120,[3 3]),'k');
+h(4) = plot(symp.date(2):symp.date(1)+length(pred),pred*120,'r');
+legend(h(2:4),'deaths','%positive x 1.2, 14 days before','%positive x 1.2, conv')
 %%
 lag = 14;
 figure;
