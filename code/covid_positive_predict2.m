@@ -74,11 +74,24 @@ end
 
 
 
-date = [];
-for ij = 1:length(tables)
-    date = [date;tables{ij}.cellDateU];
-end
-date = unique(date);
+% date = [];
+% for ij = 1:length(tables)
+%     date = [date;tables{ij}.cellDateU];
+% end
+% date = unique(date);
+% test2result = nan(size(date));
+% for iDate = 1:length(date)
+%     n = [];
+%     avg = [];
+%     for ij = 1:length(tables)
+%         iRow = ismember(tables{ij}.cellDateU,date(iDate));
+%         if sum(iRow) > 0
+%         	n(end+1,1) = tables{ij}.cellN(iRow);
+%             avg(end+1,1) = tables{ij}.cellDif(iRow);
+%         end
+%     end
+%     test2result(iDate,1) = sum(avg.*n)./sum(n);
+% end
 
 neg = zeros(length(date),1);
 pos = neg;
@@ -320,24 +333,71 @@ predPositive(1:37) = 0;
 % hold on
 % plot(listD.date,positiveTests+(listD.tests_result-movmean(listD.tests_result,[3 3]))*weekend);
 % 
-% %% מאגר מידע
-% clear json
-% ii = 0;
-% read = true;
-% while read
-%     tic;
-%     json{ii/100000+1} = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=dcf999c1-d394-4b57-a5e0-9d014a62e046&limit=100000&offset=',str(ii)]);
-%     if length(json{ii/100000+1}) > 10000
-%         json{ii/100000+1} = strrep(json{ii/100000+1},'NULL','2020-01-01');
-%         json{ii/100000+1} = jsondecode(json{ii/100000+1});
-%         ii = ii+100000;
-%         toc;
-%     else
-%         read = false;
-%         json = json(1:end-1);
-%         disp('done')
-%     end
-% end
+%% test result gap
+ii = 0;
+read = true;
+clear tables
+while read
+    tic;
+    json = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=dcf999c1-d394-4b57-a5e0-9d014a62e046&limit=100000&offset=',str(ii)]);
+    if length(json) > 10000
+        json = strrep(json,'NULL','2020-01-01');
+        json = jsondecode(json);
+        
+        clear cell*
+        
+        cellDateR = {json.result.records(:).result_date}';
+        cellDateR = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDateR); %#ok<*ST2NM>
+        cellDateT = {json.result.records(:).test_date}';
+        cellDateT = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDateT); %#ok<*ST2NM>
+        cellDateU = unique(cellDateR);
+        cellDateU(cellDateU == datetime(2020,1,1)) = [];
+        for jj = 1:length(cellDateU)
+            iii = ismember({json.result.records(:).corona_result}',{'חיובי','שלילי'}) & ...
+                ismember({json.result.records(:).is_first_Test}','Yes') & ...
+                cellDateR == cellDateU(jj);
+            cellT = cellDateT(iii);
+            cellT(cellT == datetime(2020,1,1)) = [];
+            bad = datenum(cellDateU(jj)-cellT) > 7 | datenum(cellDateU(jj)-cellT) < 0;
+            cellT(bad) = [];
+            cellDif(jj,1) = mean(datenum(cellDateU(jj)-cellT));
+            cellN(jj,1) = length(cellT);
+        end
+        cellDateU = cellDateU(~isnan(cellDif));
+        cellN(isnan(cellDif)) = [];
+        cellDif(isnan(cellDif)) = [];
+        
+        tables{ii/100000+1,1} = table(cellDateU,cellDif,cellN);
+        disp(cellDateU(1));
+    else
+        read = false;
+        json = json(1:end-1);
+        disp('done')
+    end
+    ii = ii+100000;
+end
+disp('XXXXXXXXXXXXX')
+
+date = [];
+for ij = 1:length(tables)
+    date = [date;tables{ij}.cellDateU];
+end
+date = unique(date);
+test2result = nan(size(date));
+for iDate = 1:length(date)
+    n = [];
+    avg = [];
+    for ij = 1:length(tables)
+        iRow = ismember(tables{ij}.cellDateU,date(iDate));
+        if sum(iRow) > 0
+        	n(end+1,1) = tables{ij}.cellN(iRow);
+            avg(end+1,1) = tables{ij}.cellDif(iRow);
+        end
+    end
+    test2result(iDate,1) = sum(avg.*n)./sum(n);
+end
+figure;plot(date,test2result)
+%% old
 % for ij = 1:length(json)
 %     clear cell*
 %     cellDate = {json{ij}.result.records(:).test_date}';
