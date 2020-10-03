@@ -51,28 +51,38 @@ h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
 h(3) = plot(symp.date+14,movmean(yy*120,[3 3]),'k');
 h(4) = plot(symp.date(2):symp.date(1)+length(pred),pred*120,'r');
 legend(h(2:4),'deaths','%positive x 1.2, 14 days before','%positive x 1.2, conv')
-%%
-lag = 14;
-figure;
-h(1) = plot(listD.date,listD.CountDeath,'.b');
-hold on;
-h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-h(3) = plot(t.date+lag,movmean(t.pos-t.nosymptoms_pos,[3 3])/50,'k');
-legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
-box off
-grid on
-title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
-ylabel('daily deaths')
 
-%%
+
+%% new critical
 newc = readtable('new_critical.csv');
+xn = 0:9;
+yn = normpdf(xn,4,2);
+yn = yn/sum(yn);
+% figure;
+% plot(xn,yn)
+
+newconv = conv(movmean(newc.new_critical,[3 3]),yn);
+
 figure;
 h(1) = plot(listD.date,listD.CountDeath,'.b');
 hold on;
 h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
 h(3) = plot(newc.date+4,movmean(newc.new_critical*0.3,[3 3]),'r');
-h(4) = plot(listD.date,movmean(listD.CountHardStatus*0.035,[3 3]),'k');
+h(4) = plot(newc.date(1):newc.date(1)+length(newconv)-1,newconv*0.3,'k');
+%h(4) = plot(listD.date,movmean(listD.CountHardStatus*0.035,[3 3]),'k');
 grid on
 box off
 ylabel('daily deaths')
-legend(h(2:4),'deaths','new critical x 0.3, 4 days before','total critical x 0.035, the same day')
+legend(h(2:4),'deaths','new critical x 0.3, 4 days before','new critical conv x 0.3')
+
+%%   pos / symp
+yy = symp.pos./((symp.pos+symp.neg) - symp.nosymptoms_neg - symp.nosymptoms_pos)    %(symp.pos+symp.neg);
+pred = conv(yy,prob);
+fac = 10;
+figure;
+h(1) = plot(listD.date,listD.CountDeath,'b.');
+hold on
+h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+h(3) = plot(symp.date+14,movmean(yy*fac,[3 3]),'k');
+h(4) = plot(symp.date(2):symp.date(1)+length(pred),pred*fac,'r');
+legend(h(2:4),'deaths','%positive x 1.2, 14 days before','%positive x 1.2, conv')

@@ -12,9 +12,14 @@ nCountries = 20;
 
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
-iBahamas = find(ismember(mergedData(:,1),{'Bahamas','Malta','Guyana'}));
-% iBahamas = pop.Population_2020_ < 1000000;
-mergedData(iBahamas,:) = [];
+% iBahamas = find(ismember(mergedData(:,1),{'Bahamas','Malta','Guyana'}));
+
+pop = readtable('data/population.csv','delimiter',',');
+mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
+[~,idx1] = ismember(mergedData(:,1),pop.Country_orDependency_);
+pop = pop(idx1,:);
+small = pop.Population_2020_ < 1000000;
+mergedData(small,:) = [];
 
 criterion = 'ddpm';
 criterionDays = 7;
@@ -28,7 +33,7 @@ if ~exist('heb','var')
 end
 % showDateEvery = 7; % days
 warning off
-pop = readtable('data/population.csv','delimiter',',');
+
 for iCou = 1:length(mergedData)
     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
@@ -38,7 +43,7 @@ mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 deaths = nan(length(timeVector),length(mergedData));
 if heb
     countryName = {'אפגניסטן';'אלבניה';'''אלג''יריה''';'אנדורה';'אנגולה';'אנטיגואה וברבודה';'ארגנטינה';'אַרְמֶנִיָה';'אוֹסטְרַלִיָה';'אוֹסְטְרֵיָה';'''אזרבייג''ן''';'איי בהאמה';'בחריין';'בנגלדש';'ברבדוס';'בלארוס';'בלגיה';'בליז';'בנין';'בהוטן';'בוליביה';'בוסניה';'בוצואנה';'ברזיל';'ברוניי';'בולגריה';'בורקינה פאסו';'בורמה';'בורונדי';'קאבו ורדה';'קמבודיה';'קמרון';'קנדה';'הרפובליקה המרכז - אפריקאית';'צ''אד';['צ''','ילה'];'חרסינה';'קולומביה';'קונגו (בראזוויל)';'קונגו (קינשאסה)';'קוסטה ריקה';'חוף השנהב';'קרואטיה';'קובה';'קַפרִיסִין';'''צ''כיה''';'דנמרק';'ג''יבוטי';'דומיניקה';'הרפובליקה הדומיניקנית';'אקוודור';'מִצְרַיִם';'אל סלבדור';'גיניאה המשוונית';'אריתריאה';'אסטוניה';'Eswatini';'אֶתִיוֹפִּיָה';'''פיג''י''';'פינלנד';'צָרְפַת';'גבון';'גמביה';'''ג''ורג''יה''';'גֶרמָנִיָה';'גאנה';'יָוָן';'גרנדה';'גואטמלה';'גינאה';'גינאה ביסאו';'גיאנה';'האיטי';'הכס הקדוש';'הונדורס';'הונגריה';'אִיסלַנד';'הוֹדוּ';'אִינדוֹנֵזִיָה';'איראן';'עִירַאק';'אירלנד';'ישראל';'אִיטַלִיָה';'ג''מייקה';'יפן';'יַרדֵן';'קזחסטן';'קניה';'קוריאה, דרום';'קוסובו';'כווית';'קירגיזסטן';'לאוס';'לטביה';'לבנון';'ליבריה';'לוב';'ליכטנשטיין';'ליטא';'לוקסמבורג';'מדגסקר';'מלזיה';'מלדיבים';'מאלי';'מלטה';'מאוריטניה';'מאוריציוס';'מקסיקו';'מולדובה';'מונקו';'מונגוליה';'מונטנגרו';'מָרוֹקוֹ';'מוזמביק';'נמיביה';'נפאל';'הולנד';'ניו זילנד';'ניקרגואה';'''ניז''ר''';'ניגריה';'צ. מקדוניה';'נורווגיה';'עומאן';'פקיסטן';'פנמה';'פפואה גינאה החדשה';'פרגוואי';'פרו';'פיליפינים';'פּוֹלִין';'פּוֹרטוּגָל';'קטאר';'רומניה';'רוּסִיָה';'רואנדה';'סנט לוסיה';'סן מרינו';'ערב הסעודית';'סנגל';'סרביה';'סיישל';'סיירה לאון';'סינגפור';'סלובקיה';'סלובניה';'סומליה';'דרום אפריקה';'ספרד';'סרי לנקה';'סודן';'סורינאם';'שבדיה';'שוויץ';'סוּריָה';'טייוואן *';'טנזניה';'תאילנד';'טימור-לסטה';'ללכת';'טרינידד וטובגו';'תוניסיה';'טורקיה';'ארה"ב';'אוגנדה';'אוקראינה';'איחוד האמירויות הערביות';'הממלכה המאוחדת';'אורוגוואי';'אוזבקיסטן';'ונצואלה';'וייטנאם';'הגדה המערבית ועזה';'זמביה'};
-    countryName(iBahamas) = [];
+    countryName(small) = [];
 else
     countryName = mergedData(:,1);
 end
@@ -61,29 +66,18 @@ if dashboard
     deaths(iDate(isDate),iMustHave) = cumsum(deaths(iDate(isDate),iMustHave));
 end
 
-switch criterion
-    case 'd'
-        y = deaths;
-        tit = 'Deaths';
-    case 'dpm'
-        y = deaths./mil;
-        tit = 'Deaths per million';
-    case 'dd'
-        y = [deaths(1,:);diff(deaths)];
-        tit = 'Daily deaths';
-    case 'ddpm'
-        y = [deaths(1,:);diff(deaths)]./mil;
-        isNeg = y < 0;
-        y(isNeg) = nan;
-        isJump = y > 20;
-        if ~dashboard
-            isJump(211,83) = true;  % Israel's little jump
-        end
-        jump = nan(size(y));
-        jump(isJump) = y(isJump);
-        y(isJump) = nan;
-        tit = {'מתים למליון ליום, דירוג לפי ממוצע בשבוע האחרון','יש לכפול ב 9.2 לקבלת מתים ליום בישראל'};
+y = [deaths(1,:);diff(deaths)]./mil;
+isNeg = y < 0;
+y(isNeg) = nan;
+isJump = y > 20;
+if ~dashboard
+    isJump(211,83) = true;  % Israel's little jump
 end
+jump = nan(size(y));
+jump(isJump) = y(isJump);
+y(isJump) = nan;
+tit = {'מתים למליון ליום, דירוג לפי ממוצע בשבוע האחרון','יש לכפול ב 9.2 לקבלת מתים ליום בישראל'};
+
 y(y < 0) = 0;
 y = movmean(y,[6 0],'omitnan');
 if exist('isNeg','var')

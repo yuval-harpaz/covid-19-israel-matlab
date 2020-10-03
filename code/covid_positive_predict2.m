@@ -58,7 +58,7 @@ while read
             cellNosymNeg(jj,1) = sum(today & negative & nosym);
             cellOver60(jj,1) = sum(today & age == 1);
             cellBelow60(jj,1) = sum(today & age == 0);
-            cellNoAge(jj,1) = sum(today & isnan(age));
+            cellNoAge(jj,1) = sum(today & isnan(age)); %#ok<*SAGROW>
         end
         tables{end+1,1} = table(cellDateU,cellPos,cellNeg,cellCoughPos,cellCoughNeg,...
             cellFeverPos,cellFeverNeg,cellSorePos,cellSoreNeg,cellBreathPos,cellBreatNeg,...
