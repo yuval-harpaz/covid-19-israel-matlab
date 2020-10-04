@@ -51,7 +51,8 @@ h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
 h(3) = plot(symp.date+14,movmean(yy*120,[3 3]),'k');
 h(4) = plot(symp.date(2):symp.date(1)+length(pred),pred*120,'r');
 legend(h(2:4),'deaths','%positive x 1.2, 14 days before','%positive x 1.2, conv')
-
+grid on
+title('אחוז התשובות החיוביות')
 
 %% new critical
 newc = readtable('new_critical.csv');
@@ -67,16 +68,17 @@ figure;
 h(1) = plot(listD.date,listD.CountDeath,'.b');
 hold on;
 h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-h(3) = plot(newc.date+4,movmean(newc.new_critical*0.3,[3 3]),'r');
-h(4) = plot(newc.date(1):newc.date(1)+length(newconv)-1,newconv*0.3,'k');
+h(3) = plot(newc.date+4,movmean(newc.new_critical*0.3,[3 3]),'k');
+% h(4) = plot(newc.date(1):newc.date(1)+length(newconv)-1,newconv*0.3,'r');
 %h(4) = plot(listD.date,movmean(listD.CountHardStatus*0.035,[3 3]),'k');
 grid on
 box off
 ylabel('daily deaths')
-legend(h(2:4),'deaths','new critical x 0.3, 4 days before','new critical conv x 0.3')
+% legend(h(2:4),'deaths','new critical x 0.3, 4 days before','new critical conv x 0.3')
+legend(h(2:3),'deaths','new critical x 0.3, 4 days before')
 
 %%   pos / symp
-yy = symp.pos./((symp.pos+symp.neg) - symp.nosymptoms_neg - symp.nosymptoms_pos)    %(symp.pos+symp.neg);
+yy = symp.pos./((symp.pos+symp.neg) - symp.nosymptoms_neg - symp.nosymptoms_pos);    %(symp.pos+symp.neg);
 pred = conv(yy,prob);
 fac = 10;
 figure;

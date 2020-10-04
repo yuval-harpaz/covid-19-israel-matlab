@@ -144,5 +144,5 @@ if ~isempty(hm) && any(iMustHave > nCountries)
     end
 end
 ylabel('מתים למליון')
-
 set(gcf,'Color','w')
+xlabel('דירוג המדינות (מעל מליון איש) בהן הקורונה קטלנית ביותר כרגע')
