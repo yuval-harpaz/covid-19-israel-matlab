@@ -68,14 +68,25 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     data.recovered(row) = recovered;
     nanwritetable(data,'data/Israel/dashboard_timeseries.csv');
 end
-% discharged = t.Counthospitalized-t.Counthospitalized_without_release-t.CountDeath;
 
-
-
-% 
-% [~,~] = system(['curl ''','https://datadashboardapi.health.gov.il/api/queries/_batch''',' -H ''','Accept: application/json, text/plain, */*''',' -H ''','Referer: https://datadashboard.health.gov.il/COVID-19/''',' -H ''','Origin: https://datadashboard.health.gov.il''',' -H ''','User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36''',' -H ''','DNT: 1''',' -H ''','Content-Type: application/json''',' --data-binary ''','{"requests":[{"id":"time","queryName":"lastUpdate","single":false,"parameters":{}},{"id":"confirmed","queryName":"infectedPerDate","single":false,"parameters":{}},{"id":"conf2days","queryName":"sickPerDateTwoDays","single":false,"parameters":{}},{"id":"home_hospital","queryName":"sickPerLocation","single":false,"parameters":{}},{"id":"table","queryName":"patientsPerDate","single":false,"parameters":{}},{"id":"recovered","queryName":"recoveredPerDay","single":false,"parameters":{}},{"id":"tests_positive","queryName":"testResultsPerDate","single":false,"parameters":{}},{"id":"doubling","queryName":"doublingRate","single":false,"parameters":{}},{"id":"age_gender","queryName":"deadByAgeAndGenderPublic","single":false,"parameters":{"ageSections":[0,10,20,30,40,50,60,70,80,90]}},{"id":"staff","queryName":"isolatedDoctorsAndNurses","single":false,"parameters":{}},{"id":"city","queryName":"contagionDataPerCityPublic","single":false,"parameters":{}},{"id":"hospital","queryName":"hospitalStatus","single":false,"parameters":{}}]}''',' --compressed -o data/Israel/dashboard.json']);
-% fid = fopen('data/Israel/dashboard.json','r');
-% txt = fread(fid)';
-% fclose(fid);
-% txt = native2unicode(txt);
-% json = jsondecode(txt);
+%% age gender 
+% infected total, severe today, on vent today, dead total
+ageGen = readtable('data/Israel/dashboard_age_gen.csv');
+jDate = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+3/24;
+if ~isequal(jDate,ageGen.date(end))
+    warning off
+    ageGen.date(end+1) = jDate;
+    warning on
+    order = [1,3,2,4];
+    for ag = 1:4
+        into = 2+(((ag-1)*20+1):2:ag*20);
+        empty = cellfun(@isempty,{json(12+order(ag)).data.male});
+        into(empty) = [];
+        ageGen{end,into} = [json(12+order(ag)).data.male];
+        into = 1+(((ag-1)*20+1):2:ag*20);
+        empty = cellfun(@isempty,{json(12+order(ag)).data.female});
+        into(empty) = [];
+        ageGen{end,into} = [json(12+order(ag)).data.female];
+    end
+    nanwritetable(ageGen,'data/Israel/dashboard_age_gen.csv');
+end
