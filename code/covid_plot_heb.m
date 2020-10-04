@@ -1,10 +1,13 @@
-
+function covid_plot_heb(criterionDays)
 if ~exist('saveFigs','var')
     saveFigs = false;
 end
 if ~exist('listName','var')
     %listName = 'data/Israel/Israel_ministry_of_health.csv';
     listName = 'data/Israel/dashboard_timeseries.csv';
+end
+if ~exist('criterionDays','var')
+    criterionDays = 7;
 end
 cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
@@ -22,7 +25,7 @@ small = pop.Population_2020_ < 1000000;
 mergedData(small,:) = [];
 
 criterion = 'ddpm';
-criterionDays = 7;
+
 mustHave = 'Israel';
 ymax = 10;
 % fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
