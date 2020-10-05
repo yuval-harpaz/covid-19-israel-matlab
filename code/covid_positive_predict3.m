@@ -249,17 +249,22 @@ predLin =  conv([movmean(t.pos_m_60+t.pos_f_60,[3 3]);next2w],prob);
 lag = 12;
 fac = 20;
 pred = conv(movmean(t.pos_m_60+t.pos_f_60,[3 3]),prob);
+ratio60 = mean((t.pos_f_60(end-3:end)+t.pos_m_60(end-3:end))./(t.pos_f(end-3:end)+t.pos_m(end-3:end)));
+missingDates = find(ismember(listD.date,t.date),1,'last')+1;
+missingDates = missingDates:height(listD)-1;
+missing60 = listD.tests_positive(missingDates)*ratio60;
+pred = conv(movmean([t.pos_m_60+t.pos_f_60;missing60],[3 3]),prob);
 
 figure;
-h(1) = plot(listD.date,listD.CountDeath,'.b');
+h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
 hold on;
-h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+h(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
 h(3) = plot(t.date+lag,movmean(t.pos_m_60+t.pos_f_60,[3 3])/20,'k--');
 h(4) = plot(t.date(2):t.date(1)+length(pred),pred/20,'r--');
 h(5) = plot(t.date(2):t.date(1)+length(predLin),predLin/20,'r-.');
-h(6) = plot(t.date(1:end-lag)+lag,movmean(t.pos_m_60(1:end-lag)+t.pos_f_60(1:end-lag),[3 3])/20,'k');
-h(7) = plot(t.date(2:end),pred(1:end-length(prob))/20,'r');
-legend(h([2,6,4,5]),'נפטרים',...
+h(6) = plot(t.date(1:end-lag)+lag,movmean(t.pos_m_60(1:end-lag)+t.pos_f_60(1:end-lag),[3 3])/20,'k','linewidth',2);
+h(7) = plot(t.date(2:end),pred(1:end-length(prob)-length(missing60))/20,'r','linewidth',1);
+legend(h([2,3,4,5]),'נפטרים',...
     ['12 יום קודם: ',str(fac),'/','(חיוביים מעל גיל 60)'],...
     'מודל (מחר יש 0 חיוביים)','מודל (ממשיכים שבועיים באותו הקצב)','location','west')
 box off
@@ -269,3 +274,36 @@ ylabel('נפטרים ליום')
 set(gcf,'Color','w')
 set(gca,'FontSize',12)
 
+nWeeks = 2;
+next2w = [ones(nWeeks*7,1),(15:(14+nWeeks*7))']*b;
+next2w = [next2w;(next2w(end)-85/6:-85/6:0)';0];
+predLin =  conv([movmean(t.pos_m_60+t.pos_f_60,[3 3]);next2w],prob);
+x = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
+x = [x;(x(end)-85/3:-85/3:0)';0];
+predBest =  conv(x,prob);
+%% final plot
+figure;
+h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
+hold on;
+h(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% h(4) = plot(t.date(2):t.date(1)+length(pred),pred/20,'r--');
+h(5) = plot(t.date(2):t.date(1)+length(predBest),predBest/20,'r--','linewidth',2);
+xLin = t.date(2):t.date(1)+length(predLin);
+h(6) = plot(xLin,predLin/20,'r:','linewidth',2);
+h(7) = plot(t.date(2:end),pred(1:end-length(prob)-length(missing60))/20,'r','linewidth',1);
+i1 = height(t)+length(missing60);
+xx = [xLin(i1:end),fliplr(xLin(i1:end))]';
+yy = predLin(i1:end)/20;
+yy2 = predBest(i1:end)/20;
+yy2(end+1:length(yy)) = 0;
+yy = [yy;flipud(yy2)];
+fill(xx,yy,[0.8,0.8,0.8],'linestyle','none')
+legend(h([2,6,5]),'נפטרים','בעוד שבועיים מתחילה ירידה מתונה','מחר מתחילה ירידה בקצב גבוה',...
+   'location','west')
+box off
+grid on
+title('ניבוי תמותה לפי מספר הנבדקים החיוביים מעל גיל 60')
+ylabel('נפטרים ליום')
+set(gcf,'Color','w')
+set(gca,'FontSize',12)
+text(xx(45),20,str(round(sum(yy(1:length(xx)/2))-sum(yy(length(xx)/2+1:end)))))
