@@ -146,6 +146,9 @@ for iDate = 1:length(date)
 end
 
 save symp t
+
+%%
+
 %%
 listD = readtable('dashboard_timeseries.csv');
 lag = 14;
