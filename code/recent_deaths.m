@@ -39,6 +39,19 @@ ttd = death1.Time_between_positive_and_death;
 ttd(ismember(ttd,'NULL')) = [];
 median(cellfun(@str2num, ttd))
 ttd1 = hist(cellfun(@str2num, ttd),-2:140);
+
+
+
+
+tth = death0.Time_between_positive_and_hospitalization;
+tth(ismember(tth,'NULL')) = [];
+tth0 = hist(cellfun(@str2num, tth),-2:140);
+median(cellfun(@str2num, tth))
+tth = death1.Time_between_positive_and_hospitalization;
+tth(ismember(tth,'NULL')) = [];
+median(cellfun(@str2num, tth))
+tth1 = hist(cellfun(@str2num, tth),-2:140);
+
 figure;
 bar((-2:140)-0.2,100*tth0/sum(ttd0),'EdgeColor','none')
 hold on
@@ -51,16 +64,36 @@ grid on
 title('יום הפטירה ביחס ליום קבלת תוצאה חיובית')
 
 
-tth = death0.Time_between_positive_and_hospitalization;
-tth(ismember(tth,'NULL')) = [];
-tth0 = hist(cellfun(@str2num, tth),-2:140);
-median(cellfun(@str2num, tth))
-tth = death1.Time_between_positive_and_hospitalization;
-tth(ismember(tth,'NULL')) = [];
-median(cellfun(@str2num, tth))
-tth1 = hist(cellfun(@str2num, tth),-2:140);
+
 figure;
-bar((-2:140)-0.2,100*tth0/sum(tth0),'EdgeColor','none')
+bar((-2:140)-0.2,100*tth0/sum(ttd0),'EdgeColor','none')
 hold on
-bar((-2:140)+0.2,100*tth1/sum(tth1),'EdgeColor','none')
+bar((-2:140)+0.2,100*tth1/sum(ttd1),'EdgeColor','none')
+xlim([-2 25])
+
+vnt = death0.Ventilated;
+vnt(ismember(vnt,'NULL')) = [];
+vnt0 = mean(cellfun(@str2num,vnt));
+vnt = death1.Ventilated;
+vnt(ismember(vnt,'NULL')) = [];
+vnt1 = mean(cellfun(@str2num,vnt));
+
+age = unique(death0.age_group);
+age = age([4,1,2,3]);
+aa = {death0.age_group,death1.age_group};
+for ii = 1:4
+    for jj = 1:2
+        hh(ii,jj) = sum(ismember(aa{jj},age{ii}));
+    end
+end
+nn = hh(:,1)/sum(hh(:,1));
+nn(:,2) = hh(:,2)/sum(hh(:,2));
+figure;
+bar(nn,'EdgeColor','none')
+legend('עד ספט 25','מ ספט 25')
+set(gca,'FontSize',13,'XTickLabel',age)
+ylabel('שיעור השייכים לקבוצת הגיל')
+grid on
+title('גילאי הנפטרים לפני ואחרי 25 לספטמבר')
+grid on
 

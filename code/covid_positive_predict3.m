@@ -13,8 +13,10 @@ read = true;
 tables = {};
 json = {};
 id = false;
+%% loop read
+err = 0;
 while read
-    tic;
+    try
     json = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=d337959a-020a-4ed3-84f7-fca182292308&limit=100000&offset=',str(ii)]);
     if length(json) > 10000
         %json{ii/100000+1} = strrep(json{ii/100000+1},'NULL',' ');
@@ -82,10 +84,19 @@ while read
 %             cellOver60pos,cellOver60breath);
         ii = ii+100000;
         disp(datestr(cellDateU(1)))
+        err = o;
     else
         read = false;
         %json = json(1:end-1);
         disp('done')
+    end
+    catch
+        err = err+1;
+        if err >= 10
+            error('10 attemts failed')
+        else
+            pause(1)
+        end
     end
 end
 date = [];
@@ -148,165 +159,165 @@ end
 save symp t
 
 %%
-
+covid_pred_plot;
 %%
-listD = readtable('dashboard_timeseries.csv');
-lag = 14;
-figure;
-h(1) = plot(listD.date,listD.CountDeath,'.b');
-hold on;
-h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-%h(3) = plot(t.date+lag,movmean(t.pos_m+pos_f-t.nosymptoms_pos_m-t.nosymptoms_pos_f,[3 3])/50,'k');
-h(3) = plot(t.date+lag,movmean(t.symptoms_pos_m+t.symptoms_pos_f,[3 3])/50,'k');
-%h(4) = plot(t.date+lag,movmean(t.pos_f-t.nosymptoms_pos_f,[3 3])/50,'k');
-legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
-box off
-grid on
-title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
-ylabel('daily deaths')
-
-figure;
-h(1) = plot(listD.date,listD.CountDeath,'.b');
-hold on;
-h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-%h(3) = plot(t.date+lag,movmean(t.pos_m+pos_f-t.nosymptoms_pos_m-t.nosymptoms_pos_f,[3 3])/50,'k');
-h(3) = plot(t.date+lag,movmean(t.symptoms_pos_m-t.symptoms_pos_m_60+t.symptoms_pos_f-t.symptoms_pos_f_60,[3 3])/50,'k');
-%h(4) = plot(t.date+lag,movmean(t.pos_f-t.nosymptoms_pos_f,[3 3])/50,'k');
-legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
-box off
-grid on
-title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
-ylabel('daily deaths')
-
-
-%% 
-
-yy = [t.nosymptoms_pos_m-t.nosymptoms_pos_m_60,t.nosymptoms_pos_f-t.nosymptoms_pos_f_60,...
-    t.symptoms_pos_m-t.symptoms_pos_m_60,t.symptoms_pos_f-t.symptoms_pos_f_60,t.symptoms_pos_m_60,t.symptoms_pos_f_60];
-yy = movmean(yy,[3 3]);
-figure;
-plot(yy)
-legend('Male < 60','Female < 60','symp Male < 60','symp Female < 60','symp Male > 60','symp Female > 60')
-
-%%
-figure;
-h(1) = plot(listD.date,listD.CountDeath,'.b');
-hold on;
-h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-h(3) = plot(t.date+lag,movmean(t.pos_m+t.pos_f,[3 3])/200,'k');
-legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
-box off
-grid on
-title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
-ylabel('daily deaths')
-
-%%
-newc = readtable('new_critical.csv');
-figure;
-h(1) = plot(listD.date,listD.CountDeath,'.b');
-hold on;
-h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
-h(3) = plot(newc.date+4,movmean(newc.new_critical*0.3,[3 3]),'r');
-h(4) = plot(listD.date,movmean(listD.CountHardStatus*0.035,[3 3]),'k');
-grid on
-box off
-ylabel('daily deaths')
-legend(h(2:4),'deaths','new critical x 0.3, 4 days before','total critical x 0.035, the same day')
-
-%% pos > 60
-
-
-
-
-
-
-
-json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2b2fceb-3334-44eb-b7b5-9327a573ea2c&limit=500000');
-json = jsondecode(json);
-death = json.result.records;
-death = struct2table(death);
-pos2death = cellfun(@str2num,strrep(death.Time_between_positive_and_death,'NULL','0'));
-bad = pos2death < 1 | ismember(death.gender,'לא ידוע');
-male = ismember(death.gender(~bad),'זכר');
-pos2death = pos2death(~bad);
-old = ~ismember(death.age_group,'<65');
-
-prob = movmean(hist(pos2death,1:1000),[3 3]);
-iEnd = find(prob < 0.5,1);
-prob = prob(1:iEnd-1);
-prob = prob/sum(prob);
-
-
-% pos2death65 = cellfun(@str2num,strrep(t.Time_between_positive_and_death,'NULL','0'));
-% pos2death65 = pos2death65(~bad & old);
-% prob65 = movmean(hist(pos2death,1:1000),[3 3]);
-% iEnd = find(prob65 < 0.5,1);
-% prob65 = prob65(1:iEnd-1);
-% prob65 = prob65/sum(prob65);
+% listD = readtable('dashboard_timeseries.csv');
+% lag = 14;
 % figure;
-% plot([prob;prob65]')
-trend = movmean(t.pos_m_60(end-17:end-4)+t.pos_f_60(end-17:end-4),[3 3]);
-b = regressBasic((1:14)',trend);
-next2w = [ones(14,1),(15:28)']*b;
-predLin =  conv([movmean(t.pos_m_60+t.pos_f_60,[3 3]);next2w],prob);
-lag = 12;
-fac = 20;
-pred = conv(movmean(t.pos_m_60+t.pos_f_60,[3 3]),prob);
-ratio60 = mean((t.pos_f_60(end-3:end)+t.pos_m_60(end-3:end))./(t.pos_f(end-3:end)+t.pos_m(end-3:end)));
-missingDates = find(ismember(listD.date,t.date),1,'last')+1;
-missingDates = missingDates:height(listD)-1;
-missing60 = listD.tests_positive(missingDates)*ratio60;
-pred = conv(movmean([t.pos_m_60+t.pos_f_60;missing60],[3 3]),prob);
-
-figure;
-h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
-hold on;
-h(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
-h(3) = plot(t.date+lag,movmean(t.pos_m_60+t.pos_f_60,[3 3])/20,'k--');
-h(4) = plot(t.date(2):t.date(1)+length(pred),pred/20,'r--');
-h(5) = plot(t.date(2):t.date(1)+length(predLin),predLin/20,'r-.');
-h(6) = plot(t.date(1:end-lag)+lag,movmean(t.pos_m_60(1:end-lag)+t.pos_f_60(1:end-lag),[3 3])/20,'k','linewidth',2);
-h(7) = plot(t.date(2:end),pred(1:end-length(prob)-length(missing60))/20,'r','linewidth',1);
-legend(h([2,3,4,5]),'נפטרים',...
-    ['12 יום קודם: ',str(fac),'/','(חיוביים מעל גיל 60)'],...
-    'מודל (מחר יש 0 חיוביים)','מודל (ממשיכים שבועיים באותו הקצב)','location','west')
-box off
-grid on
-title('ניבוי תמותה לפי מספר הנבדקים החיוביים מעל גיל 60')
-ylabel('נפטרים ליום')
-set(gcf,'Color','w')
-set(gca,'FontSize',12)
-
-nWeeks = 2;
-next2w = [ones(nWeeks*7,1),(15:(14+nWeeks*7))']*b;
-next2w = [next2w;(next2w(end)-85/6:-85/6:0)';0];
-predLin =  conv([movmean(t.pos_m_60+t.pos_f_60,[3 3]);next2w],prob);
-x = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
-x = [x;(x(end)-85/3:-85/3:0)';0];
-predBest =  conv(x,prob);
-%% final plot
-figure;
-h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
-hold on;
-h(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% h(1) = plot(listD.date,listD.CountDeath,'.b');
+% hold on;
+% h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+% %h(3) = plot(t.date+lag,movmean(t.pos_m+pos_f-t.nosymptoms_pos_m-t.nosymptoms_pos_f,[3 3])/50,'k');
+% h(3) = plot(t.date+lag,movmean(t.symptoms_pos_m+t.symptoms_pos_f,[3 3])/50,'k');
+% %h(4) = plot(t.date+lag,movmean(t.pos_f-t.nosymptoms_pos_f,[3 3])/50,'k');
+% legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
+% box off
+% grid on
+% title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
+% ylabel('daily deaths')
+% 
+% figure;
+% h(1) = plot(listD.date,listD.CountDeath,'.b');
+% hold on;
+% h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+% %h(3) = plot(t.date+lag,movmean(t.pos_m+pos_f-t.nosymptoms_pos_m-t.nosymptoms_pos_f,[3 3])/50,'k');
+% h(3) = plot(t.date+lag,movmean(t.symptoms_pos_m-t.symptoms_pos_m_60+t.symptoms_pos_f-t.symptoms_pos_f_60,[3 3])/50,'k');
+% %h(4) = plot(t.date+lag,movmean(t.pos_f-t.nosymptoms_pos_f,[3 3])/50,'k');
+% legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
+% box off
+% grid on
+% title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
+% ylabel('daily deaths')
+% 
+% 
+% %% 
+% 
+% yy = [t.nosymptoms_pos_m-t.nosymptoms_pos_m_60,t.nosymptoms_pos_f-t.nosymptoms_pos_f_60,...
+%     t.symptoms_pos_m-t.symptoms_pos_m_60,t.symptoms_pos_f-t.symptoms_pos_f_60,t.symptoms_pos_m_60,t.symptoms_pos_f_60];
+% yy = movmean(yy,[3 3]);
+% figure;
+% plot(yy)
+% legend('Male < 60','Female < 60','symp Male < 60','symp Female < 60','symp Male > 60','symp Female > 60')
+% 
+% %%
+% figure;
+% h(1) = plot(listD.date,listD.CountDeath,'.b');
+% hold on;
+% h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+% h(3) = plot(t.date+lag,movmean(t.pos_m+t.pos_f,[3 3])/200,'k');
+% legend(h(2:3),'deaths','corona positive with symptoms / 50, 14 days before')
+% box off
+% grid on
+% title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
+% ylabel('daily deaths')
+% 
+% %%
+% newc = readtable('new_critical.csv');
+% figure;
+% h(1) = plot(listD.date,listD.CountDeath,'.b');
+% hold on;
+% h(2) = plot(listD.date,movmean(listD.CountDeath,[3 3]),'b','linewidth',2);
+% h(3) = plot(newc.date+4,movmean(newc.new_critical*0.3,[3 3]),'r');
+% h(4) = plot(listD.date,movmean(listD.CountHardStatus*0.035,[3 3]),'k');
+% grid on
+% box off
+% ylabel('daily deaths')
+% legend(h(2:4),'deaths','new critical x 0.3, 4 days before','total critical x 0.035, the same day')
+% 
+% %% pos > 60
+% 
+% 
+% 
+% 
+% 
+% 
+% 
+% json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2b2fceb-3334-44eb-b7b5-9327a573ea2c&limit=500000');
+% json = jsondecode(json);
+% death = json.result.records;
+% death = struct2table(death);
+% pos2death = cellfun(@str2num,strrep(death.Time_between_positive_and_death,'NULL','0'));
+% bad = pos2death < 1 | ismember(death.gender,'לא ידוע');
+% male = ismember(death.gender(~bad),'זכר');
+% pos2death = pos2death(~bad);
+% old = ~ismember(death.age_group,'<65');
+% 
+% prob = movmean(hist(pos2death,1:1000),[3 3]);
+% iEnd = find(prob < 0.5,1);
+% prob = prob(1:iEnd-1);
+% prob = prob/sum(prob);
+% 
+% 
+% % pos2death65 = cellfun(@str2num,strrep(t.Time_between_positive_and_death,'NULL','0'));
+% % pos2death65 = pos2death65(~bad & old);
+% % prob65 = movmean(hist(pos2death,1:1000),[3 3]);
+% % iEnd = find(prob65 < 0.5,1);
+% % prob65 = prob65(1:iEnd-1);
+% % prob65 = prob65/sum(prob65);
+% % figure;
+% % plot([prob;prob65]')
+% trend = movmean(t.pos_m_60(end-17:end-4)+t.pos_f_60(end-17:end-4),[3 3]);
+% b = regressBasic((1:14)',trend);
+% next2w = [ones(14,1),(15:28)']*b;
+% predLin =  conv([movmean(t.pos_m_60+t.pos_f_60,[3 3]);next2w],prob);
+% lag = 12;
+% fac = 20;
+% pred = conv(movmean(t.pos_m_60+t.pos_f_60,[3 3]),prob);
+% ratio60 = mean((t.pos_f_60(end-3:end)+t.pos_m_60(end-3:end))./(t.pos_f(end-3:end)+t.pos_m(end-3:end)));
+% missingDates = find(ismember(listD.date,t.date),1,'last')+1;
+% missingDates = missingDates:height(listD)-1;
+% missing60 = listD.tests_positive(missingDates)*ratio60;
+% pred = conv(movmean([t.pos_m_60+t.pos_f_60;missing60],[3 3]),prob);
+% 
+% figure;
+% h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
+% hold on;
+% h(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% h(3) = plot(t.date+lag,movmean(t.pos_m_60+t.pos_f_60,[3 3])/20,'k--');
 % h(4) = plot(t.date(2):t.date(1)+length(pred),pred/20,'r--');
-h(5) = plot(t.date(2):t.date(1)+length(predBest),predBest/20,'r--','linewidth',2);
-xLin = t.date(2):t.date(1)+length(predLin);
-h(6) = plot(xLin,predLin/20,'r:','linewidth',2);
-h(7) = plot(t.date(2:end),pred(1:end-length(prob)-length(missing60))/20,'r','linewidth',1);
-i1 = height(t)+length(missing60);
-xx = [xLin(i1:end),fliplr(xLin(i1:end))]';
-yy = predLin(i1:end)/20;
-yy2 = predBest(i1:end)/20;
-yy2(end+1:length(yy)) = 0;
-yy = [yy;flipud(yy2)];
-fill(xx,yy,[0.8,0.8,0.8],'linestyle','none')
-legend(h([2,6,5]),'נפטרים','בעוד שבועיים מתחילה ירידה מתונה','מחר מתחילה ירידה בקצב גבוה',...
-   'location','west')
-box off
-grid on
-title('ניבוי תמותה לפי מספר הנבדקים החיוביים מעל גיל 60')
-ylabel('נפטרים ליום')
-set(gcf,'Color','w')
-set(gca,'FontSize',12)
-text(xx(45),20,str(round(sum(yy(1:length(xx)/2))-sum(yy(length(xx)/2+1:end)))))
+% h(5) = plot(t.date(2):t.date(1)+length(predLin),predLin/20,'r-.');
+% h(6) = plot(t.date(1:end-lag)+lag,movmean(t.pos_m_60(1:end-lag)+t.pos_f_60(1:end-lag),[3 3])/20,'k','linewidth',2);
+% h(7) = plot(t.date(2:end),pred(1:end-length(prob)-length(missing60))/20,'r','linewidth',1);
+% legend(h([2,3,4,5]),'נפטרים',...
+%     ['12 יום קודם: ',str(fac),'/','(חיוביים מעל גיל 60)'],...
+%     'מודל (מחר יש 0 חיוביים)','מודל (ממשיכים שבועיים באותו הקצב)','location','west')
+% box off
+% grid on
+% title('ניבוי תמותה לפי מספר הנבדקים החיוביים מעל גיל 60')
+% ylabel('נפטרים ליום')
+% set(gcf,'Color','w')
+% set(gca,'FontSize',12)
+% 
+% nWeeks = 2;
+% next2w = [ones(nWeeks*7,1),(15:(14+nWeeks*7))']*b;
+% next2w = [next2w;(next2w(end)-85/6:-85/6:0)';0];
+% predLin =  conv([movmean(t.pos_m_60+t.pos_f_60,[3 3]);next2w],prob);
+% x = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
+% x = [x;(x(end)-85/3:-85/3:0)';0];
+% predBest =  conv(x,prob);
+% %% final plot
+% figure;
+% h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
+% hold on;
+% h(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% % h(4) = plot(t.date(2):t.date(1)+length(pred),pred/20,'r--');
+% h(5) = plot(t.date(2):t.date(1)+length(predBest),predBest/20,'r--','linewidth',2);
+% xLin = t.date(2):t.date(1)+length(predLin);
+% h(6) = plot(xLin,predLin/20,'r:','linewidth',2);
+% h(7) = plot(t.date(2:end),pred(1:end-length(prob)-length(missing60))/20,'r','linewidth',1);
+% i1 = height(t)+length(missing60);
+% xx = [xLin(i1:end),fliplr(xLin(i1:end))]';
+% yy = predLin(i1:end)/20;
+% yy2 = predBest(i1:end)/20;
+% yy2(end+1:length(yy)) = 0;
+% yy = [yy;flipud(yy2)];
+% fill(xx,yy,[0.8,0.8,0.8],'linestyle','none')
+% legend(h([2,6,5]),'נפטרים','בעוד שבועיים מתחילה ירידה מתונה','מחר מתחילה ירידה בקצב גבוה',...
+%    'location','west')
+% box off
+% grid on
+% title('ניבוי תמותה לפי מספר הנבדקים החיוביים מעל גיל 60')
+% ylabel('נפטרים ליום')
+% set(gcf,'Color','w')
+% set(gca,'FontSize',12)
+% text(xx(45),20,str(round(sum(yy(1:length(xx)/2))-sum(yy(length(xx)/2+1:end)))))
