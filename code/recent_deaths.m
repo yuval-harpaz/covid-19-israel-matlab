@@ -27,6 +27,17 @@ for ii = height(death0):-1:1
     disp(ii)
 end
 
+
+nans = find(isnan(row));
+for in = 1:length(nans)
+    if abs(row(nans(in)+1)-row(nans(in)-1)) == 3
+        disp(in)
+        disp(death0(nans(in),:))
+        disp(death(row(nans(in)-1)+1,:))
+    end
+end
+        
+
 death1 = death;
 death1(row(~isnan(row)),:) = [];
 death0(isnan(row),:) = [];
@@ -97,3 +108,21 @@ grid on
 title('גילאי הנפטרים לפני ואחרי 25 לספטמבר')
 grid on
 
+
+hos = death0.Length_of_hospitalization;
+hos(ismember(hos,'NULL')) = [];
+hos0 = median(cellfun(@str2num,hos));
+nohos0 = mean(cellfun(@str2num,hos) <= 0);
+hos = death1.Length_of_hospitalization;
+hos(ismember(hos,'NULL')) = [];
+hos1 = median(cellfun(@str2num,hos));
+nohos1 = mean(cellfun(@str2num,hos) <= 0);
+
+male0 = nan(height(death0),1);
+male0(ismember(death0.gender,'זכר')) = 1;
+male0(ismember(death0.gender,'נקבה')) = 0;
+nanmean(male0)
+male1 = nan(height(death1),1);
+male1(ismember(death1.gender,'זכר')) = 1;
+male1(ismember(death1.gender,'נקבה')) = 0;
+nanmean(male1)
