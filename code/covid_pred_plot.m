@@ -35,6 +35,7 @@ probCrit = probCrit/sum(probCrit);
 predCrit = movmean(conv(movmean(newc.new_critical,[3 3]),probCrit),[3 3]);
 % predCritTot = conv(movmean(listD.CountHardStatus(1:end-1),[3 3]),[0,0,0,1]);
 %%
+clear h
 figure;
 plot(listD.date,listD.CountDeath,'.b');
 hold on;
