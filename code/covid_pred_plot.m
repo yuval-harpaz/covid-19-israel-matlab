@@ -35,23 +35,42 @@ probCrit = probCrit/sum(probCrit);
 predCrit = movmean(conv(movmean(newc.new_critical,[3 3]),probCrit),[3 3]);
 % predCritTot = conv(movmean(listD.CountHardStatus(1:end-1),[3 3]),[0,0,0,1]);
 %%
+
+open pred1.fig
+hp = findobj(gca,'Type','line');
+y1oct = hp(2).YData';
+x1oct = hp(2).XData';
+x = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
+x = [x;(x(end)-85/3:-85/3:0)';0];
+predBest =  conv(x,prob);
 clear h
-figure;
+figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
 plot(listD.date,listD.CountDeath,'.b');
 hold on;
 h(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
-% h(2) = plot(listD.date(end),listD.CountDeath(end),'*b','linewidth',2);
-h(2) = plot(newc.date(1):(newc.date(1)+length(predCrit))-1,predCrit*0.3,'r-.');
-% h(4) = plot(newc.date(end),predCrit(height(newc))*0.3,'*r','linewidth',2);
-h(3) = plot(t.date(1):(t.date(1)+length(predInfected))-1,predInfected*0.05,'k');
-% h(6) = plot(t.date(end),predInfected(height(t))*0.05,'*k','linewidth',2);
-% plot(listD.date(1):(listD.date(1)+length(predCritTot)-1),predCritTot*0.035,'g','linewidth',1);
-xlim([datetime(2020,7,1) datetime(2020,12,31)])
+h(2) = plot(x1oct(204:end),y1oct(204:end),'r--','linewidth',2);
+h(3) = plot(t.date(1):t.date(1)+length(predBest)-1,predBest/20,'k','linewidth',1);
 grid on
 grid minor
 ylabel('נפטרים')
-legend(h,'נפטרים','ניבוי לפי חולים קשים חדשים','ניבוי לפי נדבקים מעל גיל 60','location','northwest')
-title('ניבוי תמותה')
+legend(h,'נפטרים','ניבוי תמותה מה- 1 לאוק''','ניבוי תמותה מתעדכן','location','northwest')
+title('ניבוי תמותה לפי ירידה בתחלואה בשיעור דומה לגל הראשון')
+set(gca,'fontsize',13)
+box off
+
+% h(2) = plot(listD.date(end),listD.CountDeath(end),'*b','linewidth',2);
+% h(3) = plot(newc.date(1):(newc.date(1)+length(predCrit))-1,predCrit*0.3,'r-.');
+% h(4) = plot(newc.date(end),predCrit(height(newc))*0.3,'*r','linewidth',2);
+% h(3) = plot(t.date(1):(t.date(1)+length(predInfected))-1,predInfected*0.05,'k');
+
+
+% h(6) = plot(t.date(end),predInfected(height(t))*0.05,'*k','linewidth',2);
+% plot(listD.date(1):(listD.date(1)+length(predCritTot)-1),predCritTot*0.035,'g','linewidth',1);
+% xlim([datetime(2020,7,1) datetime(2020,12,31)])
+
+
+
+
 % legend(h,'נפטרים','נפטרים היום','ניבוי לפי חולים קשים חדשים','נתוני חולים קשים קיימים עד יום זה','ניבוי לפי נדבקים מעל גיל 60','נתוני נידבקים לפי גיל קיימים עד יום זה')
 %%
 
