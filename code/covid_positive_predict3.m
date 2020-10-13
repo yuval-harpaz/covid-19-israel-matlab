@@ -99,6 +99,7 @@ while read
         end
     end
 end
+%%
 date = [];
 for ij = 1:length(tables)
     date = [date;tables{ij}.cellDateU];
@@ -162,9 +163,9 @@ save symp t
 covid_pred_plot;
 open pred1.fig
 idx = listD.date > datetime(2020,10,1);
-sm = movmean(listD.CountDeath,[3 3],'omitnan');
+sm = movmean(listD.CountDeath(1:end-1),[3 3],'omitnan');
 plot(listD.date(idx),listD.CountDeath(idx),'.k');
-plot(listD.date(idx),sm(idx),'k','linewidth',2);
+plot(listD.date(idx(1:end-1)),sm(idx(1:end-1)),'k','linewidth',2);
 h = findobj(gca,'Type','line');
 grid on
 legend(h([5,4,3,1]),'תמותה עד ה 1 לאוק''','ניבוי ירידה תלולה כמו בסגר הראשון',...
