@@ -95,7 +95,7 @@ while read
         if err >= 10
             error('10 attemts failed')
         else
-            pause(1)
+            pause(10)
         end
     end
 end
@@ -161,17 +161,17 @@ save symp t
 
 %%
 covid_pred_plot;
-open pred1.fig
-idx = listD.date > datetime(2020,10,1);
-sm = movmean(listD.CountDeath(1:end-1),[3 3],'omitnan');
-plot(listD.date(idx),listD.CountDeath(idx),'.k');
-plot(listD.date(idx(1:end-1)),sm(idx(1:end-1)),'k','linewidth',2);
-h = findobj(gca,'Type','line');
-grid on
-legend(h([5,4,3,1]),'תמותה עד ה 1 לאוק''','ניבוי ירידה תלולה כמו בסגר הראשון',...
-    'ניבוי ירידה איטית','הירידה בתמותה בפועל','location','northwest')
-set(gca,'fontsize',13)
-title('הירידה בתמותה מהירה, ודומה לירידה בסגר הראשון')
+% open pred1.fig
+% idx = listD.date > datetime(2020,10,1);
+% sm = movmean(listD.CountDeath(1:end-1),[3 3],'omitnan');
+% plot(listD.date(idx),listD.CountDeath(idx),'.k');
+% plot(listD.date(idx(1:end-1)),sm(idx(1:end-1)),'k','linewidth',2);
+% h = findobj(gca,'Type','line');
+% grid on
+% legend(h([5,4,3,1]),'תמותה עד ה 1 לאוק''','ניבוי ירידה תלולה כמו בסגר הראשון',...
+%     'ניבוי ירידה איטית','הירידה בתמותה בפועל','location','northwest')
+% set(gca,'fontsize',13)
+% title('הירידה בתמותה מהירה, ודומה לירידה בסגר הראשון')
 
 %%
 % listD = readtable('dashboard_timeseries.csv');
