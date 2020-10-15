@@ -1,8 +1,8 @@
 cd ~/covid-19-israel-matlab/data/Israel
-[~,msg] = system('wget -O lmsWeek.xlsx https://www.cbs.gov.il/he/publications/DocLib/2020/%D7%9C%D7%95%D7%97%D7%95%D7%AA%20%D7%AA%D7%9C%D7%95%D7%A9%D7%99%D7%9D/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-2000-2020-%D7%9C%D7%A4%D7%99-%D7%A9%D7%91%D7%95%D7%A2.xlsx');
-[~,msg] = system('wget -O lmsMonth.xlsx https://www.cbs.gov.il/he/publications/DocLib/2020/%D7%9C%D7%95%D7%97%D7%95%D7%AA%20%D7%AA%D7%9C%D7%95%D7%A9%D7%99%D7%9D/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%A0%D7%94-%D7%97%D7%95%D7%93%D7%A9.xlsx');
-
-week = readtable('lmsWeek.xlsx','sheet','2020','Range','B14:L65','ReadVariableNames',false);
+% [~,msg] = system('wget -O lmsWeek.xlsx https://www.cbs.gov.il/he/publications/DocLib/2020/%D7%9C%D7%95%D7%97%D7%95%D7%AA%20%D7%AA%D7%9C%D7%95%D7%A9%D7%99%D7%9D/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-2000-2020-%D7%9C%D7%A4%D7%99-%D7%A9%D7%91%D7%95%D7%A2.xlsx');
+% [~,msg] = system('wget -O lmsMonth.xlsx https://www.cbs.gov.il/he/publications/DocLib/2020/%D7%9C%D7%95%D7%97%D7%95%D7%AA%20%D7%AA%D7%9C%D7%95%D7%A9%D7%99%D7%9D/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%A0%D7%94-%D7%97%D7%95%D7%93%D7%A9.xlsx');
+[~,msg] = system('wget -O lmsMonth.xlsx https://www.cbs.gov.il/he/publications/LochutTlushim/2020/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%A0%D7%94-%D7%97%D7%95%D7%93%D7%A9.xlsx')
+% week = readtable('lmsWeek.xlsx','sheet','2020','Range','B14:L65','ReadVariableNames',false);
 monthAll = readtable('lmsMonth.xlsx','Range','B10:V21','ReadVariableNames',false);
 month70 = readtable('lmsMonth.xlsx','Range','B28:V39','ReadVariableNames',false);
 %from https://www.cbs.gov.il/he/publications/DocLib/2020/yarhon0720/b1.xls'
@@ -95,9 +95,20 @@ for ip = 1:2
     if ip == 1
         hold on
         hc = plot(covid(1:8),'k','linewidth',2);
+        tot = nansum(yy);
+        tot(2,:) = sum(yy(~isnan(yy(:,end)),:));
     end
     ylim([-50 50])
     set(gca,'YTick',-40:20:40)
 end
 legend([h;hb;hc],[cellstr(num2str((2010:2020)'));{'צפי';'קורונה'}],[900 415 0.1 0.2]);
-niftarim = readtable('~/Downloads/corona_deceased_ver_0034.csv');
+% niftarim = readtable('~/Downloads/corona_deceased_ver_0034.csv');
+figure;
+hb = bar(tot');
+figure;
+for ii = 1:11
+    hb11(ii) = bar(2009+ii,9.2*tot(2,ii),'facecolor',col(ii,:));
+    hold on
+end
+set(gca,'xtick',2010:2020)
+grid on
