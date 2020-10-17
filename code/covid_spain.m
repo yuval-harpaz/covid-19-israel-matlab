@@ -1,20 +1,19 @@
 function [esp,pop,date] = covid_spain
 plt = 0;
-source = 'mscbs'; % or 'datadista'
+source = 'datadista'; % or 'datadista'
 cd ~/covid-19-israel-matlab/
-
+pop = readtable('data/spain_population.csv','ReadVariableNames',false);
 switch source
     case 'datadista'
-        esp = urlread('https://raw.githubusercontent.com/datadista/datasets/master/COVID%2019/ccaa_covid19_fallecidos.csv');
-        fid = fopen('tmp.csv','w');
-        fwrite(fid,esp);
-        fclose(fid);
-        esp = readtable('tmp.csv');
-        date = datetime(strrep(cellfun(@(x) x([6:8,9:10,5,1:4]),esp{1,3:end},'UniformOutput',false),'-','/'))';
-        esp(1,:) = [];
-        esp(:,1) = [];
-        writetable(esp,'tmp.csv','WriteVariableNames',false)
-        esp = readtable('tmp.csv');
+        [err,msg] = system('wget -O tmp.xlsx https://www.mscbs.gob.es/profesionales/saludPublica/ccayes/alertasActual/nCov-China/documentos/Fallecidos_COVID19.xlsx');
+%         fid = fopen('tmp.csv','w');
+%         fwrite(fid,esp);
+%         fclose(fid);
+        esp = readtable('tmp.xlsx');
+        esp(end,:) = [];
+        date = datetime(esp{:,1}); % strrep(cellfun(@(x) x([6:8,9:10,5,1:4]),esp{1,3:end},'UniformOutput',false),'-','/'))';
+        
+        esp = cumsum(esp{:,[1:4,18,5,6,8,7,9,10,14,12,13,19,15,17,16,11]+1});
         !rm tmp.csv
     case 'mscbs'
         day1 = datetime('04-Mar-2020');
@@ -52,12 +51,13 @@ switch source
             date = [date;datePDF];
             writetable(esp,'data/spain.csv','WriteVariableNames',false)
         end
+        pop = pop([1:4,6:7,9,8,10:11,19,13,14,12,16,18,17,5,15],:);
         
 end
 
 
-pop = readtable('data/spain_population.csv','ReadVariableNames',false);
-pop = pop([1:4,6:7,9,8,10:11,19,13,14,12,16,18,17,5,15],:);
+
+
 
 
 % % us_state(~ismember(us_state.Var1,pop.State),:) = [];

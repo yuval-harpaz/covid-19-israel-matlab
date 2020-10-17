@@ -37,7 +37,7 @@ country{cellCount,1} = repmat({'US'},size(pop{cellCount},1),1);
 %% spain
 cellCount = cellCount+1;
 [deceased{cellCount},pop{cellCount},date{cellCount}] = covid_spain;
-deceased{cellCount} = deceased{cellCount}{:,2:end}';
+% deceased{cellCount} = deceased{cellCount}{:,2:end}';
 country{cellCount} = repmat({'Spain'},size(pop{cellCount},1),1);
 
 %% Italy
@@ -149,9 +149,9 @@ title({'worst COVID-19 places',['regions with more than ',num2str(threshold),' d
 ylabel('Deaths per million')
 set(gca,'fontsize',13,'XTick',listDate(iXtick),'position',[0.13 0.12 0.7 0.8])
 set(gcf,'Color',[0.65 0.65 0.65],'InvertHardcopy', 'off')
-xtickangle(30)
+xtickangle(90)
 % col = reshape([h(1:7).Color],3,7)';
-col = jet(7);
+col = hsv(10);
 country = list.Country(order(1:nLines));
 countryU = unique(country);
 colorIndex = mod((0:length(countryU)-1),length(col))+1;
@@ -159,10 +159,18 @@ colorIndex = mod((0:length(countryU)-1),length(col))+1;
 countryColor = col(colorIndex(iCou),:);
 for ii = 1:nLines
     h(ii).Color = countryColor(ii,:);
+    if iCou(ii)/2 ~= round(iCou(ii)/2)
+        h(ii).LineStyle = '--';
+    end
     text(listDate(end),yt(ii),loc{ii},'color',h(ii).Color);
 end
 for ic = 1:length(countryU)
-    text(listDate(17),100+yt(1)-75*ic,countryU{ic},'color',col(colorIndex(ic),:))
+    text(listDate(5),100+yt(1)-75*ic,countryU{ic},'color',col(colorIndex(ic),:))
 end
+isr = readtable('data/Israel/dashboard_timeseries.csv');
+isr.CountDeath(isnan(isr.CountDeath)) = 0;
+plot(isr.date,cumsum(isr.CountDeath)/9.2,'k')
+text(listDate(5),100+yt(1)-75*(ic+1),'Israel','color',[0,0,0])
+text(listDate(end-30),20+sum(isr.CountDeath)/9.2,['Israel (',str(round(sum(isr.CountDeath)/9.2)),')'],'color',[0,0,0])
 %% save
 saveas(fig10,'docs/worst_region.png')
