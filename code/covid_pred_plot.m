@@ -52,11 +52,14 @@ h(2) = plot(x1oct(204:end),y1oct(204:end),'r--','linewidth',2);
 h(3) = plot(t.date(1):t.date(1)+length(predBest)-1,predBest/20,'k','linewidth',1);
 grid on
 grid minor
-ylabel('נפטרים')
+ylabel('נפטרים ליום')
 legend(h,'נפטרים','ניבוי תמותה מה- 1 לאוק''','ניבוי תמותה מתעדכן','location','northwest')
 title('ניבוי תמותה לפי ירידה בתחלואה בשיעור דומה לגל הראשון')
-set(gca,'fontsize',13)
 box off
+set(gca,'fontsize',13)
+set(gca,'XTick',datetime(2020,3:12,1))
+xtickangle(45)
+set(gcf,'color','w')
 
 % h(2) = plot(listD.date(end),listD.CountDeath(end),'*b','linewidth',2);
 % h(3) = plot(newc.date(1):(newc.date(1)+length(predCrit))-1,predCrit*0.3,'r-.');
