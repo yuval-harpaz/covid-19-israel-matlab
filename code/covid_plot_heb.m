@@ -23,9 +23,12 @@ mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 pop = pop(idx1,:);
 small = pop.Population_2020_ < 1000000;
 mergedData(small,:) = [];
+[esp,~,date] = covid_spain;
+[~,idxEsp] = ismember(date,timeVector);
+iEsp = find(ismember(mergedData(:,1),'Spain'));
+mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
 
 criterion = 'ddpm';
-
 mustHave = 'Israel';
 ymax = 10;
 % fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);

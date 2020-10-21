@@ -94,7 +94,7 @@ for ip = 1:2
     set(gca,'XTick',1:12)
     if ip == 1
         hold on
-        hc = plot(covid(1:8),'k','linewidth',2);
+        hc = plot(covid(1:9),'k','linewidth',2);
         tot = nansum(yy);
         tot(2,:) = sum(yy(~isnan(yy(:,end)),:));
     end
