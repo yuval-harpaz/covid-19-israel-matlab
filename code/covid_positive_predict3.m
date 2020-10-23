@@ -95,7 +95,7 @@ while read
         if err >= 10
             error('10 attemts failed')
         else
-            pause(10)
+            pause(60)
         end
     end
 end
