@@ -157,8 +157,8 @@ for iDate = 1:length(date)
     end
 end
 
-save symp t
-
+% save symp t
+writetable(t,'tests.csv','Delimiter',',','WriteVariableNames',true)
 %%
 covid_pred_plot;
 % open pred1.fig

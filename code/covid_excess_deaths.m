@@ -21,7 +21,7 @@ b = polyfit((2010:2019)',median(month70{:,11:end-1})'./nrm(1:end-1,3),1);
 pred(:,2) = (2010:2020)'*b(1)+b(2);
 figure;plot((2010:2019)',median(month70{:,11:end-1})'./nrm(1:end-1,3));
 hold on;plot(2010:2020,pred(:,2))
-
+clear death
 death{1} = monthAll{:,11:end};
 death{2} = month70{:,11:end};
 death{3} = monthAll{:,11:end};
