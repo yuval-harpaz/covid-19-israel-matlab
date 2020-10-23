@@ -3,5 +3,5 @@ The tests by data age is downloaded from [here](https://data.gov.il/dataset/covi
 So, you sum female and male test columns pos_m_60 + pos_f_60, you smooth the vector with a 3day back to 3day (1 week) forward moving average window (top left plot). You convolute this with the date of death probability vector (top right), and divide the result by 20 (bottom left). Apparently, 1/20 is the death rate.<br>
 ![img](predict_by_age_example.png)
 # Oct-1 prediction to present
-![Oct 1 pred]('Oct1prediction.png')
+![Oct 1 pred](Oct1prediction.png)
 
