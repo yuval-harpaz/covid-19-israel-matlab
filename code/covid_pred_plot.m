@@ -28,7 +28,7 @@ x = [x;(x(end)-85/3:-85/3:0)';0];
 predBest =  conv(x,prob);
 
 clear h
-figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+figPred = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
 plot(listD.date,listD.CountDeath,'.b');
 hold on;
 h(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
@@ -44,7 +44,7 @@ set(gca,'fontsize',13)
 set(gca,'XTick',datetime(2020,3:12,1))
 xtickangle(45)
 set(gcf,'color','w')
-
+saveas(figPred,'Oct1prediction.png')
 %%
 y = movmean(t.pos_m_60+t.pos_f_60,[3,3]);
 figure;
