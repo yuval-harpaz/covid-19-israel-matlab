@@ -1,4 +1,4 @@
-function covid_plot_heb(criterionDays,large)
+function covid_plot_dpm7(criterionDays,large)
     
 if ~exist('large','var')
     large = true;
@@ -81,13 +81,14 @@ y(isJump) = nan;
 tit = {'מתים למליון ליום, דירוג לפי ממוצע בשבוע האחרון','יש לכפול ב 9.2 לקבלת מתים ליום בישראל'};
 
 y(y < 0) = 0;
-y = movmean(y,[6 0],'omitnan');
+% y = movmean(y,[6 0],'omitnan');
+y = movmean(y,[3 3],'omitnan');
 if exist('isNeg','var')
     y(isNeg) = nan;
     %y(isJump) = jump(isJump);
 end
 y(end,isnan(y(end,:))) = y(end-1,isnan(y(end,:)));
-[~,order] = sort(nanmean(y(end-criterionDays+1:end,:),1),'descend'); % most deaths
+[means,order] = sort(nanmean(y(end-criterionDays+1:end,:),1),'descend'); % most deaths
 [~,iMustHave] = ismember(iMustHave,order);
 y = y(:,order);
 %%
@@ -145,3 +146,14 @@ end
 ylabel('מתים למליון')
 set(gcf,'Color','w')
 xlabel('דירוג המדינות (מעל מליון איש) בהן הקורונה קטלנית ביותר כרגע')
+
+figure
+for iAnn = 1:nCountries
+    plot(iAnn,means(iAnn)*7,'*','Color',h(iAnn).Color)
+    hold on
+    ht = text(iAnn+0.5,means(iAnn)*7,countryName{order(iAnn)},...
+        'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
+    set(ht,'Rotation',30);
+end
+% ,countryName{order(iAnn)},...
+%         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
