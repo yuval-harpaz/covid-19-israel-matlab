@@ -1,10 +1,23 @@
 list = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
+vars = {'flights','schools','restaurants','Beach','shops','m_100','m_500','trains','Passover','Masks'}';
+date = list.date(1);
+strr = 't = table(date,';
+for ii = 1:length(vars)
+    eval([vars{ii},' = nan;']);
+    strr = [strr,vars{ii},','];
+end
+eval([strr(1:end-1),');'])
+t.date(1:height(list)) = list.date;
+t{:,2:end} = nan;
+t.flights(ismember(list.date,[datetime(2020,3,8):datetime(2020,6,29),datetime(2020,9,23):list.date(end)])) = 1;
+t.schools(ismember(list.date,[datetime(2020,3,12):datetime(2020,5,17),...
+    datetime(2020,7,1):datetime(2020,8,31),datetime(2020,9,18):list.date(end)])) = 1;
+t.restaurants(ismember(list.date,[datetime(2020,3,14):datetime(2020,5,27),datetime(2020,7,17):list.date(end)])) = 1;
 
-isMeas = false(height(list),9);
 Start = datetime({'08-Mar-2020','12-Mar-2020','14-Mar-2020','19-Mar-2020','15-Mar-2020',...
     '25-Mar-2020','25-Mar-2020','25-Mar-2020','07-Apr-2020','12-Apr-2020'}');
 End = repmat(datetime('today'),length(Start),1);
-Measures = {'flights','schools','restaurants','Beach','shops','100m','500m','trains','Passover','Masks'}';
+
 t = table(Measures,Start,End);
 t.End(1) = datetime('today');
 t.End(2) = datetime('17-May-2020');
