@@ -1,12 +1,12 @@
 clear
 cd ~/covid-19-israel-matlab/data/Israel
-fid = fopen('data/Israel/log.txt','r');
-txt = fread(fid);
-fclose(fid);
-txt = native2unicode(txt');
+% fid = fopen('data/Israel/log.txt','r');
+% txt = fread(fid);
+% fclose(fid);
+% txt = native2unicode(txt');
 % lastRead = str2num(txt(find(ismember(txt,','),1,'last')+1:find(ismember(txt,newline),1,'last')-1));
 % ii = lastRead-100000;
-tt = readtable('symptoms.csv');
+% tt = readtable('symptoms.csv');
 
 ii = 0;
 read = true;
@@ -135,7 +135,7 @@ t = table(date,pos_f,pos_m,neg_f,neg_m,symptoms_pos_f,symptoms_pos_m,symptoms_ne
     pos_f_60,pos_m_60,neg_f_60,neg_m_60,symptoms_pos_f_60,symptoms_pos_m_60,symptoms_neg_f_60,symptoms_neg_m_60,...
     nosymptoms_pos_f_60,nosymptoms_pos_m_60,nosymptoms_neg_f_60,nosymptoms_neg_m_60);
 [vn,~] = sort(t.Properties.VariableNames);
-[~,order] = ismember(t.Properties.VariableNames,vn)
+[~,order] = ismember(t.Properties.VariableNames,vn);
 
 % symptoms_pos = neg_f;
 % symptoms_neg = neg_f;
