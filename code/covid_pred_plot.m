@@ -33,7 +33,7 @@ plot(listD.date,listD.CountDeath,'.b');
 hold on;
 h(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
 h(2) = plot(x1oct(204:end),y1oct(204:end),'r--','linewidth',2);
-h(3) = plot(t.date(1):t.date(1)+length(predBest)-1,predBest/20,'k','linewidth',1);
+h(3) = plot(t.date(1):t.date(1)+length(predBest)-1,predBest/10,'k','linewidth',1);
 grid on
 grid minor
 ylabel('נפטרים ליום')
@@ -72,7 +72,7 @@ grid on
 title('death prediction')
 ylabel('deaths (daily)')
 subplot(2,2,4)
-plot(cumsum(predBest/20),'b')
+plot(cumsum(predBest/10),'b')
 ax = gca;
 ax.YRuler.Exponent = 0;
 

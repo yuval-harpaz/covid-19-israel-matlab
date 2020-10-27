@@ -17,85 +17,85 @@ id = false;
 err = 0;
 while read
     try
-    json = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=d337959a-020a-4ed3-84f7-fca182292308&limit=100000&offset=',str(ii)]);
-    if length(json) > 10000
-        %json{ii/100000+1} = strrep(json{ii/100000+1},'NULL',' ');
-        json = jsondecode(json);
-        clear cell*
-        cellDate = {json.result.records(:).test_date}';
-        cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
-        cellDateU = unique(cellDate);
-        cough = ismember({json.result.records(:).cough}','1');
-        fever = ismember({json.result.records(:).fever}','1');
-        sore = ismember({json.result.records(:).sore_throat}','1');
-        breath = ismember({json.result.records(:).shortness_of_breath}','1');
-        head = ismember({json.result.records(:).head_ache}','1');
-        sym = sum([cough,fever,sore,breath,head],2) > 0;
-        positive = ismember({json.result.records(:).corona_result}','חיובי');
-        negative = ismember({json.result.records(:).corona_result}','שלילי');
-        other = ismember({json.result.records(:).corona_result}','אחר');
-        age = nan(size(other));
-        age(ismember({json.result.records(:).age_60_and_above}','Yes')) = 1;
-        age(ismember({json.result.records(:).age_60_and_above}','No')) = 0;
-        male = ismember({json.result.records.gender},'זכר')';
-        female = ismember({json.result.records.gender},'נקבה')';
-        cellID = [json.result.records(:).x_id]';
-        if any(ismember(find(id),cellID))
-            warning([str(sum(ismember(find(id),cellID))),' duplicates!'])
+        json = urlread(['https://data.gov.il/api/3/action/datastore_search?resource_id=d337959a-020a-4ed3-84f7-fca182292308&limit=100000&offset=',str(ii)]);
+        if length(json) > 10000
+            %json{ii/100000+1} = strrep(json{ii/100000+1},'NULL',' ');
+            json = jsondecode(json);
+            clear cell*
+            cellDate = {json.result.records(:).test_date}';
+            cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
+            cellDateU = unique(cellDate);
+            cough = ismember({json.result.records(:).cough}','1');
+            fever = ismember({json.result.records(:).fever}','1');
+            sore = ismember({json.result.records(:).sore_throat}','1');
+            breath = ismember({json.result.records(:).shortness_of_breath}','1');
+            head = ismember({json.result.records(:).head_ache}','1');
+            sym = sum([cough,fever,sore,breath,head],2) > 0;
+            positive = ismember({json.result.records(:).corona_result}','חיובי');
+            negative = ismember({json.result.records(:).corona_result}','שלילי');
+            other = ismember({json.result.records(:).corona_result}','אחר');
+            age = nan(size(other));
+            age(ismember({json.result.records(:).age_60_and_above}','Yes')) = 1;
+            age(ismember({json.result.records(:).age_60_and_above}','No')) = 0;
+            male = ismember({json.result.records.gender},'זכר')';
+            female = ismember({json.result.records.gender},'נקבה')';
+            cellID = [json.result.records(:).x_id]';
+            if any(ismember(find(id),cellID))
+                warning([str(sum(ismember(find(id),cellID))),' duplicates!'])
+            end
+            id(cellID,1) = true;
+            for jj = 1:length(cellDateU)
+                today = ismember(cellDate,cellDateU(jj));
+                cellPosM(jj,1) = sum(today & positive & male);
+                cellNegM(jj,1) = sum(today & negative & male);
+                cellPosF(jj,1) = sum(today & positive & female);
+                cellNegF(jj,1) = sum(today & negative & female);
+                cellPosM60(jj,1) = sum(today & positive & age == 1 & male);
+                cellNegM60(jj,1) = sum(today & negative & age == 1 & male);
+                cellPosF60(jj,1) = sum(today & positive & age == 1 & female);
+                cellNegF60(jj,1) = sum(today & negative & age == 1 & female);
+                cellSymPosM(jj,1) = sum(today & positive & sym & male);
+                cellSymPosF(jj,1) = sum(today & positive & sym & female);
+                cellSymNegM(jj,1) = sum(today & negative & sym & male);
+                cellSymNegF(jj,1) = sum(today & negative & sym & female);
+                cellNoSymPosM(jj,1) = sum(today & positive & ~sym & male);
+                cellNoSymPosF(jj,1) = sum(today & positive & ~sym & female);
+                cellNoSymNegM(jj,1) = sum(today & negative & ~sym & male);
+                cellNoSymNegF(jj,1) = sum(today & negative & ~sym & female);
+                
+                cellSymPosM60(jj,1) = sum(today & positive & sym & male & age == 1);
+                cellSymPosF60(jj,1) = sum(today & positive & sym & female & age == 1);
+                cellSymNegM60(jj,1) = sum(today & negative & sym & male & age == 1);
+                cellSymNegF60(jj,1) = sum(today & negative & sym & female & age == 1);
+                cellNoSymPosM60(jj,1) = sum(today & positive & ~sym & male & age == 1);
+                cellNoSymPosF60(jj,1) = sum(today & positive & ~sym & female & age == 1);
+                cellNoSymNegM60(jj,1) = sum(today & negative & ~sym & male & age == 1);
+                cellNoSymNegF60(jj,1) = sum(today & negative & ~sym & female & age == 1); %#ok<*SAGROW>
+                
+                
+            end
+            varName = who('cell*')';
+            varName(ismember(varName,'cellDate')) = [];
+            varName(ismember(varName,'cellID')) = [];
+            varName = join(varName,',');
+            tables{end+1,1} = eval(['table(',varName{1},');']);
+            %         tables{end+1,1} = table(cellDateU,cellPos,cellNeg,cellSymPos,cellSymNeg,...
+            %             cellNosymPos,cellNosymNeg,cellOver60,cellBelow60,cellNoAge,...
+            %             cellOver60pos,cellOver60breath);
+            ii = ii+100000;
+            disp(datestr(cellDateU(1)))
+            err = o;
+        else
+            read = false;
+            %json = json(1:end-1);
+            disp('done')
         end
-        id(cellID,1) = true;
-        for jj = 1:length(cellDateU)
-            today = ismember(cellDate,cellDateU(jj));
-            cellPosM(jj,1) = sum(today & positive);
-            cellNegM(jj,1) = sum(today & negative);
-            cellPosF(jj,1) = sum(today & positive);
-            cellNegF(jj,1) = sum(today & negative);
-            cellPosM60(jj,1) = sum(today & positive & age == 1);
-            cellNegM60(jj,1) = sum(today & negative & age == 1);
-            cellPosF60(jj,1) = sum(today & positive & age == 1);
-            cellNegF60(jj,1) = sum(today & negative & age == 1);
-            cellSymPosM(jj,1) = sum(today & positive & sym & male);
-            cellSymPosF(jj,1) = sum(today & positive & sym & female);
-            cellSymNegM(jj,1) = sum(today & negative & sym & male);
-            cellSymNegF(jj,1) = sum(today & negative & sym & female);
-            cellNoSymPosM(jj,1) = sum(today & positive & ~sym & male);
-            cellNoSymPosF(jj,1) = sum(today & positive & ~sym & female);
-            cellNoSymNegM(jj,1) = sum(today & negative & ~sym & male);
-            cellNoSymNegF(jj,1) = sum(today & negative & ~sym & female);
-            
-            cellSymPosM60(jj,1) = sum(today & positive & sym & male & age == 1);
-            cellSymPosF60(jj,1) = sum(today & positive & sym & female & age == 1);
-            cellSymNegM60(jj,1) = sum(today & negative & sym & male & age == 1);
-            cellSymNegF60(jj,1) = sum(today & negative & sym & female & age == 1);
-            cellNoSymPosM60(jj,1) = sum(today & positive & ~sym & male & age == 1);
-            cellNoSymPosF60(jj,1) = sum(today & positive & ~sym & female & age == 1);
-            cellNoSymNegM60(jj,1) = sum(today & negative & ~sym & male & age == 1);
-            cellNoSymNegF60(jj,1) = sum(today & negative & ~sym & female & age == 1); %#ok<*SAGROW>
-
-            
-        end
-        varName = who('cell*')';
-        varName(ismember(varName,'cellDate')) = [];
-        varName(ismember(varName,'cellID')) = [];
-        varName = join(varName,',');
-        tables{end+1,1} = eval(['table(',varName{1},');']);
-%         tables{end+1,1} = table(cellDateU,cellPos,cellNeg,cellSymPos,cellSymNeg,...
-%             cellNosymPos,cellNosymNeg,cellOver60,cellBelow60,cellNoAge,...
-%             cellOver60pos,cellOver60breath);
-        ii = ii+100000;
-        disp(datestr(cellDateU(1)))
-        err = o;
-    else
-        read = false;
-        %json = json(1:end-1);
-        disp('done')
-    end
     catch
         err = err+1;
         if err >= 10
             error('10 attemts failed')
         else
-            pause(60)
+            pause(5)
         end
     end
 end
@@ -188,7 +188,7 @@ covid_pred_plot;
 % grid on
 % title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
 % ylabel('daily deaths')
-% 
+%
 % figure;
 % h(1) = plot(listD.date,listD.CountDeath,'.b');
 % hold on;
@@ -201,17 +201,17 @@ covid_pred_plot;
 % grid on
 % title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
 % ylabel('daily deaths')
-% 
-% 
-% %% 
-% 
+%
+%
+% %%
+%
 % yy = [t.nosymptoms_pos_m-t.nosymptoms_pos_m_60,t.nosymptoms_pos_f-t.nosymptoms_pos_f_60,...
 %     t.symptoms_pos_m-t.symptoms_pos_m_60,t.symptoms_pos_f-t.symptoms_pos_f_60,t.symptoms_pos_m_60,t.symptoms_pos_f_60];
 % yy = movmean(yy,[3 3]);
 % figure;
 % plot(yy)
 % legend('Male < 60','Female < 60','symp Male < 60','symp Female < 60','symp Male > 60','symp Female > 60')
-% 
+%
 % %%
 % figure;
 % h(1) = plot(listD.date,listD.CountDeath,'.b');
@@ -223,7 +223,7 @@ covid_pred_plot;
 % grid on
 % title({'death-rate prediction under-performs','for Sep, despite younger carriers       '})
 % ylabel('daily deaths')
-% 
+%
 % %%
 % newc = readtable('new_critical.csv');
 % figure;
@@ -236,15 +236,15 @@ covid_pred_plot;
 % box off
 % ylabel('daily deaths')
 % legend(h(2:4),'deaths','new critical x 0.3, 4 days before','total critical x 0.035, the same day')
-% 
+%
 % %% pos > 60
-% 
-% 
-% 
-% 
-% 
-% 
-% 
+%
+%
+%
+%
+%
+%
+%
 % json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2b2fceb-3334-44eb-b7b5-9327a573ea2c&limit=500000');
 % json = jsondecode(json);
 % death = json.result.records;
@@ -254,13 +254,13 @@ covid_pred_plot;
 % male = ismember(death.gender(~bad),'זכר');
 % pos2death = pos2death(~bad);
 % old = ~ismember(death.age_group,'<65');
-% 
+%
 % prob = movmean(hist(pos2death,1:1000),[3 3]);
 % iEnd = find(prob < 0.5,1);
 % prob = prob(1:iEnd-1);
 % prob = prob/sum(prob);
-% 
-% 
+%
+%
 % % pos2death65 = cellfun(@str2num,strrep(t.Time_between_positive_and_death,'NULL','0'));
 % % pos2death65 = pos2death65(~bad & old);
 % % prob65 = movmean(hist(pos2death,1:1000),[3 3]);
@@ -281,7 +281,7 @@ covid_pred_plot;
 % missingDates = missingDates:height(listD)-1;
 % missing60 = listD.tests_positive(missingDates)*ratio60;
 % pred = conv(movmean([t.pos_m_60+t.pos_f_60;missing60],[3 3]),prob);
-% 
+%
 % figure;
 % h(1) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'.b');
 % hold on;
@@ -300,7 +300,7 @@ covid_pred_plot;
 % ylabel('נפטרים ליום')
 % set(gcf,'Color','w')
 % set(gca,'FontSize',12)
-% 
+%
 % nWeeks = 2;
 % next2w = [ones(nWeeks*7,1),(15:(14+nWeeks*7))']*b;
 % next2w = [next2w;(next2w(end)-85/6:-85/6:0)';0];

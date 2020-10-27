@@ -37,7 +37,7 @@ if contains(listName,'dashboard_timeseries')
     fclose(fid);
     txt = native2unicode(txt);
     json = jsondecode(txt);
-    list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+3/24;
+    list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+2/24;
 end
 
 %% plot israel only
