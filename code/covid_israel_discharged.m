@@ -1,3 +1,4 @@
+cd ~/covid-19-israel-matlab/data/Israel/
 listD = readtable('dashboard_timeseries.csv');
 newc = readtable('new_critical.csv');
 increase = diff(listD.CountHardStatus(18:end-5));

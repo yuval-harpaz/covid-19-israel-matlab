@@ -1,5 +1,5 @@
-list = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
-
+% list = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
+list = readtable('~/covid-19-israel-matlab/data/Israel/Israel_ministry_of_health.csv');
 isMeas = false(height(list),9);
 Start = datetime({'08-Mar-2020','12-Mar-2020','14-Mar-2020','19-Mar-2020','15-Mar-2020',...
     '25-Mar-2020','25-Mar-2020','25-Mar-2020','07-Apr-2020','12-Apr-2020'}');
