@@ -8,14 +8,27 @@ death = json.result.records;
 death = struct2table(death);
 pos2death = cellfun(@str2num,strrep(death.Time_between_positive_and_death,'NULL','0'));
 bad = pos2death < 1 | ismember(death.gender,'לא ידוע');
-male = ismember(death.gender(~bad),'זכר');
+isMale = ismember(death.gender(~bad),'זכר');
 pos2death = pos2death(~bad);
 old = ~ismember(death.age_group,'<65');
 prob = movmean(hist(pos2death,1:1000),[3 3]);
 iEnd = find(prob < 0.5,1);
 prob = prob(1:iEnd-1);
 prob = prob/sum(prob);
-writetable(table(prob'),'positive_to_death.txt','WriteVariableNames',false);
+
+female = movmean(hist(pos2death(~isMale),1:1000),[3 3]);
+iEnd = find(female < 0.5,1);
+female = female(1:iEnd-1);
+female = female'/sum(female);
+male = movmean(hist(pos2death(isMale),1:1000),[3 3]);
+iEnd = find(male < 0.5,1);
+male = male(1:iEnd-1);
+male = male'/sum(male);
+all = prob';
+male(end+1:length(all)) = 0;
+female(end+1:length(all)) = 0;
+tProb = table(all,female,male);
+writetable(tProb,'positive_to_death.txt','WriteVariableNames',true)
 %%
 
 hs = open('pred1.fig');
@@ -26,6 +39,14 @@ close(hs)
 x = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
 x = [x;(x(end)-85/3:-85/3:0)';0];
 predBest =  conv(x,prob);
+xf = movmean(t.pos_f_60,[3 3]);
+xf = [xf;(xf(end)-85/3:-85/3:0)';0];
+predBestF =  conv(xf,female);
+xm = movmean(t.pos_m_60,[3 3]);
+xm = [xm;(xm(end)-85/3:-85/3:0)';0];
+predBestM =  conv(xm,male);
+
+
 
 clear h
 figPred = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
