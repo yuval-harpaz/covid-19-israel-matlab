@@ -1,5 +1,4 @@
 function covid_plot_heb(criterionDays,large,cum)
-    
 if ~exist('large','var')
     large = true;
 end
@@ -9,16 +8,10 @@ end
 if ~exist('criterionDays','var')
     criterionDays = 1;
 end
-saveFigs = false;
-listName = 'data/Israel/dashboard_timeseries.csv';
 cd ~/covid-19-israel-matlab/
-myCountry = 'Israel';
 nCountries = 20;
-
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
-% iBahamas = find(ismember(mergedData(:,1),{'Bahamas','Malta','Guyana'}));
-
 pop = readtable('data/population.csv','delimiter',',');
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 [~,idx1] = ismember(mergedData(:,1),pop.Country_orDependency_);

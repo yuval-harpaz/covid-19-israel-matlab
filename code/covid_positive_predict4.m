@@ -104,7 +104,7 @@ while read
     end
 end
 if abort
-    error('aborted, no ne dates')
+    error('aborted, no new dates')
 end
 %%
 date = [];
