@@ -19,7 +19,7 @@ while read
             cellDate = {json.result.records(:).test_date}';
             cellDate = cellfun(@(x) datetime([str2num(x(1:4)),str2num(x(6:7)),str2num(x(9:10))]),cellDate);
             cellDateU = unique(cellDate);
-            if cellDateU(end) <= prev.date(end)
+            if ii == 0 && cellDateU(end) <= prev.date(end)
                 warning('No new dates?')
                 abort = true;
                 read = false;
