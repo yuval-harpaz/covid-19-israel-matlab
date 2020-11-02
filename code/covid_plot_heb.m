@@ -24,6 +24,11 @@ end
 [~,idxEsp] = ismember(date,timeVector);
 iEsp = find(ismember(mergedData(:,1),'Spain'));
 mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
+[bel,~,date] = covid_belgium;
+[~,idxB] = ismember(date,timeVector);
+iB = find(ismember(mergedData(:,1),'Belgium'));
+lastBdifs = diff(mergedData{iB,2}(end-2:end));
+mergedData{iB,2}(idxB) = cumsum(sum(bel,2));
 
 % criterion = 'ddpm';
 mustHave = 'Israel';
@@ -64,15 +69,26 @@ if cum
     y = deaths./mil;
 else
     y = [deaths(1,:);diff(deaths)]./mil;
+    lastBdifs = lastBdifs./mil(iB);
 end
 isNeg = y < 0;
 y(isNeg) = nan;
 if ~cum
-    isJump = y > 20;
-    jump = nan(size(y));
-    jump(isJump) = y(isJump);
+    isJump = [false(1,size(y,2));diff(y) > 20];
+%     isJump = y > 20;
+%     jump = nan(size(y));
+%     jump(isJump) = y(isJump);
+%     ib = ismember(mergedData(:,1),'Belgium');
+%     belge = y(1:100,ib);
     y(isJump) = nan;
+%     y(1:100,ib) = belge;
+    iF = ismember(mergedData(:,1),'France');
+    y(119,iF) = y(120,iF);
+    y(end-1:end,iB) = lastBdifs;
+%     iB = ismember(mergedData(:,1),'Belgium');
+%     y(119,iF) = y(120,iF);
 end
+
 if cum
     tit = 'מתים למליון, מצטבר';
     xl = 'דירוג המדינות (מעל מליון איש) בהן שיעור התמותה מקורונה היה גבוה ביותר במצטבר';
