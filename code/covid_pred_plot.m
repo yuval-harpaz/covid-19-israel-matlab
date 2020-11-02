@@ -102,3 +102,26 @@ box off
 grid on
 title('death prediction (cumulative)')
 ylabel('deaths (total)')
+
+%%
+
+xx = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
+xx(234:310) = xx(34:110);
+pred2 =  conv(xx,prob);
+figPred2 = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+h2(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+hold on
+h2(2) = plot(t.date(233)+1:t.date(233)+length(pred2)-233,pred2(234:end)/10,'r--','linewidth',2);
+grid on
+grid minor
+ylabel('נפטרים ליום')
+legend(h2,'נפטרים','ניבוי תמותה ','location','northwest')
+title('ניבוי תמותה לפי ירידה בתחלואה בשיעור דומה לגל הראשון')
+box off
+set(gca,'fontsize',13)
+set(gca,'XTick',[datetime(2020,3:12,1),datetime(2021,1:2,1)])
+xtickangle(45)
+xlim([datetime(2020,3,1) datetime(2021,3,1)])
+set(gcf,'color','w')
+saveas(figPred2,'Nov1prediction.png')
+saveas(figPred2,'Nov1prediction.fig')
