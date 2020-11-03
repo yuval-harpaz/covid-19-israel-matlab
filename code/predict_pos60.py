@@ -24,6 +24,7 @@ for i_end in [6,5,4]:
 dead = np.convolve(dashboard.CountDeath, np.ones((N,))/N, mode='valid')
 dead[0:19] = 0
 dead = np.concatenate(([0,0,0],dead))
+
 for i_end in [6,5,4]:
     dead = np.concatenate((dead,[np.mean(dashboard.CountDeath[-i_end:])]))
 
@@ -39,10 +40,10 @@ for iDate in range(len(dead)-1):
 
                                             
 fig, axs = plt.subplots()
-plt.plot(date_test,pred/10)
-plt.plot(date_dash,dead)
+plt.plot(date_test,pred/10, label='predicted deaths')
+plt.plot(date_dash,dead, label='deaths (7 day smoothing)')
 plt.xticks(rotation=45)
-plt.legend('prediction','observation')
+plt.legend()
 plt.suptitle('Daily deaths prediction in Israel by positive tests for over 60y')
 plt.ylabel('Deaths')
 plt.grid()
