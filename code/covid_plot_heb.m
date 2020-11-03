@@ -25,10 +25,10 @@ end
 iEsp = find(ismember(mergedData(:,1),'Spain'));
 mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
 [bel,~,date] = covid_belgium;
-[~,idxB] = ismember(date,timeVector);
+[isxB,idxB] = ismember(date,timeVector);
 iB = find(ismember(mergedData(:,1),'Belgium'));
 lastBdifs = diff(mergedData{iB,2}(end-2:end));
-mergedData{iB,2}(idxB) = cumsum(sum(bel,2));
+mergedData{iB,2}(idxB(isxB)) = cumsum(sum(bel(isxB,:),2));
 
 % criterion = 'ddpm';
 mustHave = 'Israel';
