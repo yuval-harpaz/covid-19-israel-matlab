@@ -52,26 +52,27 @@ subplot(1,2,1)
 yyaxis right
 idx = ~isnan(list.hospitalized);
 % plot(list.date(idx),list.hospitalized(idx),'color',[0.9 0.9 0.1],'linewidth',1);
-plot(list.date(idx),list.hospitalized(idx)-list.critical(idx)-list.severe(idx),...
+hh(1) = plot(list.date(idx),list.hospitalized(idx)-list.critical(idx)-list.severe(idx),...
     'color',[0 1 0],'linewidth',1);
 hold on
 idx = ~isnan(list.severe);
-plot(list.date(idx),list.severe(idx),'color',[0.7 0.7 0.3],'linewidth',1,'linestyle','-');
+hh(2) = plot(list.date(idx),list.severe(idx),'b','linewidth',1,'linestyle','-');
 idx = ~isnan(list.critical);
-plot(list.date(idx),list.critical(idx),'b','linewidth',1,'linestyle','-');
+hh(3) = plot(list.date(idx),list.critical(idx),'color',[0.7 0 0.7],'linewidth',1,'linestyle','-');
 idx = ~isnan(list.on_ventilator);
-plot(list.date(idx),list.on_ventilator(idx),'k','linewidth',1,'linestyle','-');
+hh(4) = plot(list.date(idx),list.on_ventilator(idx),'r','linewidth',1,'linestyle','-');
 idx = ~isnan(list.deceased);
+deceased = movmean(list.deceased(idx(1:end-1)),[3 3],'omitnan');
 ylim([0 1000])
 ylabel('חולים')
 yyaxis left
-plot(list.date(idx(1:end-1)),movmean(list.deceased(idx(1:end-1)),[3 3],'omitnan'),'r','linewidth',1);
+hh(5) = plot(list.date(idx(1:end-1)),deceased,'k','linewidth',1);
 ylim([0 100])
 set(gca,'FontSize',13)
 xlim([list.date(1)-1 list.date(end)+1])
 ax = gca;
-ax.YAxis(2).Color = 'k';
-ax.YAxis(1).Color = 'r';
+ax.YAxis(2).Color = 'r';
+ax.YAxis(1).Color = 'k';
 % ylim([0 max(list.hospitalized)+20])
 % xtickangle(45)
 grid on
@@ -83,11 +84,12 @@ legNum = {str(list.hospitalized(iLast)),...
     str(list.severe(iLast)),...
     str(list.critical(iLast)),...
     str(list.on_ventilator(iLast)),...
-    str(sum(list.deceased))};
-legend([legHeb{6},' (',legNum{6},')'],[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
-    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],'location','north')
+    str(round(deceased(end)))};
+legend(hh,[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
+    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','north')
 ylabel('נפטרים')
-title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
+title({['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')],...
+    ['נפטרו במצטבר ',str(nansum(list.deceased)),', הנפטרים בגרף לפי ממוצע נע']})
 xtickangle(30)
 
 yy = list.critical;
@@ -131,31 +133,9 @@ xtickangle(30)
 grid on
 xlim([list.date(1) list.date(end)])
 ylim([0 max(list.hospitalized)+20])
-title('Hospitalized by severity מאושפזים לפי חומרה')
-ylabel('חולים  או  נפטרים')
+title({'מאושפזים לפי חומרה במצטבר','הקו העליון מציין את סך הכל מאושפזים'})
+ylabel('חולים')
 set(gcf,'Color','w')
-%%
-% warning on
-% mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
-% [~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
-% [~, iworst] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx),'descend');
-% country = mergedData(iworst(1:nCountries),1);
-% iMy = find(ismember(country,myCountry));
-% if ~isempty(iMy)
-%     country(iMy) = [];
-% end
-% country{end} = myCountry;
-% cases = nan(length(timeVector),nCountries);
-% for iCou = 1:length(country)
-%     cases(1:length(timeVector),iCou) = mergedData{ismember(mergedData(:,1),country{iCou}),2};
-% end
-% [isx,idxc] = ismember(country,pop.Country_orDependency_);
-% if any(isx == 0)
-%     error('missing country')
-% end
-% mil = pop.Population_2020_(idxc)/10^6;
-% norm = cases./mil'; %#ok<NASGU>
-
 %% save
 if saveFigs
     saveas(fig6,'docs/dpmMyCountry.png')
