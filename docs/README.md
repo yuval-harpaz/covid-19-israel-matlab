@@ -17,7 +17,7 @@ For the 10 most affected countries by different criteria click [here](highest_co
 Realigned curves for top 20 countries [here](realigned.html)<br>
 To compare Israel to other countries [here](myCountry.html)<br>
 Stay safe     ![falafel](W3CSSTemplateFiles/falafel_trans.png)
-### Last updated for 02.11.2020
+### Last updated for 03.11.2020
 ### Acknowledgements
 The COVID-19 data is taken from the John Hopkins COVID-19 database. The data can be found [here](https://github.com/CSSEGISandData/COVID-19).<br>
 Spain has a drop in total deaths (25-May-2020) because of [data cleaning](https://english.elpais.com/society/2020-05-26/spanish-health-ministry-lowers-coronavirus-death-toll-by-nearly-2000.html). Regions of spain death tolls are provided by [datadista](https://github.com/datadista/datasets/blob/master/COVID%2019/ccaa_covid19_fallecidos.csv).<br>
