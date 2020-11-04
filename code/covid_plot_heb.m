@@ -1,4 +1,4 @@
-function covid_plot_heb(criterionDays,large,cum)
+function fig = covid_plot_heb(criterionDays,large,cum)
 if ~exist('large','var')
     large = true;
 end

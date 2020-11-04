@@ -1,20 +1,20 @@
-function covid_Israel(saveFigs,listName)
+function covid_Israel(saveFigs)
 % plot 20 most active countries
 if ~exist('saveFigs','var')
     saveFigs = false;
 end
-if ~exist('listName','var')
-    %listName = 'data/Israel/Israel_ministry_of_health.csv';
-    listName = 'data/Israel/dashboard_timeseries.csv';
-end
+%listName = 'data/Israel/Israel_ministry_of_health.csv';
+listName = 'data/Israel/dashboard_timeseries.csv';
 cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
 nCountries = 20;
 
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
-fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
-fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
+% fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
+% fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
+fig6 = covid_plot_heb;
+fig7 = covid_plot_heb(1,1,1);
 % showDateEvery = 7; % days
 % zer = 1; % how many deaths per million to count as day zero
 % warning off
@@ -24,47 +24,55 @@ fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
 %     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
 % end
 % iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
-pop = readtable('data/population.csv','delimiter',',');
+% pop = readtable('data/population.csv','delimiter',',');
 list = readtable(listName);
-if contains(listName,'dashboard_timeseries')
-    list.Properties.VariableNames([7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
-    list.deceased = nan(height(list),1);
-    list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
-    i1 = find(~isnan(list.hospitalized),1);
-    list = list(i1:end,:);
-    fid = fopen('data/Israel/dashboard.json','r');
-    txt = fread(fid)';
-    fclose(fid);
-    txt = native2unicode(txt);
-    json = jsondecode(txt);
-    list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+2/24;
-end
+
+list.Properties.VariableNames([7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
+list.deceased = nan(height(list),1);
+%     list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
+list.deceased =list.CountDeath;
+i1 = find(~isnan(list.hospitalized),1);
+list = list(i1:end,:);
+fid = fopen('data/Israel/dashboard.json','r');
+txt = fread(fid)';
+fclose(fid);
+txt = native2unicode(txt);
+json = jsondecode(txt);
+list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+2/24;
+
 
 %% plot israel only
-desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
-for iD = 1:length(desiredDates)
-    ixt(iD,1) = find(list.date < desiredDates(iD),1,'last'); %#ok<AGROW>
-end
+% desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
+% for iD = 1:length(desiredDates)
+%     ixt(iD,1) = find(list.date < desiredDates(iD),1,'last'); %#ok<AGROW>
+% end
 % ixt = unique([1,fliplr(length(isr.Date):-showDateEvery:1)]);
 fig8 = figure('units','normalized','position',[0,0.25,0.8,0.6]);
 subplot(1,2,1)
+yyaxis right
 idx = ~isnan(list.hospitalized);
-plot(list.date(idx),list.hospitalized(idx),'color',[0.9 0.9 0.1],'linewidth',1);
-hold on
+% plot(list.date(idx),list.hospitalized(idx),'color',[0.9 0.9 0.1],'linewidth',1);
 plot(list.date(idx),list.hospitalized(idx)-list.critical(idx)-list.severe(idx),...
     'color',[0 1 0],'linewidth',1);
+hold on
 idx = ~isnan(list.severe);
-plot(list.date(idx),list.severe(idx),'color',[0.7 0.7 0.3],'linewidth',1);
+plot(list.date(idx),list.severe(idx),'color',[0.7 0.7 0.3],'linewidth',1,'linestyle','-');
 idx = ~isnan(list.critical);
-plot(list.date(idx),list.critical(idx),'b','linewidth',1);
+plot(list.date(idx),list.critical(idx),'b','linewidth',1,'linestyle','-');
 idx = ~isnan(list.on_ventilator);
-plot(list.date(idx),list.on_ventilator(idx),'r','linewidth',1);
+plot(list.date(idx),list.on_ventilator(idx),'k','linewidth',1,'linestyle','-');
 idx = ~isnan(list.deceased);
-plot(list.date(idx),list.deceased(idx),'k','linewidth',1);
-
-set(gca,'XTick',dateshift(list.date(ixt),'start','day'),'FontSize',13)
+ylim([0 1000])
+ylabel('חולים')
+yyaxis left
+plot(list.date(idx(1:end-1)),movmean(list.deceased(idx(1:end-1)),[3 3],'omitnan'),'r','linewidth',1);
+ylim([0 100])
+set(gca,'FontSize',13)
 xlim([list.date(1)-1 list.date(end)+1])
-ylim([0 max(list.hospitalized)+20])
+ax = gca;
+ax.YAxis(2).Color = 'k';
+ax.YAxis(1).Color = 'r';
+% ylim([0 max(list.hospitalized)+20])
 % xtickangle(45)
 grid on
 box off
@@ -75,12 +83,12 @@ legNum = {str(list.hospitalized(iLast)),...
     str(list.severe(iLast)),...
     str(list.critical(iLast)),...
     str(list.on_ventilator(iLast)),...
-    str(list.deceased(iLast))};
-legend([legHeb{1},' (',legNum{1},')'],[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
-    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','north')
-ylabel('מספר החולים')
+    str(sum(list.deceased))};
+legend([legHeb{6},' (',legNum{6},')'],[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
+    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],'location','north')
+ylabel('נפטרים')
 title(['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')])
-xtickangle(90)
+xtickangle(30)
 
 yy = list.critical;
 y = movmean(yy,7,'omitnan');
@@ -113,38 +121,40 @@ hold on
 fill([list.date;flipud(list.date)],[crit+seve;flipud(crit)],[0.7 0.7 0.7],'LineStyle','none')
 fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.5 0.5 0.5],'LineStyle','none')
 fill([list.date;flipud(list.date)],[vent;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
-plot(list.date,list.deceased,'k')
+fill([list.date;flipud(list.date)],[list.deceased;zeros(height(list),1)],[0,0,0],'LineStyle','none')
 legend('mild                קל','severe          בינוני','critical          קשה',...
     'on vent    מונשמים','deceased  נפטרים','location','north')
 box off
-xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
-set(gca,'XTick',xTick,'fontsize',13,'YTick',100:100:max(list.hospitalized)+20)
-xtickangle(90)
+% xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
+set(gca,'fontsize',13,'YTick',100:100:max(list.hospitalized)+20)
+xtickangle(30)
 grid on
 xlim([list.date(1) list.date(end)])
 ylim([0 max(list.hospitalized)+20])
 title('Hospitalized by severity מאושפזים לפי חומרה')
+ylabel('חולים  או  נפטרים')
+set(gcf,'Color','w')
 %%
-warning on
-mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
-[~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
-[~, iworst] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx),'descend');
-country = mergedData(iworst(1:nCountries),1);
-iMy = find(ismember(country,myCountry));
-if ~isempty(iMy)
-    country(iMy) = [];
-end
-country{end} = myCountry;
-cases = nan(length(timeVector),nCountries);
-for iCou = 1:length(country)
-    cases(1:length(timeVector),iCou) = mergedData{ismember(mergedData(:,1),country{iCou}),2};
-end
-[isx,idxc] = ismember(country,pop.Country_orDependency_);
-if any(isx == 0)
-    error('missing country')
-end
-mil = pop.Population_2020_(idxc)/10^6;
-norm = cases./mil'; %#ok<NASGU>
+% warning on
+% mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
+% [~,idx] = ismember(mergedData(:,1),pop.Country_orDependency_);
+% [~, iworst] = sort(cellfun(@max, mergedData(:,2))./pop.Population_2020_(idx),'descend');
+% country = mergedData(iworst(1:nCountries),1);
+% iMy = find(ismember(country,myCountry));
+% if ~isempty(iMy)
+%     country(iMy) = [];
+% end
+% country{end} = myCountry;
+% cases = nan(length(timeVector),nCountries);
+% for iCou = 1:length(country)
+%     cases(1:length(timeVector),iCou) = mergedData{ismember(mergedData(:,1),country{iCou}),2};
+% end
+% [isx,idxc] = ismember(country,pop.Country_orDependency_);
+% if any(isx == 0)
+%     error('missing country')
+% end
+% mil = pop.Population_2020_(idxc)/10^6;
+% norm = cases./mil'; %#ok<NASGU>
 
 %% save
 if saveFigs
