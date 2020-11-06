@@ -20,16 +20,38 @@ if large
     small = pop.Population_2020_ < 1000000;
     mergedData(small,:) = [];
 end
+%% replace shitty data
 [esp,~,date] = covid_spain;
 [~,idxEsp] = ismember(date,timeVector);
 iEsp = find(ismember(mergedData(:,1),'Spain'));
-mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
+% mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
+mergedData{iEsp,2}(idxEsp) = sum(esp,2);
+
 [bel,~,date] = covid_belgium;
 [isxB,idxB] = ismember(date,timeVector);
 iB = find(ismember(mergedData(:,1),'Belgium'));
 lastBdifs = diff(mergedData{iB,2}(end-2:end));
 mergedData{iB,2}(idxB(isxB)) = cumsum(sum(bel(isxB,:),2));
 
+ecu = urlread('https://raw.githubusercontent.com/andrab/ecuacovid/master/datos_crudos/ecuacovid.csv');
+fid = fopen('tmp.csv','w');
+fwrite(fid,ecu);
+fclose(fid);
+ecu = readtable('tmp.csv');
+!rm tmp.*
+date = datetime(2020,3,13);
+date = date:date+height(ecu);
+[isxEcu,idxEcu] = ismember(date,timeVector);
+iEcu = find(ismember(mergedData(:,1),'Ecuador'));
+% mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
+mergedData{iEcu,2}(idxEcu(isxEcu)) = sum(ecu{isxEcu,[5,6]},2);
+
+per = urlread('https://raw.githubusercontent.com/krmnino/Peru_COVID19_OpenData/master/data/PER_data.csv');
+fid = fopen('tmp.csv','w');
+fwrite(fid,per);
+fclose(fid);
+per = readtable('tmp.csv');
+!rm tmp.*
 % criterion = 'ddpm';
 mustHave = 'Israel';
 % ymax = 10;

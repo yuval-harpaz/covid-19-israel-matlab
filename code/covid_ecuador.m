@@ -2,6 +2,7 @@ function [deceased,pop,date] = covid_ecuador(plt)
 if nargin == 0
     plt = false;
 end
+warning('ecuador should count probable deaths as well');
 cd ~/covid-19-israel-matlab/
 ecu = urlread('https://raw.githubusercontent.com/andrab/ecuacovid/master/datos_crudos/muertes/por_fecha/provincias_por_dia.csv');
 fid = fopen('tmp.csv','w');
