@@ -189,3 +189,8 @@ end
 ylabel('מתים למליון')
 set(gcf,'Color','w')
 xlabel(xl)
+% [~,iSw] = ismember('שבדיה',countryName(order));
+% h(iSw).Color = [0,0.294,0.529];
+% h(iSw).MarkerEdgeColor = [1,0.804,0];
+% h(iSw).MarkerSize = 4
+% text(x,yt(iSw),'שבדיה','FontSize',10,'Color',h(iSw).Color,'FontWeight','bold');
