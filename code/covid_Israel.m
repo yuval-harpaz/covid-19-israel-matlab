@@ -13,8 +13,8 @@ nCountries = 20;
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
 % fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
 % fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
-fig6 = covid_plot_heb;
-fig7 = covid_plot_heb(1,1,1);
+fig7 = covid_plot_heb;
+fig6 = covid_plot_heb(1,1,1);
 % showDateEvery = 7; % days
 % zer = 1; % how many deaths per million to count as day zero
 % warning off
