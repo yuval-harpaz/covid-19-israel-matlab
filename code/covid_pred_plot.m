@@ -59,11 +59,12 @@ grid on
 grid minor
 ylabel('נפטרים ליום')
 legend(h,'נפטרים','ניבוי תמותה מה- 1 לאוק''','ניבוי תמותה מתעדכן','location','northwest')
-title('ניבוי תמותה לפי ירידה בתחלואה בשיעור דומה לגל הראשון')
+title('ניבוי תמותה לפי ירידה אופטימלית בתחלואה')
 box off
 set(gca,'fontsize',13)
 set(gca,'XTick',datetime(2020,3:12,1))
 xtickangle(45)
+xlim([datetime(2020,3,15) datetime(2020,12,15)]);
 set(gcf,'color','w')
 saveas(figPred,'Oct1prediction.png')
 %%
