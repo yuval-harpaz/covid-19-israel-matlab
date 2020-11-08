@@ -21,7 +21,7 @@ while read
             cellDateU = unique(cellDate);
             if ii == 0 && cellDateU(end) <= prev.date(end)
                 warning('No new dates?')
-                abort = true;
+                abort = false;
                 read = false;
             end
             cough = ismember({json.result.records(:).cough}','1');
@@ -92,7 +92,7 @@ while read
             disp(datestr(cellDateU(1)))
             err = o;
             if datenum(prev.date(end)-cellDateU(1)) > 31
-                read = false;
+                read = true;
                 %json = json(1:end-1);
                 disp('done')
             end
@@ -123,6 +123,10 @@ neg_f = zeros(length(date),1);
 neg_m = neg_f;
 pos_f = neg_f;
 pos_m = neg_f;
+pos = neg_f;
+neg = neg_f;
+pos60 = neg_f;
+neg60 = neg_f;
 symptoms_neg_f = neg_f;
 symptoms_neg_m = neg_f;
 symptoms_pos_f = neg_f;
@@ -144,7 +148,7 @@ nosymptoms_neg_f_60 = neg_f;
 nosymptoms_neg_m_60 = neg_f;
 nosymptoms_pos_f_60 = neg_f;
 nosymptoms_pos_m_60 = neg_f;
-t = table(date,pos_f,pos_m,neg_f,neg_m,symptoms_pos_f,symptoms_pos_m,symptoms_neg_f,symptoms_neg_m,...
+t = table(date,pos,neg,pos60,neg60,pos_f,pos_m,neg_f,neg_m,symptoms_pos_f,symptoms_pos_m,symptoms_neg_f,symptoms_neg_m,...
     nosymptoms_pos_f,nosymptoms_pos_m,nosymptoms_neg_f,nosymptoms_neg_m,...
     pos_f_60,pos_m_60,neg_f_60,neg_m_60,symptoms_pos_f_60,symptoms_pos_m_60,symptoms_neg_f_60,symptoms_neg_m_60,...
     nosymptoms_pos_f_60,nosymptoms_pos_m_60,nosymptoms_neg_f_60,nosymptoms_neg_m_60);
