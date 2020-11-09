@@ -152,6 +152,8 @@ t = table(date,pos,neg,pos60,neg60,pos_f,pos_m,neg_f,neg_m,symptoms_pos_f,sympto
     nosymptoms_pos_f,nosymptoms_pos_m,nosymptoms_neg_f,nosymptoms_neg_m,...
     pos_f_60,pos_m_60,neg_f_60,neg_m_60,symptoms_pos_f_60,symptoms_pos_m_60,symptoms_neg_f_60,symptoms_neg_m_60,...
     nosymptoms_pos_f_60,nosymptoms_pos_m_60,nosymptoms_neg_f_60,nosymptoms_neg_m_60);
+% [~,po] = sort(t.Properties.VariableNames)
+% t = t(:,po);
 [vn,~] = sort(t.Properties.VariableNames);
 [~,order] = ismember(t.Properties.VariableNames,vn);
 

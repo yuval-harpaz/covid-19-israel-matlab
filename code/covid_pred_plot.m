@@ -1,5 +1,5 @@
 cd ~/covid-19-israel-matlab/data/Israel
-t = readtable('tests.csv'); 
+tests = readtable('tests.csv'); 
 listD = readtable('dashboard_timeseries.csv');
 newc = readtable('new_critical.csv');
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2b2fceb-3334-44eb-b7b5-9327a573ea2c&limit=500000');
@@ -36,13 +36,13 @@ hp = findobj(gca,'Type','line');
 y1oct = hp(2).YData';
 x1oct = hp(2).XData';
 close(hs)
-x = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
+x = movmean(tests.pos60,[3 3]);
 x = [x;(x(end)-85/3:-85/3:0)';0];
 predBest =  conv(x,prob);
-xf = movmean(t.pos_f_60,[3 3]);
+xf = movmean(tests.pos_f_60,[3 3]);
 xf = [xf;(xf(end)-85/3:-85/3:0)';0];
 predBestF =  conv(xf,female);
-xm = movmean(t.pos_m_60,[3 3]);
+xm = movmean(tests.pos_m_60,[3 3]);
 xm = [xm;(xm(end)-85/3:-85/3:0)';0];
 predBestM =  conv(xm,male);
 
@@ -54,7 +54,7 @@ plot(listD.date,listD.CountDeath,'.b');
 hold on;
 h(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
 h(2) = plot(x1oct(204:end),y1oct(204:end),'r--','linewidth',2);
-h(3) = plot(t.date(1):t.date(1)+length(predBest)-1,predBest/10,'k','linewidth',1);
+h(3) = plot(tests.date(1):tests.date(1)+length(predBest)-1,predBest/10,'k','linewidth',1);
 grid on
 grid minor
 ylabel('נפטרים ליום')
@@ -68,7 +68,7 @@ xlim([datetime(2020,3,15) datetime(2020,12,15)]);
 set(gcf,'color','w')
 saveas(figPred,'Oct1prediction.png')
 %%
-y = movmean(t.pos_m_60+t.pos_f_60,[3,3]);
+y = movmean(tests.pos60,[3,3]);
 figure;
 subplot(2,2,1);
 plot(y,'b')
@@ -106,13 +106,13 @@ ylabel('deaths (total)')
 
 %%
 
-xx = movmean(t.pos_m_60+t.pos_f_60,[3 3]);
+xx = movmean(tests.pos60,[3 3]);
 xx(234:310) = xx(34:110);
 pred2 =  conv(xx,prob);
 figPred2 = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
 h2(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
 hold on
-h2(2) = plot(t.date(233)+1:t.date(233)+length(pred2)-233,pred2(234:end)/10,'r--','linewidth',2);
+h2(2) = plot(tests.date(233)+1:tests.date(233)+length(pred2)-233,pred2(234:end)/10,'r--','linewidth',2);
 grid on
 grid minor
 ylabel('נפטרים ליום')
