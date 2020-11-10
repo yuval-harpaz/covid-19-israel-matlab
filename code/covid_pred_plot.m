@@ -46,7 +46,10 @@ xm = movmean(tests.pos_m_60,[3 3]);
 xm = [xm;(xm(end)-85/3:-85/3:0)';0];
 predBestM =  conv(xm,male);
 
-
+xConst = movmean(tests.pos60,[3 3]);
+xConst = [xConst;repmat(mean(x(end-7:end)),1000,1)];
+xConst = xConst(1:length(x));
+predConst =  conv(xConst,prob);
 
 clear h
 figPred = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
