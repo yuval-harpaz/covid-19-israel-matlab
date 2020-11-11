@@ -1,0 +1,108 @@
+Province,Capital,Code,Region,Population 2019
+Agrigento,Agrigento,AG,Sicily,434870
+Alessandria,Alessandria,AL,Piedmont,421284
+Ancona,Ancona,AN,Marche,471228
+Aosta,Aosta,AO,Aosta Valley,125666
+Arezzo,Arezzo,AR,Tuscany,342654
+Ascoli_Piceno,Ascoli Piceno,AP,Marche,207179
+Asti,Asti,AT,Piedmont,214638
+Avellino,Avellino,AV,Campania,418306
+Bari,Bari,BA,Apulia,1251994
+Barletta_Andria_Trani,"Barletta, Andria, Trani",BT,Apulia,390011
+Belluno,Belluno,BL,Veneto,202950
+Benevento,Benevento,BN,Campania,277018
+Bergamo,Bergamo,BG,Lombardy,1114590
+Biella,Biella,BI,Piedmont,175585
+Bologna,Bologna,BO,Emilia-Romagna,1014619
+Bolzano,Bolzano,BZ,Trentino-South Tyrol,531178
+Brescia,Brescia,BS,Lombardy,1265954
+Brindisi,Brindisi,BR,Apulia,392975
+Cagliari,Cagliari,CA,Sardinia,431038
+Caltanissetta,Caltanissetta,CL,Sicily,262458
+Campobasso,Campobasso,CB,Molise,221238
+Caserta,Caserta,CE,Campania,922965
+Catania,Catania,CT,Sicily,1107702
+Catanzaro,Catanzaro,CZ,Calabria,358316
+Chieti,Chieti,CH,Abruzzo,385588
+Como,Como,CO,Lombardy,599204
+Cosenza,Cosenza,CS,Calabria,705753
+Cremona,Cremona,CR,Lombardy,358955
+Crotone,Crotone,KR,Calabria,174980
+Cuneo,Cuneo,CN,Piedmont,587089
+Enna,Enna,EN,Sicily,164788
+Fermo,Fermo,FM,Marche,173800
+Ferrara,Ferrara,FE,Emilia-Romagna,345691
+Firenze,Florence,FI,Tuscany,1011349
+Foggia,Foggia,FG,Apulia,622183
+Forli_Cesena,Forlì,FC,Emilia-Romagna,394627
+Frosinone,Frosinone,FR,Lazio,489083
+Genova,Genoa,GE,Liguria,841180
+Gorizia,Gorizia,GO,Friuli-Venezia Giulia,139403
+Grosseto,Grosseto,GR,Tuscany,221629
+Imperia,Imperia,IM,Liguria,213840
+Isernia,Isernia,IS,Molise,84379
+LAquila,La Spezia,SP,Liguria,219556
+La_Spezia,L'Aquila,AQ,Abruzzo,299031
+Latina,Latina,LT,Lazio,575254
+Lecce,Lecce,LE,Apulia,795134
+Lecco,Lecco,LC,Lombardy,337380
+Livorno,Livorno,LI,Tuscany,334832
+Lodi,Lodi,LO,Lombardy,230198
+Lucca,Lucca,LU,Tuscany,387876
+Macerata,Macerata,MC,Marche,314178
+Mantova,Mantua,MN,Lombardy,412292
+Massa_Carrara,Massa,MS,Tuscany,194878
+Matera,Matera,MT,Basilicata,197909
+Messina,Messina,ME,Sicily,626876
+Milano,Milan,MI,Lombardy,3250315
+Modena,Modena,MO,Emilia-Romagna,705393
+Monza_e_della_Brianza,Monza,MB,Lombardy,873935
+Napoli,Naples,NA,Campania,3084890
+Novara,Novara,NO,Piedmont,369018
+Nuoro,Nuoro,NU,Sardinia,208550
+Oristano,Oristano,OR,Sardinia,157707
+Padova,Padua,PD,Veneto,937908
+Palermo,Palermo,PA,Sicily,1252588
+Parma,Parma,PR,Emilia-Romagna,451631
+Pavia,Pavia,PV,Lombardy,545888
+Perugia,Perugia,PG,Umbria,656382
+Pesaro_e_Urbino,Pesaro,PU,Marche,358886
+Pescara,Pescara,PE,Abruzzo,318909
+Piacenza,Piacenza,PC,Emilia-Romagna,287152
+Pisa,Pisa,PI,Tuscany,419037
+Pistoia,Pistoia,PT,Tuscany,292473
+Pordenone,Pordenone,PN,Friuli-Venezia Giulia,312533
+Potenza,Potenza,PZ,Basilicata,364960
+Prato,Prato,PO,Tuscany,257716
+Ragusa,Ragusa,RG,Sicily,320893
+Ravenna,Ravenna,RA,Emilia-Romagna,389456
+Reggio_di_Calabria,Reggio Calabria,RC,Calabria,548009
+Reggio_nellEmilia,Reggio Emilia,RE,Emilia-Romagna,531891
+Rieti,Rieti,RI,Lazio,155503
+Rimini,Rimini,RN,Emilia-Romagna,339017
+Roma,Rome,RM,Lazio,4342212
+Rovigo,Rovigo,RO,Veneto,234937
+Salerno,Salerno,SA,Campania,1098513
+Sassari,Sassari,SS,Sardinia,491571
+Savona,Savona,SV,Liguria,276064
+Siena,Siena,SI,Tuscany,267197
+Siracusa,Syracuse,SR,Sicily,399224
+Sondrio,Sondrio,SO,Lombardy,181095
+Sud_Sardegna,Carbonia,SU,Sardinia,350725
+Taranto,Taranto,TA,Apulia,576756
+Teramo,Teramo,TE,Abruzzo,308052
+Terni,Terni,TR,Umbria,225633
+Torino,Turin,TO,Piedmont,2259523
+Trapani,Trapani,TP,Sicily,430492
+Trento,Trento,TN,Trentino-South Tyrol,541098
+Treviso,Treviso,TV,Veneto,887806
+Trieste,Trieste,TS,Friuli-Venezia Giulia,234493
+Udine,Udine,UD,Friuli-Venezia Giulia,528791
+Varese,Varese,VA,Lombardy,890768
+Venezia,Venice,VE,Veneto,853338
+Verbano_Cusio_Ossola,Verbania,VB,Piedmont,158349
+Vercelli,Vercelli,VC,Piedmont,170911
+Verona,Verona,VR,Veneto,926497
+Vibo_Valentia,Vibo Valentia,VV,Calabria,160073
+Vicenza,Vicenza,VI,Veneto,862418
+Viterbo,Viterbo,VT,Lazio,317030
