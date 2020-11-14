@@ -90,7 +90,7 @@ while read
             %             cellOver60pos,cellOver60breath);
             ii = ii+100000;
             disp(datestr(cellDateU(1)))
-            err = o;
+            err = 0;
             if datenum(prev.date(end)-cellDateU(1)) > 31
                 read = true;
                 %json = json(1:end-1);
