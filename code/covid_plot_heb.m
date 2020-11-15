@@ -1,4 +1,4 @@
-function fig = covid_plot_heb(criterionDays,large,cum)
+function [fig,timeVector,y,countryName,order] = covid_plot_heb(criterionDays,large,cum)
 if ~exist('large','var')
     large = true;
 end
@@ -23,6 +23,7 @@ if large
     small = pop.Population_2020_ < 1000000;
     mergedData(small,:) = [];
 end
+
 %% replace shitty data
 [esp,~,date] = covid_spain;
 [~,idxEsp] = ismember(date,timeVector);
@@ -196,8 +197,4 @@ end
 ylabel('מתים למליון')
 set(gcf,'Color','w')
 xlabel(xl)
-% [~,iSw] = ismember('שבדיה',countryName(order));
-% h(iSw).Color = [0,0.294,0.529];
-% h(iSw).MarkerEdgeColor = [1,0.804,0];
-% h(iSw).MarkerSize = 4
-% text(x,yt(iSw),'שבדיה','FontSize',10,'Color',h(iSw).Color,'FontWeight','bold');
+countryName(:,2) = mergedData(:,1);

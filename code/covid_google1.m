@@ -1,3 +1,5 @@
+
+
 ini = {'CZ','BE','BA','SI','CO','MK','HU','BG','HR','CH','IL'};
 for ii = 1:11
     t = readtable(['2020_',ini{ii},'_Region_Mobility_Report.csv']);
