@@ -143,7 +143,7 @@ hc(3) = plot(tests.date(1)+iStart-1:tests.date(1)+length(predBest)-1,predConst(i
 grid on
 grid minor
 ylabel('נפטרים ליום')
-legend(hc,'נפטרים','ניבוי תמותה אופטימלית','ניבוי תמותה לפי R = 1','location','northwest')
+legend(hc,'נפטרים','ניבוי תמותה לפי החולים עד כה','ניבוי תמותה לפי R = 1','location','northwest')
 title('ניבוי תמותה לפי מאומתים מעל 60')
 box off
 set(gca,'fontsize',13)
