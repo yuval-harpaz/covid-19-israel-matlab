@@ -5,7 +5,7 @@
 # נתוני משרד הבריאות
  [dashboard_timeseries.csv](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/dashboard_timeseries.csv) הנתונים מהדאשבורד של משרד הבריאות<br> 
  [tests.csv](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/tests.csv) נתוני בדיקות לפי גיל, מין, וסימפטומים<br>
- [Predict_Deaths_by_tests60.md](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/Predict_Deaths_by_tests60.m/) <br>
+ [Predict_Deaths_by_tests60.md](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/Predict_Deaths_by_tests60.md) ניבוי תמותה לפי מאומתים מעל גיל 60 מתואר כאן<br>
 
 # dashboard_timeseries.csv
 [dashboard_timeseries.csv](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/dashboard_timeseries.csv) contains the following fields. Field names are kept as they were in the database. Note that Severe condition is defined by low blood saturation. Only some of severe patients are critical, and only some critical patients are ventilated.
