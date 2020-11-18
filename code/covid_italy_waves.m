@@ -56,8 +56,6 @@ yy(yy == 227) = 0;
 yy(yy < 0) = 0;
 
 ysm = movmean(yy,[3 3]);
-col = colormap(jet(107));
-col = flipud(col);
 
 % figure;
 % h = plot(date(2:end),ysm*10^6);
@@ -75,6 +73,8 @@ accum2 = (ita{end,:}-ita{190,:})./popreg.population'*10^6;
 [r,p] = corr(accum1',accum2');
 %%
 figure;
+col = colormap(jet(107));
+col = flipud(col);
 scatter(accum1(order),accum2(order),15,col,'fill')
 text(accum1(order)+200,accum2(order),strrep(popreg.Province(order),'_',' '),'rotation',-5)
 ylabel('מאומתים למליון במצטבר מ 1.9')
@@ -82,4 +82,5 @@ xlabel('מאומתים למליון במצטבר עד 31.8')
 set(gcf,'Color','w')
 box off
 grid on
-title(['קורלציה של ',str(round(r,2)),' (p=',str(round(p,3)),') בין התחלואה בגל הראשון לשני בנפות איטליה'])
+title(['קורלציה של ',str(round(r,2)),' (p=',str(round(p,4)),') בין התחלואה בגל הראשון לשני בנפות איטליה'])
+line([0,20000],[0 20000*(accum1'\accum2')],'color','k','linestyle','--')
