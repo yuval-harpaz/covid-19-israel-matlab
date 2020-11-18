@@ -5,32 +5,32 @@
 # נתוני משרד הבריאות
  [dashboard_timeseries.csv](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/dashboard_timeseries.csv) הנתונים מהדאשבורד של משרד הבריאות<br> 
  [tests.csv](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/tests.csv) נתוני בדיקות לפי גיל, מין, וסימפטומים<br>
- [Predict_Deaths_by_tests60.md](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/Predict_Deaths_by_tests60.m/) ניבוי תמותה לפי תוצאות חיוביות לגילאי 60+ מתואר בקובץ<br>
+ [Predict_Deaths_by_tests60.md](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/Predict_Deaths_by_tests60.m/) <br>
 
 # dashboard_timeseries.csv
 [dashboard_timeseries.csv](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/dashboard_timeseries.csv) contains the following fields. Field names are kept as they were in the database. Note that Severe condition is defined by low blood saturation. Only some of severe patients are critical, and only some critical patients are ventilated.
-| Field שדה                          | details                            |  פרטים|
+| Field                              | details                                 |
 |-------------------------------------|------------------------------------------|
-| date                              | date                                     |תאריך                        |
-| tests                             | number of tests collected                |מספר הבדיקות שנאספו          |
-| tests_result                      | number of test results received          |  |
-| tests_positive                    | number of positive test results received |  |
-| tests_cumulative                  | cumulative sum of tests                  |  |
-| new_hospitalized                  | newely hospitalized                      |  |
-| Counthospitalized                 | all hospitalized today                   |  |
-| Counthospitalized_without_release | ?                                        |  |
-| CountHardStatus                   | all sever patients today                 |  |
-| CountMediumStatus                 | all mild patients today                  |  |
-| CountEasyStatus                   | all easy patients today                  |  |
-| CountBreath                       | all ventilated patients today            |  |
-| CountDeath                        | new deaths                               |  |
-| total_beds                        | total beds                               |  |
-| StandardOccupancy                 | ?                                        |  |
-| num_visits                        | number of visits                         |  |
-| patients_home                     | patients staying at home                 |  |
-| patients_hotel                    | patients staying at corona hotels        |  |
-| CountBreathCum                    | cumulative ventilated patients           |  |
-| CountDeathCum                     | cumulative deaths                        |  |
-| CountCriticalStatus               | all critical patients today              |  |
-| CountSeriousCriticalCum           | cumulative critical status               |  |
-| recovered                         | recovered patients today                 |  |
+| date                              | date                                     |
+| tests                             | number of tests collected                |
+| tests_result                      | number of test results received          |
+| tests_positive                    | number of positive test results received |
+| tests_cumulative                  | cumulative sum of tests                  |
+| new_hospitalized                  | newely hospitalized                      |
+| Counthospitalized                 | all hospitalized today                   |
+| Counthospitalized_without_release | ?                                        |
+| CountHardStatus                   | all sever patients today                 |
+| CountMediumStatus                 | all mild patients today                  |
+| CountEasyStatus                   | all easy patients today                  |
+| CountBreath                       | all ventilated patients today            |
+| CountDeath                        | new deaths                               |
+| total_beds                        | total beds                               |
+| StandardOccupancy                 | ?                                        |
+| num_visits                        | number of visits                         |
+| patients_home                     | patients staying at home                 |
+| patients_hotel                    | patients staying at corona hotels        |
+| CountBreathCum                    | cumulative ventilated patients           |
+| CountDeathCum                     | cumulative deaths                        |
+| CountCriticalStatus               | all critical patients today              |
+| CountSeriousCriticalCum           | cumulative critical status               |
+| recovered                         | recovered patients today                 |
