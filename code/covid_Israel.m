@@ -158,7 +158,7 @@ hh(1) = plot(list.date(1:end-1),diff(list.CountBreathCum(1:end)),'.');
 hh(2) = plot(list.date(1:end-2),movmean(diff(list.CountBreathCum(1:end-1)),[3 3]),'linewidth',1.5);
 hh(2).Color = ccc(1,:);
 d = diff(list.CountSeriousCriticalCum);
-bad = find(diff(d) > 100);
+bad = find(diff(d) > 75);
 if length(bad) > 1
     error('too many bad diffs')
 end
