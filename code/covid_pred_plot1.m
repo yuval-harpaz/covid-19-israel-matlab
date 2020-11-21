@@ -15,21 +15,88 @@ prob = movmean(hist(pos2death,1:1000),[3 3]);
 iEnd = find(prob < 0.5,1);
 prob = prob(1:iEnd-1);
 prob = prob/sum(prob);
+agegen = readtable('dashboard_age_gen.csv');
+date = unique(dateshift(agegen.date,'start','day'));
+for ii = 1:length(date)
+    pos(ii,1) = max(sum(agegen{ismember(dateshift(agegen.date,'start','day'),date(ii)),2:21},2));
+    pos60(ii,1) = max(sum(agegen{ismember(dateshift(agegen.date,'start','day'),date(ii)),14:21},2));
+end
+agegen = table(date,pos,pos60);
+
+figure;
+plot(agegen.date(2:end),diff(agegen.pos))
+hold on
+plot(tests.date,tests.pos)
+plot(listD.date,listD.tests_positive)
+
+figure;
+plot(agegen.date(2:end),diff(agegen.pos60))
+hold on
+plot(tests.date,tests.pos60)
+iEnd = find(ismember(listD.date,tests.date(end)));
+cor = tests.pos60.*(listD.tests_positive(36:iEnd)./tests.pos);
+plot(tests.date,cor)
+corsm = tests.pos60.*movmean(listD.tests_positive(36:iEnd)./tests.pos,[3 3]);
+plot(tests.date,corsm)
+legend('dashboard tree','timna','corrected','corrected smooth')
+
+x = movmean(tests.pos60,[3 3]);
+predFirst =  conv(x,prob);
+x1 = movmean(cor,[3 3]);
+predCor = conv(x1,prob);
+x2 = movmean(corsm,[3 3]);
+predCorSm = conv(x2,prob);
+x3 = movmean(tests.pos,[3 3]);
+predAllFirst = conv(x3,prob);
+x4 = movmean(listD.tests_positive(36:iEnd),[3 3]);
+predAll = conv(x4,prob);
+
+prob05 = 2*resample(prob,2,1);
+% prob05(end+1:length(prob)) = 0;
+prob05 = prob05(1:length(prob));
+prob05 = prob05/sum(prob05);
+predAll05 = conv(x4,prob05);
+
+figPred1 = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+plot(listD.date,listD.CountDeath,'.b');
+hold on;
+h(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% h(2) = plot(x1oct(204:end),y1oct(204:end),'r--','linewidth',2);
+h(2) = plot(tests.date(1):tests.date(1)+length(predFirst)-1,predFirst/10,'k','linewidth',1);
+h(3) = plot(tests.date(1):tests.date(1)+length(predCor)-1,predCor/15,'r--','linewidth',1);
+% h(4) = plot(tests.date(1):tests.date(1)+length(predCorSm)-1,predCor/17,'g:','linewidth',1);
+% h(4) = plot(tests.date(1):tests.date(1)+length(predCor)-1,predAllFirst/75,'c','linewidth',1);
+h(4) = plot(tests.date(1):tests.date(1)+length(predCor)-1,predAll/120,'g','linewidth',1);
+h(5) = plot(tests.date(1):tests.date(1)+length(predCor)-1,predAll05/120,'c','linewidth',1);
+grid on
+grid minor
+ylabel('נפטרים ליום')
+legend(h,'נפטרים','מאומתים מעל 60 בדיקה ראשונה','מאומתים מעל 60 מתוקן','מאומתים','location','northwest')
+title('ניבוי תמותה לפי ירידה אופטימלית בתחלואה')
+box off
+set(gca,'fontsize',13)
+set(gca,'XTick',datetime(2020,3:12,1))
+xtickangle(45)
+xlim([datetime(2020,3,15) datetime(2020,12,15)]);
+set(gcf,'color','w')
 
 
-female = movmean(hist(pos2death(~isMale),1:1000),[3 3]);
-iEnd = find(female < 0.5,1);
-female = female(1:iEnd-1);
-female = female'/sum(female);
-male = movmean(hist(pos2death(isMale),1:1000),[3 3]);
-iEnd = find(male < 0.5,1);
-male = male(1:iEnd-1);
-male = male'/sum(male);
-all = prob';
-male(end+1:length(all)) = 0;
-female(end+1:length(all)) = 0;
-tProb = table(all,female,male);
-writetable(tProb,'positive_to_death.txt','WriteVariableNames',true)
+
+
+% 
+% female = movmean(hist(pos2death(~isMale),1:1000),[3 3]);
+% iEnd = find(female < 0.5,1);
+% female = female(1:iEnd-1);
+% female = female'/sum(female);
+% male = movmean(hist(pos2death(isMale),1:1000),[3 3]);
+% iEnd = find(male < 0.5,1);
+% male = male(1:iEnd-1);
+% male = male'/sum(male);
+% all = prob';
+% male(end+1:length(all)) = 0;
+% female(end+1:length(all)) = 0;
+% tProb = table(all,female,male);
+% writetable(tProb,'positive_to_death.txt','WriteVariableNames',true)
 %%
 
 hs = open('pred1.fig');
