@@ -151,10 +151,10 @@ newc = readtable('data/Israel/new_critical.csv');
 ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,0.5560;0.4660,0.6740,0.1880;0.3010,0.7450,0.9330;0.6350,0.07800,0.1840];
 figure;
 subplot(1,2,1)
-hh(9) = plot(list.date,list.CountDeath,'k.');
+hh(9) = plot(list.date,list.CountDeath,'k:');
 hold on
 hh(10) = plot(list.date(1:end-1),movmean(list.CountDeath(1:end-1),[3 3]),'k','linewidth',1.5);
-hh(1) = plot(list.date(1:end-1),diff(list.CountBreathCum(1:end)),'.');
+hh(1) = plot(list.date(1:end-1),diff(list.CountBreathCum(1:end)),':');
 hh(2) = plot(list.date(1:end-2),movmean(diff(list.CountBreathCum(1:end-1)),[3 3]),'linewidth',1.5);
 hh(2).Color = ccc(1,:);
 d = diff(list.CountSeriousCriticalCum);
@@ -163,15 +163,15 @@ if length(bad) > 1
     error('too many bad diffs')
 end
 d(bad+1) = mean(d([bad,bad+2]));
-hh(3) = plot(list.date(1:end-1),diff(list.CountSeriousCriticalCum),'.');
+hh(3) = plot(list.date(1:end-1),diff(list.CountSeriousCriticalCum),':');
 hh(3).Color = ccc(2,:);
 hh(4) = plot(list.date(1:end-2),movmean(d(1:end-1),[3 3]),'linewidth',1.5);
 hh(4).Color = ccc(2,:);
-hh(5) = plot(newc.date,newc.new_critical,'.');
+hh(5) = plot(newc.date,newc.new_critical,':');
 hh(5).Color = ccc(3,:);
 hh(6) = plot(newc.date(1:end-1),movmean(newc.new_critical(1:end-1),[3 3]),'linewidth',1.5);
 hh(6).Color = ccc(3,:);
-hh(7) = plot(list.date,list.new_hospitalized,'.');
+hh(7) = plot(list.date,list.new_hospitalized,':');
 hh(7).Color = ccc(4,:);
 hh(8) = plot(list.date(1:end-1),movmean(list.new_hospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh(8).Color = ccc(4,:);
@@ -185,20 +185,20 @@ set(gca,'fontsize',13)
 ylim([0 260])
 
 subplot(1,2,2)
-hh1(1) = plot(list.date,list.on_ventilator,'.');
+hh1(1) = plot(list.date,list.on_ventilator,':');
 hold on
 hh1(2) = plot(list.date(1:end-1),movmean(list.on_ventilator(1:end-1),[3 3]),'linewidth',1.5);
 hh1(2).Color = ccc(1,:);
 list.CountCriticalStatus(1:find(list.CountCriticalStatus > 10,1)-1) = nan;
-hh1(3) = plot(list.date,list.CountCriticalStatus,'.');
+hh1(3) = plot(list.date,list.CountCriticalStatus,':');
 hh1(3).Color = ccc(2,:);
 hh1(4) = plot(list.date(1:end-1),movmean(list.CountCriticalStatus(1:end-1),[3 3]),'linewidth',1.5);
 hh1(4).Color = ccc(2,:);
-hh1(5) = plot(list.date,list.critical,'.');
+hh1(5) = plot(list.date,list.critical,':');
 hh1(5).Color = ccc(3,:);
 hh1(6) = plot(list.date(1:end-1),movmean(list.critical(1:end-1),[3 3]),'linewidth',1.5);
 hh1(6).Color = ccc(3,:);
-hh1(7) = plot(list.date,list.hospitalized,'.');
+hh1(7) = plot(list.date,list.hospitalized,':');
 hh1(7).Color = ccc(4,:);
 hh1(8) = plot(list.date(1:end-1),movmean(list.hospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh1(8).Color = ccc(4,:);
