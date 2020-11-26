@@ -1,4 +1,4 @@
-function [fig,timeVector,y,countryName,order] = covid_plot_heb(criterionDays,large,cum)
+function [fig,timeVector,y,countryName,order] = covid_plot_heb(criterionDays,large,cum,mustHave)
 if ~exist('large','var')
     large = true;
 end
@@ -7,6 +7,9 @@ if ~exist('cum','var')
 end
 if ~exist('criterionDays','var')
     criterionDays = 1;
+end
+if ~exist('mustHave','var')
+    mustHave = 'Israel';
 end
 cd ~/covid-19-israel-matlab/
 nCountries = 20;
@@ -31,11 +34,11 @@ iEsp = find(ismember(mergedData(:,1),'Spain'));
 % mergedData{iEsp,2}(idxEsp(1:end-7)) = sum(esp(1:end-7,:),2);
 mergedData{iEsp,2}(idxEsp) = sum(esp,2);
 
-[bel,~,date] = covid_belgium;
-[isxB,idxB] = ismember(date,timeVector);
-iB = find(ismember(mergedData(:,1),'Belgium'));
-lastBdifs = diff(mergedData{iB,2}(end-2:end));
-mergedData{iB,2}(idxB(isxB)) = cumsum(sum(bel(isxB,:),2));
+% [bel,~,date] = covid_belgium;
+% [isxB,idxB] = ismember(date,timeVector);
+% iB = find(ismember(mergedData(:,1),'Belgium'));
+% lastBdifs = diff(mergedData{iB,2}(end-2:end));
+% mergedData{iB,2}(idxB(isxB)) = cumsum(sum(bel(isxB,:),2));
 
 ecu = urlread('https://raw.githubusercontent.com/andrab/ecuacovid/master/datos_crudos/ecuacovid.csv');
 fid = fopen('tmp.csv','w');
@@ -59,7 +62,7 @@ fclose(fid);
 per = readtable('tmp.csv');
 !rm tmp.*
 % criterion = 'ddpm';
-mustHave = 'Israel';
+
 % ymax = 10;
 cd ~/covid-19-israel-matlab/
 
@@ -86,18 +89,19 @@ mil = pop.Population_2020_(idx)'/10^6;
 [~,iMustHave] = ismember(mustHave,mergedData(:,1));
 iMustHave(isempty(iMustHave)) = [];
 
-
-listD = readtable('data/Israel/dashboard_timeseries.csv');
-listD.CountDeath(isnan(listD.CountDeath)) = 0;
-[isDate,iDate] = ismember(listD.date,timeVector);
-deaths(iDate(isDate),iMustHave) = listD.CountDeath(isDate);
-deaths(iDate(isDate),iMustHave) = cumsum(deaths(iDate(isDate),iMustHave));
+if strcmp(mustHave,'Israel')
+    listD = readtable('data/Israel/dashboard_timeseries.csv');
+    listD.CountDeath(isnan(listD.CountDeath)) = 0;
+    [isDate,iDate] = ismember(listD.date,timeVector);
+    deaths(iDate(isDate),iMustHave) = listD.CountDeath(isDate);
+    deaths(iDate(isDate),iMustHave) = cumsum(deaths(iDate(isDate),iMustHave));
+end
 
 if cum
     y = deaths./mil;
 else
     y = [deaths(1,:);diff(deaths)]./mil;
-    lastBdifs = lastBdifs./mil(iB);
+%     lastBdifs = lastBdifs./mil(iB);
 end
 isNeg = y < 0;
 y(isNeg) = nan;
@@ -112,7 +116,7 @@ if ~cum
 %     y(1:100,ib) = belge;
     iF = ismember(mergedData(:,1),'France');
     y(119,iF) = y(120,iF);
-    y(end-1:end,iB) = lastBdifs;
+%     y(end-1:end,iB) = lastBdifs;
     iM = ismember(mergedData(:,1),'Mexico');
     y(258,iM) = y(259,iM);
 %     iB = ismember(mergedData(:,1),'Belgium');
