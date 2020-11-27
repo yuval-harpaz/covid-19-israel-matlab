@@ -11,6 +11,7 @@ if ~exist('download','var')
     download = false;
 end
 cd ~/covid-19-israel-matlab/data
+
 % d = dir('tmp.json');
 % if length(d) == 1
 %     if dateshift(datetime(d.date),'start','day') == datetime('today')
@@ -32,6 +33,9 @@ date = datetime(dates,'InputFormat','yyyyMMdd');
 
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
+if strcmp(country{1},'United States')
+    mergedData(ismember(mergedData(:,1),'US'),1) = {'United States'};
+end
 [isx,idx] = ismember(date,timeVector);
 deaths = zeros(length(date),1);
 deaths(isx) = mergedData{contains(mergedData(:,1),country{1}),2}(idx(isx))';
