@@ -2,10 +2,12 @@ function [yy,pop,date] = covid_brazil(plt)
 if nargin == 0
     plt = false;
 end
-bra = urlread('https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv');
-fid = fopen('tmp.csv','w');
-fwrite(fid,bra);
-fclose(fid);
+% bra = urlread('https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv');
+disp('downloading Brazil')
+[~,~] = system('wget -O tmp.csv https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv')
+% fid = fopen('tmp.csv','w');
+% fwrite(fid,bra);
+% fclose(fid);
 bra = readtable('tmp.csv');
 !rm tmp.*
 pop = readtable('data/brazil_pop.csv');
