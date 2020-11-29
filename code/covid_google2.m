@@ -17,7 +17,16 @@ cd tmp
 
 
 ini = cell(11,1);
-ini{11} = 'IL';
+switch mustHave
+    case 'Israel'
+        ini{11} = 'IL';
+        countryName{11,1} = 'ישראל';
+        countryName{11,2} = 'Israel';
+    case 'Sweden'
+        ini{11} = 'SE';
+        countryName{11,1} = 'שבדיה';
+        countryName{11,2} = 'Sweden';
+end
 ini(isx) = cc(idx(isx),1);
 
 for ii = [11,1:10]
@@ -51,10 +60,9 @@ xlim([t.date(1) datetime('today')])
 box off
 grid on
 ylabel('שינוי ביחס לשגרה (%)')
-title('מדד תנועתיות של גוגל')
+title('מדד התנועתיות של גוגל')
 set(gcf,'Color','w')
-countryName{11,1} = 'ישראל';
-countryName{11,2} = 'Israel';
+
 yt = linspace(10,-40,11);
 for iAnn = 1:11
     text(length(glob),yt(iAnn),countryName{iAnn,1},...
