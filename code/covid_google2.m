@@ -1,4 +1,7 @@
-mustHave = 'Israel';
+function covid_google2(mustHave)
+if nargin == 0
+    mustHave = 'Israel';
+end
 [fig,timeVector,yy,countryName,order] = covid_plot_heb(1,1,0,mustHave);
 iMust = find(order == find(ismember(countryName(:,2),mustHave)));
 countryName = countryName(order(1:10),:);
