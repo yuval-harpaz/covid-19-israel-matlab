@@ -1,4 +1,4 @@
-function [fig,timeVector,y,countryName,order] = covid_plot_heb(criterionDays,large,cum,mustHave)
+function [fig,timeVector,y,countryName,order] = covid_plot_owid(criterionDays,large,cum,mustHave)
 if ~exist('large','var')
     large = true;
 end
@@ -26,6 +26,7 @@ if large
     small = pop.Population_2020_ < 1000000;
     mergedData(small,:) = [];
 end
+
 
 %% replace shitty data
 [esp,~,date] = covid_spain;
