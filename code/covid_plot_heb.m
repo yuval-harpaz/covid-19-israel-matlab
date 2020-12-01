@@ -13,15 +13,25 @@ if ~exist('mustHave','var')
 end
 cd ~/covid-19-israel-matlab/
 nCountries = 20;
+
+[~,~] = system('wget -O tmp.csv https://covid19.who.int/WHO-COVID-19-global-data.csv');
+whoData = readtable('tmp.csv');
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
 pop = readtable('data/population.csv','delimiter',',');
 popw = readtable('data/worldometer_data.csv');
 [isx,idx] = ismember(pop.Country_orDependency_,popw.Country_Other);
 pop.Population_2020_(isx) = popw.Population(idx(isx));
+% replace = {
+% cou = unique(whoData.Country);
+% cou = strrep(cou,'United Republic of ','');
+% whoData.Country = strrep(whoData.Country,'United Republic of ','');
+% iii = ismember(cou,popw.Country_Other);
+% cou(~iii)
 mergedData(~ismember(mergedData(:,1),pop.Country_orDependency_),:) = [];
 [~,idx1] = ismember(mergedData(:,1),pop.Country_orDependency_);
 pop = pop(idx1,:);
+
 if large
     small = pop.Population_2020_ < 1000000;
     mergedData(small,:) = [];

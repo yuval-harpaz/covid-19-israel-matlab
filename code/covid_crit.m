@@ -1,7 +1,7 @@
 cd ~/covid-19-israel-matlab/data/Israel
 % tests = readtable('tests.csv'); 
 listD = readtable('dashboard_timeseries.csv');
-q
+
 newc = readtable('new_critical.csv');
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2b2fceb-3334-44eb-b7b5-9327a573ea2c&limit=500000');
 json = jsondecode(json);
