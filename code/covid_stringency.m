@@ -73,7 +73,11 @@ elseif ismember('AR',country)
 end
 % t = t(1:find(~isnan(t.stringency),1,'last')-1,:);
 t(isnan(t.stringency),:) = [];
-mob = readtable(['~/Downloads/Region_Mobility_Report_CSVs/2020_',country{2},'_Region_Mobility_Report.csv']);
+try
+    mob = readtable(['~/Downloads/Region_Mobility_Report_CSVs/2020_',country{2},'_Region_Mobility_Report.csv']);
+catch
+    mob = readtable(['tmp/2020_',country{2},'_Region_Mobility_Report.csv']);
+end
 mob = mob(1:find(~cellfun(@isempty,mob.sub_region_1),1)-1,8:end);
 [isx,idx] = ismember(t.date,mob.date);
 figure;
