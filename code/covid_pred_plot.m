@@ -51,6 +51,7 @@ xConst = movmean(tests.pos60,[3 3]);
 xConst = [xConst;repmat(mean(x(end-7:end)),1000,1)];
 predConst =  conv(xConst,prob);
 predConst = predConst(1:length(predBest));
+iStart = find(predConst > predBest,1);
 
 clear h
 figPred = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
@@ -59,97 +60,98 @@ hold on;
 h(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
 h(2) = plot(x1oct(204:end),y1oct(204:end),'r--','linewidth',2);
 h(3) = plot(tests.date(1):tests.date(1)+length(predBest)-1,predBest/10,'k','linewidth',1);
+h(4) = plot(tests.date(1)+iStart-1:tests.date(1)+length(predBest)-1,predConst(iStart:end)/10,'g','linewidth',1);
 grid on
 grid minor
 ylabel('נפטרים ליום')
-legend(h,'נפטרים','ניבוי תמותה מה- 1 לאוק''','ניבוי תמותה מתעדכן','location','northwest')
+legend(h,'נפטרים','ניבוי תמותה מה- 1 לאוק''','ניבוי תמותה מתעדכן','ניבוי תמותה לפי R = 1','location','northwest')
 title('ניבוי תמותה לפי ירידה אופטימלית בתחלואה')
 box off
 set(gca,'fontsize',13)
 set(gca,'XTick',datetime(2020,3:12,1))
 xtickangle(45)
-xlim([datetime(2020,3,15) datetime(2020,12,15)]);
+xlim([datetime(2020,3,15) datetime(2020,12,30)]);
 set(gcf,'color','w')
 saveas(figPred,'Oct1prediction.png')
 %%
-y = movmean(tests.pos60,[3,3]);
-figure;
-subplot(2,2,1);
-plot(y,'b')
-hold on
-box off
-grid on
-ylabel('positive tests')
-xlabel('days')
-title('Positive over 60')
-xlim([0 300])
-subplot(2,2,2)
-plot(prob,'b')
-ylabel('deceased')
-xlabel('days')
-title('probability of death date after positive')
-xlim([0 75])
-box off
-grid on
-subplot(2,2,3)
-plot(predBest,'b')
-box off
-grid on
-title('death prediction')
-ylabel('deaths (daily)')
-subplot(2,2,4)
-plot(cumsum(predBest/10),'b')
-ax = gca;
-ax.YRuler.Exponent = 0;
-
-ylim([0 2500])
-box off
-grid on
-title('death prediction (cumulative)')
-ylabel('deaths (total)')
+% % y = movmean(tests.pos60,[3,3]);
+% % figure;
+% % subplot(2,2,1);
+% % plot(y,'b')
+% % hold on
+% % box off
+% % grid on
+% % ylabel('positive tests')
+% % xlabel('days')
+% % title('Positive over 60')
+% % xlim([0 300])
+% % subplot(2,2,2)
+% % plot(prob,'b')
+% % ylabel('deceased')
+% % xlabel('days')
+% % title('probability of death date after positive')
+% % xlim([0 75])
+% % box off
+% % grid on
+% % subplot(2,2,3)
+% % plot(predBest,'b')
+% % box off
+% % grid on
+% % title('death prediction')
+% % ylabel('deaths (daily)')
+% % subplot(2,2,4)
+% % plot(cumsum(predBest/10),'b')
+% % ax = gca;
+% % ax.YRuler.Exponent = 0;
+% % 
+% % ylim([0 2500])
+% % box off
+% % grid on
+% % title('death prediction (cumulative)')
+% % ylabel('deaths (total)')
 
 %%
 
-xx = movmean(tests.pos60,[3 3]);
-xx(234:310) = xx(34:110);
-pred2 =  conv(xx,prob);
-figPred2 = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
-h2(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
-hold on
-h2(2) = plot(tests.date(233)+1:tests.date(233)+length(pred2)-233,pred2(234:end)/10,'r--','linewidth',2);
-grid on
-grid minor
-ylabel('נפטרים ליום')
-legend(h2,'נפטרים','ניבוי תמותה ','location','northwest')
-title('ניבוי תמותה לפי ירידה בתחלואה בשיעור דומה לגל הראשון')
-box off
-set(gca,'fontsize',13)
-set(gca,'XTick',[datetime(2020,3:12,1),datetime(2021,1:2,1)])
-xtickangle(45)
-xlim([datetime(2020,3,1) datetime(2021,3,1)])
-set(gcf,'color','w')
-% saveas(figPred2,'Nov1prediction.png')
-% saveas(figPred2,'Nov1prediction.fig')
+% % xx = movmean(tests.pos60,[3 3]);
+% % xx(234:310) = xx(34:110);
+% % pred2 =  conv(xx,prob);
+% % figPred2 = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+% % h2(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% % hold on
+% % h2(2) = plot(tests.date(233)+1:tests.date(233)+length(pred2)-233,pred2(234:end)/10,'r--','linewidth',2);
+% % grid on
+% % grid minor
+% % ylabel('נפטרים ליום')
+% % legend(h2,'נפטרים','ניבוי תמותה ','location','northwest')
+% % title('ניבוי תמותה לפי ירידה בתחלואה בשיעור דומה לגל הראשון')
+% % box off
+% % set(gca,'fontsize',13)
+% % set(gca,'XTick',[datetime(2020,3:12,1),datetime(2021,1:2,1)])
+% % xtickangle(45)
+% % xlim([datetime(2020,3,1) datetime(2021,3,1)])
+% % set(gcf,'color','w')
+% % % saveas(figPred2,'Nov1prediction.png')
+% % % saveas(figPred2,'Nov1prediction.fig')
 
 
 %% const
-iStart = find(predConst > predBest,1);
-clear hc
-figConst = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
-plot(listD.date,listD.CountDeath,'.b');
-hold on;
-hc(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
-hc(2) = plot(tests.date(1):tests.date(1)+length(predBest)-1,predBest/10,'k','linewidth',1);
-hc(3) = plot(tests.date(1)+iStart-1:tests.date(1)+length(predBest)-1,predConst(iStart:end)/10,'r','linewidth',1);
-grid on
-grid minor
-ylabel('נפטרים ליום')
-legend(hc,'נפטרים','ניבוי תמותה לפי החולים עד כה','ניבוי תמותה לפי R = 1','location','northwest')
-title('ניבוי תמותה לפי מאומתים מעל 60')
-box off
-set(gca,'fontsize',13)
-set(gca,'XTick',datetime(2020,3:12,1))
-xtickangle(45)
-xlim([datetime(2020,3,15) datetime(2020,12,15)]);
-set(gcf,'color','w')
+% iStart = find(predConst > predBest,1);
+% clear hc
+% figConst = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+% plot(listD.date,listD.CountDeath,'.b');
+% hold on;
+% hc(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+% hc(2) = plot(tests.date(1):tests.date(1)+length(predBest)-1,predBest/10,'k','linewidth',1);
+% hc(3) = plot(tests.date(1)+iStart-1:tests.date(1)+length(predBest)-1,predConst(iStart:end)/10,'r','linewidth',1);
+% grid on
+% grid minor
+% ylabel('נפטרים ליום')
+% legend(hc,'נפטרים','ניבוי תמותה לפי החולים עד כה','ניבוי תמותה לפי R = 1','location','northwest')
+% title('ניבוי תמותה לפי מאומתים מעל 60')
+% box off
+% set(gca,'fontsize',13)
+% set(gca,'XTick',datetime(2020,3:12,1))
+% xtickangle(45)
+% xlim([datetime(2020,3,15) datetime(2020,12,15)]);
+% set(gcf,'color','w')
 % saveas(figPred,'Oct1prediction.png')
