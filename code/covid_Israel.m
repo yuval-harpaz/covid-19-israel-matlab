@@ -172,7 +172,7 @@ crit = ser_crit - newc.new_critical(ismember(newc.date,commonDate));
 
 hh(3) = scatter(commonDate,crit,'.','MarkerEdgeAlpha',alf);
 hh(3).MarkerEdgeColor = ccc(2,:);
-hh(4) = plot(commonDate,movmean(crit,[3 3]),'linewidth',1.5);
+hh(4) = plot(commonDate(1:end-1),movmean(crit(1:end-1),[3 3]),'linewidth',1.5);
 hh(4).Color = ccc(2,:);
 hh(5) = scatter(newc.date,newc.new_critical,'.','MarkerEdgeAlpha',alf);
 hh(5).MarkerEdgeColor = ccc(3,:);
