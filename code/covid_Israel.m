@@ -13,8 +13,8 @@ nCountries = 20;
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
 % fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
 % fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
-fig7 = covid_plot_heb;
-fig6 = covid_plot_heb(1,1,1);
+fig7 = covid_plot_who;
+fig6 = covid_plot_who(1,1,1);
 % showDateEvery = 7; % days
 % zer = 1; % how many deaths per million to count as day zero
 % warning off
@@ -165,9 +165,14 @@ if length(bad) > 1
     error('too many bad diffs')
 end
 d(bad+1) = mean(d([bad,bad+2]));
-hh(3) = scatter(list.date(1:end-1),diff(list.CountSeriousCriticalCum),'.','MarkerEdgeAlpha',alf);
+commonDate = datetime(2020,8,18):newc.date(end);
+ser_crit = [0;diff(list.CountSeriousCriticalCum)];
+ser_crit = ser_crit(ismember(list.date,commonDate));
+crit = ser_crit - newc.new_critical(ismember(newc.date,commonDate));
+
+hh(3) = scatter(commonDate,crit,'.','MarkerEdgeAlpha',alf);
 hh(3).MarkerEdgeColor = ccc(2,:);
-hh(4) = plot(list.date(1:end-2),movmean(d(1:end-1),[3 3]),'linewidth',1.5);
+hh(4) = plot(commonDate,movmean(crit,[3 3]),'linewidth',1.5);
 hh(4).Color = ccc(2,:);
 hh(5) = scatter(newc.date,newc.new_critical,'.','MarkerEdgeAlpha',alf);
 hh(5).MarkerEdgeColor = ccc(3,:);
