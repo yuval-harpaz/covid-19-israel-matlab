@@ -25,10 +25,10 @@ male = movmean(hist(pos2death(isMale),1:1000),[3 3]);
 iEnd = find(male < 0.5,1);
 male = male(1:iEnd-1);
 male = male'/sum(male);
-all = prob';
-male(end+1:length(all)) = 0;
-female(end+1:length(all)) = 0;
-tProb = table(all,female,male);
+all1 = prob';
+male(end+1:length(all1)) = 0;
+female(end+1:length(all1)) = 0;
+tProb = table(all1,female,male);
 writetable(tProb,'positive_to_death.txt','WriteVariableNames',true)
 %%
 
