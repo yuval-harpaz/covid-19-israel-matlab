@@ -14,8 +14,8 @@ end
 cd ~/covid-19-israel-matlab/
 nCountries = 20;
 
-[~,~] = system('wget -O tmp.csv https://covid19.who.int/WHO-COVID-19-global-data.csv');
-whoData = readtable('tmp.csv');
+% [~,~] = system('wget -O tmp.csv https://covid19.who.int/WHO-COVID-19-global-data.csv');
+% whoData = readtable('tmp.csv');
 [dataMatrix] = readCoronaData('deaths');
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
 pop = readtable('data/population.csv','delimiter',',');
