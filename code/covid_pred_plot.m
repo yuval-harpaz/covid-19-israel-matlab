@@ -38,17 +38,20 @@ y1oct = hp(2).YData';
 x1oct = hp(2).XData';
 close(hs)
 x = movmean(tests.pos60,[3 3]);
-x = [x;(x(end)-85/3:-85/3:0)';0];
+% x = [x;(x(end)-85/3:-85/3:0)';0];
 predBest =  conv(x,prob);
-xf = movmean(tests.pos_f_60,[3 3]);
-xf = [xf;(xf(end)-85/3:-85/3:0)';0];
-predBestF =  conv(xf,female);
-xm = movmean(tests.pos_m_60,[3 3]);
-xm = [xm;(xm(end)-85/3:-85/3:0)';0];
-predBestM =  conv(xm,male);
+% xf = movmean(tests.pos_f_60,[3 3]);
+% xf = [xf;(xf(end)-85/3:-85/3:0)';0];
+% predBestF =  conv(xf,female);
+% xm = movmean(tests.pos_m_60,[3 3]);
+% xm = [xm;(xm(end)-85/3:-85/3:0)';0];
+% predBestM =  conv(xm,male);
 
 xConst = movmean(tests.pos60,[3 3]);
 xConst = [xConst;repmat(mean(x(end-7:end)),1000,1)];
+% 
+% xLin = 
+
 predConst =  conv(xConst,prob);
 predConst = predConst(1:length(predBest));
 iStart = find(predConst > predBest,1);
