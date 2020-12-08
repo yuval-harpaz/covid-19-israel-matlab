@@ -144,7 +144,7 @@ yd = movmean(yd,[6 0],'omitnan');
 [~,orderd] = sort(yd(end,:),'descend');
 yd = yd(:,orderd);
 fig11 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
-plot(listDate(2:end),yd,'Color',[0.45 0.45 0.45]);
+plot(listDate(2:end),yd,'Color',[0.65 0.65 0.65]);
 hold on
 for ii = 1:10
     hd(ii) = plot(listDate(2:end),yd(:,ii));

@@ -13,7 +13,7 @@ nyc = readtable('tmp.csv');
 date = nyc.date_of_interest;
 pop =  8336830; % you sum borrogh pop 25.5995   14.1823   16.2867   22.5383    4.7614. before I used 8399000
 deceased = cumsum(nyc.DEATH_COUNT);
-deceased_probable = deceased + cumsum(nyc.DEATH_COUNT_PROBABLE);
+deceased_probable = deceased + cumsum(nyc.PROBABLE_DEATH_COUNT);
 
 % !wget -O tmp.csv https://raw.githubusercontent.com/nychealth/coronavirus-data/13c4c61fcd426eb9b285f2953ce2e262c192f49f/totals/group-data-by-boro.csv
 % bo = readtable('tmp.csv');

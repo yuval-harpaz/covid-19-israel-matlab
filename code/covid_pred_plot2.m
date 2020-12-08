@@ -95,3 +95,29 @@ xtickangle(45)
 xlim([datetime(2020,3,15) tests.date(end)+30]);
 set(gcf,'color','w')
 % saveas(figPred,'Oct1prediction.png')
+%% 
+crit = diff(listD.CountSeriousCriticalCum(1:end-1));
+bad = find(diff(crit)>75)+1;
+crit(bad) = (crit(bad-1)+crit(bad+1))/2;
+prob6 = [0.0546565127716960,0.0589401872124385,0.0644930985245121,0.0672695541805489,0.0713945740123751,0.0720291924480406,0.0728224654926226,0.0711565920990005,0.0702046644455021,0.0646517531334285,0.0606853879105188,0.0574329684277328,0.0529906393780739,0.0464858004125020,0.0426780897985087,0.0369665238775186,0.0351419958749802];
+predCrit = conv(crit,prob6);
+predCrit = predCrit(1:end-length(prob6)+1);
+predCrit(end+1:end+7) = predCrit(end)+(1:7)*mean(diff(predCrit(end-6:end)));
+%%
+figCrit = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+plot(listD.date,listD.CountDeath,'.b');
+hold on;
+hc(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+hc(2) = plot(listD.date(2:end-1)+8,movmean(crit*0.3,[3 3]),'r');
+hc(3) = plot(listD.date(2):listD.date(2)+length(predCrit)-1,predCrit*0.31,'g');
+legend(hc,'תמותה','הסטה','מודל')
+
+%%
+predLin1 = predLin(1:end-length(prob)+1);
+figBoth = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
+scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor','b','MarkerEdgeAlpha',0.5);
+hold on;
+hb(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+hb(2) = plot(tests.date(1):tests.date(1)+length(predLin1)-1,predLin1/10+add,'r');
+hb(3) = plot(listD.date(2):listD.date(2)+length(predCrit)-1,predCrit*0.31,'g');
+legend(hb,'תמותה','ניבוי לפי מאומתים','ניבוי לפי קשים וקריטיים')
