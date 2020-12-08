@@ -21,7 +21,7 @@ while read
             cellDateU = unique(cellDate);
             if ii == 0 && cellDateU(end) <= prev.date(end)
                 warning('No new dates?')
-                abort = false;
+                abort = true;
                 read = false;
             end
             cough = ismember({json.result.records(:).cough}','1');
@@ -171,4 +171,4 @@ prev(startUpdate:startUpdate+height(t)-1,:) = t;
 % save symp t
 writetable(prev,'tests.csv','Delimiter',',','WriteVariableNames',true)
 %%
-covid_pred_plot;
+covid_pred_plot2;
