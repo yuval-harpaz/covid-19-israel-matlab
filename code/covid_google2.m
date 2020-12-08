@@ -18,6 +18,12 @@ cd ~/covid-19-israel-matlab/data/
 % [~,~] = system('wget -O tmp.zip https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip');
 % unzip('tmp.zip','tmp')
 % !rm tmp.zip
+dateCheck = dir('tmp/2020_BF_Region_Mobility_Report.csv');
+if now-datenum(dateCheck.date) > 3
+    [~,~] = system('wget -O tmp.zip https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip');
+    unzip('tmp.zip','tmp')
+    !rm tmp.zip
+end
 cd tmp
 
 
@@ -75,19 +81,19 @@ for iAnn = 1:11
 end
 
 %%
-yy(yy < 1/3) = 0;
-
-for ii = 2:length(yy)
-    d1(ii,1:150) = yy(ii,:)./yy(ii-1,:);
-end
-for ii = 2:length(yy)-1
-    d2(ii,1:150) = (yy(ii+1,:)-yy(ii-1,:))./yy(ii-1,:)./2+1;
-end
-d1(isinf(d1)) = nan;
-d1(d1 == 0) = 1;
-d1(isnan(d1)) = 1;
-d1s = movmean(d1,[3 3],'omitnan');
-figure;
-plot(timeVector,d1s(:,iMust))
-hold on
-plot(t.date(1:iEnd),(glob(:,11) < -25)/10+1)
+% yy(yy < 1/3) = 0;
+% 
+% for ii = 2:length(yy)
+%     d1(ii,1:size(yy,2)) = yy(ii,:)./yy(ii-1,:);
+% end
+% for ii = 2:length(yy)-1
+%     d2(ii,1:size(yy,2)) = (yy(ii+1,:)-yy(ii-1,:))./yy(ii-1,:)./2+1;
+% end
+% d1(isinf(d1)) = nan;
+% d1(d1 == 0) = 1;
+% d1(isnan(d1)) = 1;
+% d1s = movmean(d1,[3 3],'omitnan');
+% figure;
+% plot(timeVector,d1s(:,iMust))
+% hold on
+% plot(t.date(1:iEnd),(glob(:,11) < -25)/10+1)
