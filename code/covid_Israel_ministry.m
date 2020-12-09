@@ -41,8 +41,11 @@ nc = {json.result.records(:).x_____________}';
 nc = nc(8:end);
 nc = cellfun(@str2num,nc);
 if strcmp(json.result.records(8).x_____, '2020-03-18T00:00:00')
-    dnc = datetime(2020,3,18);
-    dnc = (dnc:dnc+length(nc)-1)';
+    dnc = datetime(strrep({json.result.records().x_____}','T00:00:00',''));
+    [dnc,dOrd] = sort(dnc(8:end));
+    nc = nc(dOrd);
+%     dnc = datetime(2020,3,18);
+%     dnc = (dnc:dnc+length(nc)-1)';
 else
     error('wrong date for new critical')
 end
