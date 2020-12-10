@@ -1,26 +1,6 @@
 function covid_US
 cd ~/covid-19-israel-matlab/
-threshold = 750; %plot results over this deaths per million
-
-%% Whole countries
 cellCount = 1;
-% [dataMatrix] = readCoronaData('deaths');
-% [~,date{cellCount},mergedData] = processCoronaData(dataMatrix);
-% date{cellCount} = date{cellCount}';
-% for iCou = 1:length(mergedData)
-%     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
-%     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
-% end
-% popCou = readtable('data/population.csv','delimiter',',');
-% mergedData(~ismember(mergedData(:,1),popCou.Country_orDependency_),:) = [];
-% [~,idx] = ismember(mergedData(:,1),popCou.Country_orDependency_);
-% deceased{cellCount} = nan(length(date{cellCount}),length(idx));
-% for ii = 1:length(idx)
-%     deceased{cellCount}(:,ii) = mergedData{ii,2};
-% end
-% pop{cellCount} = popCou(idx,:);
-% country{cellCount} = pop{cellCount}{:,1};
-
 %% NYC
 % cellCount = cellCount+1;
 [date{cellCount,1},popNYC,nyc,nycp] = covid_nyc;
