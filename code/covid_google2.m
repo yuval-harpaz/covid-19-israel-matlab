@@ -37,6 +37,10 @@ switch mustHave
         ini{11} = 'SE';
         countryName{11,1} = 'שבדיה';
         countryName{11,2} = 'Sweden';
+    case 'USA'
+        ini{11} = 'US';
+        countryName{11,1} = 'ארה"ב';
+        countryName{11,2} = 'USA';
 end
 ini(isx) = cc(idx(isx),1);
 
@@ -47,6 +51,7 @@ for ii = [11,1:10]
         t = readtable(['2020_',ini{ii},'_Region_Mobility_Report.csv']);
         if ii == 11
             iEnd = find(cellfun(@isempty,t.sub_region_1),1,'last');
+            date = t.date(1:iEnd);
         end
         mob = t{1:iEnd,9:end};
         mob = movmean(movmedian(mob,[3 3]),[3 3]);
@@ -63,7 +68,7 @@ co(4,2) = 0.7;
 co(11,1:3) = 0;
 
 figure('units','normalized','position',[0,0,0.5,0.5]);
-h = plot(t.date(1:iEnd),glob,'linewidth',1);
+h = plot(date,glob,'linewidth',1);
 for ii = 1:11
     h(ii).Color = co(ii,:);
 end
