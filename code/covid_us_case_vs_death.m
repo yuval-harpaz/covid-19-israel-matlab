@@ -91,7 +91,7 @@ title('Cases vs Deaths')
 ylabel('deaths per million')
 xlabel('cases per million')
 
-d2c = [dat(end,:)./cas(end,:),nydat(end)/nycas(end)];
+d2c = [dat(end,:)./cas(end-10,:),nydat(end)/nycas(end-10)];
 [d2c,order] = sort(d2c);
 order(d2c == 0 | isnan(d2c)) = [];
 d2c(d2c == 0 | isnan(d2c)) = [];
@@ -102,8 +102,26 @@ hbr = bar(find(order == 57),d2c(find(order == 57)),'FaceColor','r','EdgeColor','
 xt = [cases.Var1;'NYC'];
 set(gca,'Xtick',1:length(d2c),'XTickLabel',xt(order))
 xtickangle(90)
-title('Deaths per Cases, today')
+title('Deaths (today) per Cases (10 days before)')
+%%
+col = colormap(jet(size(dat,2)));
+col = flipud(col);
+[dpm,order1] = sort(deaths{:,161}./pop.population.*10^6,'descend');
+[~,order2] = sort(dat(end,:),'descend');
+figure;
+hcAll = plot(date(2:end),dat,'k');
+for ic = 1:56
+    hcAll(order1(ic)).Color = col(ic,:);
+end
+hold on
+hcN = plot(nyc.date_of_interest,nydat,'r','linewidth',2);
+legend([hcN;hcAll(order2)],[{'NYC'};deaths.Var1(order2)])
+title({'נפטרים למליון','הצבע מקודד את הפטירה בגל הראשון, המקרא מסודר לפי פטירה בשבוע הנוכחי'})
+xlim([datetime(2020,3,1) datetime('today')+15])
+set(gcf,'Color','w')
+set(gca,'FontSize',13)
+grid on
+box off
 
-
-
+[~,p] = corr(deaths{:,161},deaths{:,end}-deaths{:,161});
 
