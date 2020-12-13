@@ -172,11 +172,11 @@ crit = ser_crit - newc.new_critical(ismember(newc.date,commonDate));
 
 hh(3) = scatter(commonDate,crit,'.','MarkerEdgeAlpha',alf);
 hh(3).MarkerEdgeColor = ccc(2,:);
-hh(4) = plot(commonDate(1:end-1),movmean(crit(1:end-1),[3 3]),'linewidth',1.5);
+hh(4) = plot(commonDate,movmean(crit,[3 3]),'linewidth',1.5);
 hh(4).Color = ccc(2,:);
 hh(5) = scatter(newc.date,newc.new_critical,'.','MarkerEdgeAlpha',alf);
 hh(5).MarkerEdgeColor = ccc(3,:);
-hh(6) = plot(newc.date(1:end-1),movmean(newc.new_critical(1:end-1),[3 3]),'linewidth',1.5);
+hh(6) = plot(newc.date,movmean(newc.new_critical,[3 3]),'linewidth',1.5);
 hh(6).Color = ccc(3,:);
 hh(7) = scatter(list.date,list.new_hospitalized,'.','MarkerEdgeAlpha',alf);
 hh(7).MarkerEdgeColor = ccc(4,:);
@@ -189,8 +189,8 @@ set(gcf,'Color','w')
 title('חולים חדשים')
 grid minor
 set(gca,'fontsize',13)
-ylim([0 260])
-
+ylim([0 150])
+xlim([list.date(1) datetime('tomorrow')])
 subplot(1,2,2)
 hh1(1) = scatter(list.date,list.on_ventilator,'.','MarkerEdgeAlpha',alf);
 hold on
@@ -216,3 +216,6 @@ set(gcf,'Color','w')
 set(gca,'fontsize',13)
 title('חולים')
 grid minor
+ylim([0 1200])
+xlim([list.date(1) datetime('tomorrow')])
+
