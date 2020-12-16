@@ -41,6 +41,10 @@ switch mustHave
         ini{11} = 'US';
         countryName{11,1} = 'ארה"ב';
         countryName{11,2} = 'USA';
+    case 'Iran'
+        ini{11} = 'BR';
+        countryName{11,1} = 'איראן';
+        countryName{11,2} = 'Iran';
 end
 ini(isx) = cc(idx(isx),1);
 
