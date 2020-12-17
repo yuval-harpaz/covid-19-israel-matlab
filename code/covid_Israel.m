@@ -13,8 +13,12 @@ nCountries = 20;
 [~,timeVector,mergedData] = processCoronaData(dataMatrix);
 % fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
 % fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
-fig7 = covid_plot_who;
-fig6 = covid_plot_who(1,1,1);
+try
+    fig7 = covid_plot_who;
+    fig6 = covid_plot_who(1,1,1);
+catch
+    disp('no WHO, try later')
+end
 % showDateEvery = 7; % days
 % zer = 1; % how many deaths per million to count as day zero
 % warning off
@@ -138,8 +142,10 @@ ylabel('חולים')
 set(gcf,'Color','w')
 %% save
 if saveFigs
-    saveas(fig6,'docs/dpmMyCountry.png')
-    saveas(fig7,'docs/ddpmMyCountry.png')
+    if exist('fig6','var')
+        saveas(fig6,'docs/dpmMyCountry.png')
+        saveas(fig7,'docs/ddpmMyCountry.png')
+    end
     saveas(fig8,'docs/myCountry.png')
 end
 %%
