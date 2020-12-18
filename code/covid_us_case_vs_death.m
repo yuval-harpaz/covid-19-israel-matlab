@@ -1,3 +1,4 @@
+cd ~/covid-19-israel-matlab/
 us_state = urlread('https://raw.githubusercontent.com/jeffcore/covid-19-usa-by-state/master/COVID-19-Deaths-USA-By-State.csv');
 fid = fopen('tmp.csv','w');
 fwrite(fid,us_state);
