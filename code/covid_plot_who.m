@@ -24,18 +24,10 @@ for iCou = 1:length(whoCountry)
     rowDate = whoData.x_Date_reported(row);
     deaths(ismember(date,rowDate),iCou) = whoData.New_deaths(row);
 end
-% [dataMatrix] = readCoronaData('deaths');
-% [~,timeVector,mergedData] = processCoronaData(dataMatrix);
-% pop = readtable('data/population.csv','delimiter',',');
+
+
 popWM = readtable('data/worldometer_data.csv');
-% [isx,idx] = ismember(pop.Country_orDependency_,popw.Country_Other);
-% pop.Population_2020_(isx) = popw.Population(idx(isx));
-% replace = {
-% cou = unique(whoData.Country);
-% cou = strrep(cou,'United Republic of ','');
-% whoData.Country = strrep(whoData.Country,'United Republic of ','');
-% iii = ismember(cou,popw.Country_Other);
-% cou(~iii)
+
 missing = {'American Samoa','';'Anguilla','';'Bolivia (Plurinational State of)','Bolivia';'Bonaire, Sint Eustatius and Saba','';'British Virgin Islands','';'Brunei Darussalam','';'Central African Republic','CAR';'Cook Islands','';'Côte d’Ivoire','Ivory Coast';'Democratic People''s Republic of Korea','';'Democratic Republic of the Congo','DRC';'Falkland Islands (Malvinas)','Falkland Islands';'Faroe Islands','Faeroe Islands';'Guam','';'Guernsey','';'Holy See','';'Iran (Islamic Republic of)','Iran';'Jersey','';'Kiribati','';'Kosovo[1]','';'Lao People''s Democratic Republic','Laos';'Marshall Islands','';'Micronesia (Federated States of)','';'Montserrat','';'Nauru','';'Niue','';'Northern Mariana Islands (Commonwealth of the)','';'Other','';'Palau','';'Pitcairn Islands','';'Puerto Rico','';'Republic of Korea','S. Korea';'Republic of Moldova','Moldova';'Russian Federation','Russia';'Saint Barthélemy','';'Saint Helena','';'Saint Kitts and Nevis','';'Saint Pierre and Miquelon','';'Saint Vincent and the Grenadines','';'Samoa','';'Syrian Arab Republic','Syria';'The United Kingdom','UK';'Tokelau','';'Tonga','';'Turkmenistan','';'Turks and Caicos Islands','';'Tuvalu','';'United Arab Emirates','UAE';'United Republic of Tanzania','';'United States Virgin Islands','';'United States of America','USA';'Venezuela (Bolivarian Republic of)','Venezuela';'Viet Nam','Vietnam';'Wallis and Futuna','';'occupied Palestinian territory, including east Jerusalem','Palestine'};
 missing(cellfun(@isempty,missing(:,2)),:) = [];
 [~,idx] = ismember(missing(:,1),whoCountry);
@@ -73,6 +65,14 @@ cd ~/covid-19-israel-matlab/
 %%
 mil = popWM.Population'/10^6;
 [~,iMustHave] = ismember(mustHave,whoCountry);
+if strcmp(mustHave,'Israel')
+    listD = readtable('data/Israel/dashboard_timeseries.csv');
+    listD.CountDeath(isnan(listD.CountDeath)) = 0;
+    [isDate,iDate] = ismember(listD.date,date);
+    deaths(iDate(isDate),iMustHave) = listD.CountDeath(isDate);
+%     deaths(iDate(isDate),iMustHave) = cumsum(deaths(iDate(isDate),iMustHave));
+end
+
 if cum
     y = cumsum(deaths)./mil;
     y = movmean(y,[6 0],'omitnan');
