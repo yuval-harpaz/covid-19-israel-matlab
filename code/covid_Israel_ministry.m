@@ -42,13 +42,13 @@ nc = nc(8:end);
 nc = cellfun(@str2num,nc);
 if strcmp(json.result.records(8).x_____, '2020-03-18T00:00:00')
     dnc = datetime(strrep({json.result.records().x_____}','T00:00:00',''));
-    [dnc,dOrd] = sort(dnc(8:end));
-    nc = nc(dOrd);
-%     dnc = datetime(2020,3,18);
-%     dnc = (dnc:dnc+length(nc)-1)';
+elseif strcmp(json.result.records(8).x_____, '2020-03-18')
+    dnc = datetime({json.result.records().x_____}');
 else
     error('wrong date for new critical')
 end
+[dnc,dOrd] = sort(dnc(8:end));
+nc = nc(dOrd);
 iDate = find(ismember(new_crit.date,dnc(end-13)));
 warning off
 new_crit.date(iDate:iDate+13) = dnc(end-13:end);
