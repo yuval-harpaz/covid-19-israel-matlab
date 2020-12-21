@@ -42,8 +42,8 @@ txt = fread(fid)';
 fclose(fid);
 txt = native2unicode(txt);
 json = jsondecode(txt);
-list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+2/24;
-
+% list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+2/24;
+list = list(1:end-1,:);
 
 %% plot israel only
 % desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
@@ -92,7 +92,7 @@ legNum = {str(list.hospitalized(iLast)),...
 legend(hh,[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
     [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','north')
 ylabel('נפטרים')
-title({['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm hh:MM')],...
+title({['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm')],...
     ['נפטרו במצטבר ',str(nansum(list.deceased)),', הנפטרים בגרף לפי ממוצע נע']})
 xtickangle(30)
 
