@@ -9,8 +9,8 @@ cd ~/covid-19-israel-matlab/
 myCountry = 'Israel';
 nCountries = 20;
 
-[dataMatrix] = readCoronaData('deaths');
-[~,timeVector,mergedData] = processCoronaData(dataMatrix);
+% [dataMatrix] = readCoronaData('deaths');
+% [~,timeVector,mergedData] = processCoronaData(dataMatrix);
 % fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
 % fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
 try
