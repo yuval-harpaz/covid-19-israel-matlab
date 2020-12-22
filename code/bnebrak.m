@@ -14,13 +14,43 @@ deathRow = cellfun(@str2num,BB.Cumulated_deaths);
 % figure;
 % plot(date(2:end),diff(death),'.','linestyle','-')
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
-for month = 4:12
-    death(month-3,1) = deathRow(find(dateRow < datetime(2020,month+1,1),1,'last'));
-    death(month-3,2) = listD.CountDeathCum(find(listD.date < datetime(2020,month+1,1),1,'last'));
+for month = 3:12
+    death(month-2,1) = deathRow(find(dateRow < datetime(2020,month+1,1),1,'last'));
+    death(month-2,2) = listD.CountDeathCum(find(listD.date < datetime(2020,month+1,1),1,'last'));
 end
 
 figure;
 yyaxis left
-bar((4:12)-0.15,diff([0;death(:,1)]),'BarWidth',0.3)
+bar((3:12)-0.15,diff([0;death(:,1)]),'BarWidth',0.3)
 yyaxis right
-bar((4:12)+0.15,diff([0;death(:,2)]),'BarWidth',0.3)
+bar((3:12)+0.15,diff([0;death(:,2)]),'BarWidth',0.3)
+ylim([0 1200])
+legend('בני ברק','ישראל')
+title('תמותה')
+xlim([2.5 12.5])
+xlabel('חודש')
+set(gcf,'color','w')
+box off
+set(gca,'ygrid','on')
+set(gca,'ygrid','on','XTick',3:12)
+
+caseRow = cellfun(@str2num,strrep(BB.Cumulative_verified_cases,'<15','0'));
+caseCum = cumsum(listD.tests_positive);
+for month = 3:12
+    cases(month-2,1) = caseRow(find(dateRow < datetime(2020,month+1,1),1,'last'));
+    cases(month-2,2) = caseCum(find(listD.date < datetime(2020,month+1,1),1,'last'));
+end
+
+figure;
+yyaxis left
+bar((3:12)-0.15,diff([0;cases(:,1)])/1000,'BarWidth',0.3)
+yyaxis right
+bar((3:12)+0.15,diff([0;cases(:,2)])/1000,'BarWidth',0.3)
+ylim([0 150])
+legend('בני ברק','ישראל')
+title('מאומתים (אלפים)')
+xlim([2.5 12.5])
+xlabel('חודש')
+set(gcf,'color','w')
+box off
+set(gca,'ygrid','on','XTick',3:12)
