@@ -45,6 +45,10 @@ switch mustHave
         ini{11} = 'BR';
         countryName{11,1} = 'איראן';
         countryName{11,2} = 'Iran';
+    case 'Belarus'
+        ini{11} = 'BY';
+        countryName{11,1} = 'בלרוס';
+        countryName{11,2} = 'Belarus';
 end
 ini(isx) = cc(idx(isx),1);
 
@@ -54,7 +58,11 @@ for ii = [11,1:10]
     else
         t = readtable(['2020_',ini{ii},'_Region_Mobility_Report.csv']);
         if ii == 11
-            iEnd = find(cellfun(@isempty,t.sub_region_1),1,'last');
+            try
+                iEnd = find(cellfun(@isempty,t.sub_region_1),1,'last');
+            catch
+                iEnd = find(isnan(t.sub_region_1),1,'last');
+            end
             date = t.date(1:iEnd);
         end
         mob = t{1:iEnd,9:end};

@@ -13,7 +13,7 @@ deathRow = cellfun(@str2num,BB.Cumulated_deaths);
 % 
 % figure;
 % plot(date(2:end),diff(death),'.','linestyle','-')
-listD = readtable('dashboard_timeseries.csv');
+listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 for month = 4:12
     death(month-3,1) = deathRow(find(dateRow < datetime(2020,month+1,1),1,'last'));
     death(month-3,2) = listD.CountDeathCum(find(listD.date < datetime(2020,month+1,1),1,'last'));
