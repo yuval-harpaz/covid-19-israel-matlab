@@ -34,27 +34,31 @@ else
     end
 end
 %% new critical
-json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=e4bf0ab8-ec88-4f9b-8669-f2cc78273edd&limit=1000000');
-json = jsondecode(json);
-new_crit = readtable('data/Israel/new_critical.csv');
-nc = {json.result.records(:).x_____________}';
-nc = nc(8:end);
-nc = cellfun(@str2num,nc);
-if strcmp(json.result.records(8).x_____, '2020-03-18T00:00:00')
-    dnc = datetime(strrep({json.result.records().x_____}','T00:00:00',''));
-elseif strcmp(json.result.records(8).x_____, '2020-03-18')
-    dnc = datetime({json.result.records().x_____}');
-else
-    error('wrong date for new critical')
+try
+    json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=e4bf0ab8-ec88-4f9b-8669-f2cc78273edd&limit=1000000');
+    json = jsondecode(json);
+    new_crit = readtable('data/Israel/new_critical.csv');
+    nc = {json.result.records(:).x_____________}';
+    nc = nc(8:end);
+    nc = cellfun(@str2num,nc);
+    if strcmp(json.result.records(8).x_____, '2020-03-18T00:00:00')
+        dnc = datetime(strrep({json.result.records().x_____}','T00:00:00',''));
+    elseif strcmp(json.result.records(8).x_____, '2020-03-18')
+        dnc = datetime({json.result.records().x_____}');
+    else
+        error('wrong date for new critical')
+    end
+    [dnc,dOrd] = sort(dnc(8:end));
+    nc = nc(dOrd);
+    iDate = find(ismember(new_crit.date,dnc(end-13)));
+    warning off
+    new_crit.date(iDate:iDate+13) = dnc(end-13:end);
+    warning on
+    new_crit.new_critical(iDate:iDate+13) = diff(nc(end-14:end));
+    nanwritetable(new_crit,'data/Israel/new_critical.csv');
+catch
+    warning('no new critical!')
 end
-[dnc,dOrd] = sort(dnc(8:end));
-nc = nc(dOrd);
-iDate = find(ismember(new_crit.date,dnc(end-13)));
-warning off
-new_crit.date(iDate:iDate+13) = dnc(end-13:end);
-warning on
-new_crit.new_critical(iDate:iDate+13) = diff(nc(end-14:end));
-nanwritetable(new_crit,'data/Israel/new_critical.csv');
 %% get dashboard
 covid_Israel_moh_dashboard;
 %% process text
