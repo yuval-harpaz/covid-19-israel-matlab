@@ -1,3 +1,8 @@
+function tot = covid_pred_vax1(vaxPerDay,dayEffect)
+ignoreLast = 3; % ignore days when assessing linear trend
+vaxPerDay = IEdefault('vaxPerDay',90000);
+dayEffect = IEdefault('dayEffect',datetime(2021,1,15));
+
 cd ~/covid-19-israel-matlab/data/Israel
 tests = readtable('tests.csv'); 
 listD = readtable('dashboard_timeseries.csv');
@@ -18,7 +23,7 @@ prob = prob/sum(prob);
 
 %%
 daysProject = 30*6;
-ignoreLast = 0; % ignore days when assessing linear trend
+
 x = movmean(tests.pos60,[3 3]);
 predBest =  conv(x,prob);
 xLin = [x(1:end-ignoreLast);x(end-ignoreLast)+...
@@ -35,12 +40,12 @@ dateLin = tests.date(1):tests.date(1)+length(predLin1)-1;
 fig = figure('Units','normalized','Position',[0.25,0.25,0.4,0.5]);
 scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor','b','MarkerEdgeAlpha',0.5);
 hold on;
-hb(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
-hb(2) = plot(dateLin,predLin1/10+add,'r');
-legend(hb,'תמותה','ניבוי לפי מאומתים')
+hb1(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+hb1(2) = plot(dateLin,predLin1/10+add,'r');
+legend(hb1,'תמותה','ניבוי לפי מאומתים')
 grid on
 xlim([datetime(2020,6,15) tests.date(end)+33]);
-title('ניבוי תמותה לפי מאומתים מגיל 60 (בדיקה ראשונה) ולפי קשים+קריטיים חדשים')
+title('ניבוי תמותה לפי מאומתים מגיל 60 (בדיקה ראשונה)')
 ylabel('נפטרים')
 set(gcf,'Color','w')
 
@@ -48,10 +53,10 @@ set(gcf,'Color','w')
 ratioOld = 0.157;
 pop = 9200000;
 popOld = pop*ratioOld;
-iDayEffect = find(dateLin == datetime(2021,1,15));  % first day with vaccine effect
+iDayEffect = find(dateLin == dayEffect);  % first day with vaccine effect
 ratNotVax = ones(size(xLin));
 for ii = iDayEffect:length(ratNotVax)
-    ratNotVax(ii) = ratNotVax(ii-1)-60000/popOld;
+    ratNotVax(ii) = ratNotVax(ii-1)-vaxPerDay/popOld;
 end
 ratNotVax(ratNotVax < 0) = 0;
 xLinVax = xLin.*ratNotVax;
@@ -77,9 +82,9 @@ ylim([0 750])
 subplot(2,1,2)
 scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor','b','MarkerEdgeAlpha',0.5);
 hold on;
-hb(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
-hb(2) = plot(dateVax,predVax/10+add,'g');
-legend(hb,'תמותה','ניבוי תמותה הכולל חיסונים','location','northwest')
+hb2(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
+hb2(2) = plot(dateVax,predVax/10+add,'g');
+legend(hb2,'תמותה','ניבוי תמותה הכולל חיסונים','location','northwest')
 grid on
 xlim([datetime(2020,6,15) tests.date(end)+33]);
 title('הניבוי')
@@ -88,7 +93,7 @@ set(gcf,'Color','w')
 xlim([listD.date(1) datetime(2021,4,1)])
 set(gca,'XTick',datetime(2020,3:16,1),'fontsize',12,'ygrid','on')
 xtickangle(45)
-round(sum(predVax(dateVax > datetime('today'))/10+add))
+tot = round(sum(predVax(dateVax > datetime('today'))/10+add));
 
 %% fig predictor
 
