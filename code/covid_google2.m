@@ -49,6 +49,11 @@ switch mustHave
         ini{11} = 'BY';
         countryName{11,1} = 'בלרוס';
         countryName{11,2} = 'Belarus';
+    case 'Slovakia'
+        ini{11} = 'SK';
+        countryName{11,1} = 'סלובקיה';
+        countryName{11,2} = 'Slovakia';
+        
 end
 ini(isx) = cc(idx(isx),1);
 
