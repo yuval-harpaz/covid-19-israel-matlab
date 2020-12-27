@@ -161,16 +161,16 @@ subplot(1,2,1)
 hh(9) = scatter(list.date(list.CountDeath > 0),list.CountDeath(list.CountDeath > 0),'k.','MarkerEdgeAlpha',alf);
 hold on
 hh(10) = plot(list.date(1:end-1),movmean(list.CountDeath(1:end-1),[3 3]),'k','linewidth',1.5);
-hh(1) = scatter(list.date(1:end-1),diff(list.CountBreathCum(1:end)),'.','MarkerEdgeAlpha',alf);
+hh(1) = scatter(list.date(2:end),diff(list.CountBreathCum(1:end)),'.','MarkerEdgeAlpha',alf);
 hh(1).MarkerEdgeColor = ccc(1,:);
-hh(2) = plot(list.date(1:end-2),movmean(diff(list.CountBreathCum(1:end-1)),[3 3]),'linewidth',1.5);
+hh(2) = plot(list.date(2:end-1),movmean(diff(list.CountBreathCum(1:end-1)),[3 3]),'linewidth',1.5);
 hh(2).Color = ccc(1,:);
-d = diff(list.CountSeriousCriticalCum);
-bad = find(diff(d) > 75);
-if length(bad) > 1
-    error('too many bad diffs')
-end
-d(bad+1) = mean(d([bad,bad+2]));
+% d = diff(list.CountSeriousCriticalCum);
+% bad = find(diff(d) > 75);
+% if length(bad) > 1
+%     error('too many bad diffs')
+% end
+% d(bad+1) = mean(d([bad,bad+2]));
 commonDate = datetime(2020,8,18):newc.date(end);
 ser_crit = [0;diff(list.CountSeriousCriticalCum)];
 ser_crit = ser_crit(ismember(list.date,commonDate));
@@ -195,7 +195,7 @@ set(gcf,'Color','w')
 title('חולים חדשים')
 grid minor
 set(gca,'fontsize',13)
-ylim([0 150])
+ylim([0 200])
 xlim([list.date(1) datetime('tomorrow')])
 subplot(1,2,2)
 hh1(1) = scatter(list.date,list.on_ventilator,'.','MarkerEdgeAlpha',alf);
@@ -222,6 +222,6 @@ set(gcf,'Color','w')
 set(gca,'fontsize',13)
 title('חולים')
 grid minor
-ylim([0 1200])
+ylim([0 1600])
 xlim([list.date(1) datetime('tomorrow')])
 

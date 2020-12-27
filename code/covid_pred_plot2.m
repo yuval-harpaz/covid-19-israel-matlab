@@ -120,5 +120,9 @@ hold on;
 hb(1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'b','linewidth',2);
 hb(2) = plot(tests.date(1):tests.date(1)+length(predLin1)-1,predLin1/10+add,'r');
 hb(3) = plot(listD.date(2):listD.date(2)+length(predCrit)-1,predCrit*0.31,'g');
-legend(hb,'תמותה','ניבוי לפי מאומתים','ניבוי לפי קשים וקריטיים')
-
+legend(hb,'תמותה','ניבוי לפי מאומתים','ניבוי לפי קשים וקריטיים','location','northwest')
+title('ניבוי תמותה לפי מאומתים מגיל 60 (בדיקה ראשונה) ולפי קשים+קריטיים חדשים')
+grid on
+set(gcf,'Color','w')
+ylabel('נפטרים')
+xtickformat('MMM')

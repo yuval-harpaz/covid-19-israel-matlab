@@ -43,6 +43,7 @@ switch mustHave
         countryName{11,2} = 'USA';
     case 'Iran'
         ini{11} = 'BR';
+        error('me Brazil')
         countryName{11,1} = 'איראן';
         countryName{11,2} = 'Iran';
     case 'Belarus'

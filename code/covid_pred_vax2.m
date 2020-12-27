@@ -34,18 +34,17 @@ xSeger(end:end+length(change)) = cumsum([xSeger(end);change]);
 xSeger(end+1:end+100) = xSeger(end)+cumsum(repmat(mean(diff(xSeger(end-7:end))),100,1));
 xSeger(xSeger < 0) = 0;
 predSeger = conv(xSeger,prob);
-if strcmp(xType,'steep')
+if strcmp(xType,'steep') || strcmp(xType,'london')
     xLin = [xSeger(1:291);xSeger(291)+...
         transpose(mean(diff(xSeger(286:291))).*(1:daysProject))];
 end
 
-
-% figure;plot(xLin)
-xxx = xLin;
-for ii = 288:length(xLin)
-    xxx(ii) = xxx(ii-1)*1.1;
+if strcmp(xType,'london')
+    % figure;plot(xLin)
+    for ii = 288:length(xLin)
+        xLin(ii) = xLin(ii-1)*1.1;
+    end
 end
-xLin = xxx;
 % hold on
 % plot(xxx)
 
