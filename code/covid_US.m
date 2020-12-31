@@ -121,8 +121,10 @@ for ic = 1:size(yd,2)
     yd(ij,ic) = nan;
 end
 yd = movmean(yd,[6 0],'omitnan');
+yd = movmean(yd,[3 3],'omitnan');
 [~,orderd] = sort(yd(end,:),'descend');
 yd = yd(:,orderd);
+%%
 fig11 = figure('units', 'normalized', 'position',[0.1,0.1,0.5,0.7]);
 plot(listDate(2:end),yd,'Color',[0.65 0.65 0.65]);
 hold on
@@ -131,10 +133,10 @@ for ii = 1:10
     hold on
 end
 plot(listDate(2:end),yd(:,ismember(orderd,[1,2])),'k')
-ylim([0 max(yd(end,:))*1.5])
+ylim([0 30])
 xlim(listDate([40,end]))
 % yt = max(max(y)):-max(max(y))/nLines:0;
-yt = yd(end,1):-2:0;
+yt = linspace(yd(end,1),0,10);
 grid on
 box off
 title('תמותה למליון ליום בארה"ב')
