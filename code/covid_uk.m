@@ -2,7 +2,11 @@ function [y,pop,date] = covid_uk(plt,deaths)
 if nargin == 0
     plt = false;
 end
-% cd covid-19-israel-matlab/
+if ~exist('deaths','var')
+    deaths = true;
+end
+
+cd ~/covid-19-israel-matlab/
 % https://data.london.gov.uk/dataset/coronavirus--covid-19--deaths
 if deaths
     txt = urlread('https://data.london.gov.uk/dataset/coronavirus--covid-19--deaths');
