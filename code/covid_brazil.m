@@ -1,4 +1,5 @@
 function [yy,pop,date] = covid_brazil(plt)
+cd ~/covid-19-israel-matlab
 if nargin == 0
     plt = false;
 end
@@ -82,7 +83,7 @@ if plt
 end
 %%
 % https://github.com/wcota/covid19br/raw/master/cases-brazil-cities-time.csv.gz
-city = false
+city = false;
 if city
     !wget -O tmp.gz https://github.com/wcota/covid19br/raw/master/cases-brazil-cities-time.csv.gz
     gunzip('tmp.gz')

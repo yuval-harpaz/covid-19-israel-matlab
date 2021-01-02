@@ -1,3 +1,4 @@
+
 cd ~/covid-19-israel-matlab/data/Israel
 tests = readtable('tests.csv'); 
 listD = readtable('dashboard_timeseries.csv');
@@ -8,8 +9,16 @@ json = strrep(json,'NULL','');
 json = jsondecode(json);
 death = json.result.records;
 death = struct2table(death);
-writetable(death,'deaths.csv','Delimiter',',','WriteVariableNames',true);
-death = readtable('deaths.csv');
+deathPrev = readtable('deaths.csv');
+if height(death) > height(deathPrev)
+    writetable(death,'deaths.csv','Delimiter',',','WriteVariableNames',true);
+    death = readtable('deaths.csv');
+    update = true;
+else
+    death = deathPrev;
+    update = false;
+end
+
 u = unique(death.age_group);
 u = u([4,1,2,3]);
 for ii = 1:4

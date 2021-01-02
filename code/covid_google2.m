@@ -106,7 +106,7 @@ for iAnn = 1:11
     text(length(glob),yt(iAnn),countryName{iAnn,1},...
         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
 end
-
+xtickformat('MMM')
 %%
 % yy(yy < 1/3) = 0;
 % 
