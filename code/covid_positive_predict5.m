@@ -96,6 +96,10 @@ while read
                 %json = json(1:end-1);
                 disp('done')
             end
+        
+        elseif length(tables) == 0
+            disp('no data, table is updating?')
+            abort = 1;
         else
             read = false;
             %json = json(1:end-1);
