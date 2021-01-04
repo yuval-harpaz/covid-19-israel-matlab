@@ -30,15 +30,18 @@ yyaxis left
 plot(date(2:end),movmean(diff(dash(:,1)),[3 3],'omitnan'))
 hold on
 plot(tests.date,movmean(tests.pos_f-tests.pos_f_60+tests.pos_m-tests.pos_m_60,[3 3]))
+ylabel('מאומתים צעירים')
 yyaxis right
 plot(date(2:end),movmean(diff(dash(:,2)),[3 3],'omitnan'))
 hold on
 plot(tests.date,movmean(tests.pos_f_60+tests.pos_m_60,[3 3]))
 legend('לוח בקרה צעירים','מאגר מידע צעירים','לוח בקרה מבוגרים','מאגר מידע מבוגרים','location','northwest')
-title('מאומתים- נתונים מוחלקים ומנורמלים')
+title('מאומתים- מבוגרים וצעירים מ- 60, נתונים מוחלקים ומנורמלים')
 xlim([datetime(2020,10,1) datetime('today')+3])
 grid on
 box off
+ylabel('מאומתים מבוגרים')
+set(gcf,'Color','w')
 %%
 
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
