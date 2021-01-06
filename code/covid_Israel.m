@@ -1,7 +1,7 @@
-function covid_Israel(saveFigs)
+function covid_Israel(figs)
 % plot 20 most active countries
-if ~exist('saveFigs','var')
-    saveFigs = false;
+if ~exist('figs','var')
+    figs = false;
 end
 %listName = 'data/Israel/Israel_ministry_of_health.csv';
 listName = 'data/Israel/dashboard_timeseries.csv';
@@ -141,7 +141,7 @@ title({'מאושפזים לפי חומרה במצטבר','הקו העליון מ
 ylabel('חולים')
 set(gcf,'Color','w')
 %% save
-if saveFigs
+if figs == 1
     if exist('fig6','var')
         saveas(fig6,'docs/dpmMyCountry.png')
         saveas(fig7,'docs/ddpmMyCountry.png')
@@ -149,7 +149,7 @@ if saveFigs
     saveas(fig8,'docs/myCountry.png')
 end
 %%
-covid_israel_percent_positive(saveFigs);
+covid_israel_percent_positive(figs);
 %%
 covid_death_list;
 
@@ -189,15 +189,21 @@ hh(7) = scatter(list.date,list.new_hospitalized,'.','MarkerEdgeAlpha',alf);
 hh(7).MarkerEdgeColor = ccc(4,:);
 hh(8) = plot(list.date(1:end-1),movmean(list.new_hospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh(8).Color = ccc(4,:);
-legend(hh([8,6,4,2,10]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
+if figs < 2
+    legend(hh([8,6,4,2,10]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
+    title('חולים חדשים')
+else
+    legend(hh([8,6,4,2,10]),'hospitalized','severe','critical','ventilated','deceased','location','northwest')
+    title('New Patients')
+end  
 grid on
 box off
 set(gcf,'Color','w')
-title('חולים חדשים')
 grid minor
 set(gca,'fontsize',13)
-ylim([0 200])
+ylim([0 250])
 xlim([list.date(1) datetime('tomorrow')])
+xtickformat('MMM')
 subplot(1,2,2)
 hh1(1) = scatter(list.date,list.on_ventilator,'.','MarkerEdgeAlpha',alf);
 hold on
@@ -216,13 +222,20 @@ hh1(7) = scatter(list.date,list.hospitalized,'.','MarkerEdgeAlpha',alf);
 hh1(7).MarkerEdgeColor = ccc(4,:);
 hh1(8) = plot(list.date(1:end-1),movmean(list.hospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh1(8).Color = ccc(4,:);
-legend(hh1([8,6,4,2]),'מאושפזים','קשים','קריטיים','מונשמים','location','northwest')
+% legend(hh1([8,6,4,2]),'מאושפזים','קשים','קריטיים','מונשמים','location','northwest')
+if figs < 2
+    legend(hh1([8,6,4,2]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
+    title('חולים')
+else
+    legend(hh1([8,6,4,2]),'hospitalized','severe','critical','ventilated','location','northwest')
+    title('Patients')
+end
 grid on
 box off
 set(gcf,'Color','w')
 set(gca,'fontsize',13)
-title('חולים')
-grid minor
-ylim([0 1600])
-xlim([list.date(1) datetime('tomorrow')])
 
+grid minor
+ylim([0 2000])
+xlim([list.date(1) datetime('tomorrow')])
+xtickformat('MMM')
