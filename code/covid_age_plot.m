@@ -25,6 +25,7 @@ legend(h([3,1,4,2]),'לוח בקרה צעירים','מאגר מידע צעירי
 title('מאומתים מבוגרים וצעירים מ- 60, נתונים גולמיים')
 grid on
 box off
+xtickformat('MMM')
 subplot(1,2,2)
 yyaxis left
 plot(date(2:end),movmean(diff(dash(:,1)),[3 3],'omitnan'))
@@ -42,6 +43,7 @@ grid on
 box off
 ylabel('מאומתים מבוגרים')
 set(gcf,'Color','w')
+xtickformat('MMM')
 %%
 
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
