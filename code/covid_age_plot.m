@@ -77,3 +77,60 @@ xtickformat('MMM')
 box off
 grid on
 % figure;plot(dateW,deathsYO)
+%%
+figure;
+yyaxis left
+plot(date(2:end),movmean(diff(dash(:,1)),[3 3],'omitnan'))
+hold on
+plot(date(2:end),movmean(diff(dash(:,2)),[3 3],'omitnan'))
+yyaxis right
+plot(date(2:end),movmean(diff(dash(:,2)),[3 3],'omitnan')./movmean(diff(dash(:,1)),[3 3],'omitnan'))
+xtickformat('MMM')
+xlim([datetime(2020,10,10) datetime('today')])
+
+
+%%
+
+json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=6253ce68-5f31-4381-bb4e-557260d5c9fc&limit=1000');
+json = jsondecode(json);
+tsevet = struct2table(json.result.records);
+tsevet = tsevet(:,2:end);
+for ii = 2:7
+    tsevet{ismember(tsevet{:,ii},'<15'),ii} = {''};
+end
+writetable(tsevet,'tmp.csv','Delimiter',',','WriteVariableNames',true);
+tsevet = readtable('tmp.csv');
+[~,order] = sort(tsevet.Date);
+tsevet = tsevet(order,:);
+figure;
+subplot(1,2,1)
+plot(tsevet.Date,tsevet{:,2:4})
+legend('רופאים','אחיות','אחר')
+xtickformat('MMM')
+xlim([datetime(2020,3,15) datetime('today')])
+title(['מאומתים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
+box off
+grid on
+subplot(1,2,2)
+plot(tsevet.Date,tsevet{:,5:7})
+legend('רופאים','אחיות','אחר')
+xtickformat('MMM')
+xlim([datetime(2020,3,15) datetime('today')])
+title(['מבודדים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
+box off
+grid on
+set(gcf,'Color','w')
+
+!wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/isolated_staff.csv
+staff = readtable('tmp.csv');
+staffDate = datetime(cellfun(@(x) x(1:end-5),strrep(staff.Date,'T',' '),'UniformOutput',false));
+y = staff{:,2:5};
+bad = sum(y,2) == 0;
+figure;plot(staffDate(~bad),y(~bad,:))
+legend('רופאים מאומתים','אחיות מאומתות','רופאים מבודדים','אחיות מבודדות')
+box off
+grid on
+set(gcf,'Color','w')
+xtickformat('MMM')
+xlim([datetime(2020,6,15) datetime('today')])
+title('צוות רפואי מאומת לפי לוח הבקרה')

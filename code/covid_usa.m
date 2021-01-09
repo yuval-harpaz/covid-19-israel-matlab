@@ -10,7 +10,7 @@ fid = fopen('tmp.csv','w');
 fwrite(fid,us_state);
 fclose(fid);
 us_state = readtable('tmp.csv');
-date = datetime(cellfun(@(x) [x(1:end-2),'2020'],us_state{1,2:end}','UniformOutput',false));
+date = datetime(cellfun(@(x) [x(1:end-2),'20',x(end-1:end)],us_state{1,2:end}','UniformOutput',false));
 us_state(1,:) = [];
 writetable(us_state,'tmp.csv','WriteVariableNames',false)
 us_state = readtable('tmp.csv');

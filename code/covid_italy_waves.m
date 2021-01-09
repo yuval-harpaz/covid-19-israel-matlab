@@ -22,7 +22,9 @@ for ii=1:21
 end
 hold on
 h(end+1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3],'omitnan')./9.2,'k');
-legend([h(order);h(end)],[popreg.region(order);{'Israel'}])
+legend([h(order);h(end)],[popreg.region(order);{'Israel'}],'location','north')
+set(gca,'xtick',datetime(2020,3:20,1))
+xlim([datetime(2020,3,1) datetime('tomorrow')])
 set(gcf,'Color','w')
 box off
 grid on
@@ -30,8 +32,8 @@ title({'תמותה למליון ליום במחוזות איטליה','ישרא�
 accum1 = ita{190,:}./popreg.population'*10^6;
 accum2 = (ita{end,:}-ita{190,:})./popreg.population'*10^6;
 ylabel('מתים למליון')
+xtickformat('MMM')
 [r,p] = corr(accum1',accum2');
-
 
 figure;
 scatter(accum1(order),accum2(order),25,col,'fill')
