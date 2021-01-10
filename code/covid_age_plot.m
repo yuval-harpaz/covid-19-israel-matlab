@@ -134,3 +134,16 @@ set(gcf,'Color','w')
 xtickformat('MMM')
 xlim([datetime(2020,6,15) datetime('today')])
 title('צוות רפואי מאומת לפי לוח הבקרה')
+
+%% 
+tests = readtable('tests.csv');
+figure;
+yyaxis left;
+plot(tests.date,tests.pos60);
+yyaxis right;
+plot(tests.date,tests.pos-tests.pos60)
+xtickformat('MMM')
+grid on
+set(gcf,'Color','w')
+title('מאומתים סימפטומטיים')
+legend('מבוגרים מ 60','צעירים מ 60')
