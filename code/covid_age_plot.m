@@ -102,31 +102,44 @@ writetable(tsevet,'tmp.csv','Delimiter',',','WriteVariableNames',true);
 tsevet = readtable('tmp.csv');
 [~,order] = sort(tsevet.Date);
 tsevet = tsevet(order,:);
+
+!wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/isolated_staff.csv
+staff = readtable('tmp.csv');
+staffDate = datetime(cellfun(@(x) x(1:end-5),strrep(staff.Date,'T',' '),'UniformOutput',false));
+yDash = staff{:,2:5};
+bad = sum(yDash,2) == 0;
+
+
 figure;
-subplot(1,2,1)
-plot(tsevet.Date,tsevet{:,2:4})
-legend('רופאים','אחיות','אחר')
+% subplot(1,2,1)
+plot(staffDate(~bad),yDash(~bad,1:2))
+hold on
+colorset
+plot(tsevet.Date,tsevet{:,2:3},'--')
 xtickformat('MMM')
 xlim([datetime(2020,3,15) datetime('today')])
 title(['מאומתים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
 box off
 grid on
-subplot(1,2,2)
-plot(tsevet.Date,tsevet{:,5:7})
-legend('רופאים','אחיות','אחר')
-xtickformat('MMM')
-xlim([datetime(2020,3,15) datetime('today')])
-title(['מבודדים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
-box off
-grid on
+legend('רופאים (לוח בקרה)','אחיות (לוח בקרה)','רופאים (מאגר מידע)', 'אחיות (מאגר מידע)','location','northwest')
 set(gcf,'Color','w')
+xtickformat('MMM')
+xlim([datetime(2020,6,15) datetime('today')+5])
+title('צוות רפואי מאומת לפי לוח הבקרה ומאגר המידע')
 
-!wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/isolated_staff.csv
-staff = readtable('tmp.csv');
-staffDate = datetime(cellfun(@(x) x(1:end-5),strrep(staff.Date,'T',' '),'UniformOutput',false));
-y = staff{:,2:5};
-bad = sum(y,2) == 0;
-figure;plot(staffDate(~bad),y(~bad,:))
+
+% subplot(1,2,2)
+% plot(tsevet.Date,tsevet{:,5:7})
+% legend('רופאים','אחיות','אחר')
+% xtickformat('MMM')
+% xlim([datetime(2020,3,15) datetime('today')])
+% title(['מבודדים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
+% box off
+% grid on
+% set(gcf,'Color','w')
+
+
+figure;plot(staffDate(~bad),yDash(~bad,:))
 legend('רופאים מאומתים','אחיות מאומתות','רופאים מבודדים','אחיות מבודדות')
 box off
 grid on
