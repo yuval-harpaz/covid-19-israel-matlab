@@ -373,6 +373,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AF,"Afghanistan",EMRO,125,53332,4,2257
 2021-01-09,AF,"Afghanistan",EMRO,68,53400,7,2264
 2021-01-10,AF,"Afghanistan",EMRO,89,53489,13,2277
+2021-01-11,AF,"Afghanistan",EMRO,49,53538,11,2288
 2020-01-03,AL,"Albania",EURO,0,0,0,0
 2020-01-04,AL,"Albania",EURO,0,0,0,0
 2020-01-05,AL,"Albania",EURO,0,0,0,0
@@ -1495,6 +1496,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AS,"American Samoa",WPRO,0,0,0,0
 2021-01-09,AS,"American Samoa",WPRO,0,0,0,0
 2021-01-10,AS,"American Samoa",WPRO,0,0,0,0
+2021-01-11,AS,"American Samoa",WPRO,0,0,0,0
 2020-01-03,AD,"Andorra",EURO,0,0,0,0
 2020-01-04,AD,"Andorra",EURO,0,0,0,0
 2020-01-05,AD,"Andorra",EURO,0,0,0,0
@@ -2617,6 +2619,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AI,"Anguilla",AMRO,0,15,0,0
 2021-01-09,AI,"Anguilla",AMRO,0,15,0,0
 2021-01-10,AI,"Anguilla",AMRO,0,15,0,0
+2021-01-11,AI,"Anguilla",AMRO,0,15,0,0
 2020-01-03,AG,"Antigua and Barbuda",AMRO,0,0,0,0
 2020-01-04,AG,"Antigua and Barbuda",AMRO,0,0,0,0
 2020-01-05,AG,"Antigua and Barbuda",AMRO,0,0,0,0
@@ -2991,6 +2994,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AG,"Antigua and Barbuda",AMRO,3,163,0,5
 2021-01-09,AG,"Antigua and Barbuda",AMRO,4,167,0,5
 2021-01-10,AG,"Antigua and Barbuda",AMRO,2,169,0,5
+2021-01-11,AG,"Antigua and Barbuda",AMRO,7,176,0,5
 2020-01-03,AR,"Argentina",AMRO,0,0,0,0
 2020-01-04,AR,"Argentina",AMRO,0,0,0,0
 2020-01-05,AR,"Argentina",AMRO,0,0,0,0
@@ -3365,6 +3369,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AR,"Argentina",AMRO,13441,1676171,191,43976
 2021-01-09,AR,"Argentina",AMRO,13835,1690006,146,44122
 2021-01-10,AR,"Argentina",AMRO,13346,1703352,151,44273
+2021-01-11,AR,"Argentina",AMRO,11057,1714409,144,44417
 2020-01-03,AM,"Armenia",EURO,0,0,0,0
 2020-01-04,AM,"Armenia",EURO,0,0,0,0
 2020-01-05,AM,"Armenia",EURO,0,0,0,0
@@ -4113,6 +4118,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AW,"Aruba",AMRO,95,5811,0,50
 2021-01-09,AW,"Aruba",AMRO,72,5883,0,50
 2021-01-10,AW,"Aruba",AMRO,0,5883,0,50
+2021-01-11,AW,"Aruba",AMRO,0,5883,0,50
 2020-01-03,AU,"Australia",WPRO,0,0,0,0
 2020-01-04,AU,"Australia",WPRO,0,0,0,0
 2020-01-05,AU,"Australia",WPRO,0,0,0,0
@@ -4487,6 +4493,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AU,"Australia",WPRO,11,28547,0,909
 2021-01-09,AU,"Australia",WPRO,24,28571,0,909
 2021-01-10,AU,"Australia",WPRO,11,28582,0,909
+2021-01-11,AU,"Australia",WPRO,13,28595,0,909
 2020-01-03,AT,"Austria",EURO,0,0,0,0
 2020-01-04,AT,"Austria",EURO,0,0,0,0
 2020-01-05,AT,"Austria",EURO,0,0,0,0
@@ -5609,6 +5616,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BS,"Bahamas",AMRO,14,7959,0,175
 2021-01-09,BS,"Bahamas",AMRO,10,7969,0,175
 2021-01-10,BS,"Bahamas",AMRO,0,7969,0,175
+2021-01-11,BS,"Bahamas",AMRO,0,7969,0,175
 2020-01-03,BH,"Bahrain",EMRO,0,0,0,0
 2020-01-04,BH,"Bahrain",EMRO,0,0,0,0
 2020-01-05,BH,"Bahrain",EMRO,0,0,0,0
@@ -5983,6 +5991,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BH,"Bahrain",EMRO,349,94633,0,353
 2021-01-09,BH,"Bahrain",EMRO,397,95030,1,354
 2021-01-10,BH,"Bahrain",EMRO,287,95317,1,355
+2021-01-11,BH,"Bahrain",EMRO,241,95558,1,356
 2020-01-03,BD,"Bangladesh",SEARO,0,0,0,0
 2020-01-04,BD,"Bangladesh",SEARO,0,0,0,0
 2020-01-05,BD,"Bangladesh",SEARO,0,0,0,0
@@ -6357,6 +6366,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BD,"Bangladesh",SEARO,1007,519905,31,7718
 2021-01-09,BD,"Bangladesh",SEARO,785,520690,16,7734
 2021-01-10,BD,"Bangladesh",SEARO,692,521382,22,7756
+2021-01-11,BD,"Bangladesh",SEARO,1071,522453,25,7781
 2020-01-03,BB,"Barbados",AMRO,0,0,0,0
 2020-01-04,BB,"Barbados",AMRO,0,0,0,0
 2020-01-05,BB,"Barbados",AMRO,0,0,0,0
@@ -6731,6 +6741,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BB,"Barbados",AMRO,51,743,0,7
 2021-01-09,BB,"Barbados",AMRO,37,780,0,7
 2021-01-10,BB,"Barbados",AMRO,28,808,0,7
+2021-01-11,BB,"Barbados",AMRO,70,878,0,7
 2020-01-03,BY,"Belarus",EURO,0,0,0,0
 2020-01-04,BY,"Belarus",EURO,0,0,0,0
 2020-01-05,BY,"Belarus",EURO,0,0,0,0
@@ -7853,6 +7864,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BZ,"Belize",AMRO,90,11108,2,260
 2021-01-09,BZ,"Belize",AMRO,44,11152,7,267
 2021-01-10,BZ,"Belize",AMRO,50,11202,4,271
+2021-01-11,BZ,"Belize",AMRO,64,11266,0,271
 2020-01-03,BJ,"Benin",AFRO,0,0,0,0
 2020-01-04,BJ,"Benin",AFRO,0,0,0,0
 2020-01-05,BJ,"Benin",AFRO,0,0,0,0
@@ -8601,6 +8613,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BM,"Bermuda",AMRO,4,636,0,11
 2021-01-09,BM,"Bermuda",AMRO,5,641,1,12
 2021-01-10,BM,"Bermuda",AMRO,5,646,0,12
+2021-01-11,BM,"Bermuda",AMRO,6,652,0,12
 2020-01-03,BT,"Bhutan",SEARO,0,0,0,0
 2020-01-04,BT,"Bhutan",SEARO,0,0,0,0
 2020-01-05,BT,"Bhutan",SEARO,0,0,0,0
@@ -8975,6 +8988,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BT,"Bhutan",SEARO,12,767,0,0
 2021-01-09,BT,"Bhutan",SEARO,4,771,1,1
 2021-01-10,BT,"Bhutan",SEARO,39,810,0,1
+2021-01-11,BT,"Bhutan",SEARO,3,813,0,1
 2020-01-03,BO,"Bolivia (Plurinational State of)",AMRO,0,0,0,0
 2020-01-04,BO,"Bolivia (Plurinational State of)",AMRO,0,0,0,0
 2020-01-05,BO,"Bolivia (Plurinational State of)",AMRO,0,0,0,0
@@ -9349,6 +9363,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BO,"Bolivia (Plurinational State of)",AMRO,1713,166981,46,9287
 2021-01-09,BO,"Bolivia (Plurinational State of)",AMRO,1910,168891,17,9304
 2021-01-10,BO,"Bolivia (Plurinational State of)",AMRO,2263,171154,24,9328
+2021-01-11,BO,"Bolivia (Plurinational State of)",AMRO,1644,172798,23,9351
 2020-01-03,XA,"Bonaire",AMRO,0,0,0,0
 2020-01-04,XA,"Bonaire",AMRO,0,0,0,0
 2020-01-05,XA,"Bonaire",AMRO,0,0,0,0
@@ -9723,6 +9738,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,XA,"Bonaire",AMRO,12,249,0,3
 2021-01-09,XA,"Bonaire",AMRO,5,254,0,3
 2021-01-10,XA,"Bonaire",AMRO,0,254,0,3
+2021-01-11,XA,"Bonaire",AMRO,0,254,0,3
 2020-01-03,BA,"Bosnia and Herzegovina",EURO,0,0,0,0
 2020-01-04,BA,"Bosnia and Herzegovina",EURO,0,0,0,0
 2020-01-05,BA,"Bosnia and Herzegovina",EURO,0,0,0,0
@@ -10845,6 +10861,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BR,"Brazil",AMRO,63430,7873830,1242,198974
 2021-01-09,BR,"Brazil",AMRO,87843,7961673,1524,200498
 2021-01-10,BR,"Brazil",AMRO,52035,8013708,962,201460
+2021-01-11,BR,"Brazil",AMRO,62290,8075998,1171,202631
 2020-01-03,VG,"British Virgin Islands",AMRO,0,0,0,0
 2020-01-04,VG,"British Virgin Islands",AMRO,0,0,0,0
 2020-01-05,VG,"British Virgin Islands",AMRO,0,0,0,0
@@ -11219,6 +11236,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,VG,"British Virgin Islands",AMRO,0,107,0,1
 2021-01-09,VG,"British Virgin Islands",AMRO,7,114,0,1
 2021-01-10,VG,"British Virgin Islands",AMRO,0,114,0,1
+2021-01-11,VG,"British Virgin Islands",AMRO,0,114,0,1
 2020-01-03,BN,"Brunei Darussalam",WPRO,0,0,0,0
 2020-01-04,BN,"Brunei Darussalam",WPRO,0,0,0,0
 2020-01-05,BN,"Brunei Darussalam",WPRO,0,0,0,0
@@ -11593,6 +11611,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BN,"Brunei Darussalam",WPRO,1,173,0,3
 2021-01-09,BN,"Brunei Darussalam",WPRO,0,173,0,3
 2021-01-10,BN,"Brunei Darussalam",WPRO,0,173,0,3
+2021-01-11,BN,"Brunei Darussalam",WPRO,0,173,0,3
 2020-01-03,BG,"Bulgaria",EURO,0,0,0,0
 2020-01-04,BG,"Bulgaria",EURO,0,0,0,0
 2020-01-05,BG,"Bulgaria",EURO,0,0,0,0
@@ -13463,6 +13482,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,KH,"Cambodia",WPRO,1,386,0,0
 2021-01-09,KH,"Cambodia",WPRO,1,387,0,0
 2021-01-10,KH,"Cambodia",WPRO,4,391,0,0
+2021-01-11,KH,"Cambodia",WPRO,1,392,0,0
 2020-01-03,CM,"Cameroon",AFRO,0,0,0,0
 2020-01-04,CM,"Cameroon",AFRO,0,0,0,0
 2020-01-05,CM,"Cameroon",AFRO,0,0,0,0
@@ -14211,6 +14231,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CA,"Canada",AMRO,8153,626799,136,16369
 2021-01-09,CA,"Canada",AMRO,8335,635134,210,16579
 2021-01-10,CA,"Canada",AMRO,9214,644348,128,16707
+2021-01-11,CA,"Canada",AMRO,8125,652473,126,16833
 2020-01-03,KY,"Cayman Islands",AMRO,0,0,0,0
 2020-01-04,KY,"Cayman Islands",AMRO,0,0,0,0
 2020-01-05,KY,"Cayman Islands",AMRO,0,0,0,0
@@ -14585,6 +14606,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,KY,"Cayman Islands",AMRO,6,356,0,2
 2021-01-09,KY,"Cayman Islands",AMRO,3,359,0,2
 2021-01-10,KY,"Cayman Islands",AMRO,0,359,0,2
+2021-01-11,KY,"Cayman Islands",AMRO,0,359,0,2
 2020-01-03,CF,"Central African Republic",AFRO,0,0,0,0
 2020-01-04,CF,"Central African Republic",AFRO,0,0,0,0
 2020-01-05,CF,"Central African Republic",AFRO,0,0,0,0
@@ -15707,6 +15729,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CL,"Chile",AMRO,3693,629176,97,16913
 2021-01-09,CL,"Chile",AMRO,4205,633381,61,16974
 2021-01-10,CL,"Chile",AMRO,4361,637742,63,17037
+2021-01-11,CL,"Chile",AMRO,4181,641923,59,17096
 2020-01-03,CN,"China",WPRO,0,0,0,0
 2020-01-04,CN,"China",WPRO,1,1,0,0
 2020-01-05,CN,"China",WPRO,0,1,0,0
@@ -16081,6 +16104,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CN,"China",WPRO,89,97306,0,4795
 2021-01-09,CN,"China",WPRO,81,97387,1,4796
 2021-01-10,CN,"China",WPRO,131,97518,2,4798
+2021-01-11,CN,"China",WPRO,134,97652,1,4799
 2020-01-03,CO,"Colombia",AMRO,0,0,0,0
 2020-01-04,CO,"Colombia",AMRO,0,0,0,0
 2020-01-05,CO,"Colombia",AMRO,0,0,0,0
@@ -16455,6 +16479,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CO,"Colombia",AMRO,16805,1719771,295,44723
 2021-01-09,CO,"Colombia",AMRO,17576,1737347,344,45067
 2021-01-10,CO,"Colombia",AMRO,18221,1755568,364,45431
+2021-01-11,CO,"Colombia",AMRO,15795,1771363,353,45784
 2020-01-03,KM,"Comoros",AFRO,0,0,0,0
 2020-01-04,KM,"Comoros",AFRO,0,0,0,0
 2020-01-05,KM,"Comoros",AFRO,0,0,0,0
@@ -17577,6 +17602,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CK,"Cook Islands",WPRO,0,0,0,0
 2021-01-09,CK,"Cook Islands",WPRO,0,0,0,0
 2021-01-10,CK,"Cook Islands",WPRO,0,0,0,0
+2021-01-11,CK,"Cook Islands",WPRO,0,0,0,0
 2020-01-03,CR,"Costa Rica",AMRO,0,0,0,0
 2020-01-04,CR,"Costa Rica",AMRO,0,0,0,0
 2020-01-05,CR,"Costa Rica",AMRO,0,0,0,0
@@ -17951,6 +17977,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CR,"Costa Rica",AMRO,1447,175038,19,2267
 2021-01-09,CR,"Costa Rica",AMRO,1369,176407,19,2286
 2021-01-10,CR,"Costa Rica",AMRO,1207,177614,19,2305
+2021-01-11,CR,"Costa Rica",AMRO,0,177614,0,2305
 2020-01-03,CI,"Côte d’Ivoire",AFRO,0,0,0,0
 2020-01-04,CI,"Côte d’Ivoire",AFRO,0,0,0,0
 2020-01-05,CI,"Côte d’Ivoire",AFRO,0,0,0,0
@@ -19073,6 +19100,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CU,"Cuba",AMRO,314,13479,0,148
 2021-01-09,CU,"Cuba",AMRO,344,13823,0,148
 2021-01-10,CU,"Cuba",AMRO,365,14188,0,148
+2021-01-11,CU,"Cuba",AMRO,388,14576,3,151
 2020-01-03,CW,"Curaçao",AMRO,0,0,0,0
 2020-01-04,CW,"Curaçao",AMRO,0,0,0,0
 2020-01-05,CW,"Curaçao",AMRO,0,0,0,0
@@ -19447,6 +19475,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,CW,"Curaçao",AMRO,36,4378,1,17
 2021-01-09,CW,"Curaçao",AMRO,27,4405,1,18
 2021-01-10,CW,"Curaçao",AMRO,0,4405,0,18
+2021-01-11,CW,"Curaçao",AMRO,0,4405,0,18
 2020-01-03,CY,"Cyprus",EURO,0,0,0,0
 2020-01-04,CY,"Cyprus",EURO,0,0,0,0
 2020-01-05,CY,"Cyprus",EURO,0,0,0,0
@@ -20569,6 +20598,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,KP,"Democratic People's Republic of Korea",SEARO,0,0,0,0
 2021-01-09,KP,"Democratic People's Republic of Korea",SEARO,0,0,0,0
 2021-01-10,KP,"Democratic People's Republic of Korea",SEARO,0,0,0,0
+2021-01-11,KP,"Democratic People's Republic of Korea",SEARO,0,0,0,0
 2020-01-03,CD,"Democratic Republic of the Congo",AFRO,0,0,0,0
 2020-01-04,CD,"Democratic Republic of the Congo",AFRO,0,0,0,0
 2020-01-05,CD,"Democratic Republic of the Congo",AFRO,0,0,0,0
@@ -21691,6 +21721,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,DJ,"Djibouti",EMRO,2,5857,0,61
 2021-01-09,DJ,"Djibouti",EMRO,8,5865,0,61
 2021-01-10,DJ,"Djibouti",EMRO,1,5866,0,61
+2021-01-11,DJ,"Djibouti",EMRO,5,5871,0,61
 2020-01-03,DM,"Dominica",AMRO,0,0,0,0
 2020-01-04,DM,"Dominica",AMRO,0,0,0,0
 2020-01-05,DM,"Dominica",AMRO,0,0,0,0
@@ -22065,6 +22096,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,DM,"Dominica",AMRO,0,105,0,0
 2021-01-09,DM,"Dominica",AMRO,1,106,0,0
 2021-01-10,DM,"Dominica",AMRO,0,106,0,0
+2021-01-11,DM,"Dominica",AMRO,0,106,0,0
 2020-01-03,DO,"Dominican Republic",AMRO,0,0,0,0
 2020-01-04,DO,"Dominican Republic",AMRO,0,0,0,0
 2020-01-05,DO,"Dominican Republic",AMRO,0,0,0,0
@@ -22439,6 +22471,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,DO,"Dominican Republic",AMRO,1115,177493,4,2423
 2021-01-09,DO,"Dominican Republic",AMRO,1045,178538,1,2424
 2021-01-10,DO,"Dominican Republic",AMRO,2106,180644,0,2424
+2021-01-11,DO,"Dominican Republic",AMRO,1459,182103,3,2427
 2020-01-03,EC,"Ecuador",AMRO,0,0,0,0
 2020-01-04,EC,"Ecuador",AMRO,0,0,0,0
 2020-01-05,EC,"Ecuador",AMRO,0,0,0,0
@@ -22813,6 +22846,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,EC,"Ecuador",AMRO,1008,218385,12,14158
 2021-01-09,EC,"Ecuador",AMRO,763,219148,7,14165
 2021-01-10,EC,"Ecuador",AMRO,1201,220349,12,14177
+2021-01-11,EC,"Ecuador",AMRO,721,221070,0,14177
 2020-01-03,EG,"Egypt",EMRO,0,0,0,0
 2020-01-04,EG,"Egypt",EMRO,0,0,0,0
 2020-01-05,EG,"Egypt",EMRO,0,0,0,0
@@ -23187,6 +23221,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,EG,"Egypt",EMRO,1219,146809,54,8029
 2021-01-09,EG,"Egypt",EMRO,1001,147810,56,8085
 2021-01-10,EG,"Egypt",EMRO,989,148799,57,8142
+2021-01-11,EG,"Egypt",EMRO,993,149792,55,8197
 2020-01-03,SV,"El Salvador",AMRO,0,0,0,0
 2020-01-04,SV,"El Salvador",AMRO,0,0,0,0
 2020-01-05,SV,"El Salvador",AMRO,0,0,0,0
@@ -23561,6 +23596,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SV,"El Salvador",AMRO,593,47948,17,1390
 2021-01-09,SV,"El Salvador",AMRO,307,48255,8,1398
 2021-01-10,SV,"El Salvador",AMRO,319,48574,10,1408
+2021-01-11,SV,"El Salvador",AMRO,331,48905,11,1419
 2020-01-03,GQ,"Equatorial Guinea",AFRO,0,0,0,0
 2020-01-04,GQ,"Equatorial Guinea",AFRO,0,0,0,0
 2020-01-05,GQ,"Equatorial Guinea",AFRO,0,0,0,0
@@ -25805,6 +25841,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,FK,"Falkland Islands (Malvinas)",AMRO,0,29,0,0
 2021-01-09,FK,"Falkland Islands (Malvinas)",AMRO,0,29,0,0
 2021-01-10,FK,"Falkland Islands (Malvinas)",AMRO,0,29,0,0
+2021-01-11,FK,"Falkland Islands (Malvinas)",AMRO,0,29,0,0
 2020-01-03,FO,"Faroe Islands",EURO,0,0,0,0
 2020-01-04,FO,"Faroe Islands",EURO,0,0,0,0
 2020-01-05,FO,"Faroe Islands",EURO,0,0,0,0
@@ -26553,6 +26590,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,FJ,"Fiji",WPRO,0,53,0,2
 2021-01-09,FJ,"Fiji",WPRO,0,53,0,2
 2021-01-10,FJ,"Fiji",WPRO,0,53,0,2
+2021-01-11,FJ,"Fiji",WPRO,0,53,0,2
 2020-01-03,FI,"Finland",EURO,0,0,0,0
 2020-01-04,FI,"Finland",EURO,0,0,0,0
 2020-01-05,FI,"Finland",EURO,0,0,0,0
@@ -27675,6 +27713,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,GF,"French Guiana",AMRO,193,13825,0,73
 2021-01-09,GF,"French Guiana",AMRO,145,13970,1,74
 2021-01-10,GF,"French Guiana",AMRO,143,14113,0,74
+2021-01-11,GF,"French Guiana",AMRO,0,14113,0,74
 2020-01-03,PF,"French Polynesia",WPRO,0,0,0,0
 2020-01-04,PF,"French Polynesia",WPRO,0,0,0,0
 2020-01-05,PF,"French Polynesia",WPRO,0,0,0,0
@@ -28049,6 +28088,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PF,"French Polynesia",WPRO,64,17195,0,121
 2021-01-09,PF,"French Polynesia",WPRO,46,17241,1,122
 2021-01-10,PF,"French Polynesia",WPRO,0,17241,0,122
+2021-01-11,PF,"French Polynesia",WPRO,0,17241,0,122
 2020-01-03,GA,"Gabon",AFRO,0,0,0,0
 2020-01-04,GA,"Gabon",AFRO,0,0,0,0
 2020-01-05,GA,"Gabon",AFRO,0,0,0,0
@@ -31415,6 +31455,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,GD,"Grenada",AMRO,0,130,0,1
 2021-01-09,GD,"Grenada",AMRO,1,131,0,1
 2021-01-10,GD,"Grenada",AMRO,4,135,0,1
+2021-01-11,GD,"Grenada",AMRO,0,135,0,1
 2020-01-03,GP,"Guadeloupe",AMRO,0,0,0,0
 2020-01-04,GP,"Guadeloupe",AMRO,0,0,0,0
 2020-01-05,GP,"Guadeloupe",AMRO,0,0,0,0
@@ -31789,6 +31830,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,GP,"Guadeloupe",AMRO,0,8702,0,155
 2021-01-09,GP,"Guadeloupe",AMRO,0,8702,0,155
 2021-01-10,GP,"Guadeloupe",AMRO,0,8702,0,155
+2021-01-11,GP,"Guadeloupe",AMRO,0,8702,0,155
 2020-01-03,GU,"Guam",WPRO,0,0,0,0
 2020-01-04,GU,"Guam",WPRO,0,0,0,0
 2020-01-05,GU,"Guam",WPRO,0,0,0,0
@@ -32163,6 +32205,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,GU,"Guam",WPRO,8,7200,1,124
 2021-01-09,GU,"Guam",WPRO,13,7213,0,124
 2021-01-10,GU,"Guam",WPRO,5,7218,0,124
+2021-01-11,GU,"Guam",WPRO,8,7226,0,124
 2020-01-03,GT,"Guatemala",AMRO,0,0,0,0
 2020-01-04,GT,"Guatemala",AMRO,0,0,0,0
 2020-01-05,GT,"Guatemala",AMRO,0,0,0,0
@@ -32537,6 +32580,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,GT,"Guatemala",AMRO,872,141074,29,4928
 2021-01-09,GT,"Guatemala",AMRO,990,142064,44,4972
 2021-01-10,GT,"Guatemala",AMRO,1063,143127,27,4999
+2021-01-11,GT,"Guatemala",AMRO,116,143243,26,5025
 2020-01-03,GG,"Guernsey",EURO,0,0,0,0
 2020-01-04,GG,"Guernsey",EURO,0,0,0,0
 2020-01-05,GG,"Guernsey",EURO,0,0,0,0
@@ -34033,6 +34077,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,GY,"Guyana",AMRO,0,6407,0,166
 2021-01-09,GY,"Guyana",AMRO,62,6469,1,167
 2021-01-10,GY,"Guyana",AMRO,0,6469,0,167
+2021-01-11,GY,"Guyana",AMRO,72,6541,0,167
 2020-01-03,HT,"Haiti",AMRO,0,0,0,0
 2020-01-04,HT,"Haiti",AMRO,0,0,0,0
 2020-01-05,HT,"Haiti",AMRO,0,0,0,0
@@ -34407,6 +34452,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,HT,"Haiti",AMRO,76,10203,0,236
 2021-01-09,HT,"Haiti",AMRO,38,10241,1,237
 2021-01-10,HT,"Haiti",AMRO,0,10241,0,237
+2021-01-11,HT,"Haiti",AMRO,31,10272,1,238
 2020-01-03,VA,"Holy See",EURO,0,0,0,0
 2020-01-04,VA,"Holy See",EURO,0,0,0,0
 2020-01-05,VA,"Holy See",EURO,0,0,0,0
@@ -35155,6 +35201,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,HN,"Honduras",AMRO,1077,124899,6,3192
 2021-01-09,HN,"Honduras",AMRO,658,125557,52,3244
 2021-01-10,HN,"Honduras",AMRO,839,126396,22,3266
+2021-01-11,HN,"Honduras",AMRO,830,127226,9,3275
 2020-01-03,HU,"Hungary",EURO,0,0,0,0
 2020-01-04,HU,"Hungary",EURO,0,0,0,0
 2020-01-05,HU,"Hungary",EURO,0,0,0,0
@@ -36277,6 +36324,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,IN,"India",SEARO,18139,10413417,234,150570
 2021-01-09,IN,"India",SEARO,0,10413417,0,150570
 2021-01-10,IN,"India",SEARO,36867,10450284,429,150999
+2021-01-11,IN,"India",SEARO,16311,10466595,161,151160
 2020-01-03,ID,"Indonesia",SEARO,0,0,0,0
 2020-01-04,ID,"Indonesia",SEARO,0,0,0,0
 2020-01-05,ID,"Indonesia",SEARO,0,0,0,0
@@ -36651,6 +36699,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,ID,"Indonesia",SEARO,9321,797723,224,23520
 2021-01-09,ID,"Indonesia",SEARO,10617,808340,233,23753
 2021-01-10,ID,"Indonesia",SEARO,10046,818386,194,23947
+2021-01-11,ID,"Indonesia",SEARO,9640,828026,182,24129
 2020-01-03,IR,"Iran (Islamic Republic of)",EMRO,0,0,0,0
 2020-01-04,IR,"Iran (Islamic Republic of)",EMRO,0,0,0,0
 2020-01-05,IR,"Iran (Islamic Republic of)",EMRO,0,0,0,0
@@ -37025,6 +37074,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,IR,"Iran (Islamic Republic of)",EMRO,6360,1268263,103,55933
 2021-01-09,IR,"Iran (Islamic Republic of)",EMRO,6251,1274514,85,56018
 2021-01-10,IR,"Iran (Islamic Republic of)",EMRO,5924,1280438,82,56100
+2021-01-11,IR,"Iran (Islamic Republic of)",EMRO,5968,1286406,71,56171
 2020-01-03,IQ,"Iraq",EMRO,0,0,0,0
 2020-01-04,IQ,"Iraq",EMRO,0,0,0,0
 2020-01-05,IQ,"Iraq",EMRO,0,0,0,0
@@ -37399,6 +37449,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,IQ,"Iraq",EMRO,790,600755,4,12869
 2021-01-09,IQ,"Iraq",EMRO,669,601424,8,12877
 2021-01-10,IQ,"Iraq",EMRO,907,602331,4,12881
+2021-01-11,IQ,"Iraq",EMRO,607,602938,14,12895
 2020-01-03,IE,"Ireland",EURO,0,0,0,0
 2020-01-04,IE,"Ireland",EURO,0,0,0,0
 2020-01-05,IE,"Ireland",EURO,0,0,0,0
@@ -39269,6 +39320,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,JM,"Jamaica",AMRO,38,13368,0,306
 2021-01-09,JM,"Jamaica",AMRO,43,13411,1,307
 2021-01-10,JM,"Jamaica",AMRO,44,13455,4,311
+2021-01-11,JM,"Jamaica",AMRO,93,13548,1,312
 2020-01-03,JP,"Japan",WPRO,0,0,0,0
 2020-01-04,JP,"Japan",WPRO,0,0,0,0
 2020-01-05,JP,"Japan",WPRO,0,0,0,0
@@ -39643,6 +39695,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,JP,"Japan",WPRO,6906,265299,66,3857
 2021-01-09,JP,"Japan",WPRO,7855,273154,75,3932
 2021-01-10,JP,"Japan",WPRO,7621,280775,64,3996
+2021-01-11,JP,"Japan",WPRO,5977,286752,48,4044
 2020-01-03,JE,"Jersey",EURO,0,0,0,0
 2020-01-04,JE,"Jersey",EURO,0,0,0,0
 2020-01-05,JE,"Jersey",EURO,0,0,0,0
@@ -40391,6 +40444,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,JO,"Jordan",EMRO,1215,304071,13,3968
 2021-01-09,JO,"Jordan",EMRO,1092,305163,21,3989
 2021-01-10,JO,"Jordan",EMRO,796,305959,20,4009
+2021-01-11,JO,"Jordan",EMRO,1250,307209,15,4024
 2020-01-03,KZ,"Kazakhstan",EURO,0,0,0,0
 2020-01-04,KZ,"Kazakhstan",EURO,0,0,0,0
 2020-01-05,KZ,"Kazakhstan",EURO,0,0,0,0
@@ -41513,6 +41567,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,KI,"Kiribati",WPRO,0,0,0,0
 2021-01-09,KI,"Kiribati",WPRO,0,0,0,0
 2021-01-10,KI,"Kiribati",WPRO,0,0,0,0
+2021-01-11,KI,"Kiribati",WPRO,0,0,0,0
 2020-01-03,XK,"Kosovo[1]",EURO,0,0,0,0
 2020-01-04,XK,"Kosovo[1]",EURO,0,0,0,0
 2020-01-05,XK,"Kosovo[1]",EURO,0,0,0,0
@@ -42261,6 +42316,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,KW,"Kuwait",EMRO,540,152978,0,938
 2021-01-09,KW,"Kuwait",EMRO,495,153473,2,940
 2021-01-10,KW,"Kuwait",EMRO,427,153900,2,942
+2021-01-11,KW,"Kuwait",EMRO,414,154314,1,943
 2020-01-03,KG,"Kyrgyzstan",EURO,0,0,0,0
 2020-01-04,KG,"Kyrgyzstan",EURO,0,0,0,0
 2020-01-05,KG,"Kyrgyzstan",EURO,0,0,0,0
@@ -43009,6 +43065,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,LA,"Lao People's Democratic Republic",WPRO,0,41,0,0
 2021-01-09,LA,"Lao People's Democratic Republic",WPRO,0,41,0,0
 2021-01-10,LA,"Lao People's Democratic Republic",WPRO,0,41,0,0
+2021-01-11,LA,"Lao People's Democratic Republic",WPRO,0,41,0,0
 2020-01-03,LV,"Latvia",EURO,0,0,0,0
 2020-01-04,LV,"Latvia",EURO,0,0,0,0
 2020-01-05,LV,"Latvia",EURO,0,0,0,0
@@ -43757,6 +43814,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,LB,"Lebanon",EMRO,4774,204699,16,1553
 2021-01-09,LB,"Lebanon",EMRO,5440,210139,17,1570
 2021-01-10,LB,"Lebanon",EMRO,5414,215553,20,1590
+2021-01-11,LB,"Lebanon",EMRO,3743,219296,16,1606
 2020-01-03,LS,"Lesotho",AFRO,0,0,0,0
 2020-01-04,LS,"Lesotho",AFRO,0,0,0,0
 2020-01-05,LS,"Lesotho",AFRO,0,0,0,0
@@ -44879,6 +44937,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,LY,"Libya",EMRO,635,103515,12,1558
 2021-01-09,LY,"Libya",EMRO,487,104002,10,1568
 2021-01-10,LY,"Libya",EMRO,0,104002,0,1568
+2021-01-11,LY,"Libya",EMRO,743,104745,13,1581
 2020-01-03,LI,"Liechtenstein",EURO,0,0,0,0
 2020-01-04,LI,"Liechtenstein",EURO,0,0,0,0
 2020-01-05,LI,"Liechtenstein",EURO,0,0,0,0
@@ -47123,6 +47182,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MY,"Malaysia",WPRO,3027,128465,8,521
 2021-01-09,MY,"Malaysia",WPRO,2643,131108,16,537
 2021-01-10,MY,"Malaysia",WPRO,2451,133559,5,542
+2021-01-11,MY,"Malaysia",WPRO,2433,135992,9,551
 2020-01-03,MV,"Maldives",SEARO,0,0,0,0
 2020-01-04,MV,"Maldives",SEARO,0,0,0,0
 2020-01-05,MV,"Maldives",SEARO,0,0,0,0
@@ -47497,6 +47557,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MV,"Maldives",SEARO,21,13988,1,49
 2021-01-09,MV,"Maldives",SEARO,52,14040,0,49
 2021-01-10,MV,"Maldives",SEARO,25,14065,0,49
+2021-01-11,MV,"Maldives",SEARO,44,14109,0,49
 2020-01-03,ML,"Mali",AFRO,0,0,0,0
 2020-01-04,ML,"Mali",AFRO,0,0,0,0
 2020-01-05,ML,"Mali",AFRO,0,0,0,0
@@ -48619,6 +48680,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MH,"Marshall Islands",WPRO,0,4,0,0
 2021-01-09,MH,"Marshall Islands",WPRO,0,4,0,0
 2021-01-10,MH,"Marshall Islands",WPRO,0,4,0,0
+2021-01-11,MH,"Marshall Islands",WPRO,0,4,0,0
 2020-01-03,MQ,"Martinique",AMRO,0,0,0,0
 2020-01-04,MQ,"Martinique",AMRO,0,0,0,0
 2020-01-05,MQ,"Martinique",AMRO,0,0,0,0
@@ -48993,6 +49055,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MQ,"Martinique",AMRO,0,6117,0,43
 2021-01-09,MQ,"Martinique",AMRO,0,6117,0,43
 2021-01-10,MQ,"Martinique",AMRO,0,6117,0,43
+2021-01-11,MQ,"Martinique",AMRO,0,6117,0,43
 2020-01-03,MR,"Mauritania",AFRO,0,0,0,0
 2020-01-04,MR,"Mauritania",AFRO,0,0,0,0
 2020-01-05,MR,"Mauritania",AFRO,0,0,0,0
@@ -50489,6 +50552,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MX,"Mexico",AMRO,13345,1479835,1165,129987
 2021-01-09,MX,"Mexico",AMRO,13734,1493569,1044,131031
 2021-01-10,MX,"Mexico",AMRO,14362,1507931,1038,132069
+2021-01-11,MX,"Mexico",AMRO,16105,1524036,1135,133204
 2020-01-03,FM,"Micronesia (Federated States of)",WPRO,0,0,0,0
 2020-01-04,FM,"Micronesia (Federated States of)",WPRO,0,0,0,0
 2020-01-05,FM,"Micronesia (Federated States of)",WPRO,0,0,0,0
@@ -50863,6 +50927,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,FM,"Micronesia (Federated States of)",WPRO,0,0,0,0
 2021-01-09,FM,"Micronesia (Federated States of)",WPRO,0,0,0,0
 2021-01-10,FM,"Micronesia (Federated States of)",WPRO,1,1,0,0
+2021-01-11,FM,"Micronesia (Federated States of)",WPRO,0,1,0,0
 2020-01-03,MC,"Monaco",EURO,0,0,0,0
 2020-01-04,MC,"Monaco",EURO,0,0,0,0
 2020-01-05,MC,"Monaco",EURO,0,0,0,0
@@ -51611,6 +51676,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MN,"Mongolia",WPRO,13,1362,0,0
 2021-01-09,MN,"Mongolia",WPRO,33,1395,0,0
 2021-01-10,MN,"Mongolia",WPRO,13,1408,0,0
+2021-01-11,MN,"Mongolia",WPRO,21,1429,0,0
 2020-01-03,ME,"Montenegro",EURO,0,0,0,0
 2020-01-04,ME,"Montenegro",EURO,0,0,0,0
 2020-01-05,ME,"Montenegro",EURO,0,0,0,0
@@ -52359,6 +52425,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MS,"Montserrat",AMRO,0,13,0,1
 2021-01-09,MS,"Montserrat",AMRO,0,13,0,1
 2021-01-10,MS,"Montserrat",AMRO,0,13,0,1
+2021-01-11,MS,"Montserrat",AMRO,0,13,0,1
 2020-01-03,MA,"Morocco",EMRO,0,0,0,0
 2020-01-04,MA,"Morocco",EMRO,0,0,0,0
 2020-01-05,MA,"Morocco",EMRO,0,0,0,0
@@ -52733,6 +52800,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MA,"Morocco",EMRO,1597,448678,27,7645
 2021-01-09,MA,"Morocco",EMRO,1543,450221,40,7685
 2021-01-10,MA,"Morocco",EMRO,1416,451637,24,7709
+2021-01-11,MA,"Morocco",EMRO,895,452532,34,7743
 2020-01-03,MZ,"Mozambique",AFRO,0,0,0,0
 2020-01-04,MZ,"Mozambique",AFRO,0,0,0,0
 2020-01-05,MZ,"Mozambique",AFRO,0,0,0,0
@@ -53481,6 +53549,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MM,"Myanmar",SEARO,594,128772,14,2799
 2021-01-09,MM,"Myanmar",SEARO,711,129483,13,2812
 2021-01-10,MM,"Myanmar",SEARO,566,130049,14,2826
+2021-01-11,MM,"Myanmar",SEARO,555,130604,20,2846
 2020-01-03,NA,"Namibia",AFRO,0,0,0,0
 2020-01-04,NA,"Namibia",AFRO,0,0,0,0
 2020-01-05,NA,"Namibia",AFRO,0,0,0,0
@@ -54229,6 +54298,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,NR,"Nauru",WPRO,0,0,0,0
 2021-01-09,NR,"Nauru",WPRO,0,0,0,0
 2021-01-10,NR,"Nauru",WPRO,0,0,0,0
+2021-01-11,NR,"Nauru",WPRO,0,0,0,0
 2020-01-03,NP,"Nepal",SEARO,0,0,0,0
 2020-01-04,NP,"Nepal",SEARO,0,0,0,0
 2020-01-05,NP,"Nepal",SEARO,0,0,0,0
@@ -54603,6 +54673,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,NP,"Nepal",SEARO,412,263605,4,1903
 2021-01-09,NP,"Nepal",SEARO,554,264159,6,1909
 2021-01-10,NP,"Nepal",SEARO,362,264521,3,1912
+2021-01-11,NP,"Nepal",SEARO,259,264780,5,1917
 2020-01-03,NL,"Netherlands",EURO,0,0,0,0
 2020-01-04,NL,"Netherlands",EURO,0,0,0,0
 2020-01-05,NL,"Netherlands",EURO,0,0,0,0
@@ -55351,6 +55422,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,NC,"New Caledonia",WPRO,0,40,0,0
 2021-01-09,NC,"New Caledonia",WPRO,0,40,0,0
 2021-01-10,NC,"New Caledonia",WPRO,0,40,0,0
+2021-01-11,NC,"New Caledonia",WPRO,0,40,0,0
 2020-01-03,NZ,"New Zealand",WPRO,0,0,0,0
 2020-01-04,NZ,"New Zealand",WPRO,0,0,0,0
 2020-01-05,NZ,"New Zealand",WPRO,0,0,0,0
@@ -55724,7 +55796,8 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-07,NZ,"New Zealand",WPRO,4,1832,0,25
 2021-01-08,NZ,"New Zealand",WPRO,0,1832,0,25
 2021-01-09,NZ,"New Zealand",WPRO,0,1832,0,25
-2021-01-10,NZ,"New Zealand",WPRO,31,1863,0,25
+2021-01-10,NZ,"New Zealand",WPRO,30,1862,0,25
+2021-01-11,NZ,"New Zealand",WPRO,4,1866,0,25
 2020-01-03,NI,"Nicaragua",AMRO,0,0,0,0
 2020-01-04,NI,"Nicaragua",AMRO,0,0,0,0
 2020-01-05,NI,"Nicaragua",AMRO,0,0,0,0
@@ -56099,6 +56172,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,NI,"Nicaragua",AMRO,0,4867,0,166
 2021-01-09,NI,"Nicaragua",AMRO,0,4867,0,166
 2021-01-10,NI,"Nicaragua",AMRO,0,4867,0,166
+2021-01-11,NI,"Nicaragua",AMRO,0,4867,0,166
 2020-01-03,NE,"Niger",AFRO,0,0,0,0
 2020-01-04,NE,"Niger",AFRO,0,0,0,0
 2020-01-05,NE,"Niger",AFRO,0,0,0,0
@@ -57221,6 +57295,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,NU,"Niue",WPRO,0,0,0,0
 2021-01-09,NU,"Niue",WPRO,0,0,0,0
 2021-01-10,NU,"Niue",WPRO,0,0,0,0
+2021-01-11,NU,"Niue",WPRO,0,0,0,0
 2020-01-03,MK,"North Macedonia",EURO,0,0,0,0
 2020-01-04,MK,"North Macedonia",EURO,0,0,0,0
 2020-01-05,MK,"North Macedonia",EURO,0,0,0,0
@@ -57969,6 +58044,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MP,"Northern Mariana Islands (Commonwealth of the)",WPRO,0,125,0,2
 2021-01-09,MP,"Northern Mariana Islands (Commonwealth of the)",WPRO,0,125,0,2
 2021-01-10,MP,"Northern Mariana Islands (Commonwealth of the)",WPRO,0,125,0,2
+2021-01-11,MP,"Northern Mariana Islands (Commonwealth of the)",WPRO,0,125,0,2
 2020-01-03,NO,"Norway",EURO,0,0,0,0
 2020-01-04,NO,"Norway",EURO,0,0,0,0
 2020-01-05,NO,"Norway",EURO,0,0,0,0
@@ -58717,6 +58793,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PS,"occupied Palestinian territory, including east Jerusalem",EMRO,1251,163573,21,1684
 2021-01-09,PS,"occupied Palestinian territory, including east Jerusalem",EMRO,822,164395,23,1707
 2021-01-10,PS,"occupied Palestinian territory, including east Jerusalem",EMRO,855,165250,28,1735
+2021-01-11,PS,"occupied Palestinian territory, including east Jerusalem",EMRO,699,165949,21,1756
 2020-01-03,OM,"Oman",EMRO,0,0,0,0
 2020-01-04,OM,"Oman",EMRO,0,0,0,0
 2020-01-05,OM,"Oman",EMRO,0,0,0,0
@@ -59091,6 +59168,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,OM,"Oman",EMRO,182,130070,1,1505
 2021-01-09,OM,"Oman",EMRO,0,130070,0,1505
 2021-01-10,OM,"Oman",EMRO,0,130070,0,1505
+2021-01-11,OM,"Oman",EMRO,538,130608,3,1508
 2020-01-03,,"Other",Other,0,0,0,0
 2020-01-04,,"Other",Other,0,0,0,0
 2020-01-05,,"Other",Other,0,0,0,0
@@ -59465,6 +59543,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,,"Other",Other,0,745,0,13
 2021-01-09,,"Other",Other,0,745,0,13
 2021-01-10,,"Other",Other,0,745,0,13
+2021-01-11,,"Other",Other,0,745,0,13
 2020-01-03,PK,"Pakistan",EMRO,0,0,0,0
 2020-01-04,PK,"Pakistan",EMRO,0,0,0,0
 2020-01-05,PK,"Pakistan",EMRO,0,0,0,0
@@ -59839,6 +59918,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PK,"Pakistan",EMRO,2481,495075,50,10511
 2021-01-09,PK,"Pakistan",EMRO,2435,497510,47,10558
 2021-01-10,PK,"Pakistan",EMRO,2007,499517,40,10598
+2021-01-11,PK,"Pakistan",EMRO,2899,502416,46,10644
 2020-01-03,PW,"Palau",WPRO,0,0,0,0
 2020-01-04,PW,"Palau",WPRO,0,0,0,0
 2020-01-05,PW,"Palau",WPRO,0,0,0,0
@@ -60213,6 +60293,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PW,"Palau",WPRO,0,0,0,0
 2021-01-09,PW,"Palau",WPRO,0,0,0,0
 2021-01-10,PW,"Palau",WPRO,0,0,0,0
+2021-01-11,PW,"Palau",WPRO,0,0,0,0
 2020-01-03,PA,"Panama",AMRO,0,0,0,0
 2020-01-04,PA,"Panama",AMRO,0,0,0,0
 2020-01-05,PA,"Panama",AMRO,0,0,0,0
@@ -60587,6 +60668,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PA,"Panama",AMRO,5186,264956,45,4283
 2021-01-09,PA,"Panama",AMRO,4135,269091,38,4321
 2021-01-10,PA,"Panama",AMRO,3946,273037,42,4363
+2021-01-11,PA,"Panama",AMRO,3735,276772,47,4410
 2020-01-03,PG,"Papua New Guinea",WPRO,0,0,0,0
 2020-01-04,PG,"Papua New Guinea",WPRO,0,0,0,0
 2020-01-05,PG,"Papua New Guinea",WPRO,0,0,0,0
@@ -60961,6 +61043,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PG,"Papua New Guinea",WPRO,0,799,0,9
 2021-01-09,PG,"Papua New Guinea",WPRO,12,811,0,9
 2021-01-10,PG,"Papua New Guinea",WPRO,0,811,0,9
+2021-01-11,PG,"Papua New Guinea",WPRO,0,811,0,9
 2020-01-03,PY,"Paraguay",AMRO,0,0,0,0
 2020-01-04,PY,"Paraguay",AMRO,0,0,0,0
 2020-01-05,PY,"Paraguay",AMRO,0,0,0,0
@@ -61335,6 +61418,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PY,"Paraguay",AMRO,898,111694,16,2337
 2021-01-09,PY,"Paraguay",AMRO,1162,112856,15,2352
 2021-01-10,PY,"Paraguay",AMRO,1138,113994,20,2372
+2021-01-11,PY,"Paraguay",AMRO,1032,115026,15,2387
 2020-01-03,PE,"Peru",AMRO,0,0,0,0
 2020-01-04,PE,"Peru",AMRO,0,0,0,0
 2020-01-05,PE,"Peru",AMRO,0,0,0,0
@@ -61709,6 +61793,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PE,"Peru",AMRO,2414,1024432,66,37991
 2021-01-09,PE,"Peru",AMRO,2258,1026690,58,38049
 2021-01-10,PE,"Peru",AMRO,2781,1029471,96,38145
+2021-01-11,PE,"Peru",AMRO,2804,1032275,68,38213
 2020-01-03,PH,"Philippines",WPRO,0,0,0,0
 2020-01-04,PH,"Philippines",WPRO,0,0,0,0
 2020-01-05,PH,"Philippines",WPRO,0,0,0,0
@@ -62083,6 +62168,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PH,"Philippines",WPRO,1346,482083,9,9356
 2021-01-09,PH,"Philippines",WPRO,1769,483852,8,9364
 2021-01-10,PH,"Philippines",WPRO,1945,485797,34,9398
+2021-01-11,PH,"Philippines",WPRO,1893,487690,7,9405
 2020-01-03,PN,"Pitcairn Islands",WPRO,0,0,0,0
 2020-01-04,PN,"Pitcairn Islands",WPRO,0,0,0,0
 2020-01-05,PN,"Pitcairn Islands",WPRO,0,0,0,0
@@ -62457,6 +62543,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PN,"Pitcairn Islands",WPRO,0,0,0,0
 2021-01-09,PN,"Pitcairn Islands",WPRO,0,0,0,0
 2021-01-10,PN,"Pitcairn Islands",WPRO,0,0,0,0
+2021-01-11,PN,"Pitcairn Islands",WPRO,0,0,0,0
 2020-01-03,PL,"Poland",EURO,0,0,0,0
 2020-01-04,PL,"Poland",EURO,0,0,0,0
 2020-01-05,PL,"Poland",EURO,0,0,0,0
@@ -63579,6 +63666,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PR,"Puerto Rico",AMRO,286,79898,18,1588
 2021-01-09,PR,"Puerto Rico",AMRO,2169,82067,4,1592
 2021-01-10,PR,"Puerto Rico",AMRO,563,82630,24,1616
+2021-01-11,PR,"Puerto Rico",AMRO,489,83119,14,1630
 2020-01-03,QA,"Qatar",EMRO,0,0,0,0
 2020-01-04,QA,"Qatar",EMRO,0,0,0,0
 2020-01-05,QA,"Qatar",EMRO,0,0,0,0
@@ -63953,6 +64041,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,QA,"Qatar",EMRO,210,145271,0,245
 2021-01-09,QA,"Qatar",EMRO,195,145466,1,246
 2021-01-10,QA,"Qatar",EMRO,206,145672,0,246
+2021-01-11,QA,"Qatar",EMRO,193,145865,0,246
 2020-01-03,KR,"Republic of Korea",WPRO,0,0,0,0
 2020-01-04,KR,"Republic of Korea",WPRO,0,0,0,0
 2020-01-05,KR,"Republic of Korea",WPRO,0,0,0,0
@@ -64326,7 +64415,8 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-07,KR,"Republic of Korea",WPRO,869,66684,19,1046
 2021-01-08,KR,"Republic of Korea",WPRO,674,67358,35,1081
 2021-01-09,KR,"Republic of Korea",WPRO,641,67999,19,1100
-2021-01-10,KR,"Republic of Korea",WPRO,665,68664,25,1125
+2021-01-10,KR,"Republic of Korea",WPRO,664,68663,25,1125
+2021-01-11,KR,"Republic of Korea",WPRO,451,69114,15,1140
 2020-01-03,MD,"Republic of Moldova",EURO,0,0,0,0
 2020-01-04,MD,"Republic of Moldova",EURO,0,0,0,0
 2020-01-05,MD,"Republic of Moldova",EURO,0,0,0,0
@@ -66571,6 +66661,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,XC,"Saba",AMRO,0,5,0,0
 2021-01-09,XC,"Saba",AMRO,0,5,0,0
 2021-01-10,XC,"Saba",AMRO,0,5,0,0
+2021-01-11,XC,"Saba",AMRO,0,5,0,0
 2020-01-03,BL,"Saint Barthélemy",AMRO,0,0,0,0
 2020-01-04,BL,"Saint Barthélemy",AMRO,0,0,0,0
 2020-01-05,BL,"Saint Barthélemy",AMRO,0,0,0,0
@@ -66945,6 +67036,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,BL,"Saint Barthélemy",AMRO,0,191,0,0
 2021-01-09,BL,"Saint Barthélemy",AMRO,0,191,0,0
 2021-01-10,BL,"Saint Barthélemy",AMRO,0,191,0,0
+2021-01-11,BL,"Saint Barthélemy",AMRO,0,191,0,0
 2020-01-03,SH,"Saint Helena",AFRO,0,0,0,0
 2020-01-04,SH,"Saint Helena",AFRO,0,0,0,0
 2020-01-05,SH,"Saint Helena",AFRO,0,0,0,0
@@ -67693,6 +67785,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,KN,"Saint Kitts and Nevis",AMRO,0,33,0,0
 2021-01-09,KN,"Saint Kitts and Nevis",AMRO,1,34,0,0
 2021-01-10,KN,"Saint Kitts and Nevis",AMRO,0,34,0,0
+2021-01-11,KN,"Saint Kitts and Nevis",AMRO,0,34,0,0
 2020-01-03,LC,"Saint Lucia",AMRO,0,0,0,0
 2020-01-04,LC,"Saint Lucia",AMRO,0,0,0,0
 2020-01-05,LC,"Saint Lucia",AMRO,0,0,0,0
@@ -68067,6 +68160,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,LC,"Saint Lucia",AMRO,2,382,0,5
 2021-01-09,LC,"Saint Lucia",AMRO,1,383,0,5
 2021-01-10,LC,"Saint Lucia",AMRO,12,395,0,5
+2021-01-11,LC,"Saint Lucia",AMRO,43,438,0,5
 2020-01-03,MF,"Saint Martin",AMRO,0,0,0,0
 2020-01-04,MF,"Saint Martin",AMRO,0,0,0,0
 2020-01-05,MF,"Saint Martin",AMRO,0,0,0,0
@@ -68441,6 +68535,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,MF,"Saint Martin",AMRO,0,1002,0,12
 2021-01-09,MF,"Saint Martin",AMRO,0,1002,0,12
 2021-01-10,MF,"Saint Martin",AMRO,0,1002,0,12
+2021-01-11,MF,"Saint Martin",AMRO,0,1002,0,12
 2020-01-03,PM,"Saint Pierre and Miquelon",AMRO,0,0,0,0
 2020-01-04,PM,"Saint Pierre and Miquelon",AMRO,0,0,0,0
 2020-01-05,PM,"Saint Pierre and Miquelon",AMRO,0,0,0,0
@@ -68815,6 +68910,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,PM,"Saint Pierre and Miquelon",AMRO,0,16,0,0
 2021-01-09,PM,"Saint Pierre and Miquelon",AMRO,0,16,0,0
 2021-01-10,PM,"Saint Pierre and Miquelon",AMRO,0,16,0,0
+2021-01-11,PM,"Saint Pierre and Miquelon",AMRO,0,16,0,0
 2020-01-03,VC,"Saint Vincent and the Grenadines",AMRO,0,0,0,0
 2020-01-04,VC,"Saint Vincent and the Grenadines",AMRO,0,0,0,0
 2020-01-05,VC,"Saint Vincent and the Grenadines",AMRO,0,0,0,0
@@ -69189,6 +69285,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,VC,"Saint Vincent and the Grenadines",AMRO,0,149,0,0
 2021-01-09,VC,"Saint Vincent and the Grenadines",AMRO,55,204,0,0
 2021-01-10,VC,"Saint Vincent and the Grenadines",AMRO,0,204,0,0
+2021-01-11,VC,"Saint Vincent and the Grenadines",AMRO,21,225,0,0
 2020-01-03,WS,"Samoa",WPRO,0,0,0,0
 2020-01-04,WS,"Samoa",WPRO,0,0,0,0
 2020-01-05,WS,"Samoa",WPRO,0,0,0,0
@@ -69563,6 +69660,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,WS,"Samoa",WPRO,0,0,0,0
 2021-01-09,WS,"Samoa",WPRO,0,0,0,0
 2021-01-10,WS,"Samoa",WPRO,0,0,0,0
+2021-01-11,WS,"Samoa",WPRO,0,0,0,0
 2020-01-03,SM,"San Marino",EURO,0,0,0,0
 2020-01-04,SM,"San Marino",EURO,0,0,0,0
 2020-01-05,SM,"San Marino",EURO,0,0,0,0
@@ -70685,6 +70783,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SA,"Saudi Arabia",EMRO,108,363485,6,6278
 2021-01-09,SA,"Saudi Arabia",EMRO,97,363582,4,6282
 2021-01-10,SA,"Saudi Arabia",EMRO,110,363692,4,6286
+2021-01-11,SA,"Saudi Arabia",EMRO,117,363809,5,6291
 2020-01-03,SN,"Senegal",AFRO,0,0,0,0
 2020-01-04,SN,"Senegal",AFRO,0,0,0,0
 2020-01-05,SN,"Senegal",AFRO,0,0,0,0
@@ -72555,6 +72654,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SG,"Singapore",WPRO,33,58813,0,29
 2021-01-09,SG,"Singapore",WPRO,23,58836,0,29
 2021-01-10,SG,"Singapore",WPRO,29,58865,0,29
+2021-01-11,SG,"Singapore",WPRO,42,58907,0,29
 2020-01-03,XB,"Sint Eustatius",AMRO,0,0,0,0
 2020-01-04,XB,"Sint Eustatius",AMRO,0,0,0,0
 2020-01-05,XB,"Sint Eustatius",AMRO,0,0,0,0
@@ -72929,6 +73029,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,XB,"Sint Eustatius",AMRO,0,19,0,0
 2021-01-09,XB,"Sint Eustatius",AMRO,0,19,0,0
 2021-01-10,XB,"Sint Eustatius",AMRO,0,19,0,0
+2021-01-11,XB,"Sint Eustatius",AMRO,0,19,0,0
 2020-01-03,SX,"Sint Maarten",AMRO,0,0,0,0
 2020-01-04,SX,"Sint Maarten",AMRO,0,0,0,0
 2020-01-05,SX,"Sint Maarten",AMRO,0,0,0,0
@@ -73303,6 +73404,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SX,"Sint Maarten",AMRO,8,1512,0,27
 2021-01-09,SX,"Sint Maarten",AMRO,19,1531,0,27
 2021-01-10,SX,"Sint Maarten",AMRO,0,1531,0,27
+2021-01-11,SX,"Sint Maarten",AMRO,0,1531,0,27
 2020-01-03,SK,"Slovakia",EURO,0,0,0,0
 2020-01-04,SK,"Slovakia",EURO,0,0,0,0
 2020-01-05,SK,"Slovakia",EURO,0,0,0,0
@@ -74425,6 +74527,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SB,"Solomon Islands",WPRO,0,17,0,0
 2021-01-09,SB,"Solomon Islands",WPRO,0,17,0,0
 2021-01-10,SB,"Solomon Islands",WPRO,0,17,0,0
+2021-01-11,SB,"Solomon Islands",WPRO,0,17,0,0
 2020-01-03,SO,"Somalia",EMRO,0,0,0,0
 2020-01-04,SO,"Somalia",EMRO,0,0,0,0
 2020-01-05,SO,"Somalia",EMRO,0,0,0,0
@@ -74799,6 +74902,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SO,"Somalia",EMRO,0,4726,0,130
 2021-01-09,SO,"Somalia",EMRO,0,4726,0,130
 2021-01-10,SO,"Somalia",EMRO,0,4726,0,130
+2021-01-11,SO,"Somalia",EMRO,0,4726,0,130
 2020-01-03,ZA,"South Africa",AFRO,0,0,0,0
 2020-01-04,ZA,"South Africa",AFRO,0,0,0,0
 2020-01-05,ZA,"South Africa",AFRO,0,0,0,0
@@ -76295,6 +76399,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,LK,"Sri Lanka",SEARO,532,46780,0,219
 2021-01-09,LK,"Sri Lanka",SEARO,525,47305,3,222
 2021-01-10,LK,"Sri Lanka",SEARO,535,47840,7,229
+2021-01-11,LK,"Sri Lanka",SEARO,540,48380,3,232
 2020-01-03,SD,"Sudan",EMRO,0,0,0,0
 2020-01-04,SD,"Sudan",EMRO,0,0,0,0
 2020-01-05,SD,"Sudan",EMRO,0,0,0,0
@@ -76669,6 +76774,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SD,"Sudan",EMRO,0,23316,0,1468
 2021-01-09,SD,"Sudan",EMRO,0,23316,0,1468
 2021-01-10,SD,"Sudan",EMRO,0,23316,0,1468
+2021-01-11,SD,"Sudan",EMRO,0,23316,0,1468
 2020-01-03,SR,"Suriname",AMRO,0,0,0,0
 2020-01-04,SR,"Suriname",AMRO,0,0,0,0
 2020-01-05,SR,"Suriname",AMRO,0,0,0,0
@@ -77043,6 +77149,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SR,"Suriname",AMRO,80,6666,1,126
 2021-01-09,SR,"Suriname",AMRO,84,6750,4,130
 2021-01-10,SR,"Suriname",AMRO,104,6854,1,131
+2021-01-11,SR,"Suriname",AMRO,94,6948,1,132
 2020-01-03,SE,"Sweden",EURO,0,0,0,0
 2020-01-04,SE,"Sweden",EURO,0,0,0,0
 2020-01-05,SE,"Sweden",EURO,0,0,0,0
@@ -78165,6 +78272,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,SY,"Syrian Arab Republic",EMRO,96,12084,8,755
 2021-01-09,SY,"Syrian Arab Republic",EMRO,95,12179,8,763
 2021-01-10,SY,"Syrian Arab Republic",EMRO,95,12274,5,768
+2021-01-11,SY,"Syrian Arab Republic",EMRO,90,12364,6,774
 2020-01-03,TJ,"Tajikistan",EURO,0,0,0,0
 2020-01-04,TJ,"Tajikistan",EURO,0,0,0,0
 2020-01-05,TJ,"Tajikistan",EURO,0,0,0,0
@@ -78913,6 +79021,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TH,"Thailand",SEARO,205,9841,0,67
 2021-01-09,TH,"Thailand",SEARO,0,9841,0,67
 2021-01-10,TH,"Thailand",SEARO,457,10298,0,67
+2021-01-11,TH,"Thailand",SEARO,249,10547,0,67
 2020-01-03,GB,"The United Kingdom",EURO,0,0,0,0
 2020-01-04,GB,"The United Kingdom",EURO,0,0,0,0
 2020-01-05,GB,"The United Kingdom",EURO,0,0,0,0
@@ -79661,6 +79770,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TL,"Timor-Leste",SEARO,0,49,0,0
 2021-01-09,TL,"Timor-Leste",SEARO,0,49,0,0
 2021-01-10,TL,"Timor-Leste",SEARO,0,49,0,0
+2021-01-11,TL,"Timor-Leste",SEARO,0,49,0,0
 2020-01-03,TG,"Togo",AFRO,0,0,0,0
 2020-01-04,TG,"Togo",AFRO,0,0,0,0
 2020-01-05,TG,"Togo",AFRO,0,0,0,0
@@ -80409,6 +80519,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TK,"Tokelau",WPRO,0,0,0,0
 2021-01-09,TK,"Tokelau",WPRO,0,0,0,0
 2021-01-10,TK,"Tokelau",WPRO,0,0,0,0
+2021-01-11,TK,"Tokelau",WPRO,0,0,0,0
 2020-01-03,TO,"Tonga",WPRO,0,0,0,0
 2020-01-04,TO,"Tonga",WPRO,0,0,0,0
 2020-01-05,TO,"Tonga",WPRO,0,0,0,0
@@ -80783,6 +80894,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TO,"Tonga",WPRO,0,0,0,0
 2021-01-09,TO,"Tonga",WPRO,0,0,0,0
 2021-01-10,TO,"Tonga",WPRO,0,0,0,0
+2021-01-11,TO,"Tonga",WPRO,0,0,0,0
 2020-01-03,TT,"Trinidad and Tobago",AMRO,0,0,0,0
 2020-01-04,TT,"Trinidad and Tobago",AMRO,0,0,0,0
 2020-01-05,TT,"Trinidad and Tobago",AMRO,0,0,0,0
@@ -81157,6 +81269,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TT,"Trinidad and Tobago",AMRO,10,7196,0,127
 2021-01-09,TT,"Trinidad and Tobago",AMRO,14,7210,0,127
 2021-01-10,TT,"Trinidad and Tobago",AMRO,9,7219,0,127
+2021-01-11,TT,"Trinidad and Tobago",AMRO,25,7244,1,128
 2020-01-03,TN,"Tunisia",EMRO,0,0,0,0
 2020-01-04,TN,"Tunisia",EMRO,0,0,0,0
 2020-01-05,TN,"Tunisia",EMRO,0,0,0,0
@@ -81531,6 +81644,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TN,"Tunisia",EMRO,2373,152254,48,5052
 2021-01-09,TN,"Tunisia",EMRO,2649,154903,56,5108
 2021-01-10,TN,"Tunisia",EMRO,2611,157514,45,5153
+2021-01-11,TN,"Tunisia",EMRO,1762,159276,62,5215
 2020-01-03,TR,"Turkey",EURO,0,0,0,0
 2020-01-04,TR,"Turkey",EURO,0,0,0,0
 2020-01-05,TR,"Turkey",EURO,0,0,0,0
@@ -82653,6 +82767,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TC,"Turks and Caicos Islands",AMRO,23,941,0,6
 2021-01-09,TC,"Turks and Caicos Islands",AMRO,15,956,0,6
 2021-01-10,TC,"Turks and Caicos Islands",AMRO,9,965,0,6
+2021-01-11,TC,"Turks and Caicos Islands",AMRO,29,994,0,6
 2020-01-03,TV,"Tuvalu",WPRO,0,0,0,0
 2020-01-04,TV,"Tuvalu",WPRO,0,0,0,0
 2020-01-05,TV,"Tuvalu",WPRO,0,0,0,0
@@ -83027,6 +83142,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,TV,"Tuvalu",WPRO,0,0,0,0
 2021-01-09,TV,"Tuvalu",WPRO,0,0,0,0
 2021-01-10,TV,"Tuvalu",WPRO,0,0,0,0
+2021-01-11,TV,"Tuvalu",WPRO,0,0,0,0
 2020-01-03,UG,"Uganda",AFRO,0,0,0,0
 2020-01-04,UG,"Uganda",AFRO,0,0,0,0
 2020-01-05,UG,"Uganda",AFRO,0,0,0,0
@@ -84149,6 +84265,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,AE,"United Arab Emirates",EMRO,2988,221754,5,694
 2021-01-09,AE,"United Arab Emirates",EMRO,2950,224704,3,697
 2021-01-10,AE,"United Arab Emirates",EMRO,2998,227702,5,702
+2021-01-11,AE,"United Arab Emirates",EMRO,2876,230578,6,708
 2020-01-03,TZ,"United Republic of Tanzania",AFRO,0,0,0,0
 2020-01-04,TZ,"United Republic of Tanzania",AFRO,0,0,0,0
 2020-01-05,TZ,"United Republic of Tanzania",AFRO,0,0,0,0
@@ -84897,6 +85014,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,US,"United States of America",AMRO,299562,21170475,3825,358111
 2021-01-09,US,"United States of America",AMRO,277195,21447670,4176,362287
 2021-01-10,US,"United States of America",AMRO,313516,21761186,3599,365886
+2021-01-11,US,"United States of America",AMRO,248089,22009275,3418,369304
 2020-01-03,VI,"United States Virgin Islands",AMRO,0,0,0,0
 2020-01-04,VI,"United States Virgin Islands",AMRO,0,0,0,0
 2020-01-05,VI,"United States Virgin Islands",AMRO,0,0,0,0
@@ -85271,6 +85389,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,VI,"United States Virgin Islands",AMRO,23,2106,0,24
 2021-01-09,VI,"United States Virgin Islands",AMRO,24,2130,0,24
 2021-01-10,VI,"United States Virgin Islands",AMRO,13,2143,0,24
+2021-01-11,VI,"United States Virgin Islands",AMRO,0,2143,0,24
 2020-01-03,UY,"Uruguay",AMRO,0,0,0,0
 2020-01-04,UY,"Uruguay",AMRO,0,0,0,0
 2020-01-05,UY,"Uruguay",AMRO,0,0,0,0
@@ -85645,6 +85764,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,UY,"Uruguay",AMRO,944,23048,4,221
 2021-01-09,UY,"Uruguay",AMRO,759,23807,10,231
 2021-01-10,UY,"Uruguay",AMRO,532,24339,9,240
+2021-01-11,UY,"Uruguay",AMRO,635,24974,8,248
 2020-01-03,UZ,"Uzbekistan",EURO,0,0,0,0
 2020-01-04,UZ,"Uzbekistan",EURO,0,0,0,0
 2020-01-05,UZ,"Uzbekistan",EURO,0,0,0,0
@@ -86393,6 +86513,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,VU,"Vanuatu",WPRO,0,1,0,0
 2021-01-09,VU,"Vanuatu",WPRO,0,1,0,0
 2021-01-10,VU,"Vanuatu",WPRO,0,1,0,0
+2021-01-11,VU,"Vanuatu",WPRO,0,1,0,0
 2020-01-03,VE,"Venezuela (Bolivarian Republic of)",AMRO,0,0,0,0
 2020-01-04,VE,"Venezuela (Bolivarian Republic of)",AMRO,0,0,0,0
 2020-01-05,VE,"Venezuela (Bolivarian Republic of)",AMRO,0,0,0,0
@@ -86767,6 +86888,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,VE,"Venezuela (Bolivarian Republic of)",AMRO,246,114908,5,1047
 2021-01-09,VE,"Venezuela (Bolivarian Republic of)",AMRO,414,115322,5,1052
 2021-01-10,VE,"Venezuela (Bolivarian Republic of)",AMRO,345,115667,4,1056
+2021-01-11,VE,"Venezuela (Bolivarian Republic of)",AMRO,505,116172,5,1061
 2020-01-03,VN,"Viet Nam",WPRO,0,0,0,0
 2020-01-04,VN,"Viet Nam",WPRO,0,0,0,0
 2020-01-05,VN,"Viet Nam",WPRO,0,0,0,0
@@ -87141,6 +87263,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,VN,"Viet Nam",WPRO,4,1509,0,35
 2021-01-09,VN,"Viet Nam",WPRO,3,1512,0,35
 2021-01-10,VN,"Viet Nam",WPRO,1,1513,0,35
+2021-01-11,VN,"Viet Nam",WPRO,1,1514,0,35
 2020-01-03,WF,"Wallis and Futuna",WPRO,0,0,0,0
 2020-01-04,WF,"Wallis and Futuna",WPRO,0,0,0,0
 2020-01-05,WF,"Wallis and Futuna",WPRO,0,0,0,0
@@ -87515,6 +87638,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,WF,"Wallis and Futuna",WPRO,0,4,0,0
 2021-01-09,WF,"Wallis and Futuna",WPRO,0,4,0,0
 2021-01-10,WF,"Wallis and Futuna",WPRO,0,4,0,0
+2021-01-11,WF,"Wallis and Futuna",WPRO,0,4,0,0
 2020-01-03,YE,"Yemen",EMRO,0,0,0,0
 2020-01-04,YE,"Yemen",EMRO,0,0,0,0
 2020-01-05,YE,"Yemen",EMRO,0,0,0,0
@@ -87889,6 +88013,7 @@ x_Date_reported,Country_code,Country,WHO_region,New_cases,Cumulative_cases,New_d
 2021-01-08,YE,"Yemen",EMRO,2,2108,0,611
 2021-01-09,YE,"Yemen",EMRO,0,2108,0,611
 2021-01-10,YE,"Yemen",EMRO,0,2108,0,611
+2021-01-11,YE,"Yemen",EMRO,0,2108,1,612
 2020-01-03,ZM,"Zambia",AFRO,0,0,0,0
 2020-01-04,ZM,"Zambia",AFRO,0,0,0,0
 2020-01-05,ZM,"Zambia",AFRO,0,0,0,0
