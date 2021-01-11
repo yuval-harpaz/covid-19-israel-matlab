@@ -109,6 +109,18 @@ staffDate = datetime(cellfun(@(x) x(1:end-5),strrep(staff.Date,'T',' '),'Uniform
 yDash = staff{:,2:5};
 bad = sum(yDash,2) == 0;
 
+%%
+% json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=6253ce68-5f31-4381-bb4e-557260d5c9fc&limit=10000');
+% json = jsondecode(json);
+% daily = struct2table(json.result.records);
+% daily = daily(:,2:end)
+% for ii = 1:7
+%     daily{ismember(daily{:,ii},'<15'),ii} = {''};
+% end
+% writetable(daily,'tmp.csv','Delimiter',',','WriteVariableNames',true);
+% daily = readtable('tmp.csv');
+
+
 
 figure;
 % subplot(1,2,1)
@@ -126,17 +138,6 @@ set(gcf,'Color','w')
 xtickformat('MMM')
 xlim([datetime(2020,6,15) datetime('today')+5])
 title('צוות רפואי מאומת לפי לוח הבקרה ומאגר המידע')
-
-
-% subplot(1,2,2)
-% plot(tsevet.Date,tsevet{:,5:7})
-% legend('רופאים','אחיות','אחר')
-% xtickformat('MMM')
-% xlim([datetime(2020,3,15) datetime('today')])
-% title(['מבודדים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
-% box off
-% grid on
-% set(gcf,'Color','w')
 
 
 figure;plot(staffDate(~bad),yDash(~bad,:))
@@ -160,3 +161,4 @@ grid on
 set(gcf,'Color','w')
 title('מאומתים סימפטומטיים')
 legend('מבוגרים מ 60','צעירים מ 60')
+
