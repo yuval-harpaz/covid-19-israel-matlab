@@ -17,3 +17,20 @@ grid on
 xtickformat('MMM')
 xlim([datetime(2020,6,1) datetime('tomorrow')])
 grid minor
+
+
+%% 
+
+figure;
+yyaxis left
+h(2) = plot(listD.date(188:end),listD.CountCriticalStatus(188:end));
+hold on
+h(1) = plot(listD.date(188:end),listD.CountBreath(188:end));
+ylabel('מאושפזים')
+yyaxis right
+plot(listD.date(188:end),listD.CountBreath(188:end)./listD.CountCriticalStatus(188:end))
+legend('קריטיים','מונשמים','שיעור המונשמים')
+ylim([0.7 1])
+grid on
+ylabel('שיעור המונשמים')
+grid minor
