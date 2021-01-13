@@ -1,6 +1,6 @@
 '''
 a short version of dancarmoz mohdashboardapi.py (https://github.com/dancarmoz/israel_moh_covid_dashboard_data/)
-pulls the current API data. to get backed-up  information use the csv files gin that repo
+pulls the current API data. to get backed-up  information use the csv files in that repo
 '''
 
 import requests

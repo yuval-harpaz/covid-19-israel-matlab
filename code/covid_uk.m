@@ -1,6 +1,6 @@
 function [y,pop,date] = covid_uk(plt)
 if nargin == 0
-    plt = false;
+    plt = true;
 end
 
 
@@ -21,7 +21,9 @@ extracted(ws) = [];
 extracted = regexp(extracted,newline,'split');
 extracted = extracted(1:end-1);
 extracted = reshape(extracted,9,length(extracted)/9)';
-date = cellfun(@(x) datetime([x(1:2),'-',x(3:5),'-','2020']),extracted(:,1));
+date = [cellfun(@(x) datetime([x(1:2),'-',x(3:5),'-','2020']),extracted(1:43,1));...
+    cellfun(@(x) datetime([x(1:2),'-',x(3:5),'-','2021']),extracted(44:end,1))];
+
 hospital = cellfun(@str2double, extracted(:,2));
 care_home = cellfun(@str2double, extracted(:,4));
 home = cellfun(@str2double, extracted(:,6));
@@ -35,12 +37,30 @@ writetable(lon,'data/London.csv');
 % lon = readtable('data/London.csv');
 y = lon.Cum;
 pop = table({'London'},8982000);
+iPos = strfind(txt,'Positive test');
+% iPos = iPos(1:2);
+iRest = strfind(txt,'Rest of');
+% txt(iPos(1):iPos(2))
+extracted1 = regexprep(txt(iPos(3)+19:iRest(3)-1),'<.*?>','');
+weekDeathHosp = str2num(strrep(extracted1,',',''));
+mon = {'January','February','March','April','May','June','July','August','September','October','November','December'};
+idx = [];
+for ii = 1:12 
+    idx = [idx,strfind(txt,mon{ii})];
+end
+idx = sort(idx);
+idx = idx(find(idx < iPos(3),1,'last'));
+ism = strfind(txt,'<');
+dateStr = txt(idx-3:ism(find(ism > idx,1))-2);
+[~,mm] = ismember(dateStr(4:end),mon);
+dd = str2num(dateStr(1:2));
+weekDeathDate = datetime(2021,mm,dd-42:7:dd);
 
 %% cases
-txt = urlread('https://data.london.gov.uk/dataset/coronavirus--covid-19--cases');
-iCsv = findstr(txt,'phe_cases_london_boroughs.csv');
-iDownload = strfind(txt,'download/');
-link = ['https://data.london.gov.uk/',txt(iDownload(1):iCsv(1)+28)];
+txt1 = urlread('https://data.london.gov.uk/dataset/coronavirus--covid-19--cases');
+iCsv = findstr(txt1,'phe_cases_london_boroughs.csv');
+iDownload = strfind(txt1,'download/');
+link = ['https://data.london.gov.uk/',txt1(iDownload(1):iCsv(1)+28)];
 [~,~] = system(['wget -O tmp.csv ',link])
 lonC = readtable('tmp.csv');
 date2 = unique(lonC.date);
@@ -55,10 +75,15 @@ if plt
     ylim([0 16000])
     yyaxis left
     bar(date(2:end),diff(y));
+    hold on
+    bar(weekDeathDate,weekDeathHosp,'c')
     grid on
     ylabel('נפטרים לשבוע')
+    legend('נפטרים לשבוע','נפטרים לשבוע בבתי חולים בלבד','מאומתים ליום','location','north')
+    set(gcf,'Color','w')
+    title('לונדון')
+    box off
+    xlim([datetime(2020,3,15) datetime('tomorrow')+3])
+    xtickformat('MMM')
 end
-legend('נפטרים לשבוע','מאומתים ליום')
-set(gcf,'Color','w')
-title('לונדון')
-box off
+

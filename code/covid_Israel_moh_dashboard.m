@@ -64,8 +64,9 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     dateRec = datetime(cellfun(@(x) x(1:10),{json(iRec).data(firstRec:end).date}','UniformOutput',false));
     recovered = [json(iRec).data(firstRec:end).amount]';
     data.recovered = nan(height(data),1);
-    [~,row] = ismember(dateRec,data.date);
-    data.recovered(row) = recovered;
+    [isRow,row] = ismember(dateRec,data.date);
+    data.recovered(row(isRow)) = recovered(isRow);
+    data = [dataPrev(1:find(ismember(dataPrev.date,data.date),1)-1,:);data];
     nanwritetable(data,'data/Israel/dashboard_timeseries.csv');
 end
 
