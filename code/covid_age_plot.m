@@ -66,7 +66,7 @@ end
 figure;
 yyaxis left
 plot(dateW,casesYO/1000)
-ylim([0 40])
+ylim([0 50])
 ylabel('מאומתים לשבוע (באלפים)')
 yyaxis right
 plot(dateW,100*casesYO(:,2)./casesYO(:,1))
@@ -76,6 +76,9 @@ ylabel('שיעור המאומתים מעל גיל 60 (באחוזים)')
 xtickformat('MMM')
 box off
 grid on
+xlim([datetime(2020,10,1) datetime('today')])
+title('נתוני גיל ומין (שבועי)')
+set(gcf,'Color','w')
 % figure;plot(dateW,deathsYO)
 %%
 figure;
