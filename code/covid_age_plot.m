@@ -8,7 +8,7 @@ for ii = 1:length(date)
         sum(max(agegen{agegen.date > date(ii) & agegen.date < date(ii)+1,14:21}))];
 end
 dash(dash(:,1) < 150000,:) = nan;
-in = find(isnan(dash(:,1)))
+in = find(isnan(dash(:,1)));
 if in(end) == length(dash)
     in(end) = [];
 end

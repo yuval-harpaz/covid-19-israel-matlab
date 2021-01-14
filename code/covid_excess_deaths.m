@@ -3,8 +3,8 @@ cd ~/covid-19-israel-matlab/data/Israel
 % [~,msg] = system('wget -O lmsMonth.xlsx https://www.cbs.gov.il/he/publications/DocLib/2020/%D7%9C%D7%95%D7%97%D7%95%D7%AA%20%D7%AA%D7%9C%D7%95%D7%A9%D7%99%D7%9D/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%A0%D7%94-%D7%97%D7%95%D7%93%D7%A9.xlsx');
 [~,msg] = system('wget -O lmsMonth.xlsx https://www.cbs.gov.il/he/publications/LochutTlushim/2020/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%A0%D7%94-%D7%97%D7%95%D7%93%D7%A9.xlsx')
 % week = readtable('lmsWeek.xlsx','sheet','2020','Range','B14:L65','ReadVariableNames',false);
-monthAll = readtable('lmsMonth.xlsx','Range','B10:V21','ReadVariableNames',false);
-month70 = readtable('lmsMonth.xlsx','Range','B28:V39','ReadVariableNames',false);
+monthAll = readtable('lmsMonth.xlsx','Range','B11:V22','ReadVariableNames',false);
+month70 = readtable('lmsMonth.xlsx','Range','B30:V41','ReadVariableNames',false);
 %from https://www.cbs.gov.il/he/publications/DocLib/2020/yarhon0720/b1.xls'
 % month70.Var21(8) = sum(week{32:34,end})/21*31;
 % monthAll.Var21(8) = sum(week{32:34,2})/21*31;
@@ -26,7 +26,7 @@ death{1} = monthAll{:,11:end};
 death{2} = month70{:,11:end};
 death{3} = monthAll{:,11:end};
 death{4} = month70{:,11:end};
-lims = [2000 4500;2000 4500;250 550;250 550];
+lims = [2000 5000;2000 5000;250 550;250 550];
 
 yl = {'תמותה','תמותה','תמותה למליון','תמותה למליון'};
 tit = {'תמותה, כל הגילאים','תמותה, מעל 70','תמותה למליון, כל הגילאים','תמותה למליון, מעל 70','עודף תמותה למליון, כל הגילאים','עודף תמותה למליון, מעל 70'};
@@ -94,14 +94,16 @@ for ip = 1:2
     set(gca,'XTick',1:12)
     if ip == 1
         hold on
-        hc = plot(covid(1:9),'k','linewidth',2);
+        hc = plot(covid(1:11),'k','linewidth',2);
         tot = nansum(yy);
         tot(2,:) = sum(yy(~isnan(yy(:,end)),:));
     end
-    ylim([-50 50])
-    set(gca,'YTick',-40:20:40)
+    ylim([-50 120])
+    set(gca,'YTick',-40:20:120)
 end
+%%
 legend([h;hb;hc],[cellstr(num2str((2010:2020)'));{'צפי';'קורונה'}],[900 415 0.1 0.2]);
+set(gcf,'Color','w')
 % niftarim = readtable('~/Downloads/corona_deceased_ver_0034.csv');
 figure;
 hb = bar(tot');
@@ -112,3 +114,6 @@ for ii = 1:11
 end
 set(gca,'xtick',2010:2020)
 grid on
+xtickangle(30)
+set(gcf,'Color','w')
+title('תמותה עודפת שנתית')
