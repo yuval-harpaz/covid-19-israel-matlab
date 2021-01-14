@@ -1,7 +1,7 @@
 function [yy,pop,date] = covid_brazil(plt)
 cd ~/covid-19-israel-matlab
 if nargin == 0
-    plt = false;
+    plt = true;
 end
 % bra = urlread('https://raw.githubusercontent.com/wcota/covid19br/master/cases-brazil-cities-time.csv');
 disp('downloading Brazil')
@@ -60,6 +60,7 @@ if plt
     box off
     grid on
     yt = linspace(min(dypm(end,:)),max(dypm(end,:)),size(dypm,2));
+    xtickformat('MMM')
     figure;
     hd = plot(date(2:end),dypm);
     hold on
@@ -80,6 +81,7 @@ if plt
     title('תמותה למליון ליום בברזיל, לפי איזור')
     box off
     grid on
+    xtickformat('MMM')
 end
 %%
 % https://github.com/wcota/covid19br/raw/master/cases-brazil-cities-time.csv.gz
@@ -113,4 +115,36 @@ if city
     plot(t.date(iCity),dpm,'r','linewidth',2);
     legend([h2,h1(1)],'מנאוס','ערים אחרות')
     title('תמותה בערי ברזיל')
+    ylim([0 60])
+    xlim([datetime(2020,3,15) datetime('today')+1])
+    set(gca,'ygrid','on')
+    set(gcf,'Color','w')
+    box off
+    xtickformat('MMM')
+    figure;
+    for ii = 1:length(cityName)
+        iCity = ismember(t.city,cityName{ii});
+        dpm = t.deaths_per_100k_inhabitants(iCity)*10;
+%         dpm = [0;movmean(movmedian(dpm,[3 3]),[3 3])];
+        if ii == 1
+            hh1 = plot(t.date(iCity),dpm,'k');
+            hold on
+        elseif ii == iMa
+            hh2 = plot(t.date(iCity),dpm/10,'r');
+        else
+            plot(t.date(iCity),dpm,'k');
+        end
+    end
+    iCity = ismember(t.city,cityName{iMa});
+    dpm = t.deaths_per_100k_inhabitants(iCity)*10;
+%     dpm = [0;movmean(movmedian(dpm,[3 3]),[3 3])];
+    plot(t.date(iCity),dpm,'r','linewidth',2);
+    legend([hh2,hh1(1)],'מנאוס','ערים אחרות')
+    title('תמותה מצטברת בערי ברזיל')
+%     ylim([0 60])
+    xlim([datetime(2020,3,15) datetime('today')+1])
+    set(gca,'ygrid','on')
+    set(gcf,'Color','w')
+    box off
+    xtickformat('MMM')
 end
