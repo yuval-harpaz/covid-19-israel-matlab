@@ -202,7 +202,7 @@ box off
 set(gcf,'Color','w')
 grid minor
 set(gca,'fontsize',13)
-ylim([0 275])
+ylim([0 300])
 xlim([list.date(1) datetime('tomorrow')])
 xtickformat('MMM')
 subplot(1,2,2)
@@ -237,6 +237,6 @@ set(gcf,'Color','w')
 set(gca,'fontsize',13)
 
 grid minor
-ylim([0 2000])
+ylim([0 2100])
 xlim([listE.date(1) datetime('tomorrow')])
 xtickformat('MMM')
