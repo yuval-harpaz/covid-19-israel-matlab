@@ -44,7 +44,12 @@ api_query = {'requests': [
     {'id': '23', 'queryName': 'verifiedDoctorsAndNurses', 'single': False, 'parameters': {}},
     {'id': '24', 'queryName': 'isolatedVerifiedDoctorsAndNurses', 'single': False, 'parameters': {}},
     {'id': '25', 'queryName': 'spotlightPublic', 'single': False, 'parameters': {}},
-    {'id': '26', 'queryName': 'vaccinated', 'single': False, 'parameters': {'days': 0}},
+    {'id': '26', 'queryName': 'vaccinated', 'single': False, 'parameters': {}},
+    {'id': '27', 'queryName': 'vaccinationsPerAge', 'single': False, 'parameters': {}},
+    {'id': '28', 'queryName': 'testsPerDate', 'single': False, 'parameters': {}},
+    {'id': '29', 'queryName': 'averageInfectedPerWeek', 'single': False, 'parameters': {}},
+    {'id': '30', 'queryName': 'spotlightAggregatedPublic', 'single': True, 'parameters': {}},
+    {'id': '31', 'queryName': 'HospitalBedStatusSegmentation', 'single': False, 'parameters': {}},
     ]}
 api_address = 'https://datadashboardapi.health.gov.il/api/queries/_batch'
 def get_api_data():
