@@ -44,6 +44,7 @@ box off
 ylabel('מאומתים מבוגרים')
 set(gcf,'Color','w')
 xtickformat('MMM')
+ylim([0 1200])
 %%
 
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
@@ -130,7 +131,7 @@ figure;
 plot(staffDate(~bad),yDash(~bad,2:-1:1))
 hold on
 colorset
-plot(tsevet.Date,tsevet{:,2:3},'--')
+plot(tsevet.Date,tsevet{:,2:3},':','linewidth',2)
 xtickformat('MMM')
 xlim([datetime(2020,3,15) datetime('today')])
 title(['מאומתים בצוות הרפואי עד ',datestr(tsevet.Date(end),'mmm-dd')])
@@ -141,6 +142,7 @@ set(gcf,'Color','w')
 xtickformat('MMM')
 xlim([datetime(2020,6,15) datetime('today')+5])
 title('צוות רפואי מאומת לפי לוח הבקרה ומאגר המידע')
+xlim([datetime(2020,10,1) datetime('today')+5])
 
 tit = {'רופאות מאומתות','אחים מאומתים','רופאות מבודדות','אחים מבודדים'};
 figure;
