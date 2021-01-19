@@ -51,5 +51,59 @@ set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
 box off
 set(gcf,'Color','w')
 title(['תמותה לפי גיל מתוך ',str(sum(NN)),' נפטרים (לוח הבקרה)'])
-
-
+%%
+dday = datetime(2020,12,31);
+top = 1200;
+figure;
+subplot(1,2,1)
+row = find(dateshift(agegen.date,'start','day') == dday,1,'last');
+NN = [sum(ya(row,1:6)),ya(row,7:end)]';
+bar(NN,'EdgeColor','none');
+text((1:5)-0.2,NN+40,str(NN))
+text((1:5)-0.2,NN-40,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
+ylim([0 top])
+set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
+box off
+set(gcf,'Color','w')
+title(['תמותה ב 2020 - ',str(sum(NN)),'  (לוח הבקרה)'])
+subplot(1,2,2)
+row = find(dateshift(agegen.date,'start','day') == datetime(2020,12,31),1,'last');
+NN = [sum(ya(end,1:6)),ya(end,7:end)]'-NN;
+bar(NN,'EdgeColor','none');
+text((1:5)-0.2,NN+40,str(NN))
+text((1:5)-0.2,NN-40,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
+ylim([0 top])
+set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
+box off
+set(gcf,'Color','w')
+title(['תמותה ב 2021 - ',str(sum(NN)),'  (לוח הבקרה)'])
+%%
+% col = 42:2:60;
+% for ii = 1:length(col)
+%     yav(1:height(agegen),ii) = sum(agegen{:,[col(ii),col(ii)+1]},2);
+% end
+% top = 60;
+% tdist = 4;
+% figure;
+% subplot(1,2,1)
+% row = find(dateshift(agegen.date,'start','day') == datetime(2020,12,31),1,'last');
+% NN = [sum(yav(row,1:6)),yav(row,7:end)]';
+% bar(NN,'EdgeColor','none');
+% text((1:5)-0.2,NN+tdist,str(NN))
+% text((1:5)-0.2,NN-tdist,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
+% ylim([0 top])
+% set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
+% box off
+% set(gcf,'Color','w')
+% title(['תמותה ב 2020 - ',str(sum(NN)),'  (לוח הבקרה)'])
+% subplot(1,2,2)
+% row = find(dateshift(agegen.date,'start','day') == datetime(2020,12,31),1,'last');
+% NN = [sum(yav(end,1:6)),yav(end,7:end)]'-NN;
+% bar(NN,'EdgeColor','none');
+% text((1:5)-0.2,NN+tdist,str(NN))
+% text((1:5)-0.2,NN-tdist,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
+% ylim([0 top])
+% set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
+% box off
+% set(gcf,'Color','w')
+% title(['תמותה ב 2021 - ',str(sum(NN)),'  (לוח הבקרה)'])
