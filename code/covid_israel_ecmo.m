@@ -10,7 +10,7 @@ h(4) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'k');
 h(3) = plot(ecmo.date,ecmo.ecmo,'Color',[0.4660    0.6740    0.1880],'Marker','.');
 
 legend('קריטיים','מונשמים','נפטרים','אקמו','location','northwest')
-title('חוסר בעמדות אקמו ובהנשמה מלאכותית בשיא העומס')
+title('השימוש בהנשמה מלאכותית ומכשירי לב-ריאה (אקמו)')
 set(gcf,'Color','w')
 box off
 grid on
