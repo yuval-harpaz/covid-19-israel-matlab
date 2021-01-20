@@ -26,10 +26,41 @@ for iSec = 1:4
     xtickformat('MMM')
     ylim([0 100])
     hold on
-    hl = plot(agegen.date(2:end),sm,'k')
+    hl = plot(agegen.date(2:end),sm,'k');
     title(tit{iSec})
     if iSec == 1
         legend([fliplr(hb),hl],'80+','60-80','40-60','20-40','0-20','סה"כ (מנורמל)');
+    end
+    
+end
+set(gcf,'Color','w')
+
+figure;
+for iSec = 1:4
+    prevCol = iSec*20-20;
+    y = [sum(agegen{:,prevCol+(2:5)},2),sum(agegen{:,prevCol+(6:9)},2),sum(agegen{:,prevCol+(10:13)},2),sum(agegen{:,prevCol+(14:17)},2),sum(agegen{:,prevCol+(18:21)},2)];
+    if iSec == 2 || iSec == 3
+        yd = y(2:end,:);
+    else
+        yd = diff(y);
+    end
+    yds = movmean(movmedian(yd,[3 3]),[3 3]);
+%     ydsp = yds./sum(yds,2)*100;
+%     sm = sum(cumsum(yds),2);
+%     sm = sm/max(sm)*100;
+    subplot(2,2,iSec)
+    hb = bar(agegen.date(2:end),yds,20,'stacked','EdgeColor','none');
+    for ih = 1:5
+        hb(ih).FaceColor = col(ih,:);
+    end
+    grid on
+    xtickformat('MMM')
+%     ylim([0 100])
+    hold on
+%     hl = plot(agegen.date(2:end),sm,'k');
+    title(tit{iSec})
+    if iSec == 1
+        legend(fliplr(hb),'80+','60-80','40-60','20-40','0-20');
     end
     
 end
