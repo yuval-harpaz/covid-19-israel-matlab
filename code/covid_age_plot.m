@@ -110,8 +110,18 @@ tsevet = tsevet(order,:);
 !wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/isolated_staff.csv
 staff = readtable('tmp.csv');
 staffDate = datetime(cellfun(@(x) x(1:end-5),strrep(staff.Date,'T',' '),'UniformOutput',false));
-yDash = staff{:,2:5};
+yDash = staff{:,2:7};
 bad = sum(yDash,2) == 0;
+
+figure;
+plot(staffDate,yDash)
+legend(staff.Properties.VariableNames{2:end})
+fix = yDash;
+bd = yDash(:,1) > yDash(:,3);
+fix(bd,1) = yDash(bd,3);
+fix(bd,3) = yDash(bd,1);
+figure;
+plot(staffDate,fix)
 
 %%
 % json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=6253ce68-5f31-4381-bb4e-557260d5c9fc&limit=10000');
