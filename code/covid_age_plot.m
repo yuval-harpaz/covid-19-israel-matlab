@@ -67,7 +67,7 @@ end
 figure;
 yyaxis left
 plot(dateW,casesYO/1000)
-ylim([0 50])
+% ylim([0 50])
 ylabel('מאומתים לשבוע (באלפים)')
 yyaxis right
 plot(dateW,100*casesYO(:,2)./casesYO(:,1))
@@ -114,14 +114,35 @@ yDash = staff{:,2:7};
 bad = sum(yDash,2) == 0;
 
 figure;
-plot(staffDate,yDash)
+plot(staffDate,yDash);
 legend(staff.Properties.VariableNames{2:end})
-fix = yDash;
-bd = yDash(:,1) > yDash(:,3);
-fix(bd,1) = yDash(bd,3);
-fix(bd,3) = yDash(bd,1);
+order = [2,1;4,2;6,3;1,4;3,5;5,6];
+tit = {'confirmed doctors','confirmed nurses','confirmed others','isolated doctors','isolated nurses','isolated others'};
 figure;
-plot(staffDate,fix)
+for ip = 1:6
+    subplot(2,3,ip)
+    yyaxis right
+    h1 = fill(datetime(2020,12,[20,20+14,20+14,20,20]),[0,0,1000,1000,0]/0.3,[0.9,0.9,0.9],'linestyle','none');
+    alpha(0.5)
+    hold on
+    h2 = plot(listD.date(1:end-1),movmean(listD.tests_positive(1:end-1),[3 3]),'-');
+    yyaxis left
+    h3 = plot(staffDate,yDash(:,order(ip,1)),'c-');
+    hold on
+    h4 = plot(tsevet.Date,tsevet{:,1+order(ip,2)},'b-')
+    
+%     legend(staff.Properties.VariableNames{1+order(ip,1)},strrep(tsevet.Properties.VariableNames{1+order(ip,2)},'_',' '))
+    if ip == 1
+        legend([h1,h2,h3,h4],'2 weeks from day 1','General population (cases)','Dashboard','Data Base','location','northwest')
+    end
+    title(tit{ip})
+    set(gca,'xtick',datetime(2020,3:30,1))
+    xtickformat('MMM')
+    grid on
+end
+set(gcf,'Color','w')
+
+
 
 %%
 % json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=6253ce68-5f31-4381-bb4e-557260d5c9fc&limit=10000');
