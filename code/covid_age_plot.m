@@ -112,7 +112,7 @@ staff = readtable('tmp.csv');
 staffDate = datetime(cellfun(@(x) x(1:end-5),strrep(staff.Date,'T',' '),'UniformOutput',false));
 yDash = staff{:,2:7};
 bad = sum(yDash,2) == 0;
-
+listD = readtable('dashboard_timeseries.csv');
 figure;
 plot(staffDate,yDash);
 legend(staff.Properties.VariableNames{2:end})
@@ -127,7 +127,7 @@ for ip = 1:6
     hold on
     h2 = plot(listD.date(1:end-1),movmean(listD.tests_positive(1:end-1),[3 3]),'-');
     yyaxis left
-    h3 = plot(staffDate,yDash(:,order(ip,1)),'c-');
+    h3 = plot(staffDate,yDash(:,order(ip,1)),'b--');
     hold on
     h4 = plot(tsevet.Date,tsevet{:,1+order(ip,2)},'b-')
     
