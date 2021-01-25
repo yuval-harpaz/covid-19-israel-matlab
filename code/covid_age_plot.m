@@ -82,17 +82,30 @@ title('נתוני גיל ומין (שבועי)')
 set(gcf,'Color','w')
 % figure;plot(dateW,deathsYO)
 %%
+listD = readtable('dashboard_timeseries.csv');
 figure;
 yyaxis left
-plot(date(2:end),movmean(diff(dash(:,1)),[3 3],'omitnan'))
-hold on
-plot(date(2:end),movmean(diff(dash(:,2)),[3 3],'omitnan'))
+plot(listD.date,listD.tests_positive)
+ylabel('מאומתים')
 yyaxis right
-plot(date(2:end),movmean(diff(dash(:,2)),[3 3],'omitnan')./movmean(diff(dash(:,1)),[3 3],'omitnan'))
+plot(date(2:end),movmean(diff(dash(:,2)),[3 3],'omitnan')./...
+    (movmean(diff(dash(:,1)),[3 3],'omitnan')+movmean(diff(dash(:,2)),[3 3],'omitnan')))
 xtickformat('MMM')
-xlim([datetime(2020,10,10) datetime('today')])
-
-
+xlim([datetime(2020,5,15) datetime('tomorrow')])
+ylabel ('שיעור המבוגרים')
+hold on
+y = tests.pos60;
+y(y == 0) = nan;
+y(ismember(weekday(tests.date),[6,7])) = nan;
+y = y./tests.pos;
+y = movmean(movmedian(y,[3 3],'omitnan'),[3 3]);
+plot(tests.date(1:207),y(1:207))
+legend('מאומתים','שיעור המבוגרים (לוח הבקרה)','שיעור המבוגרים (מאגר המידע)','location','northwest')
+box off
+set(gcf,'Color','w')
+title('שיעור המבוגרים ביחס לעלית וירידת הגלים')
+grid on
+ylim([0.05 0.25])
 %%
 
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=6253ce68-5f31-4381-bb4e-557260d5c9fc&limit=1000');
