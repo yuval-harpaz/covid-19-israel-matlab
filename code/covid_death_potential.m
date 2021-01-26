@@ -28,3 +28,11 @@ ylabel('תמותה')
 xlabel('שכבת גיל')
 legend('תמותה עד כה','תמותת לא מוגנים אם התגלו שליש מהנדבקים','תמותת לא מוגנים אם התגלו חצי מהנדבקים')
 title('פוטנציאל התמותה לפי כמות הנדבקים והמחוסנים לפי שכבת גיל')
+
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge');
+json = jsondecode(json);
+tv = struct2table(json);
+
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedByAgeAndGenderPublic');
+json = jsondecode(json);
+ti = struct2table(json);
