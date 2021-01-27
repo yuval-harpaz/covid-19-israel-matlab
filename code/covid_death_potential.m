@@ -36,3 +36,29 @@ tv = struct2table(json);
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedByAgeAndGenderPublic');
 json = jsondecode(json);
 ti = struct2table(json);
+
+population = [sum(vacc.pop1000(1:2))*1000;vacc.pop1000(3:8)*1000;vacc.pop1000(9)*1000];
+vaccinated1 = [tv.vaccinated_first_dose(1);tv.vaccinated_first_dose(2:7);sum(tv.vaccinated_first_dose(8:9))];
+confirmed = [sum(sum(ti{1:2,2:3}));sum(ti{3:8,2:3},2);sum(sum(ti{9:10,2:3}))];
+age = vacc.age(2:end);
+age{1} = '0-20';
+ifr = [0.00002;0.0001;0.0002;0.001;0.002;0.01;0.045;0.15];
+tt = table(age,population,confirmed,vaccinated1,ifr);
+
+y = [(population-vaccinated1-confirmed),(population-vaccinated1-confirmed*2)].*ifrr;
+y(end+1,:) = sum(y);
+%%
+figure;
+h = bar(y);
+ylim([10 max(y(:,1)*1.5)])
+set(gca, 'YScale', 'log')
+grid on
+text((1:9)-0.5,y(:,1)*1.25,str(round(y(:,1))),'Color',h(1).FaceColor)
+text((1:9),y(:,2)*1.25,str(round(y(:,2))),'Color',h(2).FaceColor)
+
+set(gca,'XTickLabel',[age;{'Total'}],'fontsize',13)
+set(gcf,'Color','w')
+ylabel('תמותה')
+xlabel('שכבת גיל')
+legend('תמותת לא מוגנים ','תמותת לא מוגנים אם התגלו חצי מהנדבקים')
+title('פוטנציאל התמותה לפי כמות הנדבקים והמחוסנים לפי שכבת גיל')
