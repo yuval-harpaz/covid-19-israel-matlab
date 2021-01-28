@@ -2,6 +2,10 @@ cd ~/covid-19-israel-matlab/data/Israel
 ecmo = readtable('ECMO.csv');
 ecmo(isnan(ecmo.ecmo),:) = [];
 listD = readtable('dashboard_timeseries.csv');
+if listD.CountBreath(349) < 250
+    listD.CountBreath(349) = nan;
+end
+    
 figure;
 h(2) = plot(listD.date(188:end),listD.CountCriticalStatus(188:end));
 hold on
