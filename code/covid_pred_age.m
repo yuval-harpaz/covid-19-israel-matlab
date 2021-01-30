@@ -11,8 +11,16 @@ casesYOday = [sum(ag{:,[2:7,12:17]},2),sum(ag{:,[8:11,18:21]},2)];
 %%
 yyy0 = movmean(diff(casesYOday)./datenum(diff(agDate)),[11 11],'omitnan');
 yyy0 = movmean(yyy0,[11 11],'omitnan');
+agdu = unique(dateshift(agDate(2:end),'start','day'));
+clear yyy
+for ii = 1:length(agdu)-1
+    yyy(ii,1:2) = yyy0(find(ismember(dateshift(agDate,'start','day'),agdu(ii)),1),:);
+end
 
-
+figure
+plot(listD.date(131:end-1),movmean(listD.tests_positive(131:end-1),[3 3]))
+hold on
+plot(sum(yyy,2)*0.7)
 %%
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=a2b2fceb-3334-44eb-b7b5-9327a573ea2c&limit=500000');
 json = jsondecode(json);
@@ -37,14 +45,22 @@ probYoung = movmean(probYoung,[3 3]);
 probYoung = probYoung(1:iEnd);
 probYoung = probYoung/sum(probYoung);
 
-predOld = conv(yyy0(:,2),probOld);
-predYoung = conv(yyy0(:,1),probYoung);
+predOld = conv(yyy(:,2),probOld);
+predYoung = conv(yyy(:,1),probYoung);
 
 listD = readtable('dashboard_timeseries.csv');
-pred = 
+pred = conv(movmean(listD.tests_positive,[3 3]),prob);
+pred = pred(find(ismember(listD.date,agdu(2))):end);
+pred = pred(1:length(predOld));
 xPred = agDate(1):agDate(1)+length(predOld)-1;
+
 figure;
-plot(xPred,[predYoung,predOld])
+plot(listD.date(131:end-1),movmean(listD.CountDeath(131:end-1),[3 3]))
+hold on
+plot(xPred,pred/125)
+plot(xPred,(predOld+predYoung)*0.7/125)
+% plot(xPred,predYoung*0.7/125)
+
 
 figure;
 yyaxis left
@@ -67,50 +83,3 @@ grid on
 grid minor
 xtickformat('MMM')
 set(gcf,'Color','w')
-%%
-col = [0.259 0.525 0.961;0.063 0.616 0.345;0.961 0.706 0.4;0.988 0.431 0.016;0.863 0.267 0.216];
-
-
-clear yy;
-for ii = 1:5
-    idx = 1+(ii*2-1:ii*2);
-    yy(1:length(agDate),ii) = sum(ag{:,idx},2);
-    disp(idx)
-end
-yyy = movmean(diff(yy)./datenum(diff(agDate)),[11 11],'omitnan');
-yyy = [cumsum(yyy,2);zeros(size(yyy))];
-xxx = [agDate(2:end);flipud(agDate(2:end))];
-
-figure;
-subplot(2,1,1)
-for ii = 1:5
-    fill(xxx,yyy(:,6-ii),col(6-ii,:),'linestyle','none')
-    hold on
-end
-% plot(agDate(2:end),yyy)
-legend('80+','60-80','40-60','20-40','0-20','location','northwest');
-set(gcf,'Color','w')
-ax = gca;
-ax.YRuler.Exponent = 0;
-xtickformat('MMM')
-xlim(agDate([2,end]))
-grid on
-title('מאומתים לפי גיל')
-set(gca, 'layer', 'top');
-
-yyy1 = yyy./yyy(:,5)*100;
-yyy1(isnan(yyy1)) = 0;
-subplot(2,1,2)
-for ii = 1:5
-    fill(xxx,yyy1(:,6-ii),col(6-ii,:),'linestyle','none')
-    hold on
-end
-% legend('80+','60-80','40-60','20-40','0-20','location','northwest');
-set(gcf,'Color','w')
-ax = gca;
-ax.YRuler.Exponent = 0;
-xtickformat('MMM')
-xlim(agDate([2,end]))
-grid on
-title('מאומתים לפי גיל (%)')
-set(gca, 'layer', 'top');
