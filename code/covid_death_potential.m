@@ -45,7 +45,15 @@ age{1} = '0-20';
 ifr = [0.00002;0.0001;0.0002;0.001;0.002;0.01;0.045;0.15];
 tt = table(age,population,confirmed,vaccinated1,ifr);
 
-y = [(population-vaccinated1-confirmed),(population-vaccinated1-confirmed*2)].*ifrr;
+% ifrr = [0.00002;0.0001;0.0002;0.001;0.002;0.01;0.045;0.15];
+y = population-vaccinated1-confirmed;
+fac = 1;
+notConf = population-confirmed;
+vaccAndConf = round((confirmed*fac./notConf) .* (vaccinated1./notConf) .* notConf);
+confNotVax = confirmed*fac-vaccAndConf;
+y(:,2) = population-vaccinated1-confirmed*(1+fac);
+y(:,3) = population-vaccinated1-confirmed-confNotVax;
+y = y.*ifr;
 y(end+1,:) = sum(y);
 %%
 figure;
@@ -54,7 +62,8 @@ ylim([10 max(y(:,1)*1.5)])
 set(gca, 'YScale', 'log')
 grid on
 text((1:9)-0.5,y(:,1)*1.25,str(round(y(:,1))),'Color',h(1).FaceColor)
-text((1:9),y(:,2)*1.25,str(round(y(:,2))),'Color',h(2).FaceColor)
+text((1:9)-0.25,y(:,2)*1.25,str(round(y(:,2))),'Color',h(2).FaceColor)
+text((1:9),y(:,3)*1.25,str(round(y(:,3))),'Color',h(3).FaceColor)
 
 set(gca,'XTickLabel',[age;{'Total'}],'fontsize',13)
 set(gcf,'Color','w')
@@ -62,3 +71,33 @@ ylabel('תמותה')
 xlabel('שכבת גיל')
 legend('תמותת לא מוגנים ','תמותת לא מוגנים אם התגלו חצי מהנדבקים')
 title('פוטנציאל התמותה לפי כמות הנדבקים והמחוסנים לפי שכבת גיל')
+
+%% 
+
+fac = 1;
+notConf = population-confirmed;
+vaccAndConf = round((confirmed*fac./notConf) .* (vaccinated1./notConf) .* notConf);
+confNotVax = confirmed*fac-vaccAndConf;
+y = population-vaccinated1-confirmed-confNotVax;
+% easy ifr, herd immunity
+
+y = y.*[ifr,ifr*2/3];
+y(end+1,:) = sum(y);
+Hasinut = sum((vaccinated1+confirmed+confNotVax))./sum(population);
+Hasinut = [str(round(Hasinut*100)),'%'];
+%%
+figure;
+h = bar(y);
+ylim([10 max(y(:,1)*1.5)])
+set(gca, 'YScale', 'log')
+grid on
+text((1:9)-0.35,y(:,1)*1.25,str(round(y(:,1))),'Color',h(1).FaceColor)
+text((1:9),y(:,2)*1.25,str(round(y(:,2))),'Color',h(2).FaceColor)
+% text((1:9),y(:,3)*1.25,str(round(y(:,3))),'Color',h(3).FaceColor)
+
+set(gca,'XTickLabel',[age;{'Total'}],'fontsize',13)
+set(gcf,'Color','w')
+ylabel('תמותה')
+xlabel('שכבת גיל')
+legend('ifr x 1','ifr x 0.667','location','northwest')
+title({'פוטנציאל התמותה לפי כמות הנדבקים והמחוסנים לפי שכבת גיל',['החסינות כרגע ',Hasinut]})
