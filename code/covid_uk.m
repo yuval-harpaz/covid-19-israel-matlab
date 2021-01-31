@@ -8,7 +8,7 @@ cd ~/covid-19-israel-matlab/
 % https://data.london.gov.uk/dataset/coronavirus--covid-19--deaths
 
 txt = urlread('https://data.london.gov.uk/dataset/coronavirus--covid-19--deaths');
-iStart = strfind(txt,'06 March');
+iStart = strfind(txt,'06 Mar');
 iStart = iStart(1);
 iEnd = strfind(txt,'Total');
 iEnd = iEnd(1)-1;
