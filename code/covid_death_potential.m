@@ -86,7 +86,7 @@ y(end+1,:) = sum(y);
 Hasinut = sum((vaccinated1+confirmed+confNotVax))./sum(population);
 Hasinut = [str(round(Hasinut*100)),'%'];
 %%
-figure;
+figure('position',[100,100,900,600]);
 h = bar(y);
 ylim([10 max(y(:,1)*1.5)])
 set(gca, 'YScale', 'log')
@@ -98,6 +98,11 @@ text((1:9),y(:,2)*1.25,str(round(y(:,2))),'Color',h(2).FaceColor)
 set(gca,'XTickLabel',[age;{'Total'}],'fontsize',13)
 set(gcf,'Color','w')
 ylabel('תמותה')
-xlabel('שכבת גיל')
+% xlabel('שכבת גיל')
 legend('ifr x 1','ifr x 0.667','location','northwest')
 title({'פוטנציאל התמותה לפי כמות הנדבקים והמחוסנים לפי שכבת גיל',['החסינות כרגע ',Hasinut]})
+text((1:8)-0.25,repmat(6,1,8),strrep(cellstr([repmat('1/',8,1),num2str(round(1./(ifr)))]),' ',''),'Color',h(1).FaceColor)
+text((1:8)-0.25,repmat(5,1,8),strrep(cellstr([repmat('1/',8,1),num2str(round(1./(ifr*2/3)))]),' ',''),'Color',h(2).FaceColor)
+text(0.3,8,'גיל','FontSize',13)
+text(0.3,6,'IFR','Color',h(1).FaceColor)
+text(0.3,5,'IFR','Color',h(2).FaceColor)
