@@ -7,9 +7,9 @@ if listD.CountBreath(349) < 250
 end
     
 figure;
-h(2) = plot(listD.date(188:end),listD.CountCriticalStatus(188:end));
+h(2) = plot(listD.date(188:end),listD.CountCriticalStatus(188:end),'r');
 hold on
-h(1) = plot(listD.date,listD.CountBreath);
+h(1) = plot(listD.date,listD.CountBreath,'b');
 h(4) = plot(listD.date(1:end-1),listD.CountDeath(1:end-1),'k');
 h(3) = plot(ecmo.date,ecmo.ecmo,'Color',[0.4660    0.6740    0.1880],'Marker','.');
 
