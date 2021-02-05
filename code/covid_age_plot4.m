@@ -25,19 +25,23 @@ for iList = 1:4
         ax = gca;
         ax.YRuler.Exponent = 0;
         ylim([4 20])
-        set(gca,'ytick',0:2:24)
+        set(gca,'ytick',0:2:24,'xgrid','on')
         hold on
         last24i = find(agDate < agDate(end)-1,1,'last');
         last24 = diff(casesYOday([last24i,end],:));
-        plot(agDate(end),last24(2)./last24(1)*100,'.')
-        legend('מתחת 60','מעל 60','שיעור המבוגרים','location','northwest')
+        hhh = plot(agDate(end),last24(2)./last24(1)*100,'.');
+        
         title('מאומתים לפי גיל')
-        grid on
-        grid minor
+%         grid on
+%         grid minor
         xtickformat('MMM')
         set(gcf,'Color','w')
         %%
-        
+        xlim([agDate(1) datetime('tomorrow')+1])
+        for iti = 5:19
+            line([agDate(1) datetime('tomorrow')+1],[iti iti],'Color',hhh.Color,'linestyle',':')
+        end
+        legend('מתחת 60','מעל 60','שיעור המבוגרים','location','northwest')
     end
     
     clear yy;
