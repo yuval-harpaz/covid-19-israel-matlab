@@ -1,6 +1,6 @@
 cd ~/covid-19-israel-matlab/data/Israel
 t = readtable('vent_per_hosp.csv');
-t1 = t(ismember(t.date,datetime(2021,1,1)),:)
+t1 = t(ismember(t.date,datetime(2021,1,1)),:);
 figure;
 h = bar([t1.vent,t1.crit-t1.vent],'stacked'); legend(h([2,1]),'קריטיים לא מונשמים','קריטיים מונשמים')
 set(gcf,'Color','w')
