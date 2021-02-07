@@ -175,6 +175,7 @@ hh(2).Color = ccc(1,:);
 % d(bad+1) = mean(d([bad,bad+2]));
 commonDate = datetime(2020,8,18):newc.date(end);
 ser_crit = [0;diff(list.CountSeriousCriticalCum)];
+ser_crit = list.serious_critical_new;
 ser_crit = ser_crit(ismember(list.date,commonDate));
 crit = ser_crit - newc.new_critical(ismember(newc.date,commonDate));
 
