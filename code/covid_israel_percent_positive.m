@@ -14,7 +14,7 @@ ylabel('tests')
 ax = gca;
 ax.YRuler.Exponent = 0;
 yyaxis right
-plot(list.date(idx),round(100*list.tests_positive(idx)./list.tests_result(idx),1))
+plot(list.date(idx),round(100*list.tests_positive(idx)./list.tests_result(idx),1),':')
 ylabel('positive tests (%)')
 set(gca,'ygrid', 'on','fontsize',13)
 box off
@@ -34,7 +34,9 @@ posSmooth(end) = nan;
 posSmooth(end-1) = mean(pos(end-4:end-1));
 posSmooth(end-2) = mean(pos(end-5:end-1));
 posSmooth(end-3) = mean(pos(end-6:end-1));
-
+hold on
+plot(list.date(idx),posSmooth,'-','linewidth',2)
+xtickformat('MMM')
 fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
 yyaxis left
 plot(list.date(idx),list.new_hospitalized(idx),'.');
@@ -56,7 +58,7 @@ grid minor
 box off
 title('אחוז הבדיקות החיוביות ומספר המאושפזים החדשים')
 legend(hh,'מאושפזים','בדיקות חיוביות','location','north')
-
+xtickformat('MMM')
 if saveFigs
     saveas(fig,'docs/percent_positive.png');
     saveas(fig1,'docs/positiveVShosp.png');
