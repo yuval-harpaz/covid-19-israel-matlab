@@ -12,7 +12,7 @@ hold on
 % hn(2) = plot(listD.date(2:end-1),movmean(dif,[3 3],'omitnan'),'b');
 plot(listD.date,listD.serious_critical_new,'.r')
 hn(2) = plot(listD.date(1:end-1),movmean(listD.serious_critical_new(1:end-1),[3 3],'omitnan'),'r');
-ylim([0 1.1*nanmax(dif)])
+% ylim([0 1.1*nanmax(dif)])
 grid on
 box off
 xtickformat('MMM')
