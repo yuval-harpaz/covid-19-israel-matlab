@@ -4,7 +4,7 @@ pulls the current API data. to get backed-up  information use the csv files in t
 '''
 
 import requests
-
+from numpy import log
 api_query = {'requests': [
     {'id': '0', 'queryName': 'lastUpdate', 'single': True, 'parameters': {}},
     {'id': '1', 'queryName': 'patientsPerDate', 'single': False, 'parameters': {}},
@@ -58,3 +58,13 @@ def get_api_data():
     return data_dict
 
 data = get_api_data()
+
+def trafficlight(city='קיסריה'):
+    data = get_api_data()
+    for ii in data['contagionDataPerCityPublic']:
+        if ii['city'] == city:
+            cityData = ii.copy()
+    ln_pos = log(cityData['patientDiffPopulationForTenThousands'])
+    print ("I don't know how to do this")
+    
+    

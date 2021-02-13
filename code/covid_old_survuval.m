@@ -1,8 +1,8 @@
 cd ~/covid-19-israel-matlab/data/Israel
-listName = {'','severe_','ventilated_','deaths_'};
-tit = {'מאומתים','קשים','מונשמים','נפטרים'};
+listName = {'','deaths_'};
+tit = {'מאומתים','נפטרים'};
 col = [0.259 0.525 0.961;0.063 0.616 0.345;0.961 0.706 0.4;0.988 0.431 0.016;0.863 0.267 0.216];
-for iList = [1,4]
+for iList = [1,2]
     txt = urlread(['https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/',listName{iList},'ages_dists.csv']);
     txt = txt(find(ismember(txt,newline),1)+1:end);
     fid = fopen('tmp.csv','w');
@@ -10,10 +10,11 @@ for iList = [1,4]
     fclose(fid);
     ag = readtable('tmp.csv');
     agDate = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
+    agDate = dateshift(agDate,'start','day');
     casesYOday = [sum(ag{:,[2:7,12:17]},2),sum(ag{:,[8:11,18:21]},2)];
     %%
-    yyy0 = movmean(diff(casesYOday)./datenum(diff(agDate)),[11 11],'omitnan');
-    yyy0 = movmean(yyy0,[11 11],'omitnan');
+%     yyy0 = movmean(diff(casesYOday)./datenum(diff(agDate)),[11 11],'omitnan');
+%     yyy0 = movmean(yyy0,[11 11],'omitnan');
     
     clear yy;
     for ii = 1:5
@@ -24,19 +25,23 @@ for iList = [1,4]
 %     if iList == 1 || iList == 4
 %         yyy = movmean(diff(yy)./datenum(diff(agDate)),[11 11],'omitnan');
 %     else
-    tmpY = [];
-    for iDate = 1:length(yy)
-        jDate = find(ismember(agDate,agDate(iDate)),1,'last');
-        if jDate == iDate
+    agDate = dateshift(agDate,'start','day');
+    date = agDate(1):agDate(end);
+    tmpY = nan(size(date'));
+%     tmpY = [];
+    for iDate = 1:length(date)
+        jDate = find(ismember(agDate,date(iDate)),1,'last');
+        if ~isempty(jDate)
             tmpY(iDate,1:5) = yy(jDate,:);
-        else
-            tmpY(iDate,1:5) = nan;
+%         else
+%             tmpY(iDate,1:5) = nan;
         end
     end
-    yyy = diff(movmean(tmpY(2:end,:),[11 11],'omitnan'));
+    yyy = diff(movmean(tmpY,[6 0],'omitnan'));
+    yyy(yyy < 0) = 0;
 %     end
     yyy = [cumsum(yyy,2);zeros(size(yyy))];
-    xxx = [agDate(3:end);flipud(agDate(3:end))];
+    xxx = [date(2:end)';flipud(date(2:end)')];
     
     figure;
     subplot(2,1,1)
@@ -57,6 +62,7 @@ for iList = [1,4]
     
     yyy1 = yyy./yyy(:,5)*100;
     yyy1(isnan(yyy1)) = 0;
+    yyy1(yyy1 < 0) = 0;
     subplot(2,1,2)
     for ii = 1:5
         fill(xxx,yyy1(:,6-ii),col(6-ii,:),'linestyle','none')
@@ -71,4 +77,32 @@ for iList = [1,4]
     grid on
       title([tit{iList},' ','לפי גיל','%'])
     set(gca, 'layer', 'top');
+    dates{iList,1} = date;
+    ys{iList,1} = tmpY;
 end
+lg = fliplr({'80+','60-80','40-60','20-40','0-20'});
+figure('units','normalized','position',[0,0,0.5,1]);
+for ii = 1:5
+    subplot(5,1,ii)
+    yyaxis left
+    if ii > 2
+        y = diff(movmean(ys{1}(:,ii),[6 0]));
+    else
+        y = diff(ys{1}(:,ii));
+    end
+    y(y < 0) = 0;
+    plot(dates{1}(2:end)+16,y)
+    yyaxis right
+    y = diff(movmean(ys{2}(:,ii),[6 0]));
+    y(y < 0) = 0;
+    plot(dates{2}(2:end),y)
+    title(lg{ii})
+    if ii == 1
+        legend('מאומתים','נפטרים','location','northwest')
+    end
+    xlim([datetime(2020,9,1) datetime('tomorrow')])
+    box off
+    xtickformat('MMM')
+    grid on
+end
+    
