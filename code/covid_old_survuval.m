@@ -111,19 +111,34 @@ conf2 = [movmean(diff(sum(ys{1}(:,1:3),2)),[3 3]),movmean(diff(sum(ys{1}(:,4:5),
 dead2 = [movmean(diff(sum(ys{2}(:,1:3),2)),[3 3]),movmean(diff(sum(ys{2}(:,4:5),2)),[3 3])];
 figure;
 yyaxis left;
-plot(movmean(diff(sum(ys{1}(:,1:3),2)),[3 3]));
+plot(conf2(:,1));
 yyaxis right;
-plot(movmean(diff(sum(ys{1}(:,4:5),2)),[3 3]));
+plot(conf2(:,2));
 
-w = repmat(0.12,239,1);
-w(103:end) = 0.16;
-w(190:210) = 0.12;
-w(207:220) = linspace(0.12,0.16,14);
+% w = repmat(0.12,239,1);
+% w(103:end) = 0.16;
+% w(190:220) = 0.12;
+% iii = 214:220;
+% w(iii) = linspace(0.12,0.16,length(iii));
+w = 0.1232;
 figure;
-plot(dates{1}(2:end),conf2(:,1).*w);
+yyaxis left;
+plot(dates{1}(3:end),conf2(2:end,2));
 hold on
-plot(dates{1}(2:end),conf2(:,2));
+plot(dates{1}(3:end),conf2(2:end,1).*w);
+yyaxis right
+plot(dates{1}(3:end),conf2(2:end,1));
+legend('מאומתים מעל 60','מאומתים מעל 60 אם החיסון היה מתעכב','מאומתים מתחת 60')
+grid on
+common = find(ismember(dates{1},dates{2}));
 
-common = find(ismember(dates{2}(2:end),dates{1}));
+prob = readtable('positive_to_death.txt');
+pred = conv(conf2(common(1:end-1),2),prob.all1)*0.07;
+pred1 = conv(conf2(common(1:end-1),1).*w,prob.all1)*0.07;
 figure;
-plot(dead2(1:end-16,2)./conf2(common(17:end),2))
+plot(dead2(:,2))
+hold on
+plot(pred)
+plot(pred1)
+
+plot(dead2(17:end,2)./conf2(common(1:end-16),2))
