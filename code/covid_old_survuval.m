@@ -105,4 +105,25 @@ for ii = 1:5
     xtickformat('MMM')
     grid on
 end
-    
+
+%% 
+conf2 = [movmean(diff(sum(ys{1}(:,1:3),2)),[3 3]),movmean(diff(sum(ys{1}(:,4:5),2)),[3 3])];
+dead2 = [movmean(diff(sum(ys{2}(:,1:3),2)),[3 3]),movmean(diff(sum(ys{2}(:,4:5),2)),[3 3])];
+figure;
+yyaxis left;
+plot(movmean(diff(sum(ys{1}(:,1:3),2)),[3 3]));
+yyaxis right;
+plot(movmean(diff(sum(ys{1}(:,4:5),2)),[3 3]));
+
+w = repmat(0.12,239,1);
+w(103:end) = 0.16;
+w(190:210) = 0.12;
+w(207:220) = linspace(0.12,0.16,14);
+figure;
+plot(dates{1}(2:end),conf2(:,1).*w);
+hold on
+plot(dates{1}(2:end),conf2(:,2));
+
+common = find(ismember(dates{2}(2:end),dates{1}));
+figure;
+plot(dead2(1:end-16,2)./conf2(common(17:end),2))
