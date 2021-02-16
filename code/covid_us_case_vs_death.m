@@ -25,8 +25,11 @@ pop = readtable('data/us_state_population.csv');
 [~,idx] = ismember(pop.State,cases.Var1);
 cases = cases(idx,:);
 deaths = deaths(idx,:);
-
-cas = diff(cases{:,2:end}');
+cycy = cases{:,2:end};
+zer = cycy == 0;
+zer(:,1:75)  = false;
+cycy(zer) = nan;
+cas = diff(cycy');
 cas(cas < 0) = nan;
 for iState = 1:56
     iBad = find(diff(cas(:,iState)) < -10000);
@@ -64,8 +67,10 @@ subplot(2,1,1)
 h1 = plot(date(2:end),cas,'k');
 hold on
 h2 = plot(nyc.date_of_interest,nycas,'r','linewidth',2);
-xlim([datetime(2020,3,1) datetime('today')+15])
+xlim([datetime(2020,3,1) datetime('today')+1])
 title('מאומתים למליון')
+xtickformat('MMM')
+set(gca,'xtick',datetime(2020,3:30,1))
 legend([h1(1),h2(1)],'מדינות ארה"ב','ניו יורק סיטי')
 set(gca,'FontSize',13)
 grid on
@@ -75,12 +80,13 @@ plot(date(2:end),dat,'k')
 hold on
 plot(nyc.date_of_interest,nydat,'r','linewidth',2)
 title('נפטרים למליון')
-xlim([datetime(2020,3,1) datetime('today')+15])
+xlim([datetime(2020,3,1) datetime('today')+1])
 set(gcf,'Color','w')
 set(gca,'FontSize',13)
 grid on
 box off
-
+xtickformat('MMM')
+set(gca,'xtick',datetime(2020,3:30,1))
 figure;
 scatter(cas(end,:),dat(end,:),25,'k','fill')
 text(cas(end,:)'+20,dat(end,:)',cases.Var1,'rotation',-5)

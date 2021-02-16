@@ -16,7 +16,7 @@ clear yyy
 for ii = 1:length(agdu)-1
     yyy(ii,1:2) = yyy0(find(ismember(dateshift(agDate,'start','day'),agdu(ii)),1),:);
 end
-
+listD = readtable('dashboard_timeseries.csv');
 figure
 plot(listD.date(131:end-1),movmean(listD.tests_positive(131:end-1),[3 3]))
 hold on
