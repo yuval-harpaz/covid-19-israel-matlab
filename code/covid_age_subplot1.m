@@ -47,7 +47,14 @@ for iList = 1:4
         %     plot(agDate,ag{:,idx});legend(strrep(strrep(ag.Properties.VariableNames(idx),'_',' '),'x',''));xtickformat('MMM');xlim([datetime(2020,10,1) datetime('tomorrow')]);grid on;box off
         title([tit{iList},' ',agetit{ip}])
         if ip == 1 && iList == 4
+            bar(date,yy(:,idx(ip,:)-1),3);
             ylim([0 20])
+            legend(strrep(strrep(ag.Properties.VariableNames(idx(ip,:)),'_',' '),'x',''),'Location','northwest');
+            xtickformat('MMM');
+            xlim([datetime(2020,10,1) datetime('tomorrow')]);
+            grid on;
+            box off
+            title([tit{iList},' ',agetit{ip}])
         end
     end
     set(gcf,'Color','w')
