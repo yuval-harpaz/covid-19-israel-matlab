@@ -16,6 +16,7 @@ cd ~/covid-19-israel-matlab/data
 if download       
 %     [~,~] = system('wget -O tmp.json https://covidtrackerapi.bsg.ox.ac.uk/api/v2/stringency/date-range/2020-02-15/2020-11-11');
     [~,~] = system('wget -O tmp1.csv https://raw.githubusercontent.com/OxCGRT/covid-policy-tracker/master/data/OxCGRT_latest.csv');
+%     [~,~] = system('wget -O tmp1.csv https://github.com/OxCGRT/covid-policy-tracker/raw/master/data/OxCGRT_latest.csv');
 end
 ox = readtable('tmp1.csv');
 dates = str(ox.Date(contains(ox.CountryName,country{1}) & cellfun(@isempty, ox.RegionName)));
