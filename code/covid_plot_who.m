@@ -163,4 +163,6 @@ end
 ylabel('מתים למליון')
 set(gcf,'Color','w')
 xlabel(xl)
+xtickformat('MMM')
+set(gca,'XTick',datetime(2020,3:25,1),'FontSize',13)
 countryHeb(:,2) = whoCountry;

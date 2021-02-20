@@ -3,6 +3,7 @@ if nargin == 0
     mustHave = 'Israel';
 end
 [fig,timeVector,yy,countryName,order] = covid_plot_who(1,1,0,mustHave);
+
 xlim([datetime(2020,2,15) datetime('today')]);
 % [fig,timeVector,yy,countryName,order] = covid_plot_heb(1,1,0,mustHave);
 iMust = find(order == find(ismember(countryName(:,2),mustHave)));
@@ -75,7 +76,7 @@ for ii = [11,1:10]
             end
             date = t.date(1:iEnd);
         end
-        mob = t{1:iEnd,9:end};
+        mob = t{1:iEnd,10:end};
         mob = movmean(movmedian(mob,[3 3]),[3 3]);
     %     mob = mob./(-min(mob));
         mob = mean(mob(:,[1,4,5]),2);
@@ -107,6 +108,7 @@ for iAnn = 1:11
         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
 end
 xtickformat('MMM')
+set(gca,'XTick',datetime(2020,3:25,1),'FontSize',13)
 %%
 % yy(yy < 1/3) = 0;
 % 
