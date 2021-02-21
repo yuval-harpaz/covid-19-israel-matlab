@@ -1,19 +1,19 @@
 cd ~/covid-19-israel-matlab/data/Israel
-
-json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=eea57b2e-2d00-4569-b768-1386abe6bb5d&limit=50000');
-json = jsondecode(json);
-week0 = struct2table(json.result.records);
-week0.weekly_newly_tested(cellfun(@isempty, week0.weekly_newly_tested)) = {''};
-week0.weekly_newly_tested(ismember(week0.weekly_newly_tested,'<15')) = {''};
-week0.weekly_cases(cellfun(@isempty, week0.weekly_cases)) = {''};
-week0.weekly_cases(ismember(week0.weekly_cases,'<15')) = {''};
-week0.weekly_deceased(cellfun(@isempty, week0.weekly_deceased)) = {''};
-week0.weekly_deceased(ismember(week0.weekly_deceased,'<15')) = {''};
-week0.weekly_tests_num(cellfun(@isempty, week0.weekly_tests_num)) = {''};
-week0.weekly_tests_num(ismember(week0.weekly_tests_num,'<15')) = {''};
-week0(cellfun(@isempty,week0.first_week_day),:) = [];
-writetable(week0,'tmp.csv','Delimiter',',','WriteVariableNames',true);
-week0 = readtable('tmp.csv');
+% 
+% json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=eea57b2e-2d00-4569-b768-1386abe6bb5d&limit=50000');
+% json = jsondecode(json);
+% week0 = struct2table(json.result.records);
+% week0.weekly_newly_tested(cellfun(@isempty, week0.weekly_newly_tested)) = {''};
+% week0.weekly_newly_tested(ismember(week0.weekly_newly_tested,'<15')) = {''};
+% week0.weekly_cases(cellfun(@isempty, week0.weekly_cases)) = {''};
+% week0.weekly_cases(ismember(week0.weekly_cases,'<15')) = {''};
+% week0.weekly_deceased(cellfun(@isempty, week0.weekly_deceased)) = {''};
+% week0.weekly_deceased(ismember(week0.weekly_deceased,'<15')) = {''};
+% week0.weekly_tests_num(cellfun(@isempty, week0.weekly_tests_num)) = {''};
+% week0.weekly_tests_num(ismember(week0.weekly_tests_num,'<15')) = {''};
+% week0(cellfun(@isempty,week0.first_week_day),:) = [];
+% writetable(week0,'tmp.csv','Delimiter',',','WriteVariableNames',true);
+% week0 = readtable('tmp.csv');
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
 json = jsondecode(json);
 week = struct2table(json.result.records);
@@ -23,8 +23,8 @@ week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {''};
 week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {''};
 writetable(week,'tmp.csv','Delimiter',',','WriteVariableNames',true);
 week = readtable('tmp.csv');
-week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
-week = [week0;week];
+% week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
+% week = [week0;week];
 dateW = unique(week.last_week_day);
 ages = unique(week.age_group);
 clear casesYO deathsYO testsYO
