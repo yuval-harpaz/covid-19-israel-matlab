@@ -238,6 +238,6 @@ set(gcf,'Color','w')
 set(gca,'fontsize',13)
 
 grid minor
-ylim([0 2300])
+ylim([0 2600])
 xlim([listE.date(1) datetime('tomorrow')])
 xtickformat('MMM')
