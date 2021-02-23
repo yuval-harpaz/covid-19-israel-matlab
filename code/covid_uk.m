@@ -60,7 +60,19 @@ weekDeathDate = datetime(2021,mm,dd-42:7:dd);
 txt1 = urlread('https://data.london.gov.uk/dataset/coronavirus--covid-19--cases');
 iCsv = findstr(txt1,'phe_cases_london_boroughs.csv');
 iDownload = strfind(txt1,'download/');
-link = ['https://data.london.gov.uk/',txt1(iDownload(1):iCsv(1)+28)];
+sf = [];
+cPrev = 0;
+for ic = 1:length(iCsv)
+    c = find(iCsv(ic) > iDownload,1,'last');
+    if c > cPrev
+        sf = [sf;iDownload(c),iCsv(ic)];
+    end
+    cPrev = c;
+end
+    
+    
+iii = 1;
+link = ['https://data.london.gov.uk/',txt1(sf(iii,1):sf(iii,2)+28)];
 [~,~] = system(['wget -O tmp.csv ',link])
 lonC = readtable('tmp.csv');
 date2 = unique(lonC.date);
