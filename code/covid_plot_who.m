@@ -1,4 +1,4 @@
-function [fig,date,y,countryHeb,order] = covid_plot_who(criterionDays,large,cum,mustHave)
+function [fig,date,y,countryHeb,order,ht] = covid_plot_who(criterionDays,large,cum,mustHave,eng)
 if ~exist('large','var')
     large = true;
 end
@@ -10,6 +10,9 @@ if ~exist('criterionDays','var')
 end
 if ~exist('mustHave','var')
     mustHave = 'Israel';
+end
+if ~exist('eng','var')
+    eng = false;
 end
 cd ~/covid-19-israel-matlab/
 nCountries = 20;
@@ -138,7 +141,7 @@ ylim([0 ymax])
 yt = fliplr(ymax/nCountries:ymax/20:ymax);
 x = size(y,1);
 for iAnn = 1:nCountries
-    text(x,yt(iAnn),countryHeb{order(iAnn)},...
+    ht(iAnn) = text(x,yt(iAnn),countryHeb{order(iAnn)},...
         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
 end
 if ~isempty(hm) && any(iMustHave > nCountries)
@@ -152,10 +155,10 @@ if ~isempty(hm) && any(iMustHave > nCountries)
         if strcmp(mustHave,'Sweden') && ~cum
             [~,place] = sort(deaths(end-10,:),'descend');
             place = find(place == order(iMustHave));
-            text(x,ya(im),[countryHeb{io},'(',num2str(place),')'],...
+            ht(end+1) = text(x,ya(im),[countryHeb{io},'(',num2str(place),')'],...
                 'FontSize',10,'Color',hm(im).Color,'FontWeight','bold');
         else
-            text(x,ya(im),[countryHeb{io},'(',num2str(iMustHave(im)),')'],...
+            ht(end+1) = text(x,ya(im),[countryHeb{io},'(',num2str(iMustHave(im)),')'],...
                 'FontSize',10,'Color',hm(im).Color,'FontWeight','bold');
         end
     end
@@ -166,3 +169,16 @@ xlabel(xl)
 xtickformat('MMM')
 set(gca,'XTick',datetime(2020,3:25,1),'FontSize',13)
 countryHeb(:,2) = whoCountry;
+if eng
+    title('Daily deaths per million, rank by last week average')
+    ylabel('deaths per million')
+    xlabel('Rank of >1m people countries by COVID19 deaths')
+    for it = 1:20
+        cr = ismember(countryHeb(:,1),ht(it).String);
+        ht(it).String = countryHeb{[false(size(cr)),cr]};
+    end
+    coco = ht(21).String(1:find(ismember(ht(21).String,'('),1)-1);
+    cr = ismember(countryHeb(:,1),coco);
+    coco1 = countryHeb{[false(size(cr)),cr]};
+    ht(21).String = strrep(ht(21).String,coco,coco1);
+end

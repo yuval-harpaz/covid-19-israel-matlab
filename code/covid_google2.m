@@ -1,8 +1,10 @@
-function covid_google2(mustHave)
-if nargin == 0
-    mustHave = 'Israel';
-end
-[fig,timeVector,yy,countryName,order] = covid_plot_who(1,1,0,mustHave);
+function covid_google2(mustHave,eng)
+
+mustHave = IEdefault('mustHave','Israel');
+eng = IEdefault('eng',false);
+
+
+[fig,timeVector,yy,countryName,order] = covid_plot_who(1,1,0,mustHave,eng);
 
 xlim([datetime(2020,2,15) datetime('today')]);
 % [fig,timeVector,yy,countryName,order] = covid_plot_heb(1,1,0,mustHave);
@@ -98,13 +100,23 @@ end
 xlim([t.date(1) datetime('today')])
 box off
 grid on
-ylabel('שינוי ביחס לשגרה (%)')
-title('מדד התנועתיות של גוגל')
+if eng
+    ylabel('change compared to baseline (%)')
+    title('Google mobility report')
+else
+    ylabel('שינוי ביחס לשגרה (%)')
+    title('מדד התנועתיות של גוגל')
+end
 set(gcf,'Color','w')
 
 yt = linspace(10,-40,11);
+if eng
+    lang = 2;
+else
+    lang = 1;
+end
 for iAnn = 1:11
-    text(length(glob),yt(iAnn),countryName{iAnn,1},...
+    text(length(glob),yt(iAnn),countryName{iAnn,lang},...
         'FontSize',10,'Color',h(iAnn).Color,'FontWeight','bold');
 end
 xtickformat('MMM')
