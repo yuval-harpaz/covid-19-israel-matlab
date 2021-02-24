@@ -1,4 +1,5 @@
 cd ~/covid-19-israel-matlab/data/Israel
+listD = readtable('dashboard_timeseries.csv');
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
 json = jsondecode(json);
 week = struct2table(json.result.records);
@@ -43,3 +44,24 @@ for ip = 1:2
     grid minor
 end
 set(gcf,'Color','w')
+
+%%
+ps = covid_israel_percent_positive;
+close;
+close;
+close;
+%%
+figure;
+h1 = plot(dateM,100*pos./tests);
+hold on
+h2 = plot(ps.dateSmooth,ps.posSmooth,'r','linewidth',2);
+h3 = plot(listD.date(1:end-1),movmean(listD.new_hospitalized(1:end-1),[3 3])/23,'b','linewidth',2);
+xtickformat('MMM')
+grid on
+xlim([dateM(1),listD.date(end)])
+legend([h3,h2],'מאושפזים חדשים (מנורמל)','אחוז הבדיקות החיוביות לכל האוכלוסיה')
+ylabel('%')
+title('אחוז הבדיקות החיוביות לפי גיל, מול אישפוזים חדשים')
+set(gcf,'Color','w')
+ylim([0 25])
+grid minor

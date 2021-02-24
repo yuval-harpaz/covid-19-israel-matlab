@@ -1,4 +1,4 @@
-function covid_israel_percent_positive(saveFigs)
+function ps = covid_israel_percent_positive(saveFigs)
 if nargin == 0
     saveFigs = false;
 end
@@ -35,6 +35,8 @@ posSmooth(end-1) = mean(pos(end-4:end-1));
 posSmooth(end-2) = mean(pos(end-5:end-1));
 posSmooth(end-3) = mean(pos(end-6:end-1));
 hold on
+dateSmooth = list.date(idx);
+ps = table(dateSmooth,posSmooth);
 plot(list.date(idx),posSmooth,'-','linewidth',2)
 xtickformat('MMM')
 fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
