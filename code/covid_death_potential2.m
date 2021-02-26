@@ -12,7 +12,8 @@ json = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedByAge
 json = jsondecode(json);
 ti = struct2table(json);
 
-population = [sum(vacc.pop1000(1:2))*1000;vacc.pop1000(3:8)*1000;vacc.pop1000(9)*1000];
+% population0 = [sum(vacc.pop1000(1:2))*1000;vacc.pop1000(3:8)*1000;vacc.pop1000(9)*1000];
+population = [2777000*1.02+591000;1318000;1206000;1111000;875000;749000;531000;308000];
 vaccinated1 = [tv.vaccinated_first_dose(1);tv.vaccinated_first_dose(2:7);sum(tv.vaccinated_first_dose(8:9))];
 confirmed = [sum(sum(ti{1:2,2:3}));sum(ti{3:8,2:3},2);sum(sum(ti{9:10,2:3}))];
 age = vacc.age(2:end);
