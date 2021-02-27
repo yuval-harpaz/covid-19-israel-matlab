@@ -66,7 +66,7 @@ for iList = 1:4
     end
     yyy = [cumsum(yyy,2);zeros(size(yyy))];
     xxx = [agDate(2:end);flipud(agDate(2:end))];
-    
+    yyy(yyy < 0) = 0;
     figure;
     subplot(2,1,1)
     for ii = 1:5
@@ -86,6 +86,7 @@ for iList = 1:4
     
     yyy1 = yyy./yyy(:,5)*100;
     yyy1(isnan(yyy1)) = 0;
+    yyy1(yyy1 < 0) = 0;
     subplot(2,1,2)
     for ii = 1:5
         fill(xxx,yyy1(:,6-ii),col(6-ii,:),'linestyle','none')

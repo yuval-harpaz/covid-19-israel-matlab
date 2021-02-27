@@ -1,4 +1,5 @@
-function covid_death_potential2(fac)
+function covid_death_potential2(fac,deathVE)
+deathVE = IEdefault('deathVE',[0.02 0.08]);
 fac = IEdefault('fac',[2/3,1]);
 cd ~/covid-19-israel-matlab/data/Israel
 load vacc
@@ -68,9 +69,10 @@ text(0.3,5,'IFR','Color',h(2).FaceColor)
 
 
 %% deaths for vaccinated / recovered
+
 yy = min(tt.vaccinated1+tt.confirmed,population);
 % yy = tt.vaccinated1+tt.confirmed;
-yy = round(yy.*[ifr*0.01,ifr*0.05]);
+yy = round(yy.*[ifr*deathVE(1),ifr*deathVE(2)]);
 yy(yy < 0) = 0;
 yy(end+1,:) = sum(yy);
 %%
@@ -87,12 +89,12 @@ set(gca,'XTickLabel',[age;{'סה"כ'}],'fontsize',13)
 set(gcf,'Color','w')
 ylabel('תמותה')
 % xlabel('שכבת גיל')
-legend('IFR x 1%','IFR x 5%','location','northwest')
-title('פוטנציאל התמותה בקרב המחוסנים,  לפי אחוז פגיעות מקל (1%) ומחמיר (%5)')
+legend(['IFR x ',str(deathVE(1)*100),'%'],['IFR x ',str(deathVE(2)*100),'%'],'location','northwest')
+title(['פוטנציאל התמותה בקרב המחוסנים והמחלימים, לפי אחוז פגיעות מקל (',str(deathVE(1)*100),'%) ומחמיר (',str(deathVE(2)*100),'%)'])
 
 for iAge = 1:length(ifr)
-    txtx{iAge,1} = ['1:',char(jf.format(round(1./(ifr(iAge)*0.01))))];
-    txtx{iAge,2} = ['1:',char(jf.format(round(1./(ifr(iAge)*0.05))))];
+    txtx{iAge,1} = ['1:',char(jf.format(round(1./(ifr(iAge)*deathVE(1)))))];
+    txtx{iAge,2} = ['1:',char(jf.format(round(1./(ifr(iAge)*deathVE(2)))))];
 end
 
 % strrep(cellstr([repmat('1/',8,1),num2str(round(1./(ifr*0.01)))]),' ','')

@@ -35,18 +35,18 @@ set(gca,'xtick',datetime('today')-7^3:7:datetime('today'))
 xtickformat('dd/MM')
 %% 
 figure;
-hcc(1) = scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor',col(1,:),'MarkerEdgeAlpha',0.5);
+hcc(1) = scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor',[0,0,0],'MarkerEdgeAlpha',0.5);
 hold on
-hcc(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'-','Color',col(1,:),'linewidth',1.5);
+hcc(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'-','Color',[0,0,0],'linewidth',1.5);
 ylabel('נפטרים')
 % hcc(3) = scatter(listD.date(2:end)+7,critDiff*0.3,'.','MarkerEdgeColor',col(2,:),'MarkerEdgeAlpha',0.5);
 % hold on
-hcc(3) = plot(listD.date(1:end-1)+7,movmean(listD.serious_critical_new(1:end-1),[3 3])*0.3,'-','Color',col(2,:),'linewidth',1);
-hcc(4) = plot(ncba.date+7,movmean(ncba.over60,[3 3])*0.47,'-','Color',col(3,:),'linewidth',1.5);
+% hcc(3) = plot(listD.date(1:end-1)+7,movmean(listD.serious_critical_new(1:end-1),[3 3])*0.3,'-','Color',col(2,:),'linewidth',1);
+hcc(3) = plot(ncba.date+7,movmean(ncba.over60,[3 3])*0.47,'-','Color',col3(1,:),'linewidth',1.5);
 grid on
-legend(hcc([2:4]),'נפטרים','צפי תמותה לפי קשים חדשים','צפי תמותה לפי קשים חדשים מעל 60','location','northwest')
+legend(hcc([2:3]),'נפטרים','צפי תמותה לפי קשים חדשים מעל 60','location','northwest')
 set(gcf,'Color','w')
-title('ניבוי תמותה שבוע קדימה לפי חולים חדשים במצב קשה וקריטי')
+title({'ניבוי תמותה שבוע קדימה לפי חולים חדשים במצב קשה וקריטי בני 60+','A week ahead death prediction by new critical patients 60+y/o'})
 xtickformat('MMM')
 xlim([datetime(2020,7,1) datetime('today')+7])
 
