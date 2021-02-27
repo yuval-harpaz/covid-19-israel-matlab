@@ -102,3 +102,10 @@ text((1:8)-0.25,repmat(0.035,1,8),txtx(:,2),'Color',h(2).FaceColor)
 text(0.3,0.07,'גיל','FontSize',13)
 text(0.3,0.05,'IFR','Color',h(1).FaceColor)
 text(0.3,0.035,'IFR','Color',h(2).FaceColor)
+
+tt.death_unprotected_low = round(y(1:end-1,1));
+tt.death_unprotected_high = round(y(1:end-1,2));
+tt.death_protected_low = round(yy(1:end-1,1));
+tt.death_protected_high = round(yy(1:end-1,2));
+writetable(tt,'death_potential.csv','Delimiter',',','WriteVariableNames',true)
+
