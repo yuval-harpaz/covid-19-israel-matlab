@@ -108,15 +108,15 @@ for ip = 1:length(idx)
         hold on
         plot(date(xSeger),ggl(xSeger),'kd')
     end
+    
     yyaxis right
     plot(timeVector,dead);
     if ~isempty(xSlope)
         hold on
         plot(timeVector(xSlope),dead(xSlope),'g*')
-        
     end
-    
-    title(countryName{isp})
+    ylim([0 30])
+    title(countryName{isp,2})
     axis off
     
 end
@@ -138,9 +138,32 @@ set(gca,'fontsize',13)
 difsss = difs;
 difsss(difsss > 55) = nan;
 
-[yy,xx] = hist(-difsss(~isnan(difsss)),-49:7:0);
+subplot(7,7,49)
+yyaxis left
+plot(1:2,nan(2,1))
+hold on
+plot(1,nan,'kd')
+set(gca,'ytick',[0,1],'yticklabel',{'0','-100'})
+% ylabel('% change')
+yyaxis right
+plot(1:2,nan(2,1));
+hold on
+plot(1,nan,'g*')
+set(gcf,'Color','w')
+disp('karamba')
+box off
+set(gca,'Xtick',[0 1],'XTickLabel',datestr([datetime(2020,2,15) timeVector(end)]),...
+    'ytick',[0,1],'yticklabel',{'0','30'})
+set(gca,'fontsize',13)
+
+
+difsss = difs;
+difsss(difsss > 55) = nan;
+
+
+[yyy,xxx] = hist(-difsss(~isnan(difsss)),-49:7:0);
 figure;
-bar(xx,yy/length(difs)*100,0.95,'edgecolor','none')
+bar(xxx,yyy/length(difs)*100,0.95,'edgecolor','none')
 ylabel('probability (%)')
 xlabel('lag (days)')
 set(gca,'ygrid','on')
