@@ -9,6 +9,9 @@ if ~exist('criterionDays','var')
     criterionDays = 1;
 end
 if ~exist('mustHave','var')
+    mustHave = '';
+end
+if isempty(mustHave)
     mustHave = 'Israel';
 end
 if ~exist('eng','var')
