@@ -1,4 +1,4 @@
-function covid_death_potential2(fac,deathVE)
+function tt = covid_death_potential2(fac,deathVE)
 deathVE = IEdefault('deathVE',[0.02 0.08]);
 fac = IEdefault('fac',[2/3,1]);
 cd ~/covid-19-israel-matlab/data/Israel

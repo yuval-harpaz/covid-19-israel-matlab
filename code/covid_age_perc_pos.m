@@ -3,7 +3,7 @@ listD = readtable('dashboard_timeseries.csv');
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
 json = jsondecode(json);
 week = struct2table(json.result.records);
-week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
+% week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
 week.weekly_cases(ismember(week.weekly_cases,'<15')) = {''};
 week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {''};
 week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {''};
