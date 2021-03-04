@@ -65,6 +65,10 @@ switch mustHave
         ini{11} = 'BE';
         countryName{11,1} = 'בלגיה';
         countryName{11,2} = 'Belgium';
+    case 'UK'
+        ini{11} = 'GB';
+        countryName{11,1} = 'בריטניה';
+        countryName{11,2} = 'UK';
         
 end
 ini(isx) = cc(idx(isx),1);
@@ -74,7 +78,7 @@ for ii = [11,1:10]
         glob(:,ii) = nan;
     else
         t = readtable(['2020_',ini{ii},'_Region_Mobility_Report.csv']);
-        if ii == 11
+        if ii == 11 || ~exist('iEnd','var')
             try
                 iEnd = find(cellfun(@isempty,t.sub_region_1),1,'last');
             catch
