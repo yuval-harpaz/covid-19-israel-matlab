@@ -8,14 +8,17 @@ for ii = 1:length(city)
     data = struct2table(data.result.records);
     dateRow = datetime(data.Date);
     [dateRow,order] = unique(dateRow);
+    if ii == 1
+        nMonths = 11+month(dateRow(end));
+    end
     data = data(order,:);
     data.Cumulated_deaths = strrep(data.Cumulated_deaths,'<15','0');
     data.Cumulative_verified_cases = strrep(data.Cumulative_verified_cases,'<15','0');
     deathRow = cellfun(@str2num,data.Cumulated_deaths);
     caseRow = cellfun(@str2num,data.Cumulative_verified_cases);
-    for month = 3:13
-        death(month-2,ii) = deathRow(find(dateRow < datetime(2020,month+1,1),1,'last'));
-        cases(month-2,ii) = caseRow(find(dateRow < datetime(2020,month+1,1),1,'last'));
+    for mon = 3:nMonths
+        death(mon-2,ii) = deathRow(find(dateRow < datetime(2020,mon+1,1),1,'last'));
+        cases(mon-2,ii) = caseRow(find(dateRow < datetime(2020,mon+1,1),1,'last'));
     end
 end
 ddpm = diff(death)./pop.population'*10^6;
@@ -42,17 +45,14 @@ set(gcf,'Color','w')
 title('תמותה למליון סך הכל')
 subplot(1,2,2)
 % yyaxis left
-h = plot(datetime(2020,4:13,1),ddpm,'linewidth',1);
+h = plot(datetime(2020,4:nMonths,1),ddpm,'linewidth',1);
 shape = repmat({'o','s','^'},1,5);
 for ii = 1:13
     h(ii).Color = hb(ii).FaceColor;
     h(ii).Marker = shape{order == ii};
     h(ii).MarkerFaceColor = h(ii).Color;
 end
-legend(h(order),pop.city(order))
-% hold on
-% h2 = plot(datetime(2020,4:13,1),ddpm(:,9),'r','linewidth',2);
-% legend([h1(1),h2],'ערים בישראל','בני ברק','location','northwest')
+legend(h(order),pop.city(order),'location','northwest')
 set(gcf,'Color','w')
 xlim([datetime(2020,3,15) datetime(2020,3+size(ddpm,1),15)])
 xlabel('חודש')
@@ -82,7 +82,7 @@ ax = gca;
 ax.YRuler.Exponent = 0;
 ax.YAxis.TickLabelFormat = '%,.0f';
 subplot(1,2,2)
-h = plot(datetime(2020,4:13,1),dcpm,'linewidth',1);
+h = plot(datetime(2020,4:nMonths,1),dcpm,'linewidth',1);
 for ii = 1:13
     h(ii).Color = hb(ii).FaceColor;
     h(ii).Marker = shape{order == ii};
