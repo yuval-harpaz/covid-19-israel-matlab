@@ -202,7 +202,7 @@ grid on
 box off
 set(gcf,'Color','w')
 grid minor
-set(gca,'fontsize',13)
+set(gca,'fontsize',13,'XTick',datetime(2020,3:20,1))
 ylim([0 300])
 xlim([list.date(1) datetime('tomorrow')])
 xtickformat('MMM')
@@ -241,3 +241,4 @@ grid minor
 ylim([0 2600])
 xlim([listE.date(1) datetime('tomorrow')])
 xtickformat('MMM')
+set(gca,'fontsize',13,'XTick',datetime(2020,3:20,1))
