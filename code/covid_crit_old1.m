@@ -17,6 +17,7 @@ grid on
 title(['new severe patients by age    ','חולים קשים חדשים לפי גיל'])
 set(gca,'xtick',datetime('today')-7^3:7:datetime('today'))
 xtickformat('dd/MM')
+xlim([ncba.date(1)-1 ncba.date(end)+1])
 subplot(2,1,2)
 yy = ncba{:,2:4}./sum(ncba{:,2:4},2)*100;
 h2 = plot(ncba.date,yy,'.');
@@ -33,6 +34,7 @@ title(['new severe patients by age  (%)  ','חולים קשים חדשים לפ�
 set(gcf,'Color','w')
 set(gca,'xtick',datetime('today')-7^3:7:datetime('today'))
 xtickformat('dd/MM')
+xlim([ncba.date(1)-1 ncba.date(end)+1])
 %% 
 figure;
 hcc(1) = scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor',[0,0,0],'MarkerEdgeAlpha',0.5);
@@ -44,7 +46,7 @@ ylabel('נפטרים')
 % hcc(3) = plot(listD.date(1:end-1)+7,movmean(listD.serious_critical_new(1:end-1),[3 3])*0.3,'-','Color',col(2,:),'linewidth',1);
 hcc(3) = plot(ncba.date+7,movmean(ncba.over60,[3 3])*0.47,'-','Color',col3(1,:),'linewidth',1.5);
 grid on
-legend(hcc([2:3]),'נפטרים','צפי תמותה לפי קשים חדשים מעל 60','location','northwest')
+legend(hcc([2:3]),['נפטרים',' deceased'],['צפי לפי ','prediction by >60'],'location','northwest')
 set(gcf,'Color','w')
 title({'ניבוי תמותה שבוע קדימה לפי חולים חדשים במצב קשה וקריטי בני 60+','A week ahead death prediction by new critical patients 60+y/o'})
 xtickformat('MMM')
