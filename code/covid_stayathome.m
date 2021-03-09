@@ -56,7 +56,7 @@ for ii = 1:length(idx)
     mob = t{1:iEnd,10:end};
     mob = movmean(movmedian(mob,[3 3]),[3 3]);
     %     mob = mob./(-min(mob));
-    mob = -3*mob(:,end);
+    mob = -1*mob(:,end);
 %     mob = mean(mob(:,[1,4,5]),2);
     glob(1:length(mob),ii) = mob;
     IEprog(ii)
@@ -65,7 +65,7 @@ end
 %%
 nDays = 14;
 loss = -1;
-seger = 10;
+seger = 5;
 [~,ord] = sort(max(yy),'descend');
 difs = [];
 figure;
@@ -104,7 +104,7 @@ for ip = 1:length(idx)
     subplot(7,7,ip+1)
     yyaxis left
     plot(date,ggl)
-    ylim([0 100])
+    ylim([0 50])
     if ~isempty(xSeger)
         hold on
         plot(date(xSeger),ggl(xSeger),'kd')
@@ -131,7 +131,7 @@ yyaxis right
 plot(1:2,nan(2,1));
 hold on
 plot(1,nan,'g*')
-legend('mobility','lockdown','deaths','deaths plummet')
+legend('stay-at-home','lockdown','deaths','deaths plummet')
 set(gcf,'Color','w')
 disp('karamba')
 axis off
@@ -144,7 +144,7 @@ yyaxis left
 plot(1:2,nan(2,1))
 hold on
 plot(1,nan,'kd')
-set(gca,'ytick',[0,1],'yticklabel',{'0','-100'})
+set(gca,'ytick',[0,1],'yticklabel',{'0','50'})
 % ylabel('% change')
 yyaxis right
 plot(1:2,nan(2,1));
@@ -162,16 +162,17 @@ difsss = difs;
 difsss(difsss > 55) = nan;
 
 
-[yyy,xxx] = hist(-difsss(~isnan(difsss)),-49:7:0);
+[yyy,xxx] = hist(-difsss(~isnan(difsss)),-49:7:-7);
 figure;
 bar(xxx,yyy/length(difs)*100,0.95,'edgecolor','none')
 ylabel('probability (%)')
 xlabel('lag (days)')
 set(gca,'ygrid','on')
-title('probability to have mobility reduction')
+title({'probability to have increased stay-at-home','before a decline in mortality'})
+set(gcf,'Color','w')
+ylim([0 25])
 
-    
-    
+mean(isnan(difsss))
 % figure;
 % yyaxis left
 % plot(date,-glob(:,1))

@@ -40,17 +40,17 @@ col = 62:2:80;
 for ii = 1:length(col)
     ya(1:height(agegen),ii) = sum(agegen{:,[col(ii),col(ii)+1]},2);
 end
-NN = [sum(ya(end,1:6)),ya(end,7:end)]';
-subplot(1,2,2)
-
-bar(NN,'EdgeColor','none');
-text((1:5)-0.2,NN+40,str(NN))
-text((1:5)-0.2,NN-40,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
-ylim([0 max(N)+100])
-set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
-box off
-set(gcf,'Color','w')
-title(['תמותה לפי גיל מתוך ',str(sum(NN)),' נפטרים (לוח הבקרה)'])
+% NN = [sum(ya(end,1:6)),ya(end,7:end)]';
+% subplot(1,2,2)
+% 
+% bar(NN,'EdgeColor','none');
+% text((1:5)-0.2,NN+40,str(NN))
+% text((1:5)-0.2,NN-40,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
+% ylim([0 max(N)+100])
+% set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
+% box off
+% set(gcf,'Color','w')
+% title(['תמותה לפי גיל מתוך ',str(sum(NN)),' נפטרים (לוח הבקרה)'])
 %%
 dday = datetime(2020,12,31);
 top = 1200;
