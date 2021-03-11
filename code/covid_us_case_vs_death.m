@@ -22,6 +22,12 @@ cases = readtable('tmp.csv');
 !rm tmp.csv
 
 pop = readtable('data/us_state_population.csv');
+iRI = ismember(deaths.Var1,'Rhode Island');
+if deaths{iRI,265} < 40
+    deaths(iRI,:) = [];
+    cases(iRI,:) = [];
+    pop(ismember(pop.State,'Rhode Island'),:) = [];
+end
 [~,idx] = ismember(pop.State,cases.Var1);
 cases = cases(idx,:);
 deaths = deaths(idx,:);
@@ -31,7 +37,7 @@ zer(:,1:75)  = false;
 cycy(zer) = nan;
 cas = diff(cycy');
 cas(cas < 0) = nan;
-for iState = 1:56
+for iState = 1:size(cases,1)
     iBad = find(diff(cas(:,iState)) < -10000);
     cas(iBad,iState) = nan;
 end
@@ -39,7 +45,7 @@ end
 dat = diff(deaths{:,2:end}');
 dat = dat./pop.population'*10^6;
 dat(dat < 0) = nan;
-for iState = 1:56
+for iState = 1:size(cases,1)
     iBad = find(diff(dat(:,iState)) < -40);
     dat(iBad,iState) = nan;
 end
@@ -118,7 +124,7 @@ col = flipud(col);
 [~,order2] = sort(dat(end,:),'descend');
 figure;
 hcAll = plot(date(2:end),dat,'k');
-for ic = 1:56
+for ic = 1:size(cases,1)
     hcAll(order1(ic)).Color = col(ic,:);
 end
 hold on
@@ -131,5 +137,17 @@ set(gca,'FontSize',13)
 grid on
 box off
 
-[~,p] = corr(deaths{:,161},deaths{:,end}-deaths{:,161});
+%%
+[rr,pp] = corr(deaths{:,161},deaths{:,end}-deaths{:,161});
+nc = 40;
+accum = [deaths{order1(1:nc),161},deaths{order1(1:nc),end}-deaths{order1(1:nc),161}];
+figure;
+scatter(deaths{order1,161},deaths{order1,end}-deaths{order1,161},25,col,'fill')
+text(accum(:,1)+20,accum(:,2),cases.Var1(order2(1:nc)),'rotation',-5)
 
+ylabel('נפטרים למליון במצטבר מ 1.8')
+xlabel('נפטרים למליון במצטבר עד 31.7')
+set(gcf,'Color','w')
+box off
+grid on
+title(['קורלציה של ',str(round(rr,2)),' (p=',str(round(pp,3)),') בין התמותה בגל הראשון לשני בארה"ב'])
