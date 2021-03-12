@@ -1,7 +1,7 @@
 function covid_Israel(figs)
 % plot 20 most active countries
 if ~exist('figs','var')
-    figs = false;
+    figs = 3;
 end
 %listName = 'data/Israel/Israel_ministry_of_health.csv';
 listName = 'data/Israel/dashboard_timeseries.csv';
@@ -82,7 +82,7 @@ ax.YAxis(1).Color = 'k';
 % xtickangle(45)
 grid on
 box off
-legHeb = {'מאושפזים','קל','בינוני','קשה','מונשמים','נפטרים'};
+legHeb = {['מאושפזים',''],'קל','בינוני','קשה','מונשמים','נפטרים'};
 iLast = find(idx,1,'last');
 legNum = {str(list.hospitalized(iLast)),...
     str(list.hospitalized(iLast)-list.critical(iLast)-list.severe(iLast)),...
@@ -153,12 +153,13 @@ end
 covid_israel_percent_positive(figs);
 %%
 covid_death_list;
-
+%% 
+covid_crit_old1
 %%
 newc = readtable('~/covid-19-israel-matlab/data/Israel/new_critical.csv');
 ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,0.5560;0.4660,0.6740,0.1880;0.3010,0.7450,0.9330;0.6350,0.07800,0.1840];
 alf = 0.5;
-figure;
+figure('units','normalized','position',[0,0,1,1]);
 subplot(1,2,1)
 hh(9) = scatter(list.date(list.CountDeath > 0),list.CountDeath(list.CountDeath > 0),'k.','MarkerEdgeAlpha',alf);
 hold on
@@ -191,12 +192,17 @@ hh(7) = scatter(list.date,list.new_hospitalized,'.','MarkerEdgeAlpha',alf);
 hh(7).MarkerEdgeColor = ccc(4,:);
 hh(8) = plot(list.date(1:end-1),movmean(list.new_hospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh(8).Color = ccc(4,:);
-if figs < 2
+if figs <= 1
     legend(hh([8,6,4,2,10]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
     title('חולים חדשים')
-else
+elseif figs == 2
     legend(hh([8,6,4,2,10]),'hospitalized','severe','critical','ventilated','deceased','location','northwest')
     title('New Patients')
+elseif figs == 3
+%     legend(hh([8,6,4,2,10]),['hospitalized ','מאושפזים'],['severe',''],['critical',''],['ventilated',''],['deceased',''],'location','northwest')
+    title('New Patients    חולים חדשים')
+    legend(hh([8,6,4,2,10]),'hospitalized מאושפזים','severe                קשה','critical               קריטי',...
+    'on vent          מונשמים','deceased        נפטרים','location','northwest')
 end  
 grid on
 box off
@@ -225,13 +231,25 @@ hh1(7).MarkerEdgeColor = ccc(4,:);
 hh1(8) = plot(listE.date(1:end-1),movmean(listE.hospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh1(8).Color = ccc(4,:);
 % legend(hh1([8,6,4,2]),'מאושפזים','קשים','קריטיים','מונשמים','location','northwest')
-if figs < 2
-    legend(hh1([8,6,4,2]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
+% if figs < 2
+%     legend(hh1([8,6,4,2]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
+%     title('חולים')
+% else
+%     legend(hh1([8,6,4,2]),'hospitalized','severe','critical','ventilated','location','northwest')
+%     title('Patients')
+% end
+if figs <= 1
+    legend(hh([8,6,4,2,10]),'מאושפזים','קשים','קריטיים','מונשמים','נפטרים','location','northwest')
     title('חולים')
-else
-    legend(hh1([8,6,4,2]),'hospitalized','severe','critical','ventilated','location','northwest')
+elseif figs == 2
+    legend(hh([8,6,4,2,10]),'hospitalized','severe','critical','ventilated','deceased','location','northwest')
     title('Patients')
-end
+elseif figs == 3
+%     legend(hh([8,6,4,2,10]),['hospitalized ','מאושפזים'],['severe',''],['critical',''],['ventilated',''],['deceased',''],'location','northwest')
+    title('Patients    חולים')
+    legend(hh1([8,6,4,2]),'hospitalized מאושפזים','severe                קשה','critical               קריטי',...
+    'on vent          מונשמים','location','northwest')
+end  
 grid on
 box off
 set(gcf,'Color','w')

@@ -9,7 +9,7 @@ lastValid = find(~isnan(list.new_hospitalized),1,'last');
 idx = 27:lastValid;
 fig = figure('position',[50,50,800,500]);
 yyaxis left
-plot(list.date(idx),list.tests_result(idx));
+h2(1) = plot(list.date(idx),list.tests_result(idx));
 ylabel('tests')
 ax = gca;
 ax.YRuler.Exponent = 0;
@@ -37,31 +37,35 @@ posSmooth(end-3) = mean(pos(end-6:end-1));
 hold on
 dateSmooth = list.date(idx);
 ps = table(dateSmooth,posSmooth);
-plot(list.date(idx),posSmooth,'-','linewidth',2)
+h2(2) = plot(list.date(idx),posSmooth,'-','linewidth',2);
 xtickformat('MMM')
+legend(h2,'tests                      בדיקות','positive (%) בדיקות חיוביות','location','northwest')
+title('Tests and positive tests (%) בדיקות ובדיקות חיוביות ')
+set(gca,'xtick',datetime(2020,3:30,1))
 fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
 yyaxis left
 plot(list.date(idx),list.new_hospitalized(idx),'.');
 hold on
 hh(1) = plot(list.date(idx),hospSmooth,'linewidth',2,'linestyle','-');
-ylabel('מאושפזים חדשים')
+ylabel(['new hospitalized     ','מאושפזים חדשים'])
 ax = gca;
 ax.YRuler.Exponent = 0;
 yyaxis right
 plot(list.date(idx),pos,'.')
 hold on
 hh(2) = plot(list.date(idx),posSmooth,'linewidth',2,'linestyle','-');
-ylabel('בדיקות חיוביות (%)')
+ylabel(['positive ','(%)',' בדיקות חיוביות '])
 set(gca,'ygrid', 'on','fontsize',13)
 xlim([list.date(idx(1))-1 list.date(idx(end))+1]);
 set(gcf,'Color','w')
 ylim([0 15])
 grid minor
 box off
-title('אחוז הבדיקות החיוביות ומספר המאושפזים החדשים')
-legend(hh,'מאושפזים','בדיקות חיוביות','location','north')
+title({'אחוז הבדיקות החיוביות ומספר המאושפזים החדשים','% positive tests vs new hospitalized'})
+legend(hh,'hospitalized מאושפזים','positive בדיקות חיוביות','location','northwest')
 xtickformat('MMM')
-if saveFigs
+set(gca,'xtick',datetime(2020,3:30,1))
+if saveFigs == 1
     saveas(fig,'docs/percent_positive.png');
     saveas(fig1,'docs/positiveVShosp.png');
     % update html
@@ -88,27 +92,27 @@ if saveFigs
     fclose(fid);
 end
 
-deathSmooth = movmean(list.CountDeath,[3 3]);
-deathSmooth(end) = nan;
-deathSmooth(end-1) = mean(list.CountDeath(end-4:end-1));
-deathSmooth(end-2) = mean(list.CountDeath(end-5:end-1));
-deathSmooth(end-3) = mean(list.CountDeath(end-6:end-1));
-lag = 12;
-fig2 = figure('position',[50,50,800,500]);
-plot(list.date,list.CountDeath,':k','linewidth',1)
-hold on
-plot(list.date,deathSmooth,'k','linewidth',2)
-hh = plot(list.date(idx(1:end-lag-1))+lag,hospSmooth(1:end-lag-1)/10,'linewidth',2);
-hp = plot(list.date(idx(1:end-lag-1))+lag,posSmooth(1:end-lag-1)*1.5,'linewidth',2);
-plot(list.date(idx(end-lag:end))+lag,hospSmooth(end-lag:end)/10,':','linewidth',2,'Color',hh.Color)
-plot(list.date(idx(end-lag:end))+lag,posSmooth(end-lag:end)*1.5,':','linewidth',2,'Color',hp.Color)
-legend('Deaths','Deaths (7 day average)','Deaths predicted by new hospitalized / 10',...
-    'Deaths predicted by %positive x 1.5','location','Northwest')
-grid on
-box off
-ylabel('Deaths')
-title('Predicting daily deaths in Israel 12 days ahead')
-iTick = find(list.date(1:end-1) == dateshift(list.date(1:end-1),'start','month'));
-set(gca,'fontsize',13,'XTick',unique([list.date(iTick);list.date(end-1);list.date(end)+11]))
-xtickangle(90)
-xlim([list.date(idx(1)) list.date(idx(end))+lag])
+% deathSmooth = movmean(list.CountDeath,[3 3]);
+% deathSmooth(end) = nan;
+% deathSmooth(end-1) = mean(list.CountDeath(end-4:end-1));
+% deathSmooth(end-2) = mean(list.CountDeath(end-5:end-1));
+% deathSmooth(end-3) = mean(list.CountDeath(end-6:end-1));
+% lag = 12;
+% fig2 = figure('position',[50,50,800,500]);
+% plot(list.date,list.CountDeath,':k','linewidth',1)
+% hold on
+% plot(list.date,deathSmooth,'k','linewidth',2)
+% hh = plot(list.date(idx(1:end-lag-1))+lag,hospSmooth(1:end-lag-1)/6.5,'linewidth',2);
+% hp = plot(list.date(idx(1:end-lag-1))+lag,posSmooth(1:end-lag-1)*1.5,'linewidth',2);
+% plot(list.date(idx(end-lag:end))+lag,hospSmooth(end-lag:end)/10,':','linewidth',2,'Color',hh.Color)
+% plot(list.date(idx(end-lag:end))+lag,posSmooth(end-lag:end)*1.5,':','linewidth',2,'Color',hp.Color)
+% legend('Deaths','Deaths (7 day average)','Deaths predicted by new hospitalized / 10',...
+%     'Deaths predicted by %positive x 1.5','location','Northwest')
+% grid on
+% box off
+% ylabel('Deaths')
+% title('Predicting daily deaths in Israel 12 days ahead')
+% iTick = find(list.date(1:end-1) == dateshift(list.date(1:end-1),'start','month'));
+% set(gca,'fontsize',13,'XTick',unique([list.date(iTick);list.date(end-1);list.date(end)+11]))
+% xtickangle(90)
+% xlim([list.date(idx(1)) list.date(idx(end))+lag])
