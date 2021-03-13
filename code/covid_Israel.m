@@ -6,8 +6,8 @@ end
 %listName = 'data/Israel/Israel_ministry_of_health.csv';
 listName = 'data/Israel/dashboard_timeseries.csv';
 cd ~/covid-19-israel-matlab/
-myCountry = 'Israel';
-nCountries = 20;
+% myCountry = 'Israel';
+% nCountries = 20;
 
 % [dataMatrix] = readCoronaData('deaths');
 % [~,timeVector,mergedData] = processCoronaData(dataMatrix);
@@ -176,17 +176,20 @@ hh(2).Color = ccc(1,:);
 % d(bad+1) = mean(d([bad,bad+2]));
 commonDate = datetime(2020,8,18):newc.date(end);
 % ser_crit = [0;diff(list.CountSeriousCriticalCum)];
-ser_crit = list.serious_critical_new;
-ser_crit = ser_crit(ismember(list.date,commonDate));
-crit = ser_crit - newc.new_critical(ismember(newc.date,commonDate));
-
-hh(3) = scatter(commonDate,crit,'.','MarkerEdgeAlpha',alf);
+% ser_crit = list.serious_critical_new;
+% ser_crit = ser_crit(ismember(list.date,commonDate));
+% crit = ser_crit - newc.new_critical(ismember(newc.date,commonDate));
+crit = list.serious_critical_new(2:end) - diff(list.CountSeriousCriticalCum);
+hh(3) = scatter(list.date(2:end),crit,'.','MarkerEdgeAlpha',alf);
 hh(3).MarkerEdgeColor = ccc(2,:);
-hh(4) = plot(commonDate,movmean(crit,[3 3]),'linewidth',1.5);
+hh(4) = plot(list.date(2:end),movmean(crit,[3 3]),'linewidth',1.5);
 hh(4).Color = ccc(2,:);
-hh(5) = scatter(newc.date,newc.new_critical,'.','MarkerEdgeAlpha',alf);
+% hh(4) = plot(commonDate,movmean(crit,[3 3]),'linewidth',1.5);
+% hh(4).Color = ccc(2,:);
+% hh(5) = scatter(newc.date,newc.new_critical,'.','MarkerEdgeAlpha',alf);
+hh(5) = scatter(list.date,list.serious_critical_new,'.','MarkerEdgeAlpha',alf);
 hh(5).MarkerEdgeColor = ccc(3,:);
-hh(6) = plot(newc.date,movmean(newc.new_critical,[3 3]),'linewidth',1.5);
+hh(6) = plot(list.date,movmean(list.serious_critical_new,[3 3]),'linewidth',1.5);
 hh(6).Color = ccc(3,:);
 hh(7) = scatter(list.date,list.new_hospitalized,'.','MarkerEdgeAlpha',alf);
 hh(7).MarkerEdgeColor = ccc(4,:);

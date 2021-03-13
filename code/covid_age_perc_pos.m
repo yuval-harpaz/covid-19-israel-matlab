@@ -47,7 +47,7 @@ set(gcf,'Color','w')
 
 %%
 ps = covid_israel_percent_positive;
-close;
+% close;
 close;
 close;
 %%
