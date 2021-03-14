@@ -1,5 +1,5 @@
 function covid_death_potential3
-
+error('there was some mistake, wrong age groupings')
 cd ~/covid-19-israel-matlab/data/Israel
 jf=java.text.DecimalFormat;
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge');
