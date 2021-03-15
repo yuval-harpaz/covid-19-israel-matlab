@@ -1,3 +1,4 @@
+cd /home/innereye/covid-19-israel-matlab/data/Israel
 y = [667,98;434,71;285,43;150,34;61,12;48,8;31,6;51,14];
 listD = readtable('dashboard_timeseries.csv');
 
