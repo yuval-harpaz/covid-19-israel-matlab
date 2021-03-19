@@ -28,7 +28,8 @@ end
 %%
 dateM = dateW-3.5;
 idx = [1:7;8:14];
-agetit = {'צעירים','מבוגרים'};
+agetit = {'צעירים','מבוגרים';'young','old'};
+
 figure;
 % plot(dateM,pos./tests)
 for ip = 1:2
@@ -36,11 +37,13 @@ for ip = 1:2
     plot(dateM,100*pos(:,idx(ip,:))./tests(:,idx(ip,:)));
     legend(ages(idx(ip,:)),'Location','northwest');
     xtickformat('MMM');
-    xlim([datetime(2020,10,1) datetime('tomorrow')]);
-    ylim([0 25])
+%     xlim([datetime(2020,10,1) datetime('tomorrow')]);
+    xlim([datetime(2020,3,1) datetime('today')+7])
+    set(gca,'xtick',datetime(2020,3:30,1))
+    ylim([0 20])
     grid on;
     box off
-    title(['אחוז הבדיקות החיוביות ל',agetit{ip}])
+    title({['אחוז הבדיקות החיוביות ל',agetit{1,ip}],['percent positive tests for the ',agetit{2,ip}]})
     grid minor
 end
 set(gcf,'Color','w')
