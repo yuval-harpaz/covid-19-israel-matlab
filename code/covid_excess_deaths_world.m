@@ -24,7 +24,10 @@ xt = datetime(2020,3:100,1);
 xt(xt > dateshift(max(date),'end','month')+31) = [];
 set(gca,'XTick',xt)
 xtickformat('MMM')
-
+title({'Excess deaths as percents of annual','mortality by date of report               '})
+ylabel('% of annual deaths')
+set(gcf,'Color','w')
+set(gca,'FontSize',13)
 %%
 lim = datetime(2020,10,20);
 tr = t;
