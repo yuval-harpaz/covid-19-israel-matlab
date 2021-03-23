@@ -1,9 +1,12 @@
 cd ~/covid-19-israel-matlab/data/Israel
 listName = {'','severe_','ventilated_','deaths_'};
 tit = {'מאומתים','קשים','מונשמים','נפטרים'};
-agetit = {'צעירים','מבוגרים'};
+tit(2,:) = {'cases','severe','ventilated','deceased'};
+agetit = {'צעירים','מבוגרים';'young','old'};
 col = [0.259 0.525 0.961;0.063 0.616 0.345;0.961 0.706 0.4;0.988 0.431 0.016;0.863 0.267 0.216];
 idx = [2:6;7:11];
+spo = 0;
+figure;
 for iList = 1:4
     txt = urlread(['https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/',listName{iList},'ages_dists.csv']);
     txt = txt(find(ismember(txt,newline),1)+1:end);
@@ -32,9 +35,10 @@ for iList = 1:4
         date = agDate;
         yy = ag{:,2:11};
     end
-    figure;
+    
     for ip = 1:2
-        subplot(1,2,ip)
+        spo = spo+1;
+        subplot(2,4,spo)
         
         plot(date,yy(:,idx(ip,:)-1));
         legend(strrep(strrep(ag.Properties.VariableNames(idx(ip,:)),'_',' '),'x',''),'Location','northwest');
@@ -45,7 +49,7 @@ for iList = 1:4
         %     subplot(1,2,2)
         %     idx = 7:11;
         %     plot(agDate,ag{:,idx});legend(strrep(strrep(ag.Properties.VariableNames(idx),'_',' '),'x',''));xtickformat('MMM');xlim([datetime(2020,10,1) datetime('tomorrow')]);grid on;box off
-        title([tit{iList},' ',agetit{ip}])
+        title({[tit{1,iList},' ',agetit{1,ip}],[tit{2,iList},' - ',agetit{2,ip}]})
         if ip == 1 && iList == 4
             bar(date,yy(:,idx(ip,:)-1),3);
             ylim([0 20])
@@ -54,7 +58,7 @@ for iList = 1:4
             xlim([datetime(2020,10,1) datetime('tomorrow')]);
             grid on;
             box off
-            title([tit{iList},' ',agetit{ip}])
+            title({[tit{1,iList},' ',agetit{1,ip}],[tit{2,iList},' - ',agetit{2,ip}]})
         end
     end
     set(gcf,'Color','w')
