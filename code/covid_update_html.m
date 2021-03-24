@@ -1,33 +1,6 @@
 function covid_update_html
-% show the worst countries by different criteria
 cd ~/covid-19-israel-matlab/
-
 list = readtable('data/Israel/dashboard_timeseries.csv');
-% yesterdate = datestr(datetime-1,'dd.mm.yyyy');
-% today = datestr(datetime,'dd.mm.yyyy');
-% highest countries
-% fName = 'docs/highest_countries.html';
-% fid = fopen(fName,'r');
-% txt = fread(fid);
-% fclose(fid);
-% txt = native2unicode(txt');
-% iDate = strfind(txt,'2021');
-% txt(iDate-6:iDate+3) = yesterdate;
-% fid = fopen(fName,'w');
-% fwrite(fid,txt);
-% fclose(fid);
-% % realigned
-% fName = 'docs/realigned.html';
-% fid = fopen(fName,'r');
-% txt = fread(fid);
-% fclose(fid);
-% txt = native2unicode(txt');
-% iDate = strfind(txt,'2021');
-% txt(iDate-6:iDate+3) = yesterdate;
-% fid = fopen(fName,'w');
-% fwrite(fid,txt);
-% fclose(fid);
-% index
 fName = 'docs/README.md';
 fid = fopen(fName,'r');
 txt = fread(fid);
@@ -38,7 +11,6 @@ txt(iDate-6:iDate+3) = datestr(list.date(end),'dd.mm.yyyy');
 fid = fopen(fName,'w');
 fwrite(fid,txt);
 fclose(fid);
-% Israel
 fName = 'docs/myCountry.html';
 fid = fopen(fName,'r');
 txt = fread(fid);
