@@ -21,7 +21,7 @@ cd ~/covid-19-israel-matlab/data/
 % [~,~] = system('wget -O tmp.zip https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip');
 % unzip('tmp.zip','tmp')
 % !rm tmp.zip
-dateCheck = dir('tmp/2020_BF_Region_Mobility_Report.csv');
+dateCheck = dir('tmp/2021_BF_Region_Mobility_Report.csv');
 if now-datenum(dateCheck.date) > 3
     [~,~] = system('wget -O tmp.zip https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip');
     unzip('tmp.zip','tmp')
@@ -77,16 +77,17 @@ for ii = [11,1:10]
     if isempty(ini{ii})
         glob(:,ii) = nan;
     else
-        t = readtable(['2020_',ini{ii},'_Region_Mobility_Report.csv']);
-        if ii == 11 || ~exist('iEnd','var')
-            try
-                iEnd = find(cellfun(@isempty,t.sub_region_1),1,'last');
-            catch
-                iEnd = find(isnan(t.sub_region_1),1,'last');
-            end
-            date = t.date(1:iEnd);
+        t2020 = readtable(['2020_',ini{ii},'_Region_Mobility_Report.csv']);
+        t2021 = readtable(['2021_',ini{ii},'_Region_Mobility_Report.csv']);
+        if iscell(t2020.sub_region_1(1))
+            t = [t2020(cellfun(@isempty,t2020.sub_region_1),:);t2021(cellfun(@isempty,t2021.sub_region_1),:)];
+        else
+            t = [t2020;t2021];
         end
-        mob = t{1:iEnd,10:end};
+        if ~exist('date','var')
+            date = t.date;
+        end
+        mob = t{:,10:end};
         mob = movmean(movmedian(mob,[3 3]),[3 3]);
     %     mob = mob./(-min(mob));
         mob = mean(mob(:,[1,4,5]),2);
