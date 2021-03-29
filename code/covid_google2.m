@@ -22,7 +22,7 @@ cd ~/covid-19-israel-matlab/data/
 % unzip('tmp.zip','tmp')
 % !rm tmp.zip
 dateCheck = dir('tmp/2021_BF_Region_Mobility_Report.csv');
-if now-datenum(dateCheck.date) > 3
+if now-datenum(dateCheck.date) > 7
     [~,~] = system('wget -O tmp.zip https://www.gstatic.com/covid19/mobility/Region_Mobility_Report_CSVs.zip');
     unzip('tmp.zip','tmp')
     !rm tmp.zip
@@ -81,11 +81,20 @@ for ii = [11,1:10]
         t2021 = readtable(['2021_',ini{ii},'_Region_Mobility_Report.csv']);
         if iscell(t2020.sub_region_1(1))
             t = [t2020(cellfun(@isempty,t2020.sub_region_1),:);t2021(cellfun(@isempty,t2021.sub_region_1),:)];
+            if iscell(t.metro_area(1))
+                t = t(cellfun(@isempty,t.metro_area),:);
+            end
         else
             t = [t2020;t2021];
         end
         if ~exist('date','var')
             date = t.date;
+        end
+        if ~isequal(unique(date),date)
+            error('dates not unique or not sorted')
+        end
+        if ~isequal(t.date,date)
+            error('dates mismatch')
         end
         mob = t{:,10:end};
         mob = movmean(movmedian(mob,[3 3]),[3 3]);

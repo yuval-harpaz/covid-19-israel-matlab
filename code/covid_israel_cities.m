@@ -140,9 +140,9 @@ set(gcf,'Color','w')
 title('תמותה למליון סך הכל')
 subplot(1,2,2)
 % yyaxis left
-h = plot(datetime(2020,4:13,1),ddpm,'linewidth',1);
+h = plot(datetime(2020,4:size(ddpm,1)+3,1),ddpm,'linewidth',1);
 shape = repmat({'o','s','^'},1,5);
-for ii = 1:13
+for ii = 1:length(h)
     h(ii).Color = hb(ii).FaceColor;
     h(ii).Marker = shape{order == ii};
     h(ii).MarkerFaceColor = h(ii).Color;
@@ -180,7 +180,7 @@ ax = gca;
 ax.YRuler.Exponent = 0;
 ax.YAxis.TickLabelFormat = '%,.0f';
 subplot(1,2,2)
-h = plot(datetime(2020,4:13,1),dcpm,'linewidth',1);
+h = plot(datetime(2020,4:size(dcpm,1)+3,1),dcpm,'linewidth',1);
 for ii = 1:13
     h(ii).Color = hb(ii).FaceColor;
     h(ii).Marker = shape{order == ii};
