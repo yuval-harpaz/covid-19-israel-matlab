@@ -47,7 +47,7 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     clear date tests positive_tests
     iTable = find(ismember({json(:).id},'table'));
     dateTable = datetime(cellfun(@(x) x(1:10),{json(iTable).data.date}','UniformOutput',false));
-    [~,row] = ismember(dateTable,data.date);
+    [isRow,row] = ismember(dateTable,data.date);
     % t = table(date);
     field = fieldnames(json(iTable).data);
     for fi = field(2:end)'
@@ -56,7 +56,7 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
         if length(vec) < length(dateTable)
             vec(end+1:length(dateTable)) = nan;
         end
-        col(row) = vec;
+        col(row(isRow)) = vec(isRow);
         eval(['data.',fi{1},' = col;'])
     end
     iRec = find(ismember({json(:).id},'recovered'));
