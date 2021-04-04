@@ -57,7 +57,7 @@ top = 1200;
 mon = unique(month(agegen.date));
 mon(end-2:end) = [];
 figure('units','normalized','position',[0,0.25,1,0.75]);
-subplot(1,length(mon)+1,1)
+subplot(2,ceil((length(mon)+1)/2),1)
 row = find(dateshift(agegen.date,'start','day') == dday,1,'last');
 NN = [sum(ya(row,1:6)),ya(row,7:end)]';
 bar(NN,'EdgeColor','none');
@@ -72,13 +72,13 @@ rowPrev = find(dateshift(agegen.date,'start','day') == datetime(2020,12,31),1,'l
 % NN = [sum(ya(end,1:6)),ya(end,7:end)]'-NN;
 
 for iMon = 1:length(mon)
-    subplot(1,length(mon)+1,iMon+1)
+    subplot(2,ceil((length(mon)+1)/2),iMon+1)
     row = find(dateshift(agegen.date,'start','month') == datetime(2021,mon(iMon),1),1,'last');
     NN = [sum(ya(row,1:6)),ya(row,7:end)]'-[sum(ya(rowPrev,1:6)),ya(rowPrev,7:end)]';
     bar(NN,'EdgeColor','none');
     text((1:5)-0.2,NN+40,str(NN))
     text((1:5)-0.2,NN-20,[str(round(NN/sum(NN)*100)),repmat('%',5,1)],'Color','w','FontWeight','bold');
-    ylim([0 top])
+    ylim([0 top/2])
     set(gca,'XTickLabel',{'<60','60-70','70-80','80-90','90+'},'ygrid','on')
     box off
     set(gcf,'Color','w')

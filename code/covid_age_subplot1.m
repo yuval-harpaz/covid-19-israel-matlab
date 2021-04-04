@@ -14,6 +14,9 @@ for iList = 1:4
     fwrite(fid,txt);
     fclose(fid);
     ag = readtable('tmp.csv');
+    if iList == 4
+        ag = covid_fix_age(ag);
+    end
     agDate = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
     
     if iList == 1 || iList == 4
