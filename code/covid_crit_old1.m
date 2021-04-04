@@ -49,3 +49,38 @@ title({'ניבוי תמותה שבוע קדימה לפי חולים חדשים �
 xtickformat('MMM')
 xlim([datetime(2020,7,1) datetime('today')+7])
 
+%%
+% json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge');
+% json = jsondecode(json);
+% vacc = struct2table(json);
+% dateVacc = datetime(strrep(vacc.Day_Date,'T00:00:00.000Z',''));
+!wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/vaccinated_by_age.csv
+vacc = readtable('tmp.csv');
+vaccDate = datetime(cellfun(@(x) x(1:end-4), strrep(strrep(vacc.Date,'T',' '),'Z',''),'UniformOutput',false));
+pop60 = sum(vacc{end,17:3:end});
+% pop60 = (749+531+308)*1000;
+vaccDay = unique(dateshift(vaccDate,'start','day'));
+for ii = 1:length(vaccDay)
+    row = find(vaccDate < vaccDay(ii)+1,1,'last');
+    vacc60(ii,1) = sum(vacc{row,19:3:end});
+end
+effic = nan(length(vaccDay),1);
+for iDay = 1:length(vaccDay)
+    try
+        effic(iDay) = 1-(ncba{51+iDay,6}/vacc60(iDay))/((ncba{51+iDay,2}-ncba{51+iDay,6})/(pop60-vacc60(iDay)));
+    end
+end
+
+figure;
+% plot(vaccDay+7,movmean(effic,[3 3],'omitnan'))
+% plot(vaccDay+7,effic)
+nn = ~isnan(effic);
+plot(vaccDay(nn)+7,effic(nn))
+ylim([0 1])
+set(gca,'FontSize',12,'YTickLabel',0:10:100,'YTick',0:0.1:1)
+grid on
+box off
+title({'יעילות החיסון לתחלואה קשה מעל גיל 60','Vaccine Efficiency for severe cases over 60'})
+set(gcf,'Color','w')
+set(gca,'XTick',datetime(fliplr(datetime(2021,3,30):-7:datetime(2021,1,17))))
+xtickformat('dd/MM')
