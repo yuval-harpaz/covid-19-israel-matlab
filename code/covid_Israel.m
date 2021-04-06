@@ -145,7 +145,7 @@ set(gcf,'Color','w')
 %%
 covid_israel_percent_positive(figs);
 %%
-covid_death_list;
+covid_death_list2;
 %% 
 covid_crit_old1
 %%

@@ -19,8 +19,8 @@ for col = 1:9
             if dif(idx(jdx),col+1) > dif(idx(jdx),col)*(-1)
                 agf{idx(jdx)+1:end,col+1} = agf{idx(jdx)+1:end,col+1}-dif(idx(jdx),col);
                 agf{idx(jdx)+1:end,col+2} = agf{idx(jdx)+1:end,col+2}+dif(idx(jdx),col);
-            else
-                error('should be larger')
+%             else
+%                 disp('uncprrected minus deaths')
             end
         end
     end
