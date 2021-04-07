@@ -1,4 +1,4 @@
-function covid_google2(mustHave,eng)
+function glob = covid_google2(mustHave,eng)
 
 mustHave = IEdefault('mustHave','Israel');
 eng = IEdefault('eng',false);
