@@ -2,11 +2,11 @@ function [tt,Hasinut] = covid_herd(vac,hidden)
 % deathVE = IEdefault('deathVE',[0.02 0.08]);
 % fac = IEdefault('fac',[2/3,1]);
 vac = IEdefault('vac',2);  % dose 1 or 2
-hidden = IEdefault('hidden',linspace(3.5,2,8)'); %how many 
+hidden = IEdefault('hidden',linspace(3.5,2,8)'); %how much to multiply to get confirmed + hidden
 cd ~/covid-19-israel-matlab/data/Israel
 % load vacc
 
-jf=java.text.DecimalFormat;
+% jf = java.text.DecimalFormat;
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge');
 json = jsondecode(json);
 tv = struct2table(json);
