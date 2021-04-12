@@ -13,7 +13,7 @@ hh(2) = plot(listD.date(idx),movmean(listD.CountBreath(idx),[3 3]),'-','Color',c
 hh(3) = scatter(listD.date(idx),listD.CountCriticalStatus(idx),'.','MarkerEdgeColor',col(2,:),'MarkerEdgeAlpha',0.5);
 hh(4) = plot(listD.date(idx),movmean(listD.CountCriticalStatus(idx),[3 3]),'-','Color',col(2,:),'linewidth',1.5);
 hh(5) = plot(ward.date,ward.corona,'--','Color',col(2,:),'linewidth',1.5);
-hh(6) = plot(listD.date,death,'k')
+hh(6) = plot(listD.date,death,'k');
 grid on
 % ylim([0 350])
 legend(hh([4,5,2,6]),'all critical        סך הכל קריטיים','corona ward     מחלקת קורונה',...
