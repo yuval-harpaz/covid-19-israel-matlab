@@ -31,7 +31,7 @@ end
 % pop = readtable('data/population.csv','delimiter',',');
 list = readtable(listName);
 
-list.Properties.VariableNames([7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
+list.Properties.VariableNames(1+[7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
 list.deceased = nan(height(list),1);
 %     list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
 list.deceased =list.CountDeath;
