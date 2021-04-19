@@ -1,7 +1,7 @@
 cd ~/covid-19-israel-matlab/data/Israel
 % tests = readtable('tests.csv'); 
 listD = readtable('dashboard_timeseries.csv');
-ncba = readtable('crit_by_age.csv');
+ncba = readtable('severe_by_age.xlsx');
 col = [0,0.447,0.741;0.850,0.325,0.0980;0.929,0.694,0.125;0.494,0.184,0.556;0.466,0.674,0.188;0.301,0.745,0.933;0.635,0.0780,0.184];
 col3 = [0.906 0.329 0.357;0.271 0.478 0.647;0.439 0.718 0.698];
 %%
@@ -82,5 +82,5 @@ grid on
 box off
 title({'יעילות החיסון לתחלואה קשה מעל גיל 60','Vaccine Efficiency for severe cases over 60'})
 set(gcf,'Color','w')
-set(gca,'XTick',datetime(fliplr(datetime(2021,3,30):-7:datetime(2021,1,17))))
+set(gca,'XTick',datetime(fliplr(dateshift(datetime('today'),'start','week'):-7:datetime(2021,1,17))))
 xtickformat('dd/MM')

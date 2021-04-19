@@ -1,7 +1,7 @@
 cd ~/covid-19-israel-matlab/data/Israel/
 deaths = readtable('deaths by vaccination status.xlsx');
 severe = readtable('severe by vaccination status.xlsx');
-old = readtable('crit_by_age.csv');
+old = readtable('severe_by_age.xlsx');
 dPer = 100*deaths{:,3:4}./deaths{:,5};
 sPer = 100*severe{:,3:4}./severe{:,5};
 oPer = 100*old.over60vacc./old.over60;
