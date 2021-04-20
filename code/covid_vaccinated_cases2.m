@@ -30,6 +30,13 @@ pop = sum(population(iAge(1):end));
 clear eff60
 for ii = 1:length(weekk)
     date1 = datetime(weekk{ii}(1:10));
+    vacc1 = zeros(7,1);
+    for iDate = 1:7
+        uvr = ismember(vaccX.date,date1+iDate-1);
+        if sum(uvr) > 0
+            vacc1(iDate,1) = sum(vaccX.first_dose(1:find(uvr,1,'last')));
+        end
+    end
     for jj = 1:3
         w = [1:6,7:-1:1];
         if jj == 1
@@ -42,12 +49,12 @@ for ii = 1:length(weekk)
 %     end
 % end   
         vrw = zeros(height(vaccX),1);
-        vacc1 = zeros(length(dates),1);
+        
         for iDate = 1:length(dates)
             vr = ismember(vaccX.date,dates(iDate));
             if ~isempty(vr)
                 vrw(vr) = w(iDate);
-                vacc1(iDate,1) = sum(vaccX.first_dose(1:find(vr,1,'last')));
+                %vacc1(iDate,1) = sum(vaccX.first_dose(1:find(vr,1,'last')));
             end
         end
                 
