@@ -69,6 +69,10 @@ switch mustHave
         ini{11} = 'GB';
         countryName{11,1} = 'בריטניה';
         countryName{11,2} = 'UK';
+    case 'India'
+        ini{11} = 'IN';
+        countryName{11,1} = 'הודו';
+        countryName{11,2} = 'India';
         
 end
 ini(isx) = cc(idx(isx),1);

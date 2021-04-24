@@ -49,19 +49,29 @@ end
 % t = t(1:find(~isnan(t.stringency),1,'last')-1,:);
 t(isnan(t.stringency),:) = [];
 
-glob = covid_google2; error('get country')
-try
-    mob = readtable(['~/Downloads/Region_Mobility_Report_CSVs/2020_',country{2},'_Region_Mobility_Report.csv']);
-catch
-    mob = readtable(['tmp/2020_',country{2},'_Region_Mobility_Report.csv']);
+% glob = covid_google2; error('get country')
+t2020 = readtable(['tmp/2020_',country{2},'_Region_Mobility_Report.csv']);
+t2021 = readtable(['tmp/2021_',country{2},'_Region_Mobility_Report.csv']);
+if iscell(t2020.sub_region_1(1))
+    mob = [t2020(cellfun(@isempty,t2020.sub_region_1),:);t2021(cellfun(@isempty,t2021.sub_region_1),:)];
+    if iscell(mob.metro_area(1))
+        mob = mob(cellfun(@isempty,mob.metro_area),:);
+    end
+else
+    mob = [t2020;t2021];
 end
-mob = mob(1:find(~cellfun(@isempty,mob.sub_region_1),1)-1,8:end);
+% try
+%     mob = readtable(['~/Downloads/Region_Mobility_Report_CSVs/2020_',country{2},'_Region_Mobility_Report.csv']);
+% catch
+%     mob = readtable(['tmp/2020_',country{2},'_Region_Mobility_Report.csv']);
+% end
+% mob = mob(1:find(~cellfun(@isempty,mob.sub_region_1),1)-1,8:end);
 [isx,idx] = ismember(t.date,mob.date);
 figure('units','normalized','position',[0.1,0.1,0.6,0.8]);
 fill([t.date;flipud(t.date)],[t.stringency;-flipud(t.stringency)],[0.9,0.9,0.9],'linestyle','none')
 hold on
 colorset;
-plot(mob.date,movmedian(mob{:,3:end},[3 3]))
+plot(mob.date,movmedian(mob{:,10:end},[3 3]))
 plot(t.date(2:end),movmean(diff(t.deaths)./max(diff(t.deaths))*100,[3 3],'omitnan'),'k')
 plot(t.date(2:end),movmean(diff(t.cases)./max(diff(t.cases))*100,[3 3],'omitnan'),'m')
 grid on
