@@ -84,3 +84,29 @@ title({'יעילות החיסון לתחלואה קשה מעל גיל 60','Vacci
 set(gcf,'Color','w')
 set(gca,'XTick',datetime(fliplr(dateshift(datetime('today'),'start','week'):-7:datetime(2021,1,17))))
 xtickformat('dd/MM')
+
+
+%%
+
+yyy = cumsum(ncba{:,2:4});
+
+dateWeek = datetime(2021,1,5:7:300);
+dateWeek(dateWeek > datetime('today')-3) = [];
+
+for iDate = 1:length(dateWeek)
+    week (iDate,1:3) = yyy(ncba.date == dateWeek(iDate)+3,:)-yyy(ncba.date == dateWeek(iDate)+3-7,:);
+end
+figure('units','normalized','position',[0.1,0.1,0.4,0.5]);
+h5 = bar(dateWeek,fliplr(week),'EdgeColor','none');
+colGov = flipud([0.855,0.122,0.169;0.141,0.627,0.216;1,0.49,0.157]);
+for ii = 1:3
+    h5(ii).FaceColor = colGov(ii,:);
+end
+legend(flipud(h5),'0-39','40-59','60+','location','west');
+grid on
+title({'חולים חדשים במצב קשה','New severe patients'})
+set(gca,'XTick',dateWeek)
+xtickangle(45)
+xtickformat('yyyy-MM-dd')
+set(gcf,'Color','w')
+% xtickformat('MMM')
