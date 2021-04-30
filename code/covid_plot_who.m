@@ -174,6 +174,10 @@ set(gca,'XTick',datetime(2020,3:25,1),'FontSize',13)
 countryHeb(:,2) = whoCountry;
 if eng
     title('Daily deaths per million, rank by last week average')
+    if cum
+        title('Cumulative deaths per million, rank by last week average')
+    end
+        
     ylabel('deaths per million')
     xlabel('Rank of >1m people countries by COVID19 deaths')
     for it = 1:20
