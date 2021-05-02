@@ -42,6 +42,7 @@ set(gcf,'Color','w')
 title(['Deaths in 2020 (',str(sum(NN)),')'])
 rowPrev = find(dateshift(ag.date,'start','day') == datetime(2020,12,31),1,'last');
 % NN = [sum(ya(end,1:6)),ya(end,7:end)]'-NN;
+listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 figure('units','normalized','position',[0,0,1,1]);
 for iMon = 1:length(mon)
     subplot(2,ceil((length(mon))/2),iMon)
@@ -58,4 +59,10 @@ for iMon = 1:length(mon)
     mName = mName{1};
     title(['Deaths in ',mName,' (',str(sum(NN)),')'])
     rowPrev = row;
+%     listD.CountDeathCum(find(dateshift(listD.date,'start','month') == datetime(2021,mon(iMon)+1,1),1,'last')-1)-...
+%         listD.CountDeathCum(find(dateshift(listD.date,'start','month') == datetime(2021,mon(iMon),1),1,'last')-1);
+    totM(iMon,1) = listD.CountDeathCum(find(dateshift(listD.date,'end','month') == dateshift(datetime(2021,mon(iMon),1),'end','month'),1,'last'))-...
+        listD.CountDeathCum(find(dateshift(listD.date,'end','month') == dateshift(datetime(2021,mon(iMon)-1,1),'end','month'),1,'last'));
 end
+figure;
+bar(totM);
