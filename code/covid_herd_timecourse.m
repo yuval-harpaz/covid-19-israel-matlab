@@ -4,7 +4,7 @@ function [tt,Hasinut] = covid_herd_timecourse(hidden)
 vac = 2;  % dose 1 or 2
 hidden = IEdefault('hidden',linspace(3.5,2,8)'); %how much to multiply to get confirmed + hidden
 cd ~/covid-19-israel-matlab/data/Israel
-[agf, agDate] = covid_fix_age('',[]);
+[agf, agDate] = covid_fix_age('');
 confirmed = [sum(agf{end,2:3});agf{end,4:9}';sum(agf{end,10:11})];
 !wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/vaccinated_by_age.csv
 agVacc = readtable('tmp.csv');

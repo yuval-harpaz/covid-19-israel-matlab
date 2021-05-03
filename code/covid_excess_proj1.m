@@ -12,7 +12,7 @@ t.date = datetime(t.DataUntil,'InputFormat','MMM dd, yyyy');
 try
     [~,~] = system('wget -O tmp.csv https://covid19.who.int/WHO-COVID-19-global-data.csv');
     whoData = readtable('tmp.csv');
-    writetable(whoData,'data/who.csv','Delimiter',',','WriteVariableNames',true);
+    writetable(whoData,'who.csv','Delimiter',',','WriteVariableNames',true);
 catch
     disp('NO WHO, Reading Previous!')
     whoData = readtable('who.csv');
@@ -67,6 +67,15 @@ dpm2annual = t.ExcessAs_OfAnnualBaseline./(10*t.ExcessPer100k);
 
 figure;
 plot(dpm.*dpm2annual');
+
+annualDeath = t.ExcessDeaths./t.ExcessAs_OfAnnualBaseline*100;
+acu = t.UndercountRatio;
+acu(isnan(acu)) = 1;
+deathsCorrected = sum(deaths(:,idxD))'.*acu;
+correctedAnnual = deathsCorrected./annualDeath;
+
+
+
 % for ii = 1:height(t)
 %     wCol = ismember(whoCountry,t.Country{ii});
 %     popRow = ismember(popWM.Country_Other,t.Country{ii});
