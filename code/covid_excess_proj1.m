@@ -1,4 +1,4 @@
-function covid_excess_proj1
+function t = covid_excess_proj1
 
 cd ~/covid-19-israel-matlab/data/
 !wget -O tmp.csv https://raw.githubusercontent.com/dkobak/excess-mortality/main/excess-mortality.csv
@@ -72,10 +72,39 @@ annualDeath = t.ExcessDeaths./t.ExcessAs_OfAnnualBaseline*100;
 acu = t.UndercountRatio;
 acu(isnan(acu)) = 1;
 deathsCorrected = sum(deaths(:,idxD))'.*acu;
-correctedAnnual = deathsCorrected./annualDeath;
+t.correctedAnnual = deathsCorrected./annualDeath;
+[~,order] = sort(t.correctedAnnual,'descend');
+to = t(order,:);
 
-
-
+west = find(contains(to.Country,{'Marino','Andorra','USA','Italy','Liech','Spain','UK','Portugal','France',...
+    'Ireland','Canada',...
+    'Belgium','Swit','Swed','Netherl','Austria','Luxem','Denmark','German','Icel','Finl','Norw','Gibraltar'}));
+eastEU = find(contains(to.Country,{'Russia','Albania','Macedo','Slovak','Armen','Czec','Belarus','Moldova','Bulgar','Poland',...
+    'Monteneg','Serbia','Lithuan','Roman','Slovenia','Hungary','Georgia','Croatia','Ukrain',...
+    'Estonia','Latvia','Cyprus','Greece','Malta','Bosnia'}));
+isr = find(contains(to.Country,'Israel'));
+latinA =  find(contains(to.Country,{'Peru','Ecuador','Mexico','Bolivia','El Salva','Nicara','Colombia','Brazil','Chile','Panama','Parag','Guate'}));
+indi = {1:height(to);west;eastEU;latinA;isr};
+col = [0.6 0.25 0.75;0.15 0.15 0.85;0.25 0.55 0.75;0.2 0.4 0.2;0 0 0;];
+%%
+figure;
+clear hh
+for ii = 1:length(indi)
+    y = nan(height(to),1);
+    y(indi{ii}) = to.correctedAnnual(indi{ii});
+    hh(ii) = bar(y*100);
+    hold on
+    hh(ii).EdgeColor = 'none';
+    hh(ii).FaceColor = col(ii,:);
+end
+set(gca,'XTickLabel',to.Country,'XTick',1:height(to))
+xtickangle(90)
+legend(hh([2,3,4,5,1]),'West','East Europe','Latin America','Israel','Other')
+ylabel('%')
+title('Excess mortality as % of annual deaths (projected to today)')
+set(gcf,'Color','w')
+set(gca,'YTick',0:10:140,'YGrid','on')
+box off
 % for ii = 1:height(t)
 %     wCol = ismember(whoCountry,t.Country{ii});
 %     popRow = ismember(popWM.Country_Other,t.Country{ii});
