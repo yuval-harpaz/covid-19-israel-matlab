@@ -104,7 +104,7 @@ if city
             h1 = plot(t.date(iCity),dpm,'k');
             hold on
         elseif ii == iMa
-            h2 = plot(t.date(iCity),dpm/10,'r');
+            h2 = plot(t.date(iCity),dpm,'r');
         else
             plot(t.date(iCity),dpm,'k');
         end
