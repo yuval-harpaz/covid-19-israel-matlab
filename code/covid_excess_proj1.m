@@ -61,16 +61,23 @@ co(end+1:height(t),1:3) = 0.65;
 % figure;
 % plot(cumsum(deaths(:,idxD))./popWM.Population(idxP)'*10^6.*t.UndercountRatio');
 pop = t.ExcessDeaths./t.ExcessPer100k*10^5;
-dpm = cumsum(deaths(:,idxD))./pop'*10^6.*t.UndercountRatio';
+% corrUCR = t.UndercountRatio;
+% corrUCR(isnan(t.UndercountRatio)) = 1;
+% corrUCR(t.UndercountRatio < 1) = 1;
+% dpm = cumsum(deaths(:,idxD))./pop'*10^6.*corrUCR';
 
-dpm2annual = t.ExcessAs_OfAnnualBaseline./(10*t.ExcessPer100k);
+% dpm2annual = t.ExcessAs_OfAnnualBaseline./(10*t.ExcessPer100k);
 
-figure;
-plot(dpm.*dpm2annual');
+% figure;
+% plot(dpm.*dpm2annual');
+
+
+
 
 annualDeath = t.ExcessDeaths./t.ExcessAs_OfAnnualBaseline*100;
 acu = t.UndercountRatio;
 acu(isnan(acu)) = 1;
+acu(acu < 1) = 1;
 deathsCorrected = sum(deaths(:,idxD))'.*acu;
 t.correctedAnnual = deathsCorrected./annualDeath;
 [~,order] = sort(t.correctedAnnual,'descend');
@@ -105,6 +112,44 @@ title('Excess mortality as % of annual deaths (projected to today)')
 set(gcf,'Color','w')
 set(gca,'YTick',0:10:140,'YGrid','on')
 box off
+
+
+dDeathsCorrected = deaths(:,idxD)'.*acu;
+dCorrectedAnnual = dDeathsCorrected./annualDeath;
+dCorrectedAnnual(dCorrectedAnnual > 0.04) = nan;
+ddad = movmean(dCorrectedAnnual',[6 0],'omitnan');
+% ddad = diff(dCorrectedAnnual');
+[~,order1] = sort(ddad(end,:),'descend');
+co1 = t.Country(order1);
+co = hsv(10);
+co(3,:) = co(3,:)*0.75;
+co(4,2) = 0.7;
+figure;
+plot(date,100*movmean(ddad(:,order1),[0 6],'omitnan'),'Color',[0.65 0.65 0.65])
+hold on
+h2 = plot(date,100*movmean(ddad(:,order1(11:20)),[0 6],'omitnan'));
+h1 = plot(date,100*movmean(ddad(:,order1(1:10)),[0 6],'omitnan'),'LineWidth',2)
+for ic = 1:10
+    h1(ic).Color = co(ic,:);
+    h2(ic).Color = co(ic,:);
+end
+legend([h1;h2],co1(1:20),'location','northwest');
+ylim([0 1])
+xlim([datetime(2020,3,1) datetime('tomorrow')])
+xtickformat('MMM')
+set(gca,'XTick',datetime(2020,1:25,1),'FontSize',13)
+ylabel('% annual deaths')
+box off
+grid on
+title('Daily excess mortality (%) תמותה עודפת יומית ')
+set(gcf,'Color','w')
+% 
+% ddpm = diff(dpm.*dpm2annual');
+% ddpm(ddpm > 2.5) = nan;
+% ddpm(round(ddpm,3) == 2.079) = nan;
+% [~,order1] = sort(ddpm(end,:),'descend');
+% co1 = t.Country(order1);
+
 % for ii = 1:height(t)
 %     wCol = ismember(whoCountry,t.Country{ii});
 %     popRow = ismember(popWM.Country_Other,t.Country{ii});
