@@ -12,8 +12,9 @@ abroad.tests = listD.tests;
 abroad.positive = listD.tests_positive;
 writetable(abroad,'infected_abroad.xlsx')
 %%
+
+%%
 figure;
-subplot(2,1,1)
 h1 = bar(abroad.date,abroad{:,4:5},'stacked');
 h1(1).FaceColor = [0.847, 0.435, 0.227];
 h1(2).FaceColor = [0.588, 0.247, 0.239];
@@ -23,8 +24,11 @@ title({'מאומתים לפי מקור הדבקה','cases by infection source'})
 legend('local     מקומי','abroad   חו"ל')
 set(gca,'XTick',xt)
 grid on
-xlim(abroad.date([1,end]))
-subplot(2,1,2)
+xlim([abroad.date(1)-1,abroad.date(end)+1])
+text(abroad.date-0.4,sum(abroad{:,4:5},2)+10,cellstr(str(abroad{:,5})),'Color','k')
+
+%%
+figure;
 yy = abroad{:,5}./abroad{:,4}*100;
 yys = nan(size(yy));
 idx = ~isnan(yy);
@@ -40,3 +44,49 @@ box off
 ylabel('%')
 set(gcf,'Color','w')
 xlim(abroad.date([1,end]))
+
+
+%%
+yy = abroad{:,5}./abroad{:,6}*100;
+% yys = nan(size(yy));
+% idx = ~isnan(yy);
+yys = movmean(yy,[3 3],'omitnan');
+yys(1:find(~isnan(yy),1)) = nan;
+figure;
+% plot(abroad.date,yy,'.','Color',[0.85, 0.247, 0.239])
+hold on
+hl(1) = plot(abroad.date,yys,'Color',[0.85, 0.247, 0.239],'linewidth',1)
+
+yy = (abroad{:,3}-abroad{:,5})./(abroad{:,2}-abroad{:,6})*100;
+% yys = nan(size(yy));
+% idx = ~isnan(yy);
+yys = movmean(yy,[3 3],'omitnan');
+yys(1:find(~isnan(yy),1)) = nan;
+% plot(abroad.date,yy,'.','Color',[0.847, 0.435, 0.227],'MarkerSize',10)
+hold on
+hl(2) = plot(abroad.date,yys,'Color',[0.847, 0.435, 0.227],'linewidth',2);
+legend(hl(2:-1:1),'local     מקומי','abroad   חו"ל')
+ylim([0 1])
+grid on
+title('positive tests (%) בדיקות חיוביות')
+set(gca,'XTick',xt)
+ylabel('%')
+% ylabel('%')
+set(gcf,'Color','w')
+xlim([abroad.date(12),abroad.date(end)+1])
+%%
+figure;
+yyaxis left
+h3 = bar(abroad.date-0.1,abroad{:,6});
+ylim([0 6000])
+% h3.FaceColor = [0.847, 0.435, 0.227];
+yyaxis right
+h4 = bar(abroad.date+0.1,abroad{:,5});
+ylim([0 60])
+
+title({'בדיקות ותוצאות חיוביות לבאים מחו"ל','tests and cases for incoming passengers'})
+legend('tests     בדיקות','positive   חיוביים','location','northwest')
+set(gca,'XTick',xt)
+grid on
+xlim([abroad.date(1)-1,abroad.date(end)+1])
+set(gcf,'Color','w')
