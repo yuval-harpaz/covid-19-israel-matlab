@@ -9,13 +9,16 @@ R(ful,1) = cellfun(@(x) x,t.R(ful));
 
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 mm = movmean(listD.tests_positive,[6 0]);
-rr = mm(15:end)./mm(1:end-14);
+days = 7;
+rr = mm(days+1:end)./mm(1:end-days);
 %%
+pow = 0.685;
+shift = 3;
 figure;
 yyaxis left
-plot(date,R)
-% hold on;
-% plot(listD.date(1:end-14),rr.^0.3,':','LineWidth',1.5)
+plot(date,R,'LineWidth',2)
+hold on;
+plot(listD.date(1)-shift:listD.date(end)-days-shift,rr.^pow,':k','LineWidth',1.5)
 ylim([0 2])
 ylabel('R')
 yyaxis right
@@ -29,5 +32,10 @@ set(gcf,'Color','w')
 title('cases vs R מאומתים מול')
 ylabel('Cases')
 xlim([datetime(2020,6,1) datetime('tomorrow')])
-legend('R','cases','location','north')
+legend('R','R estimate','cases','location','north')
 grid on
+% title(pow)
+
+% figure;plot([rr(end-10:end).^pow,R(end-10:end)])
+% rme = rr(end-114:end-4); rdb = R(end-120:end-10);
+% n = log10(rdb)./log10(rme);
