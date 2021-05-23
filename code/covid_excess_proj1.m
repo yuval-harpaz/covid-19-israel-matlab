@@ -78,7 +78,7 @@ annualDeath = t.ExcessDeaths./t.ExcessAs_OfAnnualBaseline*100;
 acu = t.UndercountRatio;
 acu(isnan(acu)) = 1;
 acu(acu < 1) = 1;
-deathsCorrected = sum(deaths(:,idxD))'.*acu;
+deathsCorrected = nansum(deaths(:,idxD))'.*acu;
 t.correctedAnnual = deathsCorrected./annualDeath;
 [~,order] = sort(t.correctedAnnual,'descend');
 to = t(order,:);
@@ -90,7 +90,7 @@ eastEU = find(contains(to.Country,{'Russia','Albania','Macedo','Slovak','Armen',
     'Monteneg','Serbia','Lithuan','Roman','Slovenia','Hungary','Georgia','Croatia','Ukrain',...
     'Estonia','Latvia','Cyprus','Greece','Malta','Bosnia'}));
 isr = find(contains(to.Country,'Israel'));
-latinA =  find(contains(to.Country,{'Peru','Ecuador','Mexico','Bolivia','El Salva','Nicara','Colombia','Brazil','Chile','Panama','Parag','Guate'}));
+latinA =  find(contains(to.Country,{'Costa Rica','Peru','Ecuador','Mexico','Bolivia','El Salva','Nicara','Colombia','Brazil','Chile','Panama','Parag','Guate'}));
 indi = {1:height(to);west;eastEU;latinA;isr};
 col = [0.6 0.25 0.75;0.15 0.15 0.85;0.25 0.55 0.75;0.2 0.4 0.2;0 0 0;];
 %%
