@@ -2,6 +2,7 @@
 Estimate R from dashboard data
 in the resulting data frame, R_dashboard is the published R while R_estimate is 
 computed from positive tests.
+@yuvharpaz on twitter
 '''
 import numpy as np
 import pandas as pd
