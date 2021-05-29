@@ -58,20 +58,10 @@ co = repmat(co,2,1);
 co(end+1:height(t),1:3) = 0.65;
 
 [~,idxD] = ismember(t.Country,whoCountry);
-[~,idxP] = ismember(t.Country,popWM.Country_Other);
+% [~,idxP] = ismember(t.Country,popWM.Country_Other);
 
-% figure;
-% plot(cumsum(deaths(:,idxD))./popWM.Population(idxP)'*10^6.*t.UndercountRatio');
-pop = t.ExcessDeaths./t.ExcessPer100k*10^5;
-% corrUCR = t.UndercountRatio;
-% corrUCR(isnan(t.UndercountRatio)) = 1;
-% corrUCR(t.UndercountRatio < 1) = 1;
-% dpm = cumsum(deaths(:,idxD))./pop'*10^6.*corrUCR';
 
-% dpm2annual = t.ExcessAs_OfAnnualBaseline./(10*t.ExcessPer100k);
-
-% figure;
-% plot(dpm.*dpm2annual');
+% pop = t.ExcessDeaths./t.ExcessPer100k*10^5;
 
 
 
@@ -99,75 +89,28 @@ latinA =  find(contains(to.Country,{'Costa Rica','Peru','Ecuador','Mexico','Boli
 indi = {1:height(to);west;eastEU;latinA;isr};
 col = [0.6 0.25 0.75;0.15 0.15 0.85;0.25 0.55 0.75;0.2 0.4 0.2;0 0 0;];
 %%
-figure;
-clear hh
-for ii = 1:length(indi)
-    y = nan(height(to),1);
-    y(indi{ii}) = to.correctedAnnual(indi{ii});
-    hh(ii) = bar(y*100);
-    hold on
-    hh(ii).EdgeColor = 'none';
-    hh(ii).FaceColor = col(ii,:);
-end
-set(gca,'XTickLabel',to.Country,'XTick',1:height(to))
-xtickangle(90)
-legend(hh([2,3,4,5,1]),'West','East Europe','Latin America','Israel','Other')
-ylabel('%')
-title('Excess mortality as % of annual deaths (projected to today)')
-set(gcf,'Color','w')
-set(gca,'YTick',0:10:140,'YGrid','on')
-box off
+% figure;
+% clear hh
+% for ii = 1:length(indi)
+%     y = nan(height(to),1);
+%     y(indi{ii}) = to.correctedAnnual(indi{ii});
+%     hh(ii) = bar(y*100);
+%     hold on
+%     hh(ii).EdgeColor = 'none';
+%     hh(ii).FaceColor = col(ii,:);
+% end
+% set(gca,'XTickLabel',to.Country,'XTick',1:height(to))
+% xtickangle(90)
+% legend(hh([2,3,4,5,1]),'West','East Europe','Latin America','Israel','Other')
+% ylabel('%')
+% title('Excess mortality as % of annual deaths (projected to today)')
+% set(gcf,'Color','w')
+% set(gca,'YTick',0:10:140,'YGrid','on')
+% box off
 %%
 yy = deaths;
 yy(:,:,2) = deathsC;
-% for ii = 1:2
-%     dDeathsCorrected = yy(:,idxD,ii)'.*acu;
-%     dCorrectedAnnual = dDeathsCorrected./annualDeath;
-%     if ii == 1
-%         dCorrectedAnnual(dCorrectedAnnual > 0.04) = nan;
-%     end
-%     ddad = movmean(dCorrectedAnnual',[6 0],'omitnan');
-%     % ddad = diff(dCorrectedAnnual');
-%     [~,order1] = sort(ddad(end,:),'descend');
-%     co1 = t.Country(order1);
-%     co = hsv(10);
-%     co(3,:) = co(3,:)*0.75;
-%     co(4,2) = 0.7;
-%     figure;
-%     plot(date,100*movmean(ddad(:,order1),[0 6],'omitnan'),'Color',[0.65 0.65 0.65])
-%     hold on
-%     h2 = plot(date,100*movmean(ddad(:,order1(11:20)),[0 6],'omitnan'));
-%     h1 = plot(date,100*movmean(ddad(:,order1(1:10)),[0 6],'omitnan'),'LineWidth',2);
-%     for ic = 1:10
-%         h1(ic).Color = co(ic,:);
-%         h2(ic).Color = co(ic,:);
-%     end
-%     
-%     if ii == 1
-%         ylim([0 1])
-%         %     else
-%         %         ylim([0 145])
-%     end
-%     xlim([datetime(2020,3,1) datetime('tomorrow')])
-%     xtickformat('MMM')
-%     set(gca,'XTick',datetime(2020,1:25,1),'FontSize',13)
-%     ylabel('% annual deaths')
-%     box off
-%     grid on
-%     title('Daily excess mortality (%) תמותה עודפת יומית ')
-%     set(gcf,'Color','w')
-%     if ii == 2
-%         dateC = datetime(toC.DataUntil,'InputFormat','MMM dd, yyyy');
-%         for ic = 1:10
-%             hhLast(ic) = plot(dateC(ic),toC.ExcessAs_OfAnnualBaseline(ic),'*',...
-%                 'Color',co(ic,:),'MarkerSize',10);
-%             %             h1(ic).Color = co(ic,:);
-%             %             h2(ic).Color = co(ic,:);
-%         end
-%     end
-%     legend([h1;h2],co1(1:20),'location','northwest');
-% end
-
+yy(:,:,3) = yy(:,:,2);
 %%
 % dateC = datetime(toC.DataUntil,'InputFormat','MMM dd, yyyy');
 for iii = 1:height(toC)
@@ -179,7 +122,7 @@ for iii = 1:height(toC)
     end
 end
 acuYH(acuYH <= 0) = 1;
-for ii = 1:2
+for ii = 1:3
     % ii = 2;
     dDeathsCorrected = yy(:,idxD,ii)'.*acuYH;
     dCorrectedAnnual = dDeathsCorrected./annualDeath;
@@ -192,13 +135,16 @@ for ii = 1:2
         ddad(end,replace) = ddad(end-1,replace);
         ddad(end,isnan(ddad(end,:))) = 0;
     end
-    
-    % ddad = diff(dCorrectedAnnual');
-    [~,order2] = sort(ddad(end,:),'descend');
+    if ii == 3
+        orderNext = order2;
+        order2 = order1st;
+    else
+        [~,order2] = sort(ddad(end,:),'descend');
+    end
+    if ii == 1
+        order1st = order2;
+    end
     co2 = t.Country(order2);
-    %     co = hsv(10);
-    %     co(3,:) = co(3,:)*0.75;
-    %     co(4,2) = 0.7;
     figure;
     plot(date,100*ddad(:,order2),'Color',[0.65 0.65 0.65])
     hold on
@@ -208,11 +154,8 @@ for ii = 1:2
         h1(ic).Color = co(ic,:);
         h2(ic).Color = co(ic,:);
     end
-    
     if ii == 1
         ylim([0 1])
-        %     else
-        %         ylim([0 145])
     end
     xlim([datetime(2020,3,1) datetime('tomorrow')])
     xtickformat('MMM')
@@ -226,7 +169,8 @@ for ii = 1:2
         title('Excess mortality (%) תמותה עודפת ')
     end
     set(gcf,'Color','w')
-    if ii == 2
+    
+    if ii > 1
         dateCC = datetime(t.DataUntil(order2),'InputFormat','MMM dd, yyyy');
         for ic = 1:10
             hhLast(ic) = plot(dateCC(ic),t.ExcessAs_OfAnnualBaseline(order2(ic)),'*',...
@@ -234,12 +178,15 @@ for ii = 1:2
             hhLast(ic+10) = plot(dateCC(ic+10),t.ExcessAs_OfAnnualBaseline(order2(ic+10)),'*',...
                 'Color',co(ic,:),'MarkerSize',10);
         end
+        h3 = plot(dateCC(1),nan,'*k','MarkerSize',10);
+        legend([h1;h2;h3],[co2(1:20);{'Last reported excess mortality'}],'location','northwest');
+    else
+        legend([h1;h2],co2(1:20),'location','northwest');
     end
-    legend([h1;h2],co2(1:20),'location','northwest');
 end
 % end
 %%
-toyh = t(order2,:);
+toyh = t(orderNext,:);
 west = find(contains(toyh.Country,{'Marino','Andorra','USA','Italy','Liech','Spain','UK','Portugal','France',...
     'Ireland','Canada',...
     'Belgium','Swit','Swed','Netherl','Austria','Luxem','Denmark','German','Icel','Finl','Norw','Gibraltar'}));
@@ -254,7 +201,7 @@ figure;
 clear hh
 for ii = 1:length(indi)
     y = nan(height(toyh),1);
-    y(indi{ii}) = ddad(end,order2(indi{ii}));  % toyh.correctedAnnual(indi{ii});
+    y(indi{ii}) = ddad(end,orderNext(indi{ii}));  % toyh.correctedAnnual(indi{ii});
     hh(ii) = bar(y*100);
     hold on
     hh(ii).EdgeColor = 'none';
@@ -268,3 +215,5 @@ title('Excess mortality as % of annual deaths (projected to today)')
 set(gcf,'Color','w')
 set(gca,'YTick',0:10:140,'YGrid','on')
 box off
+
+%% 
