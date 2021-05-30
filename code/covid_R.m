@@ -15,7 +15,7 @@ days = 7;
 rr = mm(days+1:end)./mm(1:end-days);
 
 %%
-pow = 0.685;
+pow = 0.65;
 shift = 3;
 figure;
 yyaxis left
@@ -53,16 +53,44 @@ ylim([0 3])
 grid on
 set(gca,'FontSize',13)
 ylabel('R estimate')
-% positive = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedPerDate');
-% positive = jsondecode(positive);
-% positive = struct2table(positive);
-% Rpos = (positive.sum(days+1:end)./ positive.sum(1:end-days)).^pow;
 
 
-% figure;plot([rr(end-10:end).^pow,R(end-10:end)])
-% ff = -1;
-% rme = (0.1+0.9*rr(end-(110):end)).^0.90;
-% rdb = R(end-120-ff:end-10-ff);
+
+%%
+figure;
+yyaxis left
+% plot(date,R,'LineWidth',2)
+% hold on;
+Rest = rr.^pow;
+t = listD.date(1)-shift:listD.date(end)-days-shift;
+date1 = dateshift(datetime('today'),'start','week')-22;
+i1 = find(ismember(t,date1));
+plot(t(i1:end),Rest(i1:end),'b','LineWidth',2,'Marker','o','MarkerFaceColor',...
+    'b','MarkerEdgeColor','none')
+iD1 = find(ismember(listD.date,date1));
+ylim([-1 2])
+ylabel('R')
+yyaxis right
+bar(listD.date(iD1:end),listD.tests_positive(iD1:end),'FaceColor',[0.8 0.8 0.8])
+hold on
+bar(listD.date(end-6:end),listD.tests_positive(end-6:end),'FaceColor',[0.8 0.2 0.2])
+bar(listD.date(end-13:end-7),listD.tests_positive(end-13:end-7),'FaceColor',[0.8 0.5 0.5])
+ylim([0 100])
+ylabel('Cases')
+
+
 % figure;
-% plot([rme,rdb])
-% n = log10(rdb)./log10(rme);
+% for ii = 1:7
+%     plot(t(i1+ii-1:7:end),Rest(i1+ii-1:7:end),'.','LineWidth',2)
+%     hold on
+% end
+% plot(listD.date,listD.tests_positive,':')
+% ylim([0 10000])
+% xtickformat('MMM')
+% set(gca,'xtick',datetime(2020,4:30,1))
+% set(gcf,'Color','w')
+% title('cases vs R מאומתים מול')
+% ylabel('Cases')
+% xlim([datetime(2020,6,1) datetime('tomorrow')])
+% legend('R','R estimate','cases','location','north')
+% grid on
