@@ -22,7 +22,7 @@ subplot(2,1,2)
 yy = ncba{:,2:4}./sum(ncba{:,2:4},2)*100;
 h2 = plot(ncba.date,yy,'.');
 hold on
-h3 = plot(ncba.date,movmean(yy,[3 3]));
+h3 = plot(ncba.date,movmean(yy,[3 3],'omitnan'));
 for ii = 1:3
     h2(ii).Color = col3(ii,:);
     h3(ii).Color = col3(ii,:);
@@ -41,7 +41,7 @@ hcc(1) = scatter(listD.date,listD.CountDeath,'.','MarkerEdgeColor',[0,0,0],'Mark
 hold on
 hcc(2) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3]),'-','Color',[0,0,0],'linewidth',1.5);
 ylabel('נפטרים')
-hcc(3) = plot(ncba.date+7,movmean(ncba.over60,[3 3])*0.47,'-','Color',col3(1,:),'linewidth',1.5);
+hcc(3) = plot(ncba.date+7,movmean(ncba.over60,[3 3],'omitnan')*0.47,'-','Color',col3(1,:),'linewidth',1.5);
 grid on
 legend(hcc([2:3]),['נפטרים',' deceased'],['צפי לפי ','prediction by >60'],'location','northwest')
 set(gcf,'Color','w')
@@ -87,8 +87,9 @@ xtickformat('dd/MM')
 
 
 %%
-
-yyy = cumsum(ncba{:,2:4});
+yyyy = ncba{:,2:4};
+yyyy(isnan(yyyy)) = 0;
+yyy = cumsum(yyyy);
 
 dateWeek = datetime(2021,1,5:7:300);
 dateWeek(dateWeek > datetime('today')-3) = [];
