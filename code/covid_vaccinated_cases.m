@@ -3,7 +3,16 @@ cd /home/innereye/covid-19-israel-matlab/data/Israel
 % strfind(txt,'csv')
 %  ! wget -O tmp.csv https://data.gov.il/dataset/covid-19/resource/9b623a64-f7df-4d0c-9f57-09bd99a88880/download/cases-among-vaccinated-10.csv
 % cases = readtable('tmp.csv','Delimiter',',');
-cases = readtable('~/Downloads/cases-among-vaccinated-10.csv','Delimiter',',');
+json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=9b623a64-f7df-4d0c-9f57-09bd99a88880&limit=1000');
+json = jsondecode(json);
+t = struct2table(json.result.records);
+t = t(:,2:end);
+t.Properties.VariableNames = {'x_Week','Age_group','positive_1_6_days_after_1st_dose','positive_7_13_days_after_1st_dose','positive_14_20_days_after_1st_dose','positive_above_20_days_after_1st_dose','positive_1_6_days_after_2nd_dose','positive_7_13_days_after_2nd_dose','positive_14_20_days_after_2nd_dose','positive_above_20_days_after_2nd_dose','Sum_positive_without_vaccination'};
+cases = t;
+for ii = 2:size(cases,2)
+    cases{cellfun(@isempty, cases{:,ii}),ii} = {''};
+end
+% cases = readtable('~/Downloads/cases-among-vaccinated-10.csv','Delimiter',',');
 weekk = unique(cases.x_Week);
 clear y
 for ii = 1:length(weekk)
@@ -52,6 +61,13 @@ json = jsondecode(json);
 t = struct2table(json);
 date = datetime(strrep(t.Day_Date,'T00:00:00.000Z',''));
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
+
+for ii = 11  % 3:size(cases,2)
+    cases{cellfun(@isempty, cases{:,ii}),ii} = {'0'};
+%     cases{:,ii} = strrep(cases{:,ii},'','0');
+    cases{:,ii} = strrep(cases{:,ii},'<5','2.5');
+    eval(['cases.',cases.Properties.VariableNames{ii},' = cellfun(@str2num,cases{:,ii});'])
+end
 
 clear eff
 for ii = 1:length(weekk)
