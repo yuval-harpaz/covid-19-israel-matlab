@@ -184,8 +184,10 @@ if eng
         cr = ismember(countryHeb(:,1),ht(it).String);
         ht(it).String = countryHeb{[false(size(cr)),cr]};
     end
-    coco = ht(21).String(1:find(ismember(ht(21).String,'('),1)-1);
-    cr = ismember(countryHeb(:,1),coco);
-    coco1 = countryHeb{[false(size(cr)),cr]};
-    ht(21).String = strrep(ht(21).String,coco,coco1);
+    if length(ht) > 20
+        coco = ht(21).String(1:find(ismember(ht(21).String,'('),1)-1);
+        cr = ismember(countryHeb(:,1),coco);
+        coco1 = countryHeb{[false(size(cr)),cr]};
+        ht(21).String = strrep(ht(21).String,coco,coco1);
+    end
 end
