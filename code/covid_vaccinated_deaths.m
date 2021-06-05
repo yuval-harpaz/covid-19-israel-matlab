@@ -1,3 +1,4 @@
+
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=8a51c65b-f95a-4fb8-bd97-65f47109f41f&limit=100000');
 json = jsondecode(json);
 t = struct2table(json.result.records);
@@ -21,7 +22,7 @@ vaccA.Properties.VariableNames{2} = 'date';
 vaccA = vaccA(order,:);
 ages = unique(vaccA.age_group);
 
-iAge = 6:9;
+
 vaccX = vaccA(ismember(vaccA.age_group,ages(iAge)),:);
 population = [2777000*1.02+591000;1318000;1206000;1111000;875000;749000;531000;308000];
 pop = sum(population(iAge(1):end));
