@@ -29,7 +29,7 @@ text(abroad.date-0.4,sum(abroad{:,4:5},2)+10,cellstr(str(abroad{:,5})),'Color','
 
 %%
 figure;
-yy = abroad{:,5}./abroad{:,4}*100;
+yy = abroad{:,5}./(abroad{:,4}+abroad{:,5})*100;
 yys = nan(size(yy));
 idx = ~isnan(yy);
 yys(idx) = movmean(yy(idx),[3 3]);

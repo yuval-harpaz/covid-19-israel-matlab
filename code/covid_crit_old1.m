@@ -97,17 +97,36 @@ dateWeek(dateWeek > datetime('today')-3) = [];
 for iDate = 1:length(dateWeek)
     week (iDate,1:3) = yyy(ncba.date == dateWeek(iDate)+3,:)-yyy(ncba.date == dateWeek(iDate)+3-7,:);
 end
-figure('units','normalized','position',[0.1,0.1,0.4,0.5]);
+figure('units','normalized','position',[0.1,0.1,0.5,1]);
+subplot(2,1,1)
 h5 = bar(dateWeek,fliplr(week),'EdgeColor','none');
 colGov = flipud([0.855,0.122,0.169;0.141,0.627,0.216;1,0.49,0.157]);
 for ii = 1:3
     h5(ii).FaceColor = colGov(ii,:);
 end
-legend(flipud(h5),'0-39','40-59','60+','location','west');
+legend(flipud(h5),'0-39','40-59','60+','location','northeast');
 grid on
 title({'חולים חדשים במצב קשה','New severe patients'})
 set(gca,'XTick',dateWeek)
 xtickangle(45)
 xtickformat('yyyy-MM-dd')
 set(gcf,'Color','w')
+
+subplot(2,1,2)
+h5 = bar(dateWeek,fliplr(week),'EdgeColor','none');
+colGov = flipud([0.855,0.122,0.169;0.141,0.627,0.216;1,0.49,0.157]);
+for ii = 1:3
+    h5(ii).FaceColor = colGov(ii,:);
+end
+legend(flipud(h5),'0-39','40-59','60+','location','northeast');
+grid on
+title({'חולים חדשים במצב קשה (סולם לוגריתמי)','New severe patients (log scale)'})
+
+xtickangle(45)
+xtickformat('yyyy-MM-dd')
+set(gcf,'Color','w')
+ax = gca;
+ax.YRuler.Exponent = 0;
+ax.YAxis.TickLabelFormat = '%,.0g';
+set(gca,'XTick',dateWeek,'yscale','log','YTickLabel',{'1','10','100','1000'})
 % xtickformat('MMM')
