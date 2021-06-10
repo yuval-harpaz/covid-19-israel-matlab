@@ -17,7 +17,13 @@ mm = movmean(listD.tests_positive,[6 0]);
 % mm = floor(movmean(listD.tests_positive,[6 0]));
 days = 7;
 rr = mm(days+1:end)./mm(1:end-days);
-
+abroad = readtable('~/covid-19-israel-matlab/data/Israel/infected_abroad.xlsx');
+if sum(abroad{end,4:6}) == 0
+    abroad(end,:) = [];
+end
+% abroad(end,:) = [];
+Ra = movmean(abroad.local,[6 0]);
+Ra = Ra(days+1:end)./Ra(1:end-days);
 %%
 pow = 0.65;
 shift = 3;
@@ -26,6 +32,8 @@ yyaxis left
 plot(date,R,'LineWidth',2)
 hold on;
 plot(listD.date(1)-shift:listD.date(end)-days-shift,rr.^pow,':k','LineWidth',1.5)
+plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Ra.^pow,'g-','LineWidth',1.5)
+
 ylim([0 2])
 ylabel('R')
 yyaxis right
@@ -39,7 +47,7 @@ set(gcf,'Color','w')
 title('cases vs R מאומתים מול')
 ylabel('Cases')
 xlim([datetime(2020,6,1) datetime('tomorrow')])
-legend('R','R estimate','cases','location','north')
+legend('R (dashboard)','R (estimate)','R (local)','cases','location','north')
 grid on
 % title(pow)
 %%
@@ -57,7 +65,6 @@ ylim([0 3])
 grid on
 set(gca,'FontSize',13)
 ylabel('R estimate')
-
 
 
 %%

@@ -90,3 +90,5 @@ set(gca,'XTick',xt)
 grid on
 xlim([abroad.date(1)-1,abroad.date(end)+1])
 set(gcf,'Color','w')
+
+RR = (sum(abroad.local(end-7:end-1))/sum(abroad.local(end-14:end-8)))^0.65;
