@@ -128,5 +128,6 @@ set(gcf,'Color','w')
 ax = gca;
 ax.YRuler.Exponent = 0;
 ax.YAxis.TickLabelFormat = '%,.0g';
-set(gca,'XTick',dateWeek,'yscale','log','YTickLabel',{'1','10','100','1000'})
+ylim([0.1 1000])
+set(gca,'XTick',dateWeek,'yscale','log','YTickLabel',{'0.1','1','10','100','1000'})
 % xtickformat('MMM')

@@ -10,6 +10,9 @@ if extra > 0
 end
 abroad.tests = listD.tests;
 abroad.positive = listD.tests_positive;
+if sum(abroad{end,4:5}) == 0
+    abroad(end,:) = [];
+end
 writetable(abroad,'infected_abroad.xlsx')
 %%
 
