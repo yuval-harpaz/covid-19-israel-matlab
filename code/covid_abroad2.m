@@ -95,3 +95,61 @@ xlim([abroad.date(1)-1,abroad.date(end)+1])
 set(gcf,'Color','w')
 
 RR = (sum(abroad.local(end-7:end-1))/sum(abroad.local(end-14:end-8)))^0.65;
+
+%%
+pow = 0.65;
+shift = 3;
+days = 7;
+abroad = readtable('~/covid-19-israel-matlab/data/Israel/infected_abroad.xlsx');
+if sum(abroad{end,4:6}) == 0
+    abroad(end,:) = [];
+end
+% abroad(end,:) = [];
+Rl = movmean(abroad.local,[6 0]);
+Rl = Rl(days+1:end)./Rl(1:end-days);
+Ra = movmean(abroad.incoming,[6 0]);
+Ra = Ra(days+1:end)./Ra(1:end-days);
+Rb = movmean(abroad.local+abroad.incoming,[6 0]);
+Rb = Rb(days+1:end)./Rb(1:end-days);
+iD2 = length(Rb)-3;
+%%
+figure('units','normalized','position',[0.3,0.3,0.5,0.5]);
+yyaxis left
+% plot(date,R,'LineWidth',2)
+% hold on;
+% plot(listD.date(1)-shift:listD.date(end)-days-shift,rr.^pow,':k','LineWidth',1.5)
+h(1) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rl.^pow,'g-','LineWidth',1.5);
+hold on
+h(2) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Ra.^pow,'r-','LineWidth',1.5);
+h(3) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rb.^pow,'k-','LineWidth',1.5);
+ylim([-3 3])
+set(gca,'YTick',-3:0.25:3,'YTickLabel',[repmat({'     '},12,1);cellstr(str((0:0.25:3)'))])
+ylabel R
+yyaxis right
+bar(abroad.date,abroad.local,'FaceColor',[0.8 0.8 0.8],'FaceAlpha',0.5)
+hold on
+bar(abroad.date,-abroad.incoming,'FaceColor',[0.5 0.5 0.5],'FaceAlpha',0.5)
+idx = iD2+4:iD2+4+6;
+h(4) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.2 0.8 0.2]);
+h(5) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.2 0.2]);
+idx = iD2-3:iD2+3;
+h(6) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.5 0.8 0.5]);
+h(7) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.5 0.5]);
+
+ylim([-60 60])
+ylabel('Cases')
+% 
+% text(x,repmat(5,length(x),1),str(listD.tests_positive(iD1:end-1)))
+a = sum(abroad.local(iD2+4:iD2+4+6));
+b = sum(abroad.local(iD2-3:iD2+3));
+c = sum(abroad.incoming(iD2+4:iD2+4+6));
+d = sum(abroad.incoming(iD2-3:iD2+3));
+text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[10 10],{str(b),str(a)},'FontSize',15)
+text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[-10 -10],{str(d),str(c)},'FontSize',15)
+xtickformat('dd/MM')
+set(gca,'XTick',abroad.date)
+xtickangle(90)
+grid on
+xlim(datetime('today')-[35,0])
+legend(h, 'R local','R incoming','R all','local this week','incoming this week',...
+    'local last week','incoming last week','location','southwest')
