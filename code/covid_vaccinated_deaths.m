@@ -22,7 +22,7 @@ vaccA.Properties.VariableNames{2} = 'date';
 vaccA = vaccA(order,:);
 ages = unique(vaccA.age_group);
 
-
+iAge = 6:9;
 vaccX = vaccA(ismember(vaccA.age_group,ages(iAge)),:);
 population = [2777000*1.02+591000;1318000;1206000;1111000;875000;749000;531000;308000];
 pop = sum(population(iAge(1):end));

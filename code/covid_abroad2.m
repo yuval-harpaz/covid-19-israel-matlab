@@ -58,7 +58,7 @@ yys(1:find(~isnan(yy),1)) = nan;
 figure;
 % plot(abroad.date,yy,'.','Color',[0.85, 0.247, 0.239])
 hold on
-hl(1) = plot(abroad.date,yys,'Color',[0.85, 0.247, 0.239],'linewidth',1)
+hl(1) = plot(abroad.date,yys,'Color',[0.85, 0.247, 0.239],'linewidth',1);
 
 yy = (abroad{:,3}-abroad{:,5})./(abroad{:,2}-abroad{:,6})*100;
 % yys = nan(size(yy));
@@ -122,9 +122,21 @@ h(1) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rl.^pow,'g-','LineW
 hold on
 h(2) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Ra.^pow,'r-','LineWidth',1.5);
 h(3) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rb.^pow,'k-','LineWidth',1.5);
-ylim([-3 3])
-set(gca,'YTick',-3:0.25:3,'YTickLabel',[repmat({'     '},12,1);cellstr(str((0:0.25:3)'))])
+ylim([-2 4])
+set(gca,'YTick',-3:0.5:3.5,'YTickLabel',[repmat({'     '},6,1);cellstr(str((0:0.5:3.5)'))])
+
+a = sum(abroad.local(iD2+4:iD2+4+6));
+b = sum(abroad.local(iD2-3:iD2+3));
+c = sum(abroad.incoming(iD2+4:iD2+4+6));
+d = sum(abroad.incoming(iD2-3:iD2+3));
 ylabel R
+y = round(Rl(end).^pow,2);
+text(abroad.date(iD2)+0.5,y,[str(y),'=(',str(a),'/',str(b),')^0^.^6^5'],'Color',[0.2,0.7,0.2])
+y = round(Ra(end).^pow,2);
+text(abroad.date(iD2)+0.5,y,[str(y),'=(',str(c),'/',str(d),')^0^.^6^5'],'Color',[0.7,0.2,0.2])
+y = round(Rb(end).^pow,2);
+text(abroad.date(iD2)+0.5,y,[str(y),'=(',str(a+c),'/',str(b+d),')^0^.^6^5'])
+
 yyaxis right
 bar(abroad.date,abroad.local,'FaceColor',[0.8 0.8 0.8],'FaceAlpha',0.5)
 hold on
@@ -136,20 +148,17 @@ idx = iD2-3:iD2+3;
 h(6) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.5 0.8 0.5]);
 h(7) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.5 0.5]);
 
-ylim([-60 60])
+ylim([-80 160])
 ylabel('Cases')
 % 
 % text(x,repmat(5,length(x),1),str(listD.tests_positive(iD1:end-1)))
-a = sum(abroad.local(iD2+4:iD2+4+6));
-b = sum(abroad.local(iD2-3:iD2+3));
-c = sum(abroad.incoming(iD2+4:iD2+4+6));
-d = sum(abroad.incoming(iD2-3:iD2+3));
-text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[10 10],{str(b),str(a)},'FontSize',15)
-text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[-10 -10],{str(d),str(c)},'FontSize',15)
+
+text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[30 30],{str(b),str(a)},'FontSize',15)
+text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[-30 -30],{str(d),str(c)},'FontSize',15)
 xtickformat('dd/MM')
-set(gca,'XTick',abroad.date)
+set(gca,'XTick',abroad.date,'YTick',-120:20:120,'YTickLabel',strrep(cellstr(str((-120:20:120)')),'-',''))
 xtickangle(90)
 grid on
 xlim(datetime('today')-[35,0])
 legend(h, 'R local','R incoming','R all','local this week','incoming this week',...
-    'local last week','incoming last week','location','southwest')
+    'local last week','incoming last week','location','north')
