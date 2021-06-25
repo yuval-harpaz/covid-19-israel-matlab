@@ -142,8 +142,8 @@ bar(abroad.date,abroad.local,'FaceColor',[0.8 0.8 0.8],'FaceAlpha',0.5)
 hold on
 bar(abroad.date,-abroad.incoming,'FaceColor',[0.5 0.5 0.5],'FaceAlpha',0.5)
 idx = iD2+4:iD2+4+6;
-h(4) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.2 0.8 0.2]);
-h(5) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.2 0.2]);
+h(4) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.2 0.65 0.2]);
+h(5) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.65 0.2 0.2]);
 idx = iD2-3:iD2+3;
 h(6) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.5 0.8 0.5]);
 h(7) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.5 0.5]);
@@ -162,3 +162,4 @@ grid on
 xlim(datetime('today')-[35,0])
 legend(h, 'R local','R incoming','R all','local this week','incoming this week',...
     'local last week','incoming last week','location','north')
+title('cases by source for the last 2 weeks   מאומתים לפי מקור הדבקה לשבועיים האחרונים')
