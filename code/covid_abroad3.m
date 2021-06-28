@@ -49,51 +49,6 @@ set(gcf,'Color','w')
 xlim(abroad.date([1,end]))
 
 
-%%
-% yy = abroad{:,5}./abroad{:,6}*100;
-% % yys = nan(size(yy));
-% % idx = ~isnan(yy);
-% yys = movmean(yy,[3 3],'omitnan');
-% yys(1:find(~isnan(yy),1)) = nan;
-% figure;
-% % plot(abroad.date,yy,'.','Color',[0.85, 0.247, 0.239])
-% hold on
-% hl(1) = plot(abroad.date,yys,'Color',[0.85, 0.247, 0.239],'linewidth',1);
-% 
-% yy = (abroad{:,3}-abroad{:,5})./(abroad{:,2}-abroad{:,6})*100;
-% % yys = nan(size(yy));
-% % idx = ~isnan(yy);
-% yys = movmean(yy,[3 3],'omitnan');
-% yys(1:find(~isnan(yy),1)) = nan;
-% % plot(abroad.date,yy,'.','Color',[0.847, 0.435, 0.227],'MarkerSize',10)
-% hold on
-% hl(2) = plot(abroad.date,yys,'Color',[0.847, 0.435, 0.227],'linewidth',2);
-% legend(hl(2:-1:1),'local     מקומי','abroad   חו"ל')
-% ylim([0 1])
-% grid on
-% title('positive tests (%) בדיקות חיוביות')
-% set(gca,'XTick',xt)
-% ylabel('%')
-% % ylabel('%')
-% set(gcf,'Color','w')
-% xlim([abroad.date(12),abroad.date(end)+1])
-%%
-% figure;
-% yyaxis left
-% h3 = bar(abroad.date-0.1,abroad{:,6});
-% ylim([0 6000])
-% % h3.FaceColor = [0.847, 0.435, 0.227];
-% yyaxis right
-% h4 = bar(abroad.date+0.1,abroad{:,5});
-% ylim([0 60])
-% 
-% title({'בדיקות ותוצאות חיוביות לבאים מחו"ל','tests and cases for incoming passengers'})
-% legend('tests     בדיקות','positive   חיוביים','location','northwest')
-% set(gca,'XTick',xt)
-% grid on
-% xlim([abroad.date(1)-1,abroad.date(end)+1])
-% set(gcf,'Color','w')
-
 RR = (sum(abroad.local(end-7:end-1))/sum(abroad.local(end-14:end-8)))^0.65;
 
 %%
@@ -113,8 +68,14 @@ Rb = movmean(abroad.local+abroad.incoming,[6 0]);
 Rb = Rb(days+1:end)./Rb(1:end-days);
 iD2 = length(Rb)-3;
 %%
+
+mxR = 6;
+xt = -mxR/3:0.5:mxR;
+xtl = cellstr(str((0:0.5:mxR)'));
+xtl = [repmat({'     '},length(xt)-length(xtl),1);xtl];
+
 figure('units','normalized','position',[0.3,0.3,0.5,0.5]);
-yyaxis left
+yyaxis right
 % plot(date,R,'LineWidth',2)
 % hold on;
 % plot(listD.date(1)-shift:listD.date(end)-days-shift,rr.^pow,':k','LineWidth',1.5)
@@ -122,8 +83,9 @@ h(1) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rl.^pow,'g-','LineW
 hold on
 h(2) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Ra.^pow,'r-','LineWidth',1.5);
 h(3) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rb.^pow,'k-','LineWidth',1.5);
-ylim([-2 4])
-set(gca,'YTick',-3:0.5:3.5,'YTickLabel',[repmat({'     '},6,1);cellstr(str((0:0.5:3.5)'))])
+ylim([xt(1) xt(end)])
+
+set(gca,'YTick',xt,'YTickLabel',xtl)
 
 a = sum(abroad.local(iD2+4:iD2+4+6));
 b = sum(abroad.local(iD2-3:iD2+3));
@@ -137,7 +99,7 @@ text(abroad.date(iD2)+0.5,y,[str(y),'=(',str(c),'/',str(d),')^0^.^6^5'],'Color',
 y = round(Rb(end).^pow,2);
 text(abroad.date(iD2)+0.5,y,[str(y),'=(',str(a+c),'/',str(b+d),')^0^.^6^5'])
 
-yyaxis right
+yyaxis left
 bar(abroad.date,abroad.local,'FaceColor',[0.8 0.8 0.8],'FaceAlpha',0.5)
 hold on
 bar(abroad.date,-abroad.incoming,'FaceColor',[0.5 0.5 0.5],'FaceAlpha',0.5)
@@ -148,7 +110,9 @@ idx = iD2-3:iD2+3;
 h(6) = bar(abroad.date(idx),abroad.local(idx),'FaceColor',[0.5 0.8 0.5]);
 h(7) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.5 0.5]);
 
-ylim([-80 160])
+yopt = 240:60:2400;
+ie = yopt(find(yopt > max(abroad.local(end-32:end)),1));
+ylim([-ie/3 ie])
 ylabel('Cases')
 % 
 % text(x,repmat(5,length(x),1),str(listD.tests_positive(iD1:end-1)))
@@ -156,10 +120,11 @@ ylabel('Cases')
 text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[30 30],{str(b),str(a)},'FontSize',15)
 text([abroad.date(iD2),abroad.date(iD2)+7]-0.52,[-30 -30],{str(d),str(c)},'FontSize',15)
 xtickformat('dd/MM')
-set(gca,'XTick',abroad.date,'YTick',-120:20:120,'YTickLabel',strrep(cellstr(str((-120:20:120)')),'-',''))
+
+set(gca,'XTick',abroad.date,'YTick',-120:20:ie,'YTickLabel',strrep(cellstr(str((-120:20:ie)')),'-',''))
 xtickangle(90)
 grid on
 xlim(datetime('today')-[35,0])
 legend(h, 'R local','R incoming','R all','local this week','incoming this week',...
-    'local last week','incoming last week','location','north')
+    'local last week','incoming last week','location','northwest')
 title('cases by source for the last 2 weeks   מאומתים לפי מקור הדבקה לשבועיים האחרונים')

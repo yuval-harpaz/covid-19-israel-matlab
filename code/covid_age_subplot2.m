@@ -45,17 +45,18 @@ for iList = 1:4
         
         plot(date,yy(:,idx(ip,:)-1));
         legend(strrep(strrep(ag.Properties.VariableNames(idx(ip,:)),'_',' '),'x',''),'Location','northwest');
-        xtickformat('MMM');
+        xtickformat('dd/MM');
         xlim([datetime(2021,4,19) datetime('tomorrow')]);
         grid on;
         box off
+        ylim([0 145])
         %     subplot(1,2,2)
         %     idx = 7:11;
         %     plot(agDate,ag{:,idx});legend(strrep(strrep(ag.Properties.VariableNames(idx),'_',' '),'x',''));xtickformat('MMM');xlim([datetime(2020,10,1) datetime('tomorrow')]);grid on;box off
         title({[tit{1,iList},' ',agetit{1,ip}],[tit{2,iList},' - ',agetit{2,ip}]})
         if iList > 1  % == 1 && iList == 4
-            bar(date,yy(:,idx(ip,:)-1),3);
-            ylim([0 10])
+            bar(date,yy(:,idx(ip,:)-1),1,'stacked','EdgeColor','none');
+            ylim([0 25])
             legend(strrep(strrep(ag.Properties.VariableNames(idx(ip,:)),'_',' '),'x',''),'Location','northwest');
             xtickformat('MMM');
             xlim([datetime(2021,4,19) datetime('tomorrow')]);
