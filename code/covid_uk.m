@@ -3,6 +3,17 @@ if nargin == 0
     plt = true;
 end
 
+%%
+!wget -O tmp.csv https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAdmissions&format=csv
+!google-chrome --new-window https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAdmissions&format=csv
+
+!google-chrome --new-window https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAntibodyTestsByPublishDate&metric=newCasesByPublishDate&metric=newOnsDeathsByRegistrationDate&metric=newCasesBySpecimenDate&format=csv
+t = readtable('tmp.csv')
+
+
+%%
+
+
 
 cd ~/covid-19-israel-matlab/
 % https://data.london.gov.uk/dataset/coronavirus--covid-19--deaths
