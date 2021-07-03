@@ -4,13 +4,15 @@ if nargin == 0
 end
 
 %%
-!wget -O tmp.csv https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAdmissions&format=csv
-!google-chrome --new-window https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAdmissions&format=csv
-
-!google-chrome --new-window https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAntibodyTestsByPublishDate&metric=newCasesByPublishDate&metric=newOnsDeathsByRegistrationDate&metric=newCasesBySpecimenDate&format=csv
-t = readtable('tmp.csv')
-
-
+% !wget -O tmp.csv https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAdmissions&format=csv
+% !google-chrome --new-window https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAdmissions&format=csv
+% 
+% !google-chrome --new-window https://api.coronavirus.data.gov.uk/v2/data?areaType=overview&metric=newAntibodyTestsByPublishDate&metric=newCasesByPublishDate&metric=newOnsDeathsByRegistrationDate&metric=newCasesBySpecimenDate&format=csv
+% t = readtable('tmp.csv')
+%% age data
+% https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/bulletins/coronaviruscovid19infectionsurveypilot/latest
+% https://www.ons.gov.uk/visualisations/dvc1456/age/datadownload.xlsx
+% look for  "Equivalent downloads for age demographic of cases"  in https://coronavirus.data.gov.uk/details/download 
 %%
 
 
