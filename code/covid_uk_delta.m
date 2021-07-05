@@ -1,3 +1,11 @@
+%% age data
+% https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/bulletins/coronaviruscovid19infectionsurveypilot/latest
+% https://www.ons.gov.uk/visualisations/dvc1456/age/datadownload.xlsx
+% look for  "Equivalent downloads for age demographic of cases"  in https://coronavirus.data.gov.uk/details/download 
+% hospitalizations as % age    https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/conditionsanddiseases/articles/coronaviruscovid19/latestinsights#hospitalisations
+
+%%
+
 % age = readtable('~/Downloads/UK.csv','ReadVariableNames',true);
 hosp = readtable('~/Downloads/data_2021-Jul-02.csv');
 age = readtable('~/Downloads/nation_E92000001_2021-07-03.csv');
@@ -55,5 +63,30 @@ ag{end} = '90+';
 legend(fliplr(h3),fliplr(ag))
 set(gca,'ygrid','on','XTickLabel',{'18.10.20','09.12.20','28.06.21'})
 xlim([0 5])
+
+
+%% 
+hospa = readtable('~/Downloads/Covid-Publication-10-06-2021-Supplementary-Data.xlsx','Range','D16:IG23','ReadVariableNames',false)
+datea = readtable('~/Downloads/Covid-Publication-10-06-2021-Supplementary-Data.xlsx','Range','D13:IG13','ReadVariableNames',false)
+datea = datea{1,:}'
+hospa = hospa{:,:}';
+hospAge = {'0-5','6-17','18-54','55-64','65-74','75-84','85+'}';
+
+%% 
+hospp = readtable('~/Downloads/hospp.xlsx','Range','B3:U10','ReadVariableNames',false);
+hospp = hospp{:,:}';
+dateH = readtable('~/Downloads/hospp.xlsx','Range','B2:U2','ReadVariableNames',false);
+dateH = dateH{1,:}';
+deathsp = readtable('~/Downloads/hospp.xlsx','Range','B15:T21','ReadVariableNames',false);
+deaths = sum(deathsp{:,:})';
+dateD = readtable('~/Downloads/hospp.xlsx','Range','B14:T14','ReadVariableNames',false);
+dateD = dateD{1,:}';
+
+figure;
+plot(dateH,hospp.*100)
+hold on
+plot(dateD,deaths,'k')
+
+
 % xlim([datetime(2020,8,1) datetime('tomorrow')])
 % date(idx)
