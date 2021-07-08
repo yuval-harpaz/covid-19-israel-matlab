@@ -90,3 +90,30 @@ plot(dateD,deaths,'k')
 
 % xlim([datetime(2020,8,1) datetime('tomorrow')])
 % date(idx)
+
+%%
+% sample = readtable('~/Downloads/Covid-Publication-08-07-2021-Supplementary-Data.xlsx','Range','D16:KK16','ReadVariableNames',false);
+% Ncol = find(
+hospa = readtable('~/Downloads/Covid-Publication-08-07-2021-Supplementary-Data.xlsx','Range','D16:JI23','ReadVariableNames',false)
+datea = readtable('~/Downloads/Covid-Publication-08-07-2021-Supplementary-Data.xlsx','Range','D13:JI13','ReadVariableNames',false)
+datea = datea{1,:}';
+hospa = hospa{:,:}';
+hospAge = {'0-5','6-17','18-54','55-64','65-74','75-84','85+'}';
+
+figure;
+yyaxis left
+% h = bar(datea,hospa,1,'stacked','EdgeColor','none');
+h = bar(datea,[sum(hospa(:,1:3),2),sum(hospa(:,4:end),2)],1,'stacked','EdgeColor','none');
+h(1).FaceColor = [0.1 0.1 0.9];
+ylabel('Daily hospital admissions')
+ylim([0 5000])
+yyaxis right
+plot(datea,100*movmean(sum(hospa(:,4:end),2)./sum(hospa,2),[3 3]))
+legend('Admissions <54','Admissions 55+','ratio of older admissions')
+title('Hospital admissions in the UK, by age')
+ylabel('ratio of older admissions (%)')
+ylim([0 100])
+grid on
+set(gca,'fontsize',13)
+set(gcf,'Color','w')
+set(gca,'xtick',datetime(2020,4:30,1))
