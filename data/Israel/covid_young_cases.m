@@ -1,4 +1,4 @@
-function [pos,dateM,tests] = covid_age_perc_pos
+function [pos,dateM,tests] = covid_young_cases
 cd ~/covid-19-israel-matlab/data/Israel
 listD = readtable('dashboard_timeseries.csv');
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
