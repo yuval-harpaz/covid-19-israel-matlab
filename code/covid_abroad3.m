@@ -128,3 +128,31 @@ xlim(datetime('today')-[35,0])
 legend(h, 'R local','R incoming','R all','local this week','incoming this week',...
     'local last week','incoming last week','location','northwest')
 title('cases by source for the last 2 weeks   מאומתים לפי מקור הדבקה לשבועיים האחרונים')
+
+%% 
+lin1 = 72;
+yy = abroad.local(lin1-1:end);
+xx = 1:length(yy)+14;
+fac = yy(1:23)\xx(1:23)';
+figure;
+bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none')
+% regressBasic(abroad.local(58:end))
+hold on
+plot(abroad.date,movmean(abroad.local,[3 3]),'r')
+plot(abroad.date(lin1-1)+xx,xx/fac,'k')
+dateR = datetime(2021,6,22):7:datetime('today')+20;
+% dateR = dateR(1:7:end);
+rr = 118;
+mult = 1.4^(1/0.65);
+for idr = 2:length(dateR)
+    rr(idr,1) = rr(idr-1)*mult;
+end
+plot(dateR,rr,'b')
+set(gca,'XTick',datetime(2021,6,22)-7*100:7:datetime('today')+20)
+xtickformat('dd/MM')
+grid on
+box off
+legend('cases (local)','cases, 7 days average (-3 to +3)','linear trend','R=1.4','location','northwest')
+title('Cases, forward projection by linear and exponential rates')
+ylabel('Cases')
+set(gcf,'Color','w')
