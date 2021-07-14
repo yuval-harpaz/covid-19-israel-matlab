@@ -45,6 +45,9 @@ fclose(fid);
 txt = native2unicode(txt);
 json = jsondecode(txt);
 
+confirmed = struct2table(json(2).data);
+confirmed.date = cellfun(@(x) datetime(x(1:10)),confirmed.date);
+writetable(confirmed,'data/Israel/confirmed.csv','Delimiter',',','WriteVariableNames',true);
 
 iTests = find(ismember({json(:).id},'tests_positive'));
 date = datetime(cellfun(@(x) x(1:10),{json(iTests).data.date}','UniformOutput',false));
