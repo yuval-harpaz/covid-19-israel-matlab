@@ -32,3 +32,7 @@ ylabel('hospital admissions per Million')
 title({'Cases vs Hospitalizations by vaccination status','מאומתים ומאושפזים לפי מצב חיסוני'})
 grid on
 % ylim([0 10])
+cd ~/covid-19-israel-matlab/
+!git add ~/covid-19-israel-matlab/data/Israel/delta.csv
+!git commit -m "gdrive to csv"
+!git push
