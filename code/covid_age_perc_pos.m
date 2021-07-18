@@ -5,9 +5,9 @@ json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89
 json = jsondecode(json);
 week = struct2table(json.result.records);
 % week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
-week.weekly_cases(ismember(week.weekly_cases,'<15')) = {''};
-week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {''};
-week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {''};
+week.weekly_cases(ismember(week.weekly_cases,'<15')) = {'2'};
+week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {'2'};
+week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
 writetable(week,'tmp.csv','Delimiter',',','WriteVariableNames',true);
 week = readtable('tmp.csv');
 % week0(ismember(week0.last_week_day,week.last_week_day),:) = [];

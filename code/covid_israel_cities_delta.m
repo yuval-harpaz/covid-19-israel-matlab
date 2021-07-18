@@ -5,30 +5,41 @@ city = {'תל אביב - יפו';'פתח תקווה';'כפר סבא';'כפר י�
 % pop = table(city,population);
 %  listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 warning off
-for ii = 1:length(city)
-    data = urlread(['https://data.gov.il/api/3/action/datastore_search?q=',city{ii},'&resource_id=8a21d39d-91e3-40db-aca1-f73f7ab1df69&limit=10000000']);
-    data = jsondecode(data);
-    data = struct2table(data.result.records);
-    dateRow = datetime(data.Date);
-    [dateRow,order] = unique(dateRow);
-%     if ii == 1
-%         nMonths = 11+month(dateRow(end));
-%     end
-    data = data(order,:);
-%     data.Cumulated_deaths = strrep(data.Cumulated_deaths,'<15','0');
-    data.Cumulative_verified_cases = strrep(data.Cumulative_verified_cases,'<15','0');
-%     deathRow = cellfun(@str2num,data.Cumulated_deaths);
-    caseRow = cellfun(@str2num,data.Cumulative_verified_cases);
-    if ii == 1
-        cases = [0;diff(caseRow)];
-    else
-        cases(:,ii) = [0;diff(caseRow)];
+counter = 0;
+while counter < length(city)
+    %     for ii = 1:length(city)
+    counter = counter + 1;
+    try
+        data = urlread(['https://data.gov.il/api/3/action/datastore_search?q=',city{counter},'&resource_id=8a21d39d-91e3-40db-aca1-f73f7ab1df69&limit=10000000']);
+        data = jsondecode(data);
+        data = struct2table(data.result.records);
+        dateRow = datetime(data.Date);
+        [dateRow,order] = unique(dateRow);
+        %     if ii == 1
+        %         nMonths = 11+month(dateRow(end));
+        %     end
+        data = data(order,:);
+        %     data.Cumulated_deaths = strrep(data.Cumulated_deaths,'<15','0');
+        data.Cumulative_verified_cases = strrep(data.Cumulative_verified_cases,'<15','0');
+        %     deathRow = cellfun(@str2num,data.Cumulated_deaths);
+        caseRow = cellfun(@str2num,data.Cumulative_verified_cases);
+        if counter == 1
+            cases = [0;diff(caseRow)];
+        else
+            cases(:,counter) = [0;diff(caseRow)];
+        end
+        datePrev = dateRow;
+        
+        IEprog(counter)
+    catch
+%         disp(num2str(counter));
+        counter = counter -1;
+        pause(10.2)
     end
-    datePrev = dateRow;
-    IEprog(ii)
+    %     end
 end
 % save tmp.mat cases city dateRow
-% 
+%
 date = dateRow;
 figure;
 plot(dateRow,cases)
@@ -115,7 +126,7 @@ title('City case count by days from outbreak')
 % box off
 % title('תמותה למליון לחודש')
 % xtickformat('MMM')
-% 
+%
 
 % figure;
 % subplot(1,2,1)
@@ -154,8 +165,8 @@ title('City case count by days from outbreak')
 % ax = gca;
 % ax.YRuler.Exponent = 0;
 % ax.YAxis.TickLabelFormat = '%,.0f';
-% 
-% 
+%
+%
 % %%
 % json1 = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=64edd0ee-3d5d-43ce-8562-c336c24dbc1f&limit=5000');;
 % json = jsondecode(json1);
@@ -163,17 +174,17 @@ title('City case count by days from outbreak')
 % popA = reshape([js{10:end,:}],7,size(js,2))';
 % [~,orderA] = sort(popA(:,1),'descend');
 % popA = popA(orderA,:);
-% 
+%
 % cn = {json.result.records(orderA(1:15)).x_______}';
 % cn(2) = city(2);
 % [isx,idx] = ismember(strrep(city,' ',''),strrep(cn,' ',''));
 % pop13 = popA(idx,:);
-% 
+%
 % ddpm = diff(death)./pop13(:,end)'*10^6;
 % dpm = death(end,:)./pop13(:,end)'*10^6;
 % dcpm = diff(cases)./pop13(:,end)'*10^6;
 % cpm = cases(end,:)./pop13(:,end)'*10^6;
-% 
+%
 % % col = colormap(jet(13));
 % % col = flipud(col);
 % % [~,order] = sort(ddpm(7,:),'descend');
@@ -213,8 +224,8 @@ title('City case count by days from outbreak')
 % box off
 % title('תמותה למליון לחודש')
 % xtickformat('MMM')
-% 
-% 
+%
+%
 % figure;
 % subplot(1,2,1)
 % for ii = 1:13
