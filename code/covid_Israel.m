@@ -3,37 +3,20 @@ function covid_Israel(figs)
 if ~exist('figs','var')
     figs = 3;
 end
-%listName = 'data/Israel/Israel_ministry_of_health.csv';
 listName = 'data/Israel/dashboard_timeseries.csv';
 cd ~/covid-19-israel-matlab/
-% myCountry = 'Israel';
-% nCountries = 20;
 
-% [dataMatrix] = readCoronaData('deaths');
-% [~,timeVector,mergedData] = processCoronaData(dataMatrix);
-% fig6 = covid_plot(mergedData,timeVector,nCountries,'dpm',1,myCountry);
-% fig7 = covid_plot(mergedData,timeVector,nCountries,'ddpm',7,myCountry,10);
 try
     fig7 = covid_plot_who;
     fig6 = covid_plot_who(1,1,1);
 catch
     disp('no WHO, try later')
 end
-% showDateEvery = 7; % days
-% zer = 1; % how many deaths per million to count as day zero
-% warning off
-% 
-% for iCou = 1:length(mergedData)
-%     mergedData{iCou,2}(isnan(mergedData{iCou,2})) = 0;
-%     mergedData{iCou,2}(mergedData{iCou,2} < 0) = 0;
-% end
-% iXtick = [1,showDateEvery:showDateEvery:length(timeVector)];
-% pop = readtable('data/population.csv','delimiter',',');
+
 list = readtable(listName);
 
 list.Properties.VariableNames(1+[7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
 list.deceased = nan(height(list),1);
-%     list.deceased(~isnan(list.CountDeath)) = cumsum(list.CountDeath(~isnan(list.CountDeath)));
 list.deceased =list.CountDeath;
 i1 = find(~isnan(list.hospitalized),1);
 list = list(i1:end,:);
@@ -42,21 +25,14 @@ txt = fread(fid)';
 fclose(fid);
 txt = native2unicode(txt);
 json = jsondecode(txt);
-% list.date(end) = datetime([json(1).data.lastUpdate(1:10),' ',json(1).data.lastUpdate(12:16)])+2/24;
 listE = list;
 list = listE(1:end-1,:);
 
 %% plot israel only
-% desiredDates = fliplr(dateshift(list.date(end),'end','day'):-7:dateshift(list.date(1),'end','day'));
-% for iD = 1:length(desiredDates)
-%     ixt(iD,1) = find(list.date < desiredDates(iD),1,'last'); %#ok<AGROW>
-% end
-% ixt = unique([1,fliplr(length(isr.Date):-showDateEvery:1)]);
 fig8 = figure('units','normalized','position',[0,0.25,0.8,0.6]);
 subplot(1,2,1)
 yyaxis right
 idx = ~isnan(list.hospitalized);
-% plot(list.date(idx),list.hospitalized(idx),'color',[0.9 0.9 0.1],'linewidth',1);
 hh(1) = plot(list.date(idx),list.hospitalized(idx)-list.critical(idx)-list.severe(idx),...
     'color',[0 1 0],'linewidth',1);
 hold on
@@ -78,8 +54,7 @@ xlim([list.date(1)-1 list.date(end)+1])
 ax = gca;
 ax.YAxis(2).Color = 'r';
 ax.YAxis(1).Color = 'k';
-% ylim([0 max(list.hospitalized)+20])
-% xtickangle(45)
+
 grid on
 box off
 legHeb = {['מאושפזים',''],'קל','בינוני','קשה','מונשמים','נפטרים'};

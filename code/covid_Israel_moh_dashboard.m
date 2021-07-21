@@ -84,6 +84,23 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     data.recovered = nan(height(data),1);
     [isRow,row] = ismember(dateRec,data.date);
     data.recovered(row(isRow)) = recovered(isRow);
+    
+    iConf = find(ismember({json(:).id},'confirmed'));
+    firstConf = find(~cellfun(@isempty,{json(iConf).data.date}'),1);
+    dateConf = datetime(cellfun(@(x) x(1:10),{json(iConf).data(firstConf:end).date}','UniformOutput',false));
+    tests_positive1 = [json(iConf).data(firstConf:end).amount]';
+    data.tests_positive1 = nan(height(data),1);
+    [isRow,row] = ismember(dateConf,data.date);
+    data.tests_positive1(row(isRow)) = tests_positive1(isRow);
+    
+    iPeople = find(ismember({json(:).id},'tests_positive'));
+    firstPeople = find(~cellfun(@isempty,{json(iPeople).data.date}'),1);
+    datePeople = datetime(cellfun(@(x) x(1:10),{json(iPeople).data(firstPeople:end).date}','UniformOutput',false));
+    tests1 = [json(iPeople).data(firstPeople:end).amountPersonTested]';
+    data.tests1 = nan(height(data),1);
+    [isRow,row] = ismember(datePeople,data.date);
+    data.tests1(row(isRow)) = tests1(isRow);
+    
     data = [dataPrev(1:find(ismember(dataPrev.date,data.date),1)-1,:);data];
     nanwritetable(data,'data/Israel/dashboard_timeseries.csv');
 end
