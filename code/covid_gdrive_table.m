@@ -46,7 +46,7 @@ yyaxis right
 plot(delta.date,10^6*movmean([delta.severeNoVacc/(pop30-vacc30),delta.severeVacc/vacc30],[3 3]))
 legend('cases no vacc','cases vacc','hosp no vacc','hosp vacc','location','northwest')
 ylabel('hospital admissions per Million')
-title({'Cases vs Severe by vaccination status','מאומתים ומאושפזים לפי מצב חיסוני'})
+title({'Cases vs Severe by vaccination status','מאומתים וקשים לפי מצב חיסוני'})
 grid on
 % ylim([0 10])
 cd ~/covid-19-israel-matlab/

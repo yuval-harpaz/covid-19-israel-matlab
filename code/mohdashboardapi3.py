@@ -262,18 +262,33 @@ def create_patients_csv(data):
     # assert os.system('git add '+HOSP_FNAME) == 0    
 
 
+# def create_vaccinated_csv(data):
+#     vac = data['vaccinated']
+#     title_line = ','.join([
+#         'Date', 'Vaccinated (daily)','Vaccinated (cumu)','Vaccinated population percentage',
+#         'Second dose (daily)','Second dose (cumu)','Second dose population precentage'])
+#     data_lines = [','.join([d['Day_Date'][:10]]+map(str, [
+#         d['vaccinated'], d['vaccinated_cum'], d['vaccinated_population_perc'],
+#         d['vaccinated_seconde_dose'], d['vaccinated_seconde_dose_cum'],
+#         d['vaccinated_seconde_dose_population_perc']])) for d in vac]
+#     csv_data = '\n'.join([title_line]+data_lines)
+#     file(VAC_FNAME, 'w').write(csv_data+'\n')
+#     assert os.system('git add '+VAC_FNAME) == 0
+
 def create_vaccinated_csv(data):
     vac = data['vaccinated']
     title_line = ','.join([
         'Date', 'Vaccinated (daily)','Vaccinated (cumu)','Vaccinated population percentage',
         'Second dose (daily)','Second dose (cumu)','Second dose population precentage'])
-    data_lines = [','.join([d['Day_Date'][:10]]+map(str, [
+    data_lines = [','.join([d['Day_Date'][:10]]+list(map(str, [
         d['vaccinated'], d['vaccinated_cum'], d['vaccinated_population_perc'],
         d['vaccinated_seconde_dose'], d['vaccinated_seconde_dose_cum'],
-        d['vaccinated_seconde_dose_population_perc']])) for d in vac]
+        d['vaccinated_seconde_dose_population_perc']]))) for d in vac]
     csv_data = '\n'.join([title_line]+data_lines)
-    file(VAC_FNAME, 'w').write(csv_data+'\n')
-    assert os.system('git add '+VAC_FNAME) == 0
+    # file(VAC_FNAME, 'w').write(csv_data+'\n')
+    # assert os.system('git add '+VAC_FNAME) == 0
+    opf = open(VAC_FNAME,'w')
+    opf.write(csv_data+'\n')
 
 
 def extend_hospital_csv(data):
@@ -364,6 +379,7 @@ def update_cities(new_data):
 
 data = get_api_data()
 create_patients_csv(data)
+create_vaccinated_csv(data)
 # def update_json():
 #     prev_date = json.load(file(DATA_FNAME,'r'))['lastUpdate']['lastUpdate']
 #     new_data = get_api_data()
