@@ -94,8 +94,11 @@ yyy = cumsum(yyyy);
 dateWeek = datetime(2021,1,5:7:300);
 dateWeek(dateWeek > datetime('today')-3) = [];
 
+week = nan(length(dateWeek),3);
 for iDate = 1:length(dateWeek)
-    week (iDate,1:3) = yyy(ncba.date == dateWeek(iDate)+3,:)-yyy(ncba.date == dateWeek(iDate)+3-7,:);
+    try
+        week (iDate,1:3) = yyy(ncba.date == dateWeek(iDate)+3,:)-yyy(ncba.date == dateWeek(iDate)+3-7,:);
+    end
 end
 figure('units','normalized','position',[0.1,0.1,0.5,1]);
 subplot(2,1,1)

@@ -96,17 +96,17 @@ if plt
     figure;
     yyaxis right
     plot(date2(1:end-2),yy(1:end-2))
-    ylabel('מאומתים ליום')
+    ylabel('cases per day')
     ylim([0 16000])
     yyaxis left
     bar(date(2:end),diff(y));
     hold on
     bar(weekDeathDate,weekDeathHosp,'c')
     grid on
-    ylabel('נפטרים לשבוע')
-    legend('נפטרים לשבוע','נפטרים לשבוע בבתי חולים בלבד','מאומתים ליום','location','north')
+    ylabel('deaths per week')
+    legend('deaths per week','deaths per week, hospitals only','cases per day','location','north')
     set(gcf,'Color','w')
-    title('לונדון')
+    title('London')
     box off
     xlim([datetime(2020,3,15) datetime('tomorrow')+3])
     xtickformat('MMM')

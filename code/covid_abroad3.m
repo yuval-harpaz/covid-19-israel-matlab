@@ -134,20 +134,31 @@ lin1 = 72;
 yy = abroad.local(lin1-1:end);
 xx = 1:length(yy)+14;
 fac = yy(1:23)\xx(1:23)';
+rr = 118;
+mult = 1.425^(1/0.65);
+for idr = 2:length(dateR)
+    rr(idr,1) = rr(idr-1)*mult;
+end
+
+ww = [1/3,0.6,1,1,1,1,1.1];
+ww = ww./mean(ww);
+pred = [];
+for idr = 1:length(rr)
+    pred = [pred,rr(idr)*((mult^(1/7)).^(-3:3)).*ww]
+end
+dateRd = dateR(1)-3;
+dateRd = dateRd:dateRd+length(pred)-1;
 figure;
+bar(dateRd,pred,1,'FaceColor',[1 1 1])
+hold on
 bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none')
 % regressBasic(abroad.local(58:end))
-hold on
 sm = movmean(abroad.local,[3 3]);
 plot(abroad.date(1:end-3),sm(1:end-3),'r')
 plot(abroad.date(lin1-1)+xx,xx/fac,'k')
 dateR = datetime(2021,6,22):7:datetime('today')+20;
 % dateR = dateR(1:7:end);
-rr = 118;
-mult = 1.4^(1/0.65);
-for idr = 2:length(dateR)
-    rr(idr,1) = rr(idr-1)*mult;
-end
+
 plot(dateR,rr,'b')
 set(gca,'XTick',datetime(2021,6,22)-7*100:7:datetime('today')+20)
 xtickformat('dd/MM')
