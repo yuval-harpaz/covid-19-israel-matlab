@@ -140,7 +140,7 @@ for idr = 2:length(dateR)
     rr(idr,1) = rr(idr-1)*mult;
 end
 
-ww = [1/3,0.6,1,1,1,1,1.1];
+ww = [1/3,0.6,1,1,1,1,1];
 ww = ww./mean(ww);
 pred = [];
 for idr = 1:length(rr)
@@ -151,7 +151,7 @@ dateRd = dateRd:dateRd+length(pred)-1;
 figure;
 bar(dateRd,pred,1,'FaceColor',[1 1 1])
 hold on
-bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none')
+bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none','FaceAlpha',0.75)
 % regressBasic(abroad.local(58:end))
 sm = movmean(abroad.local,[3 3]);
 plot(abroad.date(1:end-3),sm(1:end-3),'r')
