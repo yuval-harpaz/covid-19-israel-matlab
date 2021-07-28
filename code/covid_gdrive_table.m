@@ -14,7 +14,7 @@ legend('cases no vacc','cases vacc','hosp no vacc','hosp vacc')
 ylabel('hospital admissions')
 title({'Cases vs Hospitalizations by vaccination status','מאומתים ומאושפזים לפי מצב חיסוני'})
 grid on
-ylim([0 10])
+% ylim([0 10])
 
 vacc30 = 1937000+2160000;
 pop30 = 2317000+2462000;

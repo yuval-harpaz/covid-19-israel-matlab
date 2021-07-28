@@ -130,6 +130,7 @@ legend(h, 'R local','R incoming','R all','local this week','incoming this week',
 title('cases by source for the last 2 weeks   מאומתים לפי מקור הדבקה לשבועיים האחרונים')
 
 %% 
+dateR = datetime(2021,6,22):7:datetime('today')+20;
 lin1 = 72;
 yy = abroad.local(lin1-1:end);
 xx = 1:length(yy)+14;
@@ -156,7 +157,7 @@ bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none','Face
 sm = movmean(abroad.local,[3 3]);
 plot(abroad.date(1:end-3),sm(1:end-3),'r')
 plot(abroad.date(lin1-1)+xx,xx/fac,'k')
-dateR = datetime(2021,6,22):7:datetime('today')+20;
+
 % dateR = dateR(1:7:end);
 
 plot(dateR,rr,'b')
