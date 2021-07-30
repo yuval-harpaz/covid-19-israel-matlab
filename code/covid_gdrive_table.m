@@ -56,4 +56,4 @@ figure
 yyaxis left
 plot(delta.date,delta.cases50_);
 yyaxis right
-plot(delta.date,delta.severe65_)
+plot(delta.date,delta.severe60_)
