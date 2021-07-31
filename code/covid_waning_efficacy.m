@@ -77,3 +77,13 @@ for isp = 1:4
     title(tit{isp})
 end
 set(gcf,'Color','w')
+
+%%
+vecCases = cases(:);
+vecCases(vecCases == 0) = nan;
+x = 1:31;
+x = repmat(x,1,31)';
+y = reshape(reshape(x,31,31)',31^2,1);
+figure;
+scatter(y,x,vecCases./max(vecCases)*100,'fill')
+surf(weekInfec,
