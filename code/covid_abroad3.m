@@ -156,7 +156,7 @@ bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none','Face
 % regressBasic(abroad.local(58:end))
 sm = movmean(abroad.local,[3 3]);
 plot(abroad.date(1:end-3),sm(1:end-3),'r')
-plot(abroad.date(lin1-1)+xx,xx/fac,'k')
+% plot(abroad.date(lin1-1)+xx,xx/fac,'k')
 
 % dateR = dateR(1:7:end);
 
@@ -165,7 +165,7 @@ set(gca,'XTick',datetime(2021,6,22)-7*100:7:datetime('today')+20)
 xtickformat('dd/MM')
 grid on
 box off
-legend('cases (local)','cases, 7 days average (-3 to +3)','linear trend','R=1.4','location','northwest')
+legend('prediction','cases (local)','cases, 7 days average (-3 to +3)','R=1.4','location','northwest')
 title('Cases, forward projection by linear and exponential rates')
 ylabel('Cases')
 set(gcf,'Color','w')
