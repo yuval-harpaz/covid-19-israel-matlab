@@ -57,3 +57,82 @@ yyaxis left
 plot(delta.date,delta.cases50_);
 yyaxis right
 plot(delta.date,delta.severe60_)
+legend('cases 50+','severe 60+')
+%% QA
+row = find(delta.severeVacc60_ > delta.severe60_);
+if ~isempty(row)
+    error(['delta.severeVacc60_ > delta.severe60_ at row ',str(row)])
+end
+row = find(delta.severeVacc40_60 > delta.severe40_60);
+if ~isempty(row)
+    error(['delta.severeVacc40_60 > delta.severe40_60 at row ',str(row)])
+end
+row = find(delta.severe_40 > delta.severe_40);
+if ~isempty(row)
+    error(['delta.severeVacc_40 > delta.severe_40 at row ',str(row)])
+end
+
+row = find(delta.deathsVacc60_ > delta.deaths60_);
+if ~isempty(row)
+    error(['delta.deathsVacc60_ > delta.deaths60_ at row ',str(row)])
+end
+row = find(delta.deathsVacc40_60 > delta.deaths40_60);
+if ~isempty(row)
+    error(['delta.deathsVacc40_60 > delta.deaths40_60 at row ',str(row)])
+end
+row = find(delta.deaths_40 > delta.deaths_40);
+if ~isempty(row)
+    error(['delta.deathsVacc_40 > delta.deaths_40 at row ',str(row)])
+end
+
+row = (nansum(delta{:,6:8},2) - nansum(delta{:,15:17},2)) ~= 0;
+if sum(row) > 0
+    disp('severe vacc ~ age mismatch')
+    disp(delta(row,[1,6:8,15:17]))
+end
+
+row = (delta.severeVacc - nansum(delta{:,18:20},2)) ~= 0;
+if sum(row) > 0
+    disp('severe vacc mismatch')
+    disp(delta(row,[1,8,18:20]))
+end
+
+% deaths
+row = find(delta.deathsVacc60_ > delta.deaths60_);
+if ~isempty(row)
+    error(['delta.deathsVacc60_ > delta.deaths60_ at row ',str(row)])
+end
+row = find(delta.deathsVacc40_60 > delta.deaths40_60);
+if ~isempty(row)
+    error(['delta.deathsVacc40_60 > delta.deaths40_60 at row ',str(row)])
+end
+row = find(delta.deaths_40 > delta.deaths_40);
+if ~isempty(row)
+    error(['delta.deathsVacc_40 > delta.deaths_40 at row ',str(row)])
+end
+
+row = find(delta.deathsVacc60_ > delta.deaths60_);
+if ~isempty(row)
+    error(['delta.deathsVacc60_ > delta.deaths60_ at row ',str(row)])
+end
+row = find(delta.deathsVacc40_60 > delta.deaths40_60);
+if ~isempty(row)
+    error(['delta.deathsVacc40_60 > delta.deaths40_60 at row ',str(row)])
+end
+row = find(delta.deaths_40 > delta.deaths_40);
+if ~isempty(row)
+    error(['delta.deathsVacc_40 > delta.deaths_40 at row ',str(row)])
+end
+
+row = (nansum(delta{:,9:11},2) - nansum(delta{:,21:23},2)) ~= 0;
+if sum(row) > 0
+    disp('deaths vacc ~ age mismatch')
+    disp(delta(row,[1,9:11,21:23]))
+end
+
+row = (delta.deathsVacc - nansum(delta{:,24:26},2)) ~= 0;
+if sum(row) > 0
+    disp('deaths vacc mismatch')
+    disp(delta(row,[1,11,24:26]))
+end
+
