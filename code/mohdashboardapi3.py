@@ -380,6 +380,10 @@ def update_cities(new_data):
 data = get_api_data()
 create_patients_csv(data)
 create_vaccinated_csv(data)
+
+vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily')
+vacc.to_csv('vaccinatedVerifiedDaily.csv')
+
 # def update_json():
 #     prev_date = json.load(file(DATA_FNAME,'r'))['lastUpdate']['lastUpdate']
 #     new_data = get_api_data()

@@ -141,7 +141,8 @@ for idr = 2:length(dateR)
     rr(idr,1) = rr(idr-1)*mult;
 end
 
-ww = [1/3,0.6,1,1,1,1,1];
+% ww = [1/3,0.6,1,1,1,1,1];
+ww =  [0.6,0.8,1,1,1,1,1];
 ww = ww./mean(ww);
 pred = [];
 for idr = 1:length(rr)
@@ -155,17 +156,18 @@ hold on
 bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none','FaceAlpha',0.75)
 % regressBasic(abroad.local(58:end))
 sm = movmean(abroad.local,[3 3]);
-plot(abroad.date(1:end-3),sm(1:end-3),'r')
+plot(abroad.date(1:end-3),sm(1:end-3),'r','LineWidth',3)
 % plot(abroad.date(lin1-1)+xx,xx/fac,'k')
 
 % dateR = dateR(1:7:end);
 
-plot(dateR,rr,'b')
+plot(dateR,rr,'b','LineWidth',2)
 set(gca,'XTick',datetime(2021,6,22)-7*100:7:datetime('today')+20)
 xtickformat('dd/MM')
 grid on
 box off
-legend('prediction','cases (local)','cases, 7 days average (-3 to +3)','R=1.4','location','northwest')
+legend('prediction','cases (local)','cases, 7 days average (-3 to +3)','weekly multiplication factor = 1.724','location','northwest')
 title('Cases, forward projection by linear and exponential rates')
 ylabel('Cases')
 set(gcf,'Color','w')
+xlim([datetime(2021,6,1) datetime('today')+20])
