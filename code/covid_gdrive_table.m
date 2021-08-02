@@ -32,6 +32,20 @@ ylabel('hospital admissions per Million')
 title({'Cases vs Hospitalizations by vaccination status','מאומתים ומאושפזים לפי מצב חיסוני'})
 grid on
 % ylim([0 10])
+
+
+ncba = readtable(' ~/covid-19-israel-matlab/data/Israel/severe_by_age.xlsx');
+extra = 188-height(ncba)+height(delta);
+if extra > 0
+    warning off
+    ncba.date(end+1:end+extra) = ncba.date(end)+(1:extra);
+    warning on
+    ncba{189:end,[2:4,6:8]} = delta{:,15:20};
+    ncba{189:end,5} = sum(ncba{189:end,2:4},2);
+    ncba{189:end,9} = sum(ncba{189:end,6:8},2);
+    writetable(ncba,'~/covid-19-israel-matlab/data/Israel/severe_by_age.csv','Delimiter',',','WriteVariableNames',true);
+end
+
 cd ~/covid-19-israel-matlab/
 !git add ~/covid-19-israel-matlab/data/Israel/delta.csv
 !git commit -m "gdrive to csv"

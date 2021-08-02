@@ -1,13 +1,6 @@
-# import json
 import os
 import requests
-# import subprocess
-# import time
-# import pandas as pd
-# alarms = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/infectedPerDate')
-# alarms.to_csv('example.csv')
-
-# GIT_DIR = r'C:\GitHub\israel_moh_covid_dashboard_data'
+import pandas as pd
 
 GIT_DIR = '/home/innereye/Downloads'
 if os.path.isdir(r'C:\Users\User\Documents\Corona'):
@@ -54,6 +47,9 @@ api_query = {'requests': [
     {'id': '30', 'queryName': 'spotlightAggregatedPublic', 'single': True, 'parameters': {}},
     {'id': '31', 'queryName': 'HospitalBedStatusSegmentation', 'single': False, 'parameters': {}},
     {'id': '32', 'queryName': 'infectionFactor', 'single': False, 'parameters': {}},
+    {'id': '33', 'queryName': 'vaccinatedVerifiedDaily', 'single': False, 'parameters': {'days': 0}},
+    {'id': '34', 'queryName': 'vaccinatedVerifiedByAge', 'single': False, 'parameters': {}},
+    {'id': '35', 'queryName': 'researchGraph', 'single': False, 'parameters': {}},
     ]}
 api_address = 'https://datadashboardapi.health.gov.il/api/queries/_batch'
 def get_api_data():
@@ -69,11 +65,13 @@ os.chdir(GIT_DIR)
 DATA_FNAME = 'moh_dashboard_api_data.json'
 COMMIT_HIST_FNAME = 'commit_history.json'
 AGES_FNAME = 'ages_dists.csv'
-ALL_AGES_FNAMES = {'infected':'ages_dists.csv', 'dead':'deaths_ages_dists.csv',
-                    'severe':'severe_ages_dists.csv', 'breathe':'ventilated_ages_dists.csv'}
+ALL_AGES_FNAMES = {'infected':'ages_dists_v2.csv', 'dead':'deaths_ages_dists_v2.csv',
+                   'severe':'severe_ages_dists_v2.csv', 'breathe':'ventilated_ages_dists_v2.csv'}
 HOSP_FNAME = 'hospitalized_and_infected.csv'
 VAC_FNAME = 'vaccinated.csv'
 VAC_AGES_FNAME = 'vaccinated_by_age.csv'
+VAC_CASES_DAILY = 'cases_by_vaccination_daily.csv'
+VAC_CASES_AGES = 'cases_by_vaccination_ages.csv'
 HOSPITALS_FNAME = 'hospital_occupancy.csv'
 HOSP_HEB_FIELD_NAMES = [
     '\xd7\xaa\xd7\xa4\xd7\x95\xd7\xa1\xd7\x94 \xd7\x9b\xd7\x9c\xd7\x9c\xd7\x99\xd7\xaa',
@@ -136,22 +134,6 @@ heb_translit = {
 def safe_str(s):
     return '%s'%(heb_map.get(s, s))
 
-# def update_git(new_date):
-#     assert os.system('git add '+DATA_FNAME) == 0
-#     print ('committing...',
-#     assert os.system('git commit -m "Update to %s"'%(new_date)) == 0
-#     print 'pushing...'
-#     assert os.system('git push') == 0
-#     print 'git committed and pushed successfully'
-
-# def update_git_history(new_date):
-#     history = json.load(file(COMMIT_HIST_FNAME,'r'))
-#     curr_commit_hash = subprocess.check_output('git log').split()[1]
-#     history.append((new_date, curr_commit_hash))
-#     json.dump(history, file(COMMIT_HIST_FNAME,'w'), indent = 2)
-#     assert os.system('git add '+COMMIT_HIST_FNAME) == 0
-#     print 'updated git history file'
-    
 
 def safe_int(x):
     # converts possible None returned by API to 0
@@ -168,7 +150,10 @@ def ages_csv_line(data, prefix='infected'):
     ages_dicts = data[prefix + 'ByPeriodAndAgeAndGender']
     period = u'\u05de\u05ea\u05d7\u05d9\u05dc\u05ea \u05e7\u05d5\u05e8\u05d5\u05e0\u05d4'
     secs = [ent for ent in ages_dicts if ent['period'] == period]
-    assert ''.join([s['section'][0] for s in secs]) == '0123456789'
+    ##    assert ''.join([s['section'][0] for s in secs]) == '0123456789'
+    assert [s['section'] for s in secs] == [
+        '0-9', '10-11', '12-15', '16-19', '20-29', '30-39',
+        '40-49', '50-59', '60-69', '70-74', '75+']
     males = [safe_int(sec['male']['amount']) for sec in secs]
     females = [safe_int(sec['female']['amount']) for sec in secs]
     totals = [m+f for m,f in zip(males, females)]
@@ -255,25 +240,11 @@ def create_patients_csv(data):
                             'Official R'])
     csv_data = '\n'.join([title_line] + [
         ','.join([p,e,i]) for p,e,i in zip(pat_lines, epi_lines, inff_lines)])
-    # opf = open(HOSP_FNAME,'r')
     opf = open(HOSP_FNAME,'w')
     opf.write(csv_data+'\n')
-    # file(HOSP_FNAME, 'w').write(csv_data+'\n')
-    # assert os.system('git add '+HOSP_FNAME) == 0    
 
 
-# def create_vaccinated_csv(data):
-#     vac = data['vaccinated']
-#     title_line = ','.join([
-#         'Date', 'Vaccinated (daily)','Vaccinated (cumu)','Vaccinated population percentage',
-#         'Second dose (daily)','Second dose (cumu)','Second dose population precentage'])
-#     data_lines = [','.join([d['Day_Date'][:10]]+map(str, [
-#         d['vaccinated'], d['vaccinated_cum'], d['vaccinated_population_perc'],
-#         d['vaccinated_seconde_dose'], d['vaccinated_seconde_dose_cum'],
-#         d['vaccinated_seconde_dose_population_perc']])) for d in vac]
-#     csv_data = '\n'.join([title_line]+data_lines)
-#     file(VAC_FNAME, 'w').write(csv_data+'\n')
-#     assert os.system('git add '+VAC_FNAME) == 0
+
 
 def create_vaccinated_csv(data):
     vac = data['vaccinated']
@@ -332,8 +303,6 @@ def update_isolated_csv(data):
                   [(isols, 'doctors'),(veris, 'doctors'),
                   (isols, 'nurses'), (veris, 'nurses'),
                   (isols, 'others'), (veris, 'others')]]
-##    new_line = [data['lastUpdate']['lastUpdate']] + [str(data['isolatedDoctorsAndNurses'][k]) for k in
-##                 ['Verified_Doctors', 'Verified_Nurses', 'isolated_Doctors', 'isolated_Nurses', 'isolated_Other_Sector']]
     if new_line[1:] == csv_lines[-1].split(',')[1:]: return
     file(ISOLATED_FNAME, 'w').write('\n'.join(csv_lines + [','.join(new_line)]))
     assert os.system('git add '+ISOLATED_FNAME) == 0    
@@ -377,102 +346,38 @@ def update_cities(new_data):
             assert os.system('git add ' + fname) == 0
             add_line_to_file('cities_transliteration.csv', ('%s,%s'%(n, strip_name(n))).encode('utf-8'))
 
+
+def create_cases_by_vaccinations_daily(data):
+##    res = ',' + (','*9).join(['All ages', 'Above 60', 'Below 60']) + ','*8 + '\n'
+    res = ',' + ',,,'.join([pre+' - '+suf
+                            for pre in ['All ages', 'Above 60', 'Below 60']
+                            for suf in ['fully vaccinated', 'partially vaccinated', 'not vaccinated']
+                            ]) + ','*2 + '\n'    
+    res += 'Date' + ',Total Amount,Daily verified,Total serious'*9 + '\n'
+    vvd = data['vaccinatedVerifiedDaily']
+    for i in range(0, len(vvd), 3):
+        s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
+        assert s[0]['day_date'] == s[2]['day_date'] == s[2]['day_date']
+        line = s[0]['day_date']+','
+        line += ','.join([
+            str(ss[case_type%vacc_type])
+            for ss in s
+            for vacc_type in ['vaccinated', 'vaccinated_procces', 'not_vaccinated']
+            for case_type in ['%s_amount_cum', 'verified_amount_%s', 'Serious_amount_%s']])
+        res += line + '\n'
+    # file(VAC_CASES_DAILY, 'w').write(res)
+    opf = open(VAC_CASES_DAILY,'w')
+    opf.write(res+'\n')       
+
+
 data = get_api_data()
 create_patients_csv(data)
 create_vaccinated_csv(data)
+create_cases_by_vaccinations_daily(data)
 
-vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily')
-vacc.to_csv('vaccinatedVerifiedDaily.csv')
+# vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily')
+# vacc.to_csv('vaccinatedVerifiedDaily.csv')
 
-# def update_json():
-#     prev_date = json.load(file(DATA_FNAME,'r'))['lastUpdate']['lastUpdate']
-#     new_data = get_api_data()
-#     new_date = new_data['lastUpdate']['lastUpdate']
-#     if new_date == prev_date:
-#         print time.ctime()+': ', 'No update since', prev_date
-#         return
-    
-#     print time.ctime()+': ', 'Data updated! New time:', new_date
-#     # update_ages_csv(new_data) # Obsolete
-#     try:
-#         print 'updating ages csvs'
-#         update_all_ages_csvs(new_data)
-#     except:
-#         print 'Exception in ages csv'
-#     try:
-#         print 'updating patients csv'
-#         create_patients_csv(new_data)
-#     except:
-#         print 'Exception in patients csv'
-#     try:
-#         print 'updating vaccinated csv'
-#         create_vaccinated_csv(new_data)
-#     except:
-#         print 'Exception in vaccination csv'
-#     # extend_hospital_csv(new_data)
-#     try:
-#         print 'updating vaccination ages csv'
-#         update_age_vaccinations_csv(new_data)
-#     except:
-#         print 'Exception in vaccination ages csv'
-#     try:
-#         print 'updating cities csvs'
-#         update_cities(new_data)
-#     except:
-#         print 'Exception in cities csvs'
-#     print 'updating isolated csv'
-#     update_isolated_csv(new_data)
-    
-#     json.dump(new_data, file(DATA_FNAME,'w'), indent = 2)
-#     update_git(new_date)
-#     update_git_history(new_date)
+research = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/researchGraph')
+research.to_csv('researchGraph.csv')
 
-
-    
-# def update_json_loop():
-#     while True:
-#         try:
-#             update_json()
-#             time.sleep(60*60 - 4)
-#         except Exception, e:
-#             print e
-#             if type(e) is ValueError and e.message == "No JSON object could be decoded":
-#                 time.sleep(10)
-#             else:
-#                 time.sleep(10*60 - 4)
-            
-
-
-# def fetch_historic_data(index):
-#     history = json.load(file(COMMIT_HIST_FNAME,'r'))
-#     if type(index) == int:
-#         commit_hash = history[index][1]
-#     elif type(index) == str:
-#         commit_hash = dict(history)[index]
-#     else:
-#         raise TypeError('argument index of type %s, expected int or str'%(type(index)))
-
-#     assert os.system('git checkout %s -- %s'%(commit_hash, DATA_FNAME)) == 0
-#     data = json.load(file(DATA_FNAME,'r'))
-#     assert os.system('git checkout master -- ' + DATA_FNAME) == 0
-
-#     return data
-
-
-# def get_all_historic_data(start = 0, end = None):
-#     history = json.load(file(COMMIT_HIST_FNAME,'r'))
-#     if end == None:
-#         end = len(history)
-#     dataa = []
-#     for i in range(start, end):
-#         commit_hash = history[i][1]
-#         assert os.system('git checkout %s -- %s'%(commit_hash, DATA_FNAME)) == 0
-#         dataa.append(json.load(file(DATA_FNAME,'r')))
-
-#     assert os.system('git checkout master -- ' + DATA_FNAME) == 0
-#     return dataa
-
-
-# def get_age_dist_from_json(data):
-#     return [sec['male'] + sec['female'] for sec in data['infectedByAgeAndGenderPublic']]
-# {"mode":"full","isActive":False}
