@@ -34,7 +34,7 @@ grid on
 % ylim([0 10])
 
 
-ncba = readtable(' ~/covid-19-israel-matlab/data/Israel/severe_by_age.xlsx');
+ncba = readtable('~/covid-19-israel-matlab/data/Israel/severe_by_age.xlsx');
 extra = 188-height(ncba)+height(delta);
 if extra > 0
     warning off
