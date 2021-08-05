@@ -112,7 +112,7 @@ h(7) = bar(abroad.date(idx),-abroad.incoming(idx),'FaceColor',[0.8 0.5 0.5]);
 
 yopt = 240:60:2400;
 ie = yopt(find(yopt > max(abroad.local(end-32:end)),1));
-ylim([-ie/3 ie])
+% ylim([-ie/3 ie])
 ylabel('Cases')
 % 
 % text(x,repmat(5,length(x),1),str(listD.tests_positive(iD1:end-1)))
