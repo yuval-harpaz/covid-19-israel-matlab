@@ -46,9 +46,9 @@ tt.level6 = round(tt.ECMO_filled)*6;
 tt.load = tt.level1+tt.level2+tt.level3+tt.level6;
 
 writetable(tt,'Load.csv','Delimiter',',','WriteVariableNames',true)
-date = datetime(2021,7,29)+(0:10);
+date = datetime(2021,7,29)+(0:11);
 date = date';
-load = [424,441,500,549,581,646,681,716,700,822,884]';
+load = [424,441,500,549,581,646,681,716,717,822,917,948]';
 
 conf = readtable('confirmed.csv');
 dateSeger = conf.date(ismember(conf.coronaEvents,{'סגר 3','סגר 2','סגר 1 '}));
