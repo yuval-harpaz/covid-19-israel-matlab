@@ -46,10 +46,10 @@ tt.level6 = round(tt.ECMO_filled)*6;
 tt.load = tt.level1+tt.level2+tt.level3+tt.level6;
 
 writetable(tt,'Load.csv','Delimiter',',','WriteVariableNames',true)
-date = datetime(2021,7,29)+(0:11);
-date = date';
-load = [424,441,500,549,581,646,681,716,717,822,917,948]';
 
+% date = date';
+load = [424,441,500,549,581,646,681,716,717,822,884,964,1030]';
+date = datetime(2021,7,29)+(0:length(load)-1);
 conf = readtable('confirmed.csv');
 dateSeger = conf.date(ismember(conf.coronaEvents,{'סגר 3','סגר 2','סגר 1 '}));
 %%
@@ -66,3 +66,4 @@ idx = ismember(tt.date,dateSeger(2:end));
 plot(tt.date(idx),tt.load(idx),'*b','MarkerSize',5)
 legend('Mild+Medium    קל+בינוני','Severe    קשה','Vent     מונשים','ECMO    אקמו',...
     'Load       עומס','official load value    מדד העומס הרשמי','lockdown  סגר')
+set(gca,'FontSize',13)
