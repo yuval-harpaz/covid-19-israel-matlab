@@ -142,7 +142,7 @@ for idr = 2:length(dateR)
 end
 
 % ww = [1/3,0.6,1,1,1,1,1];
-ww =  [0.6,0.8,1,1,1,1,1];
+ww =  [0.6,0.8,1.2,1,1,1,1];
 ww = ww./mean(ww);
 pred = [];
 for idr = 1:length(rr)
@@ -170,4 +170,7 @@ legend('prediction','cases (local)','cases, 7 days average (-3 to +3)','weekly m
 title('Cases, forward projection by linear and exponential rates')
 ylabel('Cases')
 set(gcf,'Color','w')
-xlim([datetime(2021,6,1) datetime('today')+20])
+xlim([datetime(2021,6,22) datetime('today')+20])
+ax = gca;
+ax.YRuler.Exponent = 0;
+ax.YAxis.TickLabelFormat = '%,.0g';

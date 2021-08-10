@@ -2,7 +2,7 @@ import os
 import requests
 import pandas as pd
 
-GIT_DIR = '/home/innereye/Downloads'
+GIT_DIR = '/home/innereye/Repos/israel_moh_covid_dashboard_data'
 if os.path.isdir(r'C:\Users\User\Documents\Corona'):
     GIT_DIR = r'C:\Users\User\Documents\Corona'
 
@@ -140,10 +140,13 @@ def safe_int(x):
     return x if x else 0
 
 def add_line_to_file(fname, new_line):
-    prev_file = file(fname, 'r').read()
+    opr =  open(fname,'r')
+    prev_file = opr.read()
+    # prev_file = file(fname, 'r').read()
     new_file = prev_file + new_line + '\n'
-    file(fname, 'w').write(new_file)
-    assert os.system('git add ' + fname) == 0
+    # file(fname, 'w').write(new_file)
+    opf = open(fname,'w')
+    opf.write(new_file)  
 
 def ages_csv_line(data, prefix='infected'):
     date = data['lastUpdate']['lastUpdate']
@@ -176,7 +179,7 @@ def update_all_ages_csvs(data):
 def update_age_vaccinations_csv(data):
     vac_ages = data['vaccinationsPerAge']
     # Check for surprising age group
-    assert len(vac_ages) == 9
+    assert len(vac_ages) == 10
     new_line = data['lastUpdate']['lastUpdate']+',' + ','.join(['%d,%d,%d'%(
         g['age_group_population'],g['vaccinated_first_dose'],g['vaccinated_second_dose'])
                                                   for g in vac_ages])
@@ -374,10 +377,14 @@ data = get_api_data()
 create_patients_csv(data)
 create_vaccinated_csv(data)
 create_cases_by_vaccinations_daily(data)
-
+update_age_vaccinations_csv(data)
 # vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily')
 # vacc.to_csv('vaccinatedVerifiedDaily.csv')
 
 research = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/researchGraph')
 research.to_csv('researchGraph.csv')
 
+# vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily')
+# vacc.to_csv('vaccinatedVerifiedDaily.csv')
+vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge')
+vacc.to_csv('vaccinationsPerAge.csv')
