@@ -68,12 +68,12 @@ for isp = 1:4
         ax = gca;
         ax.YRuler.Exponent = 0;
         ax.YAxis.TickLabelFormat = '%,.0g';
-        ylabel('aged vaccine cases per 1M per 5 weeks')
-        ylim([0 100000])
+        ylabel('cases per 1M per 5 weeks')
+        ylim([0 200000])
     end
     box off
     set(gca,'Layer','top')
-    
+    xlabel('infection date')
     title(tit{isp})
 end
 set(gcf,'Color','w')

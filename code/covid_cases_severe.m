@@ -5,17 +5,28 @@ json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVer
 json = jsondecode(json);
 date = cellfun(@(x) datetime(x(1:10)),{json.day_date}');
 tt = struct2table(json);
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedByAge');
+json = jsondecode(json);
+tAge = struct2table(json);
+
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinated');
+json = jsondecode(json);
+tv = struct2table(json);
+
 idx60 = find(ismember(tt.age_group,'מעל גיל 60'));
 idxy = find(ismember(tt.age_group,'מתחת לגיל 60'));
-
-
-
-
 if isequal(date(idxy),unique(date))
     date = date(idxy);
 else
     error('bad dates')
 end
+
+figure;
+plot(date,tt.Serious_not_vaccinated_normalized(idx60))
+hold on
+plot(date,tt.Serious_vaccinated_procces_normalized(idx60))
+plot(date,tt.Serious_vaccinated_normalized(idx60))
+
 
 fac = 1.6;
 lag = 4;
