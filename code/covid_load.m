@@ -48,10 +48,11 @@ tt.load = tt.level1+tt.level2+tt.level3+tt.level6;
 writetable(tt,'Load.csv','Delimiter',',','WriteVariableNames',true)
 
 % date = date';
-load = [424,441,500,549,581,646,681,716,717,822,884,964,1030]';
+load = [424,441,500,549,581,646,681,716,717,822,884,964,1044,1108]';
 date = datetime(2021,7,29)+(0:length(load)-1);
 conf = readtable('confirmed.csv');
-dateSeger = conf.date(ismember(conf.coronaEvents,{'סגר 3','סגר 2','סגר 1 '}));
+% dateSeger = [datetime(202
+dateSeger = conf.date(ismember(conf.coronaEvents,{'סגר שני','סגר שלישי'}));
 %%
 figure;
 hh = plot(tt.date,[tt.level1,tt.level2,tt.level3,tt.level6,tt.load]);
@@ -62,7 +63,7 @@ title('Load on health system measure   מדד עומס על מערכת הברי�
 set(gcf,'Color','w')
 hold on
 plot(date,load,'.k','MarkerSize',20)
-idx = ismember(tt.date,dateSeger(2:end));
+idx = ismember(tt.date,dateSeger);
 plot(tt.date(idx),tt.load(idx),'*b','MarkerSize',5)
 legend('Mild+Medium    קל+בינוני','Severe    קשה','Vent     מונשים','ECMO    אקמו',...
     'Load       עומס','official load value    מדד העומס הרשמי','lockdown  סגר')
