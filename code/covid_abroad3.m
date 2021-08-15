@@ -136,7 +136,8 @@ yy = abroad.local(lin1-1:end);
 xx = 1:length(yy)+14;
 fac = yy(1:23)\xx(1:23)';
 rr = 118;
-mult = 1.425^(1/0.65);
+% mult = 1.425^(1/0.65);
+mult = 1.415^(1/0.65);
 for idr = 2:length(dateR)
     rr(idr,1) = rr(idr-1)*mult;
 end
