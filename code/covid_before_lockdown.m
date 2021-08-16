@@ -1,7 +1,8 @@
 cd ~/covid-19-israel-matlab/data/Israel
 
 conf = readtable('confirmed.csv');
-date = [conf.date(ismember(conf.coronaEvents,{'סגר 3','סגר 2','סגר 1 '}));datetime('today')];
+dateSeger = conf.date(ismember(conf.coronaEvents,{'סגר ראשון ','סגר שני','סגר שלישי'}));
+date = [dateSeger;datetime('today')];
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 listD.CountBreathNew = [0;diff(listD.CountBreathCum)];
 listD.perPos = listD.tests_positive1./listD.tests1;
