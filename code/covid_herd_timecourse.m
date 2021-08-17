@@ -9,8 +9,9 @@ confirmed = [sum(agf{end,2:3});agf{end,4:9}';sum(agf{end,10:11})];
 !wget -O tmp.csv https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/vaccinated_by_age.csv
 agVacc = readtable('tmp.csv');
 agVaccDate = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),agVacc.Date);
-vaccinated = [agVacc{end,4:3:22},sum(agVacc{end,[25,28]})]';
-population = [2777000*1.02+591000;1318000;1206000;1111000;875000;749000;531000;308000];
+% vaccinated = [agVacc{end,4:3:22},sum(agVacc{end,[25,28]})]';
+vaccinated = [nansum(agVacc{end,4:4:12}),agVacc{end,16:4:36},sum(agVacc{end,[40,44]})]';
+population = [3255000;1319000;1207000;1111000;875000;749000;531000;308000];
 age = {'0-19';'20-29';'30-39';'40-49';'50-59';'60-69';'70-79';'80+'};%vacc.age(2:end);
 notConf = population-confirmed;
 recovered_and_vacc = round((confirmed.*hidden./notConf) .* (vaccinated./notConf) .* notConf);
@@ -47,6 +48,7 @@ for iDate = 1:length(date)
         vaccinated = zeros(8,1);
     else
         vaccinated = [agVacc{rowVacc,4:3:22},sum(agVacc{rowVacc,[25,28]})]';
+        vaccinated = [nansum(agVacc{rowVacc,4:4:12}),agVacc{rowVacc,16:4:36},sum(agVacc{rowVacc,[40,44]})]';
     end
     notConf = population-conf;
     recovered_and_vacc = round((conf.*hidden./notConf) .* (vaccinated./notConf) .* notConf);
