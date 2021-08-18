@@ -4,34 +4,10 @@
 !wget --no-check-certificate -O ~/covid-19-israel-matlab/data/Israel/delta.csv 'https://docs.google.com/spreadsheets/d/1kiOrQxOtBg0__IoLkEZgqhMDpIQCXbBxEE78BwqcOs4/export?gid=472501586&format=csv'
 delta = readtable('~/covid-19-israel-matlab/data/Israel/delta.csv','ReadVariableNames',true);
 
-% figure;
-% yyaxis left
-% ylabel('cases')
-% plot(delta.date,movmean([delta.casesNoVacc,delta.casesVacc],[3 3]))
-% yyaxis right
-% plot(delta.date,movmean([delta.hospNoVacc,delta.hospVacc],[3 3]))
-% legend('cases no vacc','cases vacc','hosp no vacc','hosp vacc')
-% ylabel('hospital admissions')
-% title({'Cases vs Hospitalizations by vaccination status','מאומתים ומאושפזים לפי מצב חיסוני'})
-% grid on
-% ylim([0 10])
-
 vacc30 = 1937000+2160000;
 pop30 = 2317000+2462000;
 vacc = 1000*(21+151+437+1020+1937+2160);
 pop = 9500000;
-
-% figure;
-% yyaxis left
-% plot(delta.date,10^6*movmean([delta.casesNoVacc/(pop-vacc),delta.casesVacc/vacc],[3 3]))
-% ylabel('cases per Million')
-% yyaxis right
-% plot(delta.date,10^6*movmean([delta.hospNoVacc/(pop30-vacc30),delta.hospVacc/vacc30],[3 3]))
-% legend('cases no vacc','cases vacc','hosp no vacc','hosp vacc','location','northwest')
-% ylabel('hospital admissions per Million')
-% title({'Cases vs Hospitalizations by vaccination status','מאומתים ומאושפזים לפי מצב חיסוני'})
-% grid on
-% % ylim([0 10])
 
 
 ncba = readtable('~/covid-19-israel-matlab/data/Israel/severe_by_age.xlsx');
@@ -47,31 +23,11 @@ if extra > 0
 end
 
 cd ~/covid-19-israel-matlab/
+%%
 !git add ~/covid-19-israel-matlab/data/Israel/delta.csv
 !git commit -m "gdrive to csv"
 !git push
 
-% %%
-% figure;
-% yyaxis left
-% plot(delta.date,10^6*movmean([delta.casesNoVacc/(pop-vacc),delta.casesVacc/vacc],[3 3]))
-% ylabel('cases per Million')
-% yyaxis right
-% plot(delta.date,10^6*movmean([delta.severeNoVacc/(pop30-vacc30),delta.severeVacc/vacc30],[3 3]))
-% legend('cases no vacc','cases vacc','hosp no vacc','hosp vacc','location','northwest')
-% ylabel('hospital admissions per Million')
-% title({'Cases vs Severe by vaccination status','מאומתים וקשים לפי מצב חיסוני'})
-% grid on
-% % ylim([0 10])
-% cd ~/covid-19-israel-matlab/
-% 
-% %%
-% figure
-% yyaxis left
-% plot(delta.date,delta.cases50_);
-% yyaxis right
-% plot(delta.date,delta.severe60_)
-% legend('cases 50+','severe 60+')
 %% QA
 row = find(delta.severeVacc60_ > delta.severe60_);
 if ~isempty(row)
@@ -168,3 +124,10 @@ figure;
 plot(iComm,[[0;diff(listD.CountBreathCum(iDash))],delta.vent_40(iDel)+delta.vent40_60(iDel)+delta.vent60_(iDel)])
 legend('dashboard','tamatz')
 title('vent')
+
+figure;
+h = plot(iComm,[listD.serious_critical_new(iDash),...
+    delta.severe_40(iDel)+delta.severe40_60(iDel)+delta.severe60_(iDel),...
+    [0;diff(listD.CountSeriousCriticalCum(iDash))]]);
+legend(h([1,3,2]),'dashboard ser crit new','dashboard SerCritCum','tamatz')
+title('severe')

@@ -151,6 +151,7 @@ for idr = 1:length(rr)
 end
 dateRd = dateR(1)-3;
 dateRd = dateRd:dateRd+length(pred)-1;
+
 figure;
 bar(dateRd,pred,1,'FaceColor',[1 1 1])
 hold on
