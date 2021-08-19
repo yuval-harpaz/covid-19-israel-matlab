@@ -10,13 +10,15 @@ detuv = detuv(8:end);
 % err = abs(sevuv-detuv);
 % err = err(12:end);
 % err = fliplr(err(end:-7:1));
+
 err = abs(detuv-sevuv)./sevuv;
-err = err(12:end);
+idx1 = find(~isnan(err) & ~isinf(err),1);
+err = err(idx1:end);
 err(isnan(err)) = 1;
 err = fliplr(err(end:-7:1));
 
 idx = 1:length(detuv);
-idx = idx(12:end);
+idx = idx(idx1:end);
 idx = fliplr(idx(end:-7:1));
 sd = std(err);
 %%
