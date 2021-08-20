@@ -176,3 +176,6 @@ xlim([datetime(2021,6,22) datetime('today')+20])
 ax = gca;
 ax.YRuler.Exponent = 0;
 ax.YAxis.TickLabelFormat = '%,.0g';
+
+err = abs(1-(pred(1:height(abroad)-73)' ./ abroad.local(74:end)));
+figure;plot(err,'.');
