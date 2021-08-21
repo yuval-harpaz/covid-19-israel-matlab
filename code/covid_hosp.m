@@ -1,4 +1,4 @@
-
+% called from covid_Israel
 if newFig
     figure('units','normalized','position',[0,0,1,1]);
 else
