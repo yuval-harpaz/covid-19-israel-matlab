@@ -147,8 +147,9 @@ ww =  [0.6,0.8,1.2,1,1,1,1];
 ww = ww./mean(ww);
 pred = [];
 for idr = 1:length(rr)
-    pred = [pred,rr(idr)*((mult^(1/7)).^(-3:3)).*ww]
+    pred = [pred,rr(idr)*((mult^(1/7)).^(-3:3)).*ww];
 end
+pred = round(pred);
 dateRd = dateR(1)-3;
 dateRd = dateRd:dateRd+length(pred)-1;
 
@@ -177,5 +178,5 @@ ax = gca;
 ax.YRuler.Exponent = 0;
 ax.YAxis.TickLabelFormat = '%,.0g';
 
-err = abs(1-(pred(1:height(abroad)-73)' ./ abroad.local(74:end)));
+err = abs(1-(abroad.local(74:end) ./ pred(1:height(abroad)-73)' ));
 figure;plot(err,'.');
