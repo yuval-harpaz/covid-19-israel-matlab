@@ -79,7 +79,13 @@ end
 col = [0.7 0.7 0.7;0,0,0.7];
 figure
 for iw = 1:2
-    h{iw,1} = plot(movmean(dat{iw},[3 3]),'Color',col(iw,:))
+    for ic = 1:length(city)
+        last = find(~isnan(dat{iw}(:,ic)),1,'last');
+        if ~isempty(last)
+            dat{iw}(last,ic) = nan;
+        end
+    end
+    h{iw,1} = plot(movmean(dat{iw},[3 3],'omitnan'),'Color',col(iw,:))
     hold on
 end
 xlim([1 31])
