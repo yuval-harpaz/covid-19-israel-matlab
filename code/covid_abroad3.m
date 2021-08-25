@@ -79,6 +79,7 @@ yyaxis right
 % plot(date,R,'LineWidth',2)
 % hold on;
 % plot(listD.date(1)-shift:listD.date(end)-days-shift,rr.^pow,':k','LineWidth',1.5)
+clear h
 h(1) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Rl.^pow,'g-','LineWidth',1.5);
 hold on
 h(2) = plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Ra.^pow,'r-','LineWidth',1.5);
@@ -152,18 +153,13 @@ end
 pred = round(pred);
 dateRd = dateR(1)-3;
 dateRd = dateRd:dateRd+length(pred)-1;
-
+%%
 figure;
 bar(dateRd,pred,1,'FaceColor',[1 1 1])
 hold on
 bar(abroad.date,abroad.local,'FaceColor',[0.2 0.65 0.2],'EdgeColor','none','FaceAlpha',0.75)
-% regressBasic(abroad.local(58:end))
 sm = movmean(abroad.local,[3 3]);
 plot(abroad.date(1:end-3),sm(1:end-3),'r','LineWidth',3)
-% plot(abroad.date(lin1-1)+xx,xx/fac,'k')
-
-% dateR = dateR(1:7:end);
-
 plot(dateR,rr,'b','LineWidth',2)
 set(gca,'XTick',datetime(2021,6,22)-7*100:7:datetime('today')+20)
 xtickformat('dd/MM')
@@ -177,6 +173,8 @@ xlim([datetime(2021,6,22) datetime('today')+20])
 ax = gca;
 ax.YRuler.Exponent = 0;
 ax.YAxis.TickLabelFormat = '%,.0g';
-
+text(datetime('today'),abroad.local(end),str(abroad.local(end)),'Color',[0.2 0.65 0.2])
+text(datetime('tomorrow')-5,pred(height(abroad)-73),str(pred(height(abroad)-73)))
+%%
 err = abs(1-(abroad.local(74:end) ./ pred(1:height(abroad)-73)' ));
 figure;plot(err,'.');
