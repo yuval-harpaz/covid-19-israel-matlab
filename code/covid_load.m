@@ -40,7 +40,7 @@ if tt.ECMO(end) == 0
 end
 tt.level1 = tt.mild+tt.medium;
 no_mechanical = tt.severe-tt.vent-tt.ECMO_filled;
-tt.level2 =  no_mechanical*1.5*0.75 + no_mechanical*2*0.25; % no support + oxygen support
+tt.level2 =  no_mechanical*1*0.75 + no_mechanical*2*0.25; % no support + oxygen support
 tt.level3 = tt.vent*3;  % (tt.vent-tt.ECMO_filled)*3;
 tt.level6 = round(tt.ECMO_filled)*6;
 tt.load = tt.level1+tt.level2+tt.level3+tt.level6;
@@ -48,7 +48,8 @@ tt.load = tt.level1+tt.level2+tt.level3+tt.level6;
 writetable(tt,'Load.csv','Delimiter',',','WriteVariableNames',true)
 
 % date = date';
-load = [424,441,500,549,581,646,681,716,717,822,884,964,1044,1108]';
+load = [424,441,500,549,581,646,681,716,717,822,884,964,1044,1108,1183,1220,1308,1426,...
+    1463,1481,1509,1562,1547,1700,1791,1814,1799,1791,1819,1794]';
 date = datetime(2021,7,29)+(0:length(load)-1);
 conf = readtable('confirmed.csv');
 % dateSeger = [datetime(202

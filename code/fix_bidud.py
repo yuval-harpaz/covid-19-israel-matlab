@@ -6,7 +6,7 @@ Created on Thu Aug 19 22:49:03 2021
 @author: @yuvharpaz
 """
 # !pip install xlrd
-fname = '/home/innereye/Downloads/bidudim.xlsx'
+fname = '/home/innereye/Downloads/דוח נבדקים ובידודים 26.8.21.xlsx'
 import pandas as pd
 import numpy as np
 t = pd.read_excel(fname)
@@ -19,11 +19,11 @@ for count, col in enumerate(t.columns):
         if type(dat[0]) == str or dat.dtype == np.dtype(object):
             t[col] = [np.int64(str(x).replace('\xa0','').replace('nan','0')) for x in dat]
             t[col] = t[col].astype(float)
-            t[col].plot.hist()
+            # t[col].plot.hist()
 
 # [t[col][t[col]>0].plot() for col in t.columns if type(t[col].values[0]) != str]
 # plt.legend()
 
-t.to_excel('/home/innereye/Downloads/test.xlsx')
-t.to_csv('/home/innereye/Downloads/test.csv')
+t.to_excel('/home/innereye/Downloads/bidud.xlsx')
+t.to_csv('/home/innereye/Downloads/bidud.csv')
 
