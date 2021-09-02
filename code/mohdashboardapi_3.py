@@ -522,11 +522,14 @@ create_patients_csv(data)
 create_vaccinated_csv(data)
 create_cases_by_vaccinations_daily(data)
 update_age_vaccinations_csv(data)
-# vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily")
-# vacc.to_csv("vaccinatedVerifiedDaily.csv")
+
 research = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/researchGraph")
 research.to_csv("researchGraph.csv")
-# vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily")
-# vacc.to_csv("vaccinatedVerifiedDaily.csv")
+
 vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge")
 vacc.to_csv("vaccinationsPerAge.csv")
+
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedByAge")
+vacc.to_csv("vaccinatedVerifiedByAge.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily")
+vacc.to_csv("vaccinatedVerifiedDaily.csv")

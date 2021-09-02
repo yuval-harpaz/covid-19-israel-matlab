@@ -37,7 +37,7 @@ plot(abroad.date(1)-shift:abroad.date(end)-days-shift,Ra.^pow,'g-','LineWidth',1
 ylim([0 2])
 ylabel('R')
 yyaxis right
-plot(listD.date,movmean(listD.tests_positive,[3 3]))
+plot(listD.date,movmean(listD.tests_positive1,[3 3]))
 hold on
 plot(listD.date,listD.tests_positive,':')
 ylim([0 10000])
@@ -66,6 +66,15 @@ grid on
 set(gca,'FontSize',13)
 ylabel('R estimate')
 
+prob = fliplr([0.0364;0.143;0.159;0.144;0.121;0.0968;0.0756;0.0579;0.0438;0.0328;0.0243;0.0179;0.0131;0.00959;0.00697;0.00505;0.00365;0.00263;0.00189;0.00136;0.000971;0.000695;0.000496;0.000354;0.000252;0.000179;0.000127;9.03e-05;6.41e-05;4.54e-05;3.22e-05]);
+Rnew = nan(height(listD),1);
+for ii = 1:height(listD)-30
+    Rnew(30+ii,1) = listD.tests_positive1(30+ii)./sum(prob.*listD.tests_positive1(ii:ii+30));
+end
+Rnew = conv(listD.tests_positive1,prob);
+Rnew = Rnew(end-height(listD)+1:end);
+Rnew = movmean(listD.tests_positive1./Rnew,[3 3]);
+Rnew(end-3:end)
 
 %%
 figure('units','normalized','position',[0.3,0.3,0.5,0.5]);
