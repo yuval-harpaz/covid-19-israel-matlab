@@ -1,5 +1,15 @@
 import pandas as pd
-vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedByAge")
-vacc.to_csv("vaccinatedVerifiedByAge.csv")
-vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily")
-vacc.to_csv("vaccinatedVerifiedDaily.csv")
+import os
+DIR = "/home/innereye/covid-19-israel-matlab/data/Israel"
+if os.path.isdir(r'C:\Users\User\Documents\Corona'):
+    DIR = r'C:\Users\User\Documents\Corona'
+os.chdir(DIR)
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/deathVaccinationStatusDaily")
+vacc.to_csv("deathVaccinationStatusDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily")
+vacc.to_csv("SeriousVaccinationStatusDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily")
+vacc.to_csv("VerfiiedVaccinationStatusDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/VaccinationStatusAgg")
+vacc.to_csv("VaccinationStatusAgg.csv")
+
