@@ -55,11 +55,18 @@ api_query = {'requests': [
     {'id': '33', 'queryName': 'vaccinatedVerifiedDaily', 'single': False, 'parameters': {'days': 0}},
     {'id': '34', 'queryName': 'vaccinatedVerifiedByAge', 'single': False, 'parameters': {}},
     {'id': '35', 'queryName': 'researchGraph', 'single': False, 'parameters': {}},
+    {'id': '36', 'queryName': 'tileDisplay', 'single': False, 'parameters': {}},
+    {'id': '37', 'queryName': 'deathVaccinationStatusDaily', 'single': False, 'parameters': {}},
+    {'id': '38', 'queryName': 'SeriousVaccinationStatusDaily', 'single': False, 'parameters': {}},
+    {'id': '39', 'queryName': 'VerfiiedVaccinationStatusDaily', 'single': False, 'parameters': {}},
+    {'id': '40', 'queryName': 'VaccinationStatusAgg', 'single': False, 'parameters': {}},
     ]}
 api_address = 'https://datadashboardapi.health.gov.il/api/queries/_batch'
 def get_api_data():
     data = requests.post(api_address, json=api_query).json()
-    data_dict = {r['queryName']:data[int(r['id'])]['data'] for r in api_query['requests']}
+    data_dict = {
+        r['queryName']:(data[int(r['id'])]['data'] if 'data' in data[int(r['id'])] else None)
+        for r in api_query['requests']}
     return data_dict
 
 #  GIT_DIR = r'C:\GitHub\israel_moh_covid_dashboard_data'
@@ -75,6 +82,8 @@ HOSP_FNAME = 'hospitalized_and_infected.csv'
 VAC_FNAME = 'vaccinated.csv'
 VAC_AGES_FNAME = 'vaccinated_by_age.csv'
 VAC_CASES_DAILY = 'cases_by_vaccination_daily.csv'
+VAC_CASES_DAILY_ABS = 'cases_by_vaccination_daily_absolute.csv'
+VAC_CASES_DAILY_NORM = 'cases_by_vaccination_daily_normalized.csv'
 VAC_CASES_AGES = 'cases_by_vaccination_ages.csv'
 HOSPITALS_FNAME = 'hospital_occupancy.csv'
 HOSP_HEB_FIELD_NAMES = [
@@ -267,27 +276,96 @@ def create_patients_csv(data):
     #  assert os.system('git add '+HOSP_FNAME) == 0    
 
 
-def create_cases_by_vaccinations_daily(data):
-##    res = ',' + (','*9).join(['All ages', 'Above 60', 'Below 60']) + ','*8 + '\n'
-    res = ',' + ',,,'.join([pre+' - '+suf
-                            for pre in ['All ages', 'Above 60', 'Below 60']
-                            for suf in ['fully vaccinated', 'partially vaccinated', 'not vaccinated']
-                            ]) + ','*2 + '\n'    
-    res += 'Date' + ',Total Amount,Daily verified,Total serious'*9 + '\n'
-    vvd = data['vaccinatedVerifiedDaily']
+# def create_cases_by_vaccinations_daily(data):
+# ##    res = ',' + (','*9).join(['All ages', 'Above 60', 'Below 60']) + ','*8 + '\n'
+#     res = ',' + ',,,'.join([pre+' - '+suf
+#                             for pre in ['All ages', 'Above 60', 'Below 60']
+#                             for suf in ['fully vaccinated', 'partially vaccinated', 'not vaccinated']
+#                             ]) + ','*2 + '\n'    
+#     res += 'Date' + ',Total Amount,Daily verified,Total serious'*9 + '\n'
+#     vvd = data['vaccinatedVerifiedDaily']
+#     for i in range(0, len(vvd), 3):
+#         s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
+#         assert s[0]['day_date'] == s[2]['day_date'] == s[2]['day_date']
+#         line = s[0]['day_date']+','
+#         line += ','.join([
+#             str(ss[case_type%vacc_type])
+#             for ss in s
+#             for vacc_type in ['vaccinated', 'vaccinated_procces', 'not_vaccinated']
+#             for case_type in ['%s_amount_cum', 'verified_amount_%s', 'Serious_amount_%s']])
+#         res += line + '\n'
+#     opf = open(VAC_CASES_DAILY,'w')
+#     opf.write(res)
+#     #  assert os.system('git add '+VAC_CASES_DAILY) == 0        
+# def simulate_vvd(data):
+#     dailys = [data[pre + 'VaccinationStatusDaily'] for pre in ['death', 'Serious', 'Verfiied']]
+#     assert len(set([tuple([x['day_date'] for x in d]) for d in dailys])) == 1
+#     assert len(set([tuple([x['age_group'] for x in d]) for d in dailys])) == 1
+#     merged = [dict(x.items()+y.items()+z.items()) for x,y,z in zip(*dailys)]
+#     for m in merged:
+#         m.update({s.lower():m[s] for s in [
+#             'new_Serious_amount_boost_vaccinated', 'new_Serious_boost_vaccinated_normalized']})
+#         m.update({
+#             'death_boost_vaccinated_normalized':m['death_amount_boost_vaccinated_normalized']})
+#     return merged
+
+def simulate_vvd(data):
+    dailys = [data[pre + 'VaccinationStatusDaily'] for pre in ['death', 'Serious', 'Verfiied']]
+    assert len(set([tuple([x['day_date'] for x in d]) for d in dailys])) == 1
+    assert len(set([tuple([x['age_group'] for x in d]) for d in dailys])) == 1
+    merged = [dict(list(x.items())+list(y.items())+list(z.items())) for x,y,z in zip(*dailys)]
+    for m in merged:
+        m.update({s.lower():m[s] for s in [
+            'new_Serious_amount_boost_vaccinated', 'new_Serious_boost_vaccinated_normalized']})
+        m.update({
+            'death_boost_vaccinated_normalized':m['death_amount_boost_vaccinated_normalized']})
+    return merged
+
+def create_cases_by_vaccinations_absolute(data):
+    res = ',' + ',,,'.join([
+        pre + ' - ' + suf
+        for pre in ['All ages', 'Above 60', 'Below 60']
+        for suf in [
+            'Daily verified', 'Total serious', 'New serious', 'Total deaths']
+        ]) + ','*2 + '\n'
+    res += 'Date'+',Booster vaccinated,Fully vaccinated,Not vaccinated'*12+'\n'
+    vvd = simulate_vvd(data)
+    vacc_types = ['boost_vaccinated', 'vaccinated', 'not_vaccinated']
+    case_types = ['verified', 'serious', 'new_serious', 'death']
     for i in range(0, len(vvd), 3):
         s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
-        assert s[0]['day_date'] == s[2]['day_date'] == s[2]['day_date']
-        line = s[0]['day_date']+','
-        line += ','.join([
-            str(ss[case_type%vacc_type])
-            for ss in s
-            for vacc_type in ['vaccinated', 'vaccinated_procces', 'not_vaccinated']
-            for case_type in ['%s_amount_cum', 'verified_amount_%s', 'Serious_amount_%s']])
+        assert s[0]['day_date'] == s[1]['day_date'] == s[2]['day_date']
+        line = s[0]['day_date'] + ',' + ','.join([
+            str(ss[case_type + '_amount_' + vacc_type])
+            for ss in s for case_type in case_types for vacc_type in vacc_types])
         res += line + '\n'
-    opf = open(VAC_CASES_DAILY,'w')
+    # file(VAC_CASES_DAILY_ABS, 'w').write(res)
+    opf = open(VAC_CASES_DAILY_ABS,'w')
     opf.write(res)
-    #  assert os.system('git add '+VAC_CASES_DAILY) == 0        
+    # assert os.system('git add '+VAC_CASES_DAILY_ABS) == 0
+
+def create_cases_by_vaccinations_normalized(data):
+    res = ',' + ',,,'.join([
+        pre + ' - ' + suf
+        for pre in ['All ages', 'Above 60', 'Below 60']
+        for suf in [
+            'Daily verified', 'Total serious', 'New serious', 'Total deaths']
+        ]) + ','*2 + '\n'
+    res += 'Date'+',Booster vaccinated,Fully vaccinated,Not vaccinated'*12+'\n'
+    vvd = simulate_vvd(data)
+    vacc_types = ['boost_vaccinated', 'vaccinated', 'not_vaccinated']
+    case_types = ['verified', 'serious', 'new_serious', 'death']
+    for i in range(0, len(vvd), 3):
+        s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
+        assert s[0]['day_date'] == s[1]['day_date'] == s[2]['day_date']
+        line = s[0]['day_date'] + ',' + ','.join([
+            str(ss[case_type + '_' + vacc_type + '_normalized'])
+            for ss in s for case_type in case_types for vacc_type in vacc_types])
+        res += line + '\n'
+    # file(VAC_CASES_DAILY_NORM, 'w').write(res)
+    opf = open(VAC_CASES_DAILY_NORM,'w')
+    opf.write(res)
+    # assert os.system('git add '+VAC_CASES_DAILY_NORM) == 0
 
 def update_cases_by_vaccinations_ages(data):
     date = data['lastUpdate']['lastUpdate']
@@ -407,129 +485,27 @@ def update_cities(new_data):
             add_line_to_file('cities_transliteration.csv', ('%s,%s'%(n, strip_name(n))).encode('utf-8'))
 
 
-def update_json():
-    prev_date = json.load(file(DATA_FNAME,'r'))['lastUpdate']['lastUpdate']
-    new_data = get_api_data()
-    new_date = new_data['lastUpdate']['lastUpdate']
-    if new_date == prev_date:
-        print(time.ctime()+': ', 'No update since', prev_date)
-        return
-    
-    print(time.ctime()+': ', 'Data updated! New time:', new_date)
-    # update_ages_csv(new_data) # Obsolete
-    try:
-        print('updating ages csvs')
-        update_all_ages_csvs(new_data)
-    except:
-        print('Exception in ages csv')
-
-    try:
-        print('updating patients csv')
-        create_patients_csv(new_data)
-    except:
-        print('Exception in patients csv')
-
-    try:
-        print('updating vaccinated csv')
-        create_vaccinated_csv(new_data)
-    except:
-        print('Exception in vaccination csv')
-
-    # extend_hospital_csv(new_data)
-
-    try:
-        print('updating vaccination ages csv')
-        update_age_vaccinations_csv(new_data)
-    except:
-        print('Exception in vaccination ages csv')
-
-    try:
-        print('createing cases by vaccinations daily csv')
-        create_cases_by_vaccinations_daily(new_data)
-    except:
-        print('Exception in cases by vaccinations daily csv')
-
-    try:
-        print('updating cases by vaccinations ages csv')
-        update_cases_by_vaccinations_ages(new_data)
-    except:
-        print('Exception in cases by vaccinations ages csv')
-
-    try:
-        print('updating cities csvs')
-        update_cities(new_data)
-    except:
-        print('Exception in cities csvs')
-
-    print('updating isolated csv')
-    update_isolated_csv(new_data)
-    
-    json.dump(new_data, file(DATA_FNAME,'w'), indent = 2)
-    update_git(new_date)
-    update_git_history(new_date)
-
-
-    
-def update_json_loop():
-    while True:
-        try:
-            update_json()
-            time.sleep(60*60 - 4)
-        except Exception as e:
-            print(e)
-            if type(e) is ValueError and e.message == "No JSON object could be decoded":
-                time.sleep(10)
-            else:
-                time.sleep(10*60 - 4)
-            
-
-
-def fetch_historic_data(index):
-    history = json.load(file(COMMIT_HIST_FNAME,'r'))
-    if type(index) == int:
-        commit_hash = history[index][1]
-    elif type(index) == str:
-        commit_hash = dict(history)[index]
-    else:
-        raise TypeError('argument index of type %s, expected int or str'%(type(index)))
-
-    #  assert os.system('git checkout %s -- %s'%(commit_hash, DATA_FNAME)) == 0
-    data = json.load(file(DATA_FNAME,'r'))
-    #  assert os.system('git checkout master -- ' + DATA_FNAME) == 0
-
-    return data
-
-
-def get_all_historic_data(start = 0, end = None):
-    history = json.load(file(COMMIT_HIST_FNAME,'r'))
-    if end == None:
-        end = len(history)
-    dataa = []
-    for i in range(start, end):
-        commit_hash = history[i][1]
-        #  assert os.system('git checkout %s -- %s'%(commit_hash, DATA_FNAME)) == 0
-        dataa.append(json.load(file(DATA_FNAME,'r')))
-
-    #  assert os.system('git checkout master -- ' + DATA_FNAME) == 0
-    return dataa
-
-
 def get_age_dist_from_json(data):
     return [sec['male'] + sec['female'] for sec in data['infectedByAgeAndGenderPublic']]
 
 data = get_api_data()
 create_patients_csv(data)
 create_vaccinated_csv(data)
-create_cases_by_vaccinations_daily(data)
+# create_cases_by_vaccinations_daily(data)
 update_age_vaccinations_csv(data)
-
 research = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/researchGraph")
 research.to_csv("researchGraph.csv")
-
 vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge")
 vacc.to_csv("vaccinationsPerAge.csv")
 
-vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedByAge")
-vacc.to_csv("vaccinatedVerifiedByAge.csv")
-vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedDaily")
-vacc.to_csv("vaccinatedVerifiedDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/deathVaccinationStatusDaily")
+vacc.to_csv("deathVaccinationStatusDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily")
+vacc.to_csv("SeriousVaccinationStatusDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily")
+vacc.to_csv("VerfiiedVaccinationStatusDaily.csv")
+vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/VaccinationStatusAgg")
+vacc.to_csv("VaccinationStatusAgg.csv")
+
+create_cases_by_vaccinations_normalized(data)
+create_cases_by_vaccinations_absolute(data)
