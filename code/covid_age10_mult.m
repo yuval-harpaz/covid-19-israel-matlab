@@ -1,60 +1,70 @@
-function covid_age_mult
+function covid_age10_mult
 % delta = readtable('~/covid-19-israel-matlab/data/Israel/delta.csv','ReadVariableNames',true);
-!~/Programs/anaconda3/bin/python ~/covid-19-israel-matlab/code/vaccinated_cases.py
-ver = readtable('~/covid-19-israel-matlab/data/Israel/VerfiiedVaccinationStatusDaily.csv');
-date = datetime(ver.day_date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
+% !~/Programs/anaconda3/bin/python ~/covid-19-israel-matlab/code/vaccinated_cases.py
+% ver = readtable('~/covid-19-israel-matlab/data/Israel/VerfiiedVaccinationStatusDaily.csv');
+% date = datetime(ver.day_date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
 
-[posOld, posYoung, dateW] = getTimna60;
-idx = find(ismember(ver.age_group,'מעל גיל 60'));
-idx = idx(1:end-1);
-ydx = find(ismember(ver.age_group,'מתחת לגיל 60'));
-ydx = ydx(1:end-1);
+[posTimna, dateT] = getTimna20;
+[posDash, dateD] = get_dashboard;
+dd = dateshift(dateD,'start','day');
 
+dateT = [dateT;(dateT(end)+(7:7:50))'];
+dU = unique(dd);
+dateT(dateT>dU(end-1)) = [];
+dash = nan(size(dateT));
+for iWeek = 1:length(dateT)
+    start = find(dd == dateT(iWeek)-7,1,'last');
+    wend = find(dd == dateT(iWeek),1,'last');
+    if ~isempty(start) && ~isempty(wend)
+        dash(iWeek) = posDash(wend)-posDash(start);
+    end
+end
+dash(73) = nan;
 figure;
-plot(date(idx),movmean(sum(ver{idx,4:6},2),[3 3]))
+plot(dateT(1:length(posTimna))-3,posTimna)
 hold on
-plot(dateW-3,posOld/7)
-plot(date(ydx),movmean(sum(ver{ydx,4:6},2),[3 3]))
-plot(dateW-3,posYoung/7)
-xlim([datetime(2021,6,1),datetime('today')])
+plot(dateT-3,dash)
+
+
+
 % extraDays = find(date>dateW(end));
 % extraDays = extraDays(7:7:end);
 % dateW(1
-yy = movmean([ver{ydx,4:6},ver{idx,4:6}],[3 3]);
-yyNorm = movmean([ver{ydx,7:9},ver{idx,7:9}],[3 3]);
-mult = nan(size(yy));
-mult(8:end,:) = yy(8:end,:)./yy(1:end-7,:);
-multNorm = nan(size(yyNorm));
-multNorm(8:end,:) = yyNorm(8:end,:)./yyNorm(1:end-7,:);
-multNorm(1:213,1) = nan;
-multNorm(1:198,4) = nan;
+young = dash;
+young(1:length(posTimna)) = posTimna;
+mult = nan(size(dash));
+mult(2:end,:) = young(2:end,:)./young(1:end-1,:);
+date1 = datetime(2020,5,1);
+%%
 figure;
-plot(date(ydx),yy)
+subplot(3,1,1)
+plot(dateT,young)
+title('weekly cases for 0-20 years old')
+set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
+grid on
+ax = gca;
+ax.YRuler.Exponent = 0;
+xlim([date1,datetime('today')])
+xtickformat('MMM')
+subplot(3,1,2)
+plot(dateT,young)
+title('weekly cases for 0-20 years old (log)')
+set(gca,'YScale','log','FontSize',13,'Xtick',datetime(2020,1:50,1))
+grid on
+xlim([date1,datetime('today')])
+xtickformat('MMM')
+subplot(3,1,3)
+plot(dateT,mult)
+grid on
+title('multiplication factor')
+set(gca,'FontSize',13,'YTick',0:6,'Xtick',datetime(2020,1:50,1))
+xtickformat('MMM')
+set(gcf,'Color','w')
+xlim([date1,datetime('today')])
 
+%%
 
-figure;
-plot(date(ydx),mult)
-xlim([datetime(2021,6,1),datetime('today')])
-top = [25,3];
-date1 = [datetime(2021,6,1),datetime(2021,7,1)];
-figure;
-for ii = 1:2
-    subplot(2,1,ii)
-    plot(date(ydx),multNorm)
-    xlim([date1(ii),datetime('today')])
-    ylim([0 top(ii)]);
-    grid on
-    if ii == 1
-        legend('<60 dose III','<60 dose II','<60 no vax','60+ dose III','60+ dose II','60+ no vax');
-        title('Weekly multiplication factor  מקדם הכפלה שבועי')
-    else
-        title('zoom in')
-    end
-end
-
-
-
-function [posOld, posYoung, dateW] = getTimna60
+function [pos20, dateW] = getTimna20
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
 json = jsondecode(json);
 week = struct2table(json.result.records);
@@ -76,10 +86,18 @@ for ii = 1:length(dateW)
             ismember(week.age_group,ages(iAge))));
     end
 end
-posOld = sum(pos(:,10:14),2);
-posYoung = sum(pos(:,1:9),2);
+pos20 = pos(:,1);
+% posYoung = sum(pos(:,1:9),2);
 
-
+function [pos, dateD] = get_dashboard
+txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/ages_dists.csv');
+txt = txt(find(ismember(txt,newline),1)+1:end);
+fid = fopen('tmp.csv','w');
+fwrite(fid,txt);
+fclose(fid);
+ag = readtable('tmp.csv');
+pos = sum(ag{:,2:3},2);
+dateD = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
 % tt = struct2table(json);
 % json = urlread('https://datadashboardapi.health.gov.il/api/queries/vaccinatedVerifiedByAge');
 % json = jsondecode(json);
