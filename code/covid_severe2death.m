@@ -30,7 +30,7 @@ iAge = 1;
 % % preprocess
 
 
-cd3 = severe{ages{iAge,2},6:8};
+cd3 = severe{ages{iAge,2},12:14};
 cd3(1:195,1) = nan;
 if iAge == 2
     cd3(196:209,1) = nan;
