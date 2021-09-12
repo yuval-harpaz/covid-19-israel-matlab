@@ -9,7 +9,7 @@ vacc.to_csv("deathVaccinationStatusDaily.csv")
 vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily")
 vacc.to_csv("SeriousVaccinationStatusDaily.csv")
 vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily")
-vacc.to_csv("VerfiiedVaccinationStatusDaily.csv")
+vacc.to_csv("VerfiedVaccinationStatusDaily.csv")
 vacc = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/VaccinationStatusAgg")
 vacc.to_csv("VaccinationStatusAgg.csv")
 
