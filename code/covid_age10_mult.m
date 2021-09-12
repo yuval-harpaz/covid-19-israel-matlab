@@ -11,6 +11,7 @@ dd = dateshift(dateD,'start','day');
 dateT = [dateT;(dateT(end)+(7:7:50))'];
 dU = unique(dd);
 dateT(dateT>dU(end-1)) = [];
+dateT(end+1) = dU(end)-1;
 dash = nan(size(dateT));
 for iWeek = 1:length(dateT)
     start = find(dd == dateT(iWeek)-7,1,'last');
