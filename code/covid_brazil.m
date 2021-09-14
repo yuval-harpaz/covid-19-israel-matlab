@@ -85,7 +85,7 @@ if plt
 end
 %%
 % https://github.com/wcota/covid19br/raw/master/cases-brazil-cities-time.csv.gz
-city = true;
+city = false;
 if city
     !wget -O tmp.gz https://github.com/wcota/covid19br/raw/master/cases-brazil-cities-time.csv.gz
     gunzip('tmp.gz')
