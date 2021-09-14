@@ -11,3 +11,4 @@ vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/arriving
 vacc.to_csv("arrivingAbroadDaily.csv")
 vacc = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/positiveArrivingAboardDaily')
 vacc.to_csv("positiveArrivingAbroadDaily.csv")
+
