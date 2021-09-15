@@ -3,7 +3,7 @@
 ### Automatically generated charts showing daily updates of COVID-19 deaths
 This is an open-source project using Matlab tools to generate images from online available data. It is mainly concerned with death rates, because it is hard to compare countries for any other measurement. The number of confirmed cases for instance, is biased by the number of tests run by different countries.
 <br>
-### Last updated for 14.09.2021
+### Last updated for 15.09.2021
 
 
 
