@@ -44,12 +44,19 @@ sd3 = movmean(sd3,[3 3],'omitnan');
 dd3 = [sum(deaths{ages{2,1},3:5},2),sum(deaths{ages{1,1},3:5},2)];
 dd3(end,:) = nan;
 dd3 = movmean(dd3,[3 3],'omitnan');
-figure;
-plot(severe.date(ages{1,1}),dd3,'k')
-hold on
-plot(severe.date(ages{1,1})+7,sd3.*[0.05,0.35],'r')
-predSev = sum(sd3.*[0.05,0.35],2);
 
+figure;
+h1 = plot(severe.date(ages{1,1}),dd3,'k');
+hold on
+h2 = plot(severe.date(ages{1,1})+7,sd3.*[0.05,0.35],'r');
+legend([h1(1),h2(1)],'deaths','predicted deaths')
+text([0,0],[35,33.2],{'Deaths and predicted deaths for older (top)',...
+    'and younger than 60 (bottom)'},'FontSize',13)
+axis tight
+set(gca,'FontSize',13)
+grid on
+set(gcf,'Color','w')
+predSev = sum(sd3.*[0.05,0.35],2);
 sd6 = [severe{ages{2,2},6:8},severe{ages{1,2},6:8}];
 sd6(end,:) = nan;
 sd6 = movmean(sd6,[3 3],'omitnan');
