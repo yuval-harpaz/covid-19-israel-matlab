@@ -1,0 +1,57 @@
+function covid_abroad4
+
+
+cd ~/covid-19-israel-matlab/data/Israel
+% tests = readtable('tests.csv'); 
+listD = readtable('dashboard_timeseries.csv');
+abroad = readtable('infected_abroad.csv');
+listD = listD(find(ismember(listD.date,abroad.date),1):end,:);
+extra = height(listD)-height(abroad);
+if extra > 0
+    row = height(abroad)+1:height(abroad)+extra;
+    abroad.date(end+1:end+extra) = listD.date(row);
+end
+abroad.tests = listD.tests;
+abroad.positive = listD.tests_positive;
+if sum(abroad{end,4:5}) == 0
+    abroad(end,:) = [];
+end
+
+options = weboptions('Timeout', 30);
+url = 'https://datadashboardapi.health.gov.il/api/queries/positiveArrivingAboardDaily';
+paad = webread(url, options);
+paad = struct2table(paad);
+paad = paad(ismember(paad.visited_country,'כלל המדינות'),:);
+date = datetime(paad.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
+ie = cellfun(@isempty,paad.sum_positive);
+paad.sum_positive(ie) = {0};
+abr = cellfun(@(x) x,paad.sum_positive);
+abroad.incoming(ismember(abroad.date,date)) = abr;
+
+aad = struct2table(webread('https://datadashboardapi.health.gov.il/api/queries/arrivingAboardDaily'));
+aad = aad(ismember(aad.visited_country,'כלל המדינות'),:);
+aadDate = datetime(aad.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
+
+
+abroad.incoming_tests(ismember(abroad.date,aadDate)) = aad.sum_arrival;
+abroad.local = abroad.positive-abroad.incoming;
+writetable(abroad,'infected_abroad.csv')
+xt = dateshift(datetime('today'),'start','week');
+xt = fliplr(xt:-7:abroad.date(1));
+figure;
+yy = abroad{:,5}./(abroad{:,4}+abroad{:,5})*100;
+yys = nan(size(yy));
+idx = ~isnan(yy);
+yys(idx) = movmean(yy(idx),[3 3]);
+plot(abroad.date,yy,'.b')
+hold on
+plot(abroad.date,yys,'b')
+set(gca,'XTick',xt)
+title('infected abroad (%) נדבקו בחו"ל')
+set(gca,'XTick',xt)
+grid on
+box off
+ylabel('%')
+set(gcf,'Color','w')
+xlim(abroad.date([1,end]))
+ylim([0 100])

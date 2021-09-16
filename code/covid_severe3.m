@@ -35,5 +35,9 @@ writetable(t,'~/covid-19-israel-matlab/data/Israel/severe60.csv','Delimiter',','
 figure;
 plot(listD.date,movmean(listD.CountDeath,[3 3]),'k')
 hold on
-plot(t.date+7,movmean(sum(t{:,2:3}.*[0.45,0.05],2),[3 3]))
+plot(t.date+7,movmean(sum(t{:,2:3}.*[0.45,0.05],2),[3 3]),'r')
 xlim(t.date([1,end]))
+xtickformat('MMM')
+grid on
+set(gca,'FontSize',13)
+legend('deaths','severe-predicted')
