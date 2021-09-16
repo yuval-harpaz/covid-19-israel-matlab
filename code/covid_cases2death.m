@@ -13,7 +13,7 @@ cases.Properties.VariableNames{1} = 'date';
 dOld = ismember(deaths.age_group,'מעל גיל 60');
 cOld = ismember(cases.age_group,'מעל גיל 60');
 dYoung = ismember(deaths.age_group,'מתחת לגיל 60');
-cYoung = ismember(deaths.age_group,'מתחת לגיל 60');
+cYoung = ismember(cases.age_group,'מתחת לגיל 60');
 ages = {dOld,cOld;dYoung,cYoung};
 tit = {{'Cases vs deaths for 60+ by vaccination status','cases shifted by 14 days'};...
     {'Cases vs deaths for <60 by vaccination status','cases shifted by 14 days'}};

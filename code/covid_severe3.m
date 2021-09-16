@@ -41,3 +41,20 @@ xtickformat('MMM')
 grid on
 set(gca,'FontSize',13)
 legend('deaths','severe-predicted')
+
+%% deaths
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/deathVaccinationStatusDaily');
+json = jsondecode(json);
+deaths = struct2table(json);
+deaths.day_date = datetime(strrep(deaths.day_date,'T00:00:00.000Z',''));
+deaths.Properties.VariableNames{1} = 'date';
+idx = ismember(deaths.age_group,'כלל האוכלוסיה');
+tt = readtable('~/covid-19-israel-matlab/data/Israel/deaths_by_vacc.csv');
+jdx = 17:sum(idx)+16;
+tt.date(jdx) = deaths.date(idx);
+tt.vacc3(jdx) = deaths.death_amount_boost_vaccinated(idx);
+tt.vacc2(jdx) = deaths.death_amount_vaccinated(idx);
+tt.unvacc(jdx) = deaths.death_amount_not_vaccinated(idx);
+kdx = ismember(listD.date,tt.date);
+tt.total = listD.CountDeath(kdx);
+writetable(tt,'~/covid-19-israel-matlab/data/Israel/deaths_by_vacc.csv','Delimiter',',','WriteVariableNames',true);
