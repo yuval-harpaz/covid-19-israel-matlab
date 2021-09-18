@@ -1,7 +1,7 @@
 function covid_age_mult
 % delta = readtable('~/covid-19-israel-matlab/data/Israel/delta.csv','ReadVariableNames',true);
 !~/Programs/anaconda3/bin/python ~/covid-19-israel-matlab/code/vaccinated_cases.py
-ver = readtable('~/covid-19-israel-matlab/data/Israel/VerfiiedVaccinationStatusDaily.csv');
+ver = readtable('~/covid-19-israel-matlab/data/Israel/VerfiedVaccinationStatusDaily.csv');
 date = datetime(ver.day_date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
 
 [posOld, posYoung, dateW] = getTimna60;
