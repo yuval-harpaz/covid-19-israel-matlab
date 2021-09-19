@@ -41,7 +41,7 @@ for ii = 1:2
     figure;
     subplot(3,1,1)
     plot(dateT,merged,'LineWidth',1)
-    title('weekly cases for 0-20 years old')
+    title('weekly cases by age')
     set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
     grid on
     ax = gca;
@@ -59,7 +59,7 @@ for ii = 1:2
     end
     subplot(3,1,2)
     plot(dateT,merged,'LineWidth',1)
-    title('weekly cases for 0-20 years old (log)')
+    title('weekly cases by age (log)')
     set(gca,'YScale','log','FontSize',13,'Xtick',datetime(2020,1:50,1))
     grid on
     xlim([date1,datetime('today')])
@@ -75,7 +75,7 @@ for ii = 1:2
     subplot(3,1,3)
     plot(dateT,mult,'LineWidth',1)
     grid on
-    title('multiplication factor')
+    title('weekly multiplication factor')
     set(gca,'FontSize',13,'YTick',0:6,'Xtick',datetime(2020,1:50,1))
     xtickformat('MMM')
     set(gcf,'Color','w')

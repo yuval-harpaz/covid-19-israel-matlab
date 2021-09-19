@@ -28,7 +28,7 @@ paad.sum_positive(ie) = {0};
 abr = cellfun(@(x) x,paad.sum_positive);
 abroad.incoming(ismember(abroad.date,date)) = abr;
 
-aad = struct2table(webread('https://datadashboardapi.health.gov.il/api/queries/arrivingAboardDaily'));
+aad = struct2table(webread('https://datadashboardapi.health.gov.il/api/queries/arrivingAboardDaily',options));
 aad = aad(ismember(aad.visited_country,'כלל המדינות'),:);
 aadDate = datetime(aad.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
 
@@ -39,6 +39,7 @@ writetable(abroad,'infected_abroad.csv')
 xt = dateshift(datetime('today'),'start','week');
 xt = fliplr(xt:-7:abroad.date(1));
 figure;
+subplot(1,2,1)
 yy = abroad{:,5}./(abroad{:,4}+abroad{:,5})*100;
 yys = nan(size(yy));
 idx = ~isnan(yy);
@@ -55,3 +56,12 @@ ylabel('%')
 set(gcf,'Color','w')
 xlim(abroad.date([1,end]))
 ylim([0 100])
+xtickangle(90)
+subplot(1,2,2)
+bar(abroad.date,abroad.incoming)
+grid on
+box off
+ylim([0 2000])
+title('infected abroad')
+set(gca,'XTick',xt)
+xtickangle(90)
