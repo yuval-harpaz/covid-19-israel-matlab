@@ -86,8 +86,8 @@ predCases = sum(cd6.*fac,2);
 figure;
 plot(severe.date(ages{1,1}),sum(dd3,2),'k')
 hold on
-plot(severe.date(ages{1,1})+7,predSev,'r')
-plot(severe.date(ages{1,1})+14,predCases,'b')
+plot(severe.date(ages{1,1})+8,predSev,'r')
+plot(severe.date(ages{1,1})+11,predCases,'b')
 legend('deaths','severe-predicted','cases-predicted')
 grid on
 title('predict deaths by cases or new severe patients')
