@@ -33,35 +33,35 @@ hh(1).LineStyle = ':';
 hh(2).Color = 'b';
 hh(3).LineStyle = ':';
 
-ratio = [max(dash(55:end,:))./max(dash(25:35,:))]';
-figure;
-for ii = 1:10
-    bar(ii,100*ratio(ii),'EdgeColor','none','FaceColor',hh(ii).Color)
-    hold on
-end
-set(gca,'ygrid','on','Xtick',1:10,...
-    'XTickLabel',{'0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+'})
-title('max(wave 4)/max(wave 3)')
-ylabel('%')
-box off
-set(gcf,'Color','w')
-
-
-%%
-stc = struct2table(webread('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge'));
-figure;
-bar(0,100,'EdgeColor','none','FaceColor',hh(1).Color);
-hold on
-bar(1,100-stc.persent_vaccinated_second_dose(ii),'EdgeColor','none','FaceColor',hh(2).Color);
-for ii = 2:10
-    bar(ii,100-stc.percent_vaccinated_first_dose(ii),'EdgeColor','none','FaceColor',hh(ii).Color);
-end
-set(gca,'ygrid','on','Xtick',0:10,...
-    'XTickLabel',[{'0-11'};stc.age_group])
-ylabel('%')
-box off
-set(gcf,'Color','w')
-title('not vaccinated (0 or 1 doses)')
+% ratio = [max(dash(55:end,:))./max(dash(25:35,:))]';
+% figure;
+% for ii = 1:10
+%     bar(ii,100*ratio(ii),'EdgeColor','none','FaceColor',hh(ii).Color)
+%     hold on
+% end
+% set(gca,'ygrid','on','Xtick',1:10,...
+%     'XTickLabel',{'0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+'})
+% title('max(wave 4)/max(wave 3)')
+% ylabel('%')
+% box off
+% set(gcf,'Color','w')
+% 
+% 
+% %%
+% stc = struct2table(webread('https://datadashboardapi.health.gov.il/api/queries/vaccinationsPerAge'));
+% figure;
+% bar(0,100,'EdgeColor','none','FaceColor',hh(1).Color);
+% hold on
+% bar(1,100-stc.persent_vaccinated_second_dose(ii),'EdgeColor','none','FaceColor',hh(2).Color);
+% for ii = 2:10
+%     bar(ii,100-stc.percent_vaccinated_first_dose(ii),'EdgeColor','none','FaceColor',hh(ii).Color);
+% end
+% set(gca,'ygrid','on','Xtick',0:10,...
+%     'XTickLabel',[{'0-11'};stc.age_group])
+% ylabel('%')
+% box off
+% set(gcf,'Color','w')
+% title('not vaccinated (0 or 1 doses)')
 function [pos, date] = get_dashboard
 txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/ages_dists.csv');
 txt = txt(find(ismember(txt,newline),1)+1:end);
