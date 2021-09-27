@@ -126,84 +126,87 @@ sevsm = movmean(sevAge{:,[3,2]},[3 3]);
 % b = sevsm(1:end-shift,:)\deathsm(idx(shift+1:end));
 
 
-lowRisk = sevAge.over60vacc2;
-lowRisk(200:end) = sevAge.over60vacc3(200:end);
-lowRisk = lowRisk+sevAge.below60;
-highRisk = sevAge.total-lowRisk;
-xx = movmean([lowRisk,highRisk],[3 3]);
-bb = xx(1:end-shift,:)\deathsm(idx(shift+1:end));
+
 figure;
 plot(listD.date,deathsm,'k','linewidth',2)
 hold on
 plot(listD.date(2:end)+shift,0.35*movmean(diff(listD.CountSeriousCriticalCum),[3 3]),'b')
+plot(sevAge.date+shift,0.47*sevsm(:,2),'r')
 plot(sevAge.date+shift,0.47*sevsm(:,2),'r')
 grid on
 set(gcf,'Color','w')
 % plot(sevAge.date+shift,bb'*xx','g')
 % plot(sevAge.date+shift,b'*xx','c')
 legend('deaths','severe x 0.35','old severe x 0.47')
-xxx = movmean([[10;10;10;10;10;10;10;lowRisk(8:end)],highRisk],[3 3]);
-bbb = xxx(1:end-shift,:)\deathsm(idx(shift+1:end));
-figure;
-plot(listD.date,deathsm,'k','linewidth',2)
+%%
+lowRisk = sevAge.over60vacc2;
+lowRisk(200:end) = sevAge.over60vacc3(200:end);
+lowRisk = lowRisk+sevAge.below60;
+highRisk = sevAge.total-lowRisk;
+xx = movmean([lowRisk,highRisk],[3 3]);
+bb = xx(1:end-shift,:)\deathsm(idx(shift+1:end));
+lr2 = zeros(size(lowRisk));
+lr3 = lr2;
+% lry = lr2;
+% hr0 = lr2;
+% hr1 = lr2;
+hr2 = lr2;
+lr2(1:199) = sevAge.over60vacc2(1:199);
+lr3(200:end) = sevAge.over60vacc3(200:end);
+lry = sevAge.below60;
+hr0 = sevAge.over60unvacc;
+hr2(200:end) = sevAge.over60vacc2(200:end);
+hr1 = highRisk-hr2-hr0;
+hr1(hr1 < 10) = 0;
+figure('position',[100,100,900,600]);
+hb = bar(sevAge.date,movmean([hr0,hr1,lr2,hr2,lr3,...
+    sevAge.below60unvacc,sevAge.below60-sevAge.below60unvacc],[3 3]),1,'stacked','EdgeColor','none');
+% hb = bar(sevAge.date,movmean([hr0,hr1,lr2,hr2,lr3,lry],[3 3]),1,'stacked','EdgeColor','none');
+% hold on
+% plot(sevAge.date,sevAge.total);
+
+grid on
+box off
+set(gcf,'Color','w')
+title('New severe patients by risk group')
+hb(1).FaceColor = [0.3 0.3 0.3];
+hb(2).FaceColor = [0.7 0.0 0.0];
+hb(3).FaceColor = [0.2 0.6 0.2];
+hb(5).FaceColor = [0.1 0.9 0.1];
+hb(4).FaceColor = [0.9 0.2 0.2];
+hb(7).FaceColor = [0.2 0.2 1];
+legend(fliplr(hb),fliplr(...
+    {'0 doses, 60+','1 dose, 60+','2 doses 60+, fresh vaccine','2 doses 60+, old vaccine','3 doses','<60 unvaccinated','<60 dose 1 or more'}))
+xtickformat('MMM')
+%%
+% xxx = movmean([[10;10;10;10;10;10;10;lowRisk(8:end)],highRisk],[3 3]);
+ns = 15;
+push = repmat(10,ns,1); % move young ns days further than old
+raw = [[push;lowRisk(1:end-ns)],highRisk];
+xxx = movmean(raw,[3 3]);
+% xxx(end,:) = raw(end,:);
+% xxx(end-1,:) = mean(raw(end-2:end,:));
+% xxx(end-2,:) = mean(raw(end-4:end,:));
+
+last = xxx(end-2:end,:);
+xxx(end-2:end,:) = nan;
+% xxx(end) = movmean([[10;10;10;10;10;10;10;lowRisk(8:end)],highRisk],[3 3]);
+% bbb = xxx(1:end-shift,:)\deathsm(idx(shift+1:end));
+% bbb = 0.9*bbb;
+% bbb = 0.9*[0.0275;0.533];
+bbb = [0.0363;0.4779];
+% bbb = [0;0.5];
+figure('position',[100,100,900,600]);
+h(1) = plot(listD.date,deathsm,'k','linewidth',2);
 hold on
-plot(sevAge.date+shift,0.9*bbb'*xxx','m')
-legend('deaths','low risk x 0.025 + high risk x 0.53','Location','west')
+h(2) = plot(sevAge.date+shift,bbb'*xxx','m');
+plot(sevAge.date(end-2:end)+shift,bbb'*last','m.');
+legend('deaths',['low risk x ',str(round(bbb(1),3)),' + high risk x ',str(round(bbb(2),3))],'Location','west')
 ylim([0 60])
+xlim([datetime(2020,9,15) datetime('today')+14])
 grid on
 set(gcf,'Color','w')
 title('deaths prediction by high and low risk patient in severe condition')
-% 
-% rat = dd3(8:end,:)./sd3(1:end-7,:);
-% rat(100:153,:) = nan;
-% rat(195:204,1) = nan;
-% dt = deaths.date(ages{iAge,1});
-% dt = dt(8:end);
-% % plot norm
-% figure('units','normalized','position',[0.1 0.1 0.65 0.8]);
-% subplot(2,1,1)
-% yyaxis left
-% 
-% h = plot(deaths.date(ages{iAge,1}),dd3,'linewidth',2);
-% if iAge == 1
-%     ylim([0 9])
-% else
-%     ylim([0 18])
-% end
-% %             else
-% %                ylim([0 60])
-% %                en
-% ylabel('deaths per 100k')
-% 
-% yyaxis right
-% h(4:6,1) = plot(severe.date(ages{iAge,2})+7,sd3,'linewidth',2);
-% if iAge == 1
-%     legend(flipud(h),fliplr({'deaths dose III','deaths dose II','deaths unvacc',...
-%         'severe dose III','severe dose II','severe unvacc'}),'location','north')
-%     %         ylim([0 25])
-% else
-%     legend(flipud(h(4:6)),fliplr({'severe dose III','severe dose II','severe unvacc'}),'location','north')
-% end
-% grid on
-% 
-% title(tit{iAge})
-% box off
-% xlim([datetime(2021,2,15) datetime('today')+14])
-% ylabel('severe per 100k')
-% subplot(2,1,2)
-% 
-% yyaxis left
-% h1 = plot(dt,100*rat,'linewidth',2);
-% ylabel('deaths to severe ratio (%)')
-% if iAge == 2
-%     %         ylim([0 5])
-% end
-% yyaxis right
-% set(gca,'Ytick',[])
-% legend(flipud(h1),fliplr({'dose III','dose II','unvacc'}),'location','north')
-% title('deaths to severe ratio')
-% grid on
-% box off
-% set(gcf,'Color','w')
-% xlim([datetime(2021,2,15) datetime('today')+14])
+
+
 % 
