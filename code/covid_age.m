@@ -1,4 +1,5 @@
 function covid_age(source)
+% source can be 'd' for dashboard (confirmed), 's' for severe (dashboard too), 't' for timna
 if nargin == 0
     source = 'dashboard';
 end
@@ -13,7 +14,7 @@ if strcmp(source(1),'d')
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
     co = co(2:end,:)*0.9;
     figure('position',position);
-    hh = bar(dateW-3,pos,1.8,'stacked','EdgeColor','none');
+    hh = bar(dateW-3,pos,7,'stacked','EdgeColor','none');
     for jj = 1:length(hh)
         hh(jj).FaceColor = co(jj,:);
     end
@@ -31,7 +32,7 @@ if strcmp(source(1),'d')
     ratio = pos./sum(pos,2)*100;
     ratio(nansum(pos,2) < 2000,:) = 0;
     figure('position',position);
-    hp = bar(dateW-3,ratio,1.8,'stacked','EdgeColor','none');
+    hp = bar(dateW-3,ratio,7,'stacked','EdgeColor','none');
     for jj = 1:length(hp)
         hp(jj).FaceColor = co(jj,:);
     end
@@ -84,7 +85,7 @@ elseif strcmp(source(1),'s')
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
     co = co(2:end,:)*0.9;
     figure('position',position);
-    hh = bar(dateW-3,pos/7,1,'stacked','EdgeColor','none');
+    hh = bar(dateW-3,pos/7,1.8,'stacked','EdgeColor','none');
     for jj = 1:length(hh)
         hh(jj).FaceColor = co(jj,:);
     end

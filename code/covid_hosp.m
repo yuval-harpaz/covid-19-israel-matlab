@@ -1,6 +1,10 @@
 % called from covid_Israel
 if newFig
-    figure('units','normalized','position',[0,0,1,1]);
+    if exist('fig9','var')
+        fig10 = figure('units','normalized','position',[0,0,1,1]);
+    else
+        fig9 = figure('units','normalized','position',[0,0,1,1]);
+    end
 else
     subplot(1,2,1)
 end
@@ -41,7 +45,7 @@ grid on
 box off
 set(gcf,'Color','w')
 grid minor
-set(gca,'fontsize',13,'XTick',datetime(2020,3:20,1))
+set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 
 xlim([list.date(1) datetime('tomorrow')])
 xtickformat('MMM')
@@ -92,7 +96,7 @@ grid minor
 
 xlim([listE.date(1) datetime('tomorrow')])
 xtickformat('MMM')
-set(gca,'fontsize',13,'XTick',datetime(2020,3:20,1))
+set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 if isLog
     set(gca, 'YScale', 'log')
     ylim([10 2600])
