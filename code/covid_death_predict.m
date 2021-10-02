@@ -27,17 +27,6 @@ tit = {{'Severe vs deaths for 60+ by vaccination status','severe shifted by 7 da
     {'Severe vs deaths for <60 by vaccination status','severe shifted by 7 days'}};
 %% plot abs
 iAge = 1;
-% figure;
-% yyaxis left
-% plot(deaths.date(ages{iAge,1}),movmean(deaths{dOld,3:5},[3 3]))
-% ylim([0 30])
-% yyaxis right
-% plot(cases.date(ages{iAge,2})+14,movmean(cases{sOld,3:5},[3 3]))
-% legend('deaths dose III','deaths dose II','deaths unvacc',...
-%     'cases dose III','cases dose II','cases unvacc','location','north')
-% % preprocess
-
-
 sd3 = [sum([severe{ages{2,2},6:8}],2),sum([severe{ages{1,2},6:8}],2)];
 sd3(end,:) = nan;
 sd3 = movmean(sd3,[3 3],'omitnan');
@@ -102,12 +91,12 @@ facSev = [0.05,0.35];
 
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 listD = listD(1:end-1,:);
-deathsm = movmean(listD.CountDeath,[3 3]);
+deathsmm = movmean(listD.CountDeath,[3 3]);
 sevAge = readtable('~/covid-19-israel-matlab/data/Israel/severe60.csv');
 sevAge = sevAge(1:end-1,:);
 predSev1 = sum(sevAge{:,[3,2]}.*facSev,2);
 figure;
-plot(listD.date,deathsm,'k')
+plot(listD.date,deathsmm,'k')
 hold on
 plot(sevAge.date+8,movmean(predSev1,[3 3]),'r')
 
@@ -116,7 +105,7 @@ predSev2 = sum(sevAge{:,[3,2]}.*facSev2,2);
 shift = 10;
 
 figure;
-plot(listD.date,deathsm,'k')
+plot(listD.date,deathsmm,'k')
 hold on
 plot(sevAge.date+shift,movmean(predSev2,[3 3]),'r')
 
@@ -128,7 +117,7 @@ sevsm = movmean(sevAge{:,[3,2]},[3 3]);
 
 
 figure;
-plot(listD.date,deathsm,'k','linewidth',2)
+plot(listD.date,deathsmm,'k','linewidth',2)
 hold on
 plot(listD.date(2:end)+shift,0.35*movmean(diff(listD.CountSeriousCriticalCum),[3 3]),'b')
 plot(sevAge.date+shift,0.47*sevsm(:,2),'r')
@@ -144,7 +133,7 @@ lowRisk(200:end) = sevAge.over60vacc3(200:end);
 lowRisk = lowRisk+sevAge.below60;
 highRisk = sevAge.total-lowRisk;
 xx = movmean([lowRisk,highRisk],[3 3]);
-bb = xx(1:end-shift,:)\deathsm(idx(shift+1:end));
+bb = xx(1:end-shift,:)\deathsmm(idx(shift+1:end));
 lr2 = zeros(size(lowRisk));
 lr3 = lr2;
 % lry = lr2;
@@ -160,7 +149,7 @@ hr1 = highRisk-hr2-hr0;
 hr1(hr1 < 10) = 0;
 figure('position',[100,100,900,600]);
 hb = bar(sevAge.date,movmean([hr0,hr1,lr2,hr2,lr3,...
-    sevAge.below60unvacc,sevAge.below60-sevAge.below60unvacc],[3 3]),1,'stacked','EdgeColor','none');
+    sevAge.below60unvacc,lry-sevAge.below60unvacc],[3 3]),1,'stacked','EdgeColor','none');
 % hb = bar(sevAge.date,movmean([hr0,hr1,lr2,hr2,lr3,lry],[3 3]),1,'stacked','EdgeColor','none');
 % hold on
 % plot(sevAge.date,sevAge.total);
@@ -194,10 +183,12 @@ xxx(end-2:end,:) = nan;
 % bbb = xxx(1:end-shift,:)\deathsm(idx(shift+1:end));
 % bbb = 0.9*bbb;
 % bbb = 0.9*[0.0275;0.533];
-bbb = [0.0363;0.4779];
 % bbb = [0;0.5];
+% bbb = [0.0363;0.4779];
+bbb = [0.08;0.47];
+
 figure('position',[100,100,900,600]);
-h(1) = plot(listD.date,deathsm,'k','linewidth',2);
+h(1) = plot(listD.date,deathsmm,'k','linewidth',2);
 hold on
 h(2) = plot(sevAge.date+shift,bbb'*xxx','m');
 plot(sevAge.date(end-2:end)+shift,bbb'*last','m.');
@@ -209,4 +200,29 @@ set(gcf,'Color','w')
 title('deaths prediction by high and low risk patient in severe condition')
 
 
-% 
+%% 
+predlr = [lry,lr2,lr3]*bbb(1);
+predhr = [hr0,hr1,hr2]*bbb(2);
+pred = [lry*0.08+hr2*0.1;
+pred(ns+1:end) = pred(ns+1:end) + predlr(1:end-ns);
+figure;
+plot(sevAge.date+shift,movmean(lry,[3 3])*0.08,'m')
+hold on
+plot(deathsm.date(dYoung),movmean(sum(deathsm{dYoung,3:5},2),[3 3]),'b')
+
+figure;
+plot(sevAge.date+shift,movmean(lr2,[3 3])*bbb(2),'m')
+hold on
+plot(deathsm.date(dYoung),movmean(sum(deathsm.death_amount_vaccinated(dOld),2),[3 3]),'b')
+
+figure;
+plot(sevAge.date+shift,movmean(hr2,[3 3])*0.3,'m')
+hold on
+plot(deathsm.date(dOld),movmean(sum(deathsm.death_amount_vaccinated(dOld),2),[3 3]),'b')
+
+figure;
+plot(sevAge.date+shift,movmean(lr3,[3 3])*0.4,'m')
+hold on
+plot(deathsm.date(dOld),movmean(sum(deathsm.death_amount_boost_vaccinated(dOld),2),[3 3]),'b')
+
+% plot(sum(xxx.*bbb
