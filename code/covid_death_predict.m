@@ -201,28 +201,29 @@ title('deaths prediction by high and low risk patient in severe condition')
 
 
 %% 
-predlr = [lry,lr2,lr3]*bbb(1);
-predhr = [hr0,hr1,hr2]*bbb(2);
-pred = [lry*0.08+hr2*0.1;
-pred(ns+1:end) = pred(ns+1:end) + predlr(1:end-ns);
-figure;
-plot(sevAge.date+shift,movmean(lry,[3 3])*0.08,'m')
-hold on
-plot(deathsm.date(dYoung),movmean(sum(deathsm{dYoung,3:5},2),[3 3]),'b')
-
-figure;
-plot(sevAge.date+shift,movmean(lr2,[3 3])*bbb(2),'m')
-hold on
-plot(deathsm.date(dYoung),movmean(sum(deathsm.death_amount_vaccinated(dOld),2),[3 3]),'b')
-
-figure;
-plot(sevAge.date+shift,movmean(hr2,[3 3])*0.3,'m')
-hold on
-plot(deathsm.date(dOld),movmean(sum(deathsm.death_amount_vaccinated(dOld),2),[3 3]),'b')
-
-figure;
-plot(sevAge.date+shift,movmean(lr3,[3 3])*0.4,'m')
-hold on
-plot(deathsm.date(dOld),movmean(sum(deathsm.death_amount_boost_vaccinated(dOld),2),[3 3]),'b')
+% lry = sevAge.below60;
+% predlr = [lry,lr2,lr3]*bbb(1);
+% predhr = [hr0,hr1,hr2]*bbb(2);
+% pred = lry*0.08+hr2*0.1;
+% pred(ns+1:end) = pred(ns+1:end) + predlr(1:end-ns);
+% figure;
+% plot(sevAge.date+shift,movmean(lry,[3 3])*0.08,'m')
+% hold on
+% plot(deathsm.date(dYoung),movmean(sum(deathsm{dYoung,3:5},2),[3 3]),'b')
+% 
+% figure;
+% plot(sevAge.date+shift,movmean(lr2,[3 3])*bbb(2),'m')
+% hold on
+% plot(deathsm.date(dYoung),movmean(sum(deathsm.death_amount_vaccinated(dOld),2),[3 3]),'b')
+% 
+% figure;
+% plot(sevAge.date+shift,movmean(hr2,[3 3])*0.3,'m')
+% hold on
+% plot(deathsm.date(dOld),movmean(sum(deathsm.death_amount_vaccinated(dOld),2),[3 3]),'b')
+% 
+% figure;
+% plot(sevAge.date+shift,movmean(lr3,[3 3])*0.4,'m')
+% hold on
+% plot(deathsm.date(dOld),movmean(sum(deathsm.death_amount_boost_vaccinated(dOld),2),[3 3]),'b')
 
 % plot(sum(xxx.*bbb
