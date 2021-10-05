@@ -1,0 +1,126 @@
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/deathVaccinationStatusDaily');
+json = jsondecode(json);
+deaths = struct2table(json);
+deaths.day_date = datetime(strrep(deaths.day_date,'T00:00:00.000Z',''));
+deaths.Properties.VariableNames{1} = 'date';
+
+json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
+json = jsondecode(json);
+cases = struct2table(json);
+cases.day_date = datetime(strrep(cases.day_date,'T00:00:00.000Z',''));
+cases.Properties.VariableNames{1} = 'date';
+
+idx = ismember(deaths.age_group,'מעל גיל 60');
+
+pop = round(100000.*cases{idx,3:5}./cases{idx,6:8});
+pop(1:187,1) = 0;
+pop(60:156,2) = linspace(pop(60,2),pop(156,2),97);
+pop(95:183,3) = linspace(pop(95,3),pop(183,3),89);
+pop = movmean(pop,[3 3],'omitnan');
+ratio = pop./sum(pop,2);
+
+rat23 = pop(:,2)./sum(pop(:,1:2),2);
+vacc0 = movmean(deaths.death_amount_not_vaccinated(idx),[3 3]);
+vacc2 = movmean(deaths.death_amount_vaccinated(idx),[3 3]);
+vacc3 = movmean(deaths.death_amount_boost_vaccinated(idx),[3 3]);
+
+yyy = vacc2./rat23 - vacc3 - vacc2;
+
+figure;
+hb = bar(deaths.date(idx),[vacc0,vacc2,vacc3,yyy],1,'stacked','EdgeColor','none');
+hb(1).FaceColor = [0.787, 0.21, 0.21];
+hb(2).FaceColor = [0.21, 0.787, 0.21];
+hb(3).FaceColor = [0.1, 0.4, 0.1];
+hb(4).FaceColor = [0.6, 0.6, 0.9];
+legend(fliplr(hb),fliplr({'0 doses','2 doses','3 doses','prevented deaths'}),'location','northwest')
+grid on
+set(gcf,'Color','w')
+title('deaths and dose III prevented deaths')
+xlim([datetime(2021,7,1) datetime('today')])
+% 
+% dOld = ismember(deaths.age_group,'מעל גיל 60');
+% sOld = ismember(severe.age_group,'מעל גיל 60');
+% dYoung = ismember(deaths.age_group,'מתחת לגיל 60');
+% cYoung = ismember(deaths.age_group,'מתחת לגיל 60');
+% ages = {dOld,sOld;dYoung,cYoung};
+% tit = {{'Severe vs deaths for 60+ by vaccination status','severe shifted by 7 days'};...
+%     {'Severe vs deaths for <60 by vaccination status','severe shifted by 7 days'}};
+% %% plot abs
+% iAge = 1;
+% % figure;
+% % yyaxis left
+% % plot(deaths.date(ages{iAge,1}),movmean(deaths{dOld,3:5},[3 3]))
+% % ylim([0 30])
+% % yyaxis right
+% % plot(cases.date(ages{iAge,2})+14,movmean(cases{sOld,3:5},[3 3]))
+% % legend('deaths dose III','deaths dose II','deaths unvacc',...
+% %     'cases dose III','cases dose II','cases unvacc','location','north')
+% % % preprocess
+% 
+% 
+% cd3 = severe{ages{iAge,2},12:14};
+% cd3(1:195,1) = nan;
+% if iAge == 2
+%     cd3(196:209,1) = nan;
+% end
+% cd3(1:end-1,:) = movmean(cd3(1:end-1,:),[3 3],'omitnan');
+% cd3(end,:) = nan;
+% cd3(cd3 == 0) = nan;
+% if iAge == 1
+%     dd3 = movmean(deaths{ages{iAge,1},6:8},[3 3]);
+% else
+%     dd3 = deaths{ages{iAge,1},6:8};
+% end
+% rat = dd3(8:end,:)./cd3(1:end-7,:);
+% rat(100:153,:) = nan;
+% rat(195:204,1) = nan;
+% dt = deaths.date(ages{iAge,1});
+% dt = dt(8:end);
+% % plot norm
+% figure('units','normalized','position',[0.1 0.1 0.65 0.8]);
+% subplot(2,1,1)
+% yyaxis left
+% 
+% h = plot(deaths.date(ages{iAge,1}),dd3,'linewidth',2);
+% if iAge == 1
+%     ylim([0 9])
+% else
+%     ylim([0 18])
+% end
+% %             else
+% %                ylim([0 60])
+% %                en
+% ylabel('deaths per 100k')
+% 
+% yyaxis right
+% h(4:6,1) = plot(severe.date(ages{iAge,2})+7,cd3,'linewidth',2);
+% if iAge == 1
+%     legend(flipud(h),fliplr({'deaths dose III','deaths dose II','deaths unvacc',...
+%         'severe dose III','severe dose II','severe unvacc'}),'location','north')
+%     %         ylim([0 25])
+% else
+%     legend(flipud(h(4:6)),fliplr({'severe dose III','severe dose II','severe unvacc'}),'location','north')
+% end
+% grid on
+% 
+% title(tit{iAge})
+% box off
+% xlim([datetime(2021,2,15) datetime('today')+14])
+% ylabel('severe per 100k')
+% subplot(2,1,2)
+% 
+% yyaxis left
+% h1 = plot(dt,100*rat,'linewidth',2);
+% ylabel('deaths to severe ratio (%)')
+% if iAge == 2
+%     %         ylim([0 5])
+% end
+% yyaxis right
+% set(gca,'Ytick',[])
+% legend(flipud(h1),fliplr({'dose III','dose II','unvacc'}),'location','north')
+% title('deaths to severe ratio')
+% grid on
+% box off
+% set(gcf,'Color','w')
+% xlim([datetime(2021,2,15) datetime('today')+14])
+% 
