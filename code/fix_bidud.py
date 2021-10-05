@@ -6,7 +6,7 @@ Created on Thu Aug 19 22:49:03 2021
 @author: @yuvharpaz
 """
 # !pip install xlrd
-fname = '/home/innereye/Downloads/דוח נבדקים ובידודים 02.9.21.xlsx'
+# fname = '/home/innereye/Downloads/דוח נבדקים ובידודים 02.9.21.xlsx'
 import pandas as pd
 import numpy as np
 from glob import glob
