@@ -26,14 +26,18 @@ date = datetime(paad.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
 ie = cellfun(@isempty,paad.sum_positive);
 paad.sum_positive(ie) = {0};
 abr = cellfun(@(x) x,paad.sum_positive);
-abroad.incoming(ismember(abroad.date,date)) = abr;
+isdd = ismember(date,abroad.date);
+abr = abr(isdd);
+date = date(isdd);
+isd = ismember(abroad.date,date);
+abroad.incoming(isd) = abr;
 
 aad = struct2table(webread('https://datadashboardapi.health.gov.il/api/queries/arrivingAboardDaily',options));
 aad = aad(ismember(aad.visited_country,'כלל המדינות'),:);
 aadDate = datetime(aad.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
 
 
-abroad.incoming_tests(ismember(abroad.date,aadDate)) = aad.sum_arrival;
+abroad.incoming_tests(ismember(abroad.date,aadDate)) = aad.sum_arrival(ismember(aadDate,abroad.date));
 abroad.local = abroad.positive-abroad.incoming;
 writetable(abroad,'infected_abroad.csv')
 xt = dateshift(datetime('today'),'start','week');
