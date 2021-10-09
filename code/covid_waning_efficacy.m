@@ -18,6 +18,9 @@ cases(cases == -4) = 8;
 cpm = round(cases./cellfun(@str2num, t60.group_size).*10^6,1);
 cpm4 = movsum(cpm,[2 2]);
 pct = cpm4./sum(cpm4);
+
+pctnn = cases./sum(cases);
+
 col = flipud(jet(length(weekVacc)));
 yy{1} = cpm4;
 yy{3} = pct;
@@ -78,12 +81,82 @@ for isp = 1:4
 end
 set(gcf,'Color','w')
 
-%%
-vecCases = cases(:);
-vecCases(vecCases == 0) = nan;
-x = 1:31;
-x = repmat(x,1,31)';
-y = reshape(reshape(x,31,31)',31^2,1);
+%% normalized by group size
 figure;
-scatter(y,x,vecCases./max(vecCases)*100,'fill')
+isp = 3;
+for ii = 1:length(weekVacc)
+    if ii == 1
+        prev = zeros(1,length(weekInfec));
+        %     else
+        %         prev = fliplr(cumsum(cpm(1:ii-1,:)));
+    end
+    curr = sum(yy{isp}(1:ii,:),1);
+    h(ii) = fill([weekInfec;flipud(weekInfec)],[curr,prev],col(ii,:),'LineStyle','none');
+%     h(ii).FaceAlpha = 0.5;
+    prev = fliplr(curr);
+    hold on
+end
+axis tight
+set(gca,'YTick',0:0.1:1,'YTickLabel',0:10:100)
+ylabel('% of aged vaccines')
+box off
+set(gca,'Layer','top')
+xlabel('infection date     תאריך ההדבקה')
+title(tit{isp})
+set(gcf,'Color','w')
+ylabel('percent of aged vaccines    אחוז החיסונים הוותיקים')
+gap = 0;
+yc = 1:length(weekInfec);
+yc = yc/max(yc);
+for ic = 1:length(col)
+    fill([weekInfec(end)+gap+1,weekInfec(end)+gap+7,weekInfec(end)+gap+7,weekInfec(end)+gap+1],...
+        [yc(ic)-yc(1),yc(ic)-yc(1),yc(ic),yc(ic)],col(ic,:))
+    text(weekInfec(end)+gap+9,yc(ic)-yc(1)/2,datestr(weekInfec(ic),'dd-mmm'))
+end
+% ax = gca;
+grid on
+
+
+%% cancel group size effect, just show percent of old vaccines
+figure;
+clear isp
+for ii = 1:length(weekVacc)
+    if ii == 1
+        prev = zeros(1,length(weekInfec));
+        %     else
+        %         prev = fliplr(cumsum(cpm(1:ii-1,:)));
+    end
+    curr = sum(pctnn(1:ii,:),1);
+    h(ii) = fill([weekInfec;flipud(weekInfec)],[curr,prev],col(ii,:),'LineStyle','none');
+%     h(ii).FaceAlpha = 0.5;
+    prev = fliplr(curr);
+    hold on
+end
+axis tight
+set(gca,'YTick',0:0.1:1,'YTickLabel',0:10:100)
+ylabel('% of aged vaccines')
+box off
+set(gca,'Layer','top')
+xlabel('infection date     תאריך ההדבקה')
+title(tit{3})
+set(gcf,'Color','w')
+ylabel('percent of aged vaccines    אחוז החיסונים הוותיקים')
+gap = 0;
+yc = 1:length(weekInfec);
+yc = yc/max(yc);
+for ic = 1:length(col)
+    fill([weekInfec(end)+gap+1,weekInfec(end)+gap+7,weekInfec(end)+gap+7,weekInfec(end)+gap+1],...
+        [yc(ic)-yc(1),yc(ic)-yc(1),yc(ic),yc(ic)],col(ic,:))
+    text(weekInfec(end)+gap+9,yc(ic)-yc(1)/2,datestr(weekInfec(ic),'dd-mmm'))
+end
+% ax = gca;
+grid on
+%% dots
+% vecCases = cases(:);
+% vecCases(vecCases == 0) = nan;
+% x = 1:31;
+% x = repmat(x,1,31)';
+% y = reshape(reshape(x,31,31)',31^2,1);
+% figure;
+% scatter(y,x,vecCases./max(vecCases)*100,'fill')
 % surf(weekInfec,

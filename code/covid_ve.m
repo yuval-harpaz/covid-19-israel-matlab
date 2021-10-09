@@ -83,7 +83,7 @@ ylim([0 100])
 hold on
 plot(listD.date(2:end)-15,dd/max(dd)*100,'k')
 xl3 = datetime(2021,7,16);
-xl3(2) = xl3(1) + (xl(2)-xl(1))
+xl3(2) = xl3(1) + (xl(2)-xl(1));
 xlim(xl3);
 % legend('VE for positive tests','VE for severe illness','VE for deaths','new severe cases (normalized)')
 xtickformat('MMM')
