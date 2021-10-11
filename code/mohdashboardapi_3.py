@@ -4,7 +4,11 @@ import requests
 import subprocess
 import time
 import pandas as pd
-
+from collections import defaultdict
+try:
+    from pprint import pprint as out
+except:
+    pass
 GIT_DIR = "/home/innereye/Repos/israel_moh_covid_dashboard_data"
 if os.path.isdir(r'C:\Users\User\Documents\Corona'):
     GIT_DIR = r'C:\Users\User\Documents\Corona'
@@ -245,7 +249,7 @@ def create_patients_csv(data):
 
     tests = [t for t in data['testResultsPerDate'] if t['positiveAmount']!=-1][-N:]
     tests2 = data['testsPerDate'][-N:]
-    # assert tests[0]['date'] == tests2[0]['date'] == start_date
+    assert tests[0]['date'] == tests2[0]['date'] == start_date
     epi_lines = [','.join(map(str, [t['positiveAmount'], i['sum'],
                                     i['amount'], r['amount'],
                                     t['amount'], t['amountVirusDiagnosis'],
@@ -314,11 +318,11 @@ def simulate_vvd(data):
     assert len(set([tuple([x['day_date'] for x in d]) for d in dailys])) == 1
     assert len(set([tuple([x['age_group'] for x in d]) for d in dailys])) == 1
     merged = [dict(list(x.items())+list(y.items())+list(z.items())) for x,y,z in zip(*dailys)]
-    for m in merged:
-        m.update({s.lower():m[s] for s in [
-            'new_Serious_amount_boost_vaccinated', 'new_Serious_boost_vaccinated_normalized']})
-        m.update({
-            'death_boost_vaccinated_normalized':m['death_amount_boost_vaccinated_normalized']})
+    # for m in merged:
+    #     m.update({s.lower():m[s] for s in [
+    #         'new_Serious_amount_boost_vaccinated', 'new_Serious_boost_vaccinated_normalized']})
+    #     m.update({
+    #         'death_boost_vaccinated_normalized':m['death_amount_boost_vaccinated_normalized']})
     return merged
 
 def create_cases_by_vaccinations_absolute(data):
@@ -328,9 +332,9 @@ def create_cases_by_vaccinations_absolute(data):
         for suf in [
             'Daily verified', 'Total serious', 'New serious', 'Total deaths']
         ]) + ','*2 + '\n'
-    res += 'Date'+',Booster vaccinated,Fully vaccinated,Not vaccinated'*12+'\n'
+    res += 'Date'+',Recently vaccinated,Expired vaccinated,Not vaccinated'*12+'\n'
     vvd = simulate_vvd(data)
-    vacc_types = ['boost_vaccinated', 'vaccinated', 'not_vaccinated']
+    vacc_types = ['vaccinated', 'expired', 'not_vaccinated']
     case_types = ['verified', 'serious', 'new_serious', 'death']
     for i in range(0, len(vvd), 3):
         s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
@@ -351,9 +355,9 @@ def create_cases_by_vaccinations_normalized(data):
         for suf in [
             'Daily verified', 'Total serious', 'New serious', 'Total deaths']
         ]) + ','*2 + '\n'
-    res += 'Date'+',Booster vaccinated,Fully vaccinated,Not vaccinated'*12+'\n'
+    res += 'Date'+',Recently vaccinated,Expired vaccinated,Not vaccinated'*12+'\n'
     vvd = simulate_vvd(data)
-    vacc_types = ['boost_vaccinated', 'vaccinated', 'not_vaccinated']
+    vacc_types = ['vaccinated', 'expired', 'not_vaccinated']
     case_types = ['verified', 'serious', 'new_serious', 'death']
     for i in range(0, len(vvd), 3):
         s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
@@ -373,8 +377,8 @@ def update_cases_by_vaccinations_ages(data):
     new_line = date+',' + ','.join([
         str(ss[case_type%vacc_type])
         for ss in vvba
-        for vacc_type in ['vaccinated', 'vaccinated_procces', 'not_vaccinated']
-        for case_type in ['%s_amount_cum', 'Active_amount_%s', 'Serious_amount_%s']])
+        for vacc_type in ['vaccinated', 'vaccinated_expired', 'not_vaccinated']])
+        # for case_type in ['%s_amount_cum', 'Active_amount_%s', 'Serious_amount_%s']])
     add_line_to_file(VAC_CASES_AGES, new_line)
 
         
