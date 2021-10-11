@@ -245,7 +245,7 @@ def create_patients_csv(data):
 
     tests = [t for t in data['testResultsPerDate'] if t['positiveAmount']!=-1][-N:]
     tests2 = data['testsPerDate'][-N:]
-    assert tests[0]['date'] == tests2[0]['date'] == start_date
+    # assert tests[0]['date'] == tests2[0]['date'] == start_date
     epi_lines = [','.join(map(str, [t['positiveAmount'], i['sum'],
                                     i['amount'], r['amount'],
                                     t['amount'], t['amountVirusDiagnosis'],
