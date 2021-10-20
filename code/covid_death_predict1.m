@@ -34,11 +34,13 @@ dd3 = [sum(deathsm{ages{2,1},3:5},2),sum(deathsm{ages{1,1},3:5},2)];
 dd3(end,:) = nan;
 dd3 = movmean(dd3,[3 3],'omitnan');
 
+facSev = [0.08,0.37];
+
 figure('position',[100,100,900,700]);
 h1 = plot(severe.date(ages{1,1}),dd3,'k');
 h1(1).LineWidth = 1.5;
 hold on
-h2 = plot(severe.date(ages{1,1})+7,sd3.*[0.07,0.35],'r');
+h2 = plot(severe.date(ages{1,1})+7,sd3.*facSev,'r');
 h2(1).LineWidth = 1.5;
 legend([h1(2),h2(2),h1(1),h2(1)],'deaths 60+','predicted deaths 60+','deaths <60','predicted deaths <60')
 title('Deaths and predicted deaths for older and younger than 60','FontSize',13)
@@ -47,7 +49,8 @@ set(gca,'FontSize',13)
 grid on
 set(gcf,'Color','w')
 
-facSev = [0.07,0.35];
+
+
 predSev = sum(sd3.*facSev,2);
 sd6 = [severe{ages{2,2},6:8},severe{ages{1,2},6:8}];
 sd6(end,:) = nan;

@@ -84,8 +84,8 @@ elseif strcmp(source(1),'s')
     [pos, dateW, ages] = get_severe;
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
     co = co(2:end,:)*0.9;
-    figure('position',position);
-    hh = bar(dateW-3,pos/7,1.8,'stacked','EdgeColor','none');
+    figure('position',position,'units','normalized');
+    hh = bar(dateW-3,pos/7,1.4,'stacked','EdgeColor','none');
     for jj = 1:length(hh)
         hh(jj).FaceColor = co(jj,:);
     end
@@ -97,7 +97,7 @@ elseif strcmp(source(1),'s')
     set(gcf,'Color','w')
     grid on
     
-    figure('position',position);
+    figure('position',position,'units','normalized');
     hh = plot(dateW-3,pos./pop'*10000,'linewidth',2);
     for jj = 1:length(hh)
         hh(jj).Color = co(jj,:);
