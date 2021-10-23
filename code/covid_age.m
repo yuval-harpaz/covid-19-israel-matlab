@@ -11,6 +11,9 @@ listD(end,:) = [];
 yl = movsum(listD.tests_positive1(1:end-1),[3 3]);
 if strcmp(source(1),'d')
     [pos, dateW, ages] = get_dashboard;
+    tt = tocsv(dateW,pos);
+    tt{59,2:end} = round((tt{58,2:end}+tt{60,2:end})/2);
+    writetable(tt,'rrr.csv','Delimiter',',','WriteVariableNames',true)
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
     co = co(2:end,:)*0.9;
     figure('position',position);
@@ -328,3 +331,14 @@ dash(dash < 0) = 0;
 ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
 ages = strrep(ages,'_','-');
 ages{end} = '90+';
+
+function tt = tocsv(dateW,pos)
+ages = {'y0_9';'y10_19';'y20_29';'y30_39';'y40_49';'y50_59';'y60_69';'y70_79';'y80_89';'y90'};
+date = dateW-3;
+tte = 'tt = table(date,';
+for ii = 1:length(ages)
+    tte = [tte,ages{ii},','];
+    eval([ages{ii},'=pos(:,ii);']);
+end
+eval([tte(1:end-1),');'])
+    
