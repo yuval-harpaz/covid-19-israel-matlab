@@ -11,7 +11,7 @@ listD(end,:) = [];
 yl = movsum(listD.tests_positive1(1:end-1),[3 3]);
 if strcmp(source(1),'d')
     [pos, dateW, ages] = get_dashboard;
-    tt = tocsv(dateW,pos);
+    tt = tocsv(dateW,pos,ages);
     tt{59,2:end} = round((tt{58,2:end}+tt{60,2:end})/2);
     writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age.csv','Delimiter',',','WriteVariableNames',true)
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
@@ -124,9 +124,9 @@ elseif strcmp(source(1),'s')
 else
     [pos, testsW, dateW, ages] = getTimna;
     [posY, testsY, dateY, agesY] = getTimnaY;
-%     tt = tocsv(dateW,pos);
+    tt = tocsv(dateW,pos,ages);
 %     tt{59,2:end} = round((tt{58,2:end}+tt{60,2:end})/2);
-%     writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age.csv','Delimiter',',','WriteVariableNames',true)
+    writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age_timna.csv','Delimiter',',','WriteVariableNames',true)
 %     
     % yy = [testsY,testsW(:,2:end)];
     % figure;
@@ -141,10 +141,11 @@ else
     co{2} = jet(7); co{1} = co{1} + 0.1; co{1}(co{1} > 1) = 1;
     co{1} = jet(14); co{2} = co{2} + 0.1; co{2}(co{2} > 1) = 1;
     tests2 = {testsW;testsY};
+    dt = {dateW,dateY};
     figure('position',[100,100,900,900]);
     for ii = 1:2
         subplot(2,1,ii)
-        hh{ii} = bar(dateW-3,pos2{ii},1,'stacked','EdgeColor','none');
+        hh{ii} = bar(dt{ii},pos2{ii},1,'stacked','EdgeColor','none');
         for jj = 1:length(hh{ii})
             hh{ii}(jj).FaceColor = co{ii}(jj,:);
         end
@@ -164,11 +165,15 @@ else
         grid on
     end
     set(gcf,'Color','w')
-    
+    nsp = 2;
+    if length(dateW) ~= length(dateY)
+        warning('not same lengths for y and o ages')
+        nsp = 1;
+    end
     figure('position',[100,100,900,900]);
-    for ii = 1:2
+    for ii = 1:nsp
         subplot(2,1,ii)
-        hp{ii} = bar(dateW-3,pos2{ii}./sum(pos2{1},2)*100,1,'stacked','EdgeColor','none');
+        hp{ii} = bar(dt{ii},pos2{ii}./sum(pos2{1},2)*100,1,'stacked','EdgeColor','none');
         for jj = 1:length(hh{ii})
             hp{ii}(jj).FaceColor = co{ii}(jj,:);
         end
@@ -178,7 +183,7 @@ else
         plot(listD.date(1:end-1),yl./max(yl)*100,'k','linewidth',2);
         legend(fliplr(hp{ii}),flipud(age2{ii}),'location','west')
     
-        xlim([dateW(1)-3 datetime('today')-3]);
+        xlim([dateW(1) datetime('today')]);
         if ii == 1
             title('cases by age  (%)  מאומתים לפי גיל')
         else
@@ -193,9 +198,9 @@ else
     for ii = 1:2
         subplot(2,1,ii)
         perc = pos2{ii}./tests2{ii}*100;
-        hpp = plot(dateW-3,perc,'linewidth',1.5);
+        hpp = plot(dt{ii},perc,'linewidth',1.5);
         legend(hpp,age2{ii},'location','west')
-        xlim([dateW(1)-3 datetime('today')-3]);
+        xlim([dateW(1) datetime('today')]);
         if ii == 1
             title('percent positive by age  אחוז חיוביים לפי גיל')
         else
@@ -241,37 +246,40 @@ for ii = 1:length(dateW)
     end
 end
 ages(end) = [];
+dateW = dateW-3;
 % pos20 = [pos(:,1),sum(pos(:,2:5),2),sum(pos(:,6:9),2),sum(pos(:,10:13),2),pos(:,14)];
 % posYoung = sum(pos(:,1:9),2);
 
 function [pos, tests, date, ages] = getTimnaY
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=767ffb4e-a473-490d-be80-faac0d83cae7&limit=10000');
 json = jsondecode(json);
-week = struct2table(json.result.records);
+weekkk = struct2table(json.result.records);
 % week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
-week.weekly_cases(ismember(week.weekly_cases,'<15')) = {'2'};
-week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {'2'};
-week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
-week.last_week_day = strrep(week.last_week_day,'T00:00:00','');
+weekkk.weekly_cases(ismember(weekkk.weekly_cases,'<15')) = {'2'};
+st15 = find(ismember(weekkk.weekly_newly_tested,'<15'));
+% weekkk.weekly_newly_tested(st15) = {'2'};
+% weekkk.weekly_tests_num(ismember(weekkk.weekly_tests_num,'<15')) = {'2'};
+weekkk.last_week_day = strrep(weekkk.last_week_day,'T00:00:00','');
 % week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
-writetable(week,'tmp.csv','Delimiter',',','WriteVariableNames',true);
-week = readtable('tmp.csv');
+writetable(weekkk,'tmp.csv','Delimiter',',','WriteVariableNames',true);
+weekkk = readtable('tmp.csv');
 % week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
 % week = [week0;week];
-date = unique(week.last_week_day);
-ages = unique(week.age_group);
+date = unique(weekkk.last_week_day);
+ages = unique(weekkk.age_group);
 ages = ages([1,5,6,7,2,3,4]);
 for ii = 1:length(date)
     for iAge = 1:7
-        tests(ii,iAge) = nansum(week.weekly_tests_num(week.last_week_day == date(ii) &...
-            ismember(week.age_group,ages(iAge))));%,nansum(week.weekly_newly_tested(week.last_week_day == dateW(ii) & ismember(week.age_group,ages(10:14))))]
-        pos(ii,iAge) = nansum(week.weekly_cases(week.last_week_day == date(ii) &...
-            ismember(week.age_group,ages(iAge))));
+        tests(ii,iAge) = nansum(weekkk.weekly_tests_num(weekkk.last_week_day == date(ii) &...
+            ismember(weekkk.age_group,ages(iAge))));%,nansum(week.weekly_newly_tested(week.last_week_day == dateW(ii) & ismember(week.age_group,ages(10:14))))]
+        pos(ii,iAge) = nansum(weekkk.weekly_cases(weekkk.last_week_day == date(ii) &...
+            ismember(weekkk.age_group,ages(iAge))));
     end
 end
+date = date-3;
 
 
-function [dash, end7, ages] = get_dashboard
+function [dash, dateW, ages] = get_dashboard
 txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/ages_dists.csv');
 txt = txt(find(ismember(txt,newline),1)+1:end);
 fid = fopen('tmp.csv','w');
@@ -304,6 +312,8 @@ dash(dash < 0) = 0;
 ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
 ages = strrep(ages,'_','-');
 ages{end} = '90+';
+dateW = end7-4;
+
 function [dash, end7, ages] = get_severe
 txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/severe_ages_dists.csv');
 txt = txt(find(ismember(txt,newline),1)+1:end);
@@ -335,9 +345,13 @@ ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
 ages = strrep(ages,'_','-');
 ages{end} = '90+';
 
-function tt = tocsv(dateW,pos)
-ages = {'y0_9';'y10_19';'y20_29';'y30_39';'y40_49';'y50_59';'y60_69';'y70_79';'y80_89';'y90'};
-date = dateW-3;
+function tt = tocsv(date,pos,ages)
+ages = strrep(ages,'-','_');
+ages = strrep(ages,'+','_');
+for ii = 1:length(ages)
+    ages{ii} = ['y',ages{ii}];
+end
+% date = dateW;
 tte = 'tt = table(date,';
 for ii = 1:length(ages)
     tte = [tte,ages{ii},','];
