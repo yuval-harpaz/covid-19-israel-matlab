@@ -13,7 +13,7 @@ if strcmp(source(1),'d')
     [pos, dateW, ages] = get_dashboard;
     tt = tocsv(dateW,pos);
     tt{59,2:end} = round((tt{58,2:end}+tt{60,2:end})/2);
-    writetable(tt,'rrr.csv','Delimiter',',','WriteVariableNames',true)
+    writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age.csv','Delimiter',',','WriteVariableNames',true)
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
     co = co(2:end,:)*0.9;
     figure('position',position);
@@ -124,7 +124,10 @@ elseif strcmp(source(1),'s')
 else
     [pos, testsW, dateW, ages] = getTimna;
     [posY, testsY, dateY, agesY] = getTimnaY;
-    
+%     tt = tocsv(dateW,pos);
+%     tt{59,2:end} = round((tt{58,2:end}+tt{60,2:end})/2);
+%     writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age.csv','Delimiter',',','WriteVariableNames',true)
+%     
     % yy = [testsY,testsW(:,2:end)];
     % figure;
     % bar(dateW-3,yy,'stacked','EdgeColor','none')
