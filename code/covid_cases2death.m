@@ -67,11 +67,11 @@ ylabel('deaths per 100k')
 yyaxis right
 h(4:6,1) = plot(cases.date(ages{iAge,2})+14,cd3,'linewidth',2);
 if iAge == 1
-    legend(flipud(h),fliplr({'deaths dose III','deaths dose II','deaths unvacc',...
-        'cases dose III','cases dose II','cases unvacc'}),'location','north')
+    legend(flipud(h),fliplr({'deaths, recently vaccinated','deaths, expired vaccine','deaths, unvaccinated',...
+        'cases, recently vaccinated','cases, expired vaccine','cases, unvaccinated'}),'location','north')
     ylim([0 90])
 else
-    legend(flipud(h(4:6)),fliplr({'cases dose III','cases dose II','cases unvacc'}),'location','north')
+    legend(flipud(h(4:6)),fliplr({'cases, recently vaccinated','cases, expired vaccine','cases, unvaccinated'}),'location','north')
 end
 grid on
 
@@ -89,7 +89,7 @@ if iAge == 2
 end
 yyaxis right
 set(gca,'Ytick',[])
-legend(flipud(h1),fliplr({'dose III','dose II','unvacc'}),'location','north')
+legend(flipud(h1),fliplr({'recently vaccinated','expired vaccine','unvaccinated'}),'location','north')
 title('deaths to cases ratio')
 grid on
 box off
