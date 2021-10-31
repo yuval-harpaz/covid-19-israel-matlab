@@ -35,12 +35,15 @@ ylabel('ECMO patients')
 yyaxis right
 % plot(listD.date(2:end),movmean(diff(listD{:,23}),[3 3]))
 % plot(severe.date(sYoung),movmean(sum(severe{sYoung,6:8},2),[3 3]))
-plot(severe.date(sYoung)+3,movmean(sum(severe{sYoung,3:5},2),[3 3]))
+plot(severe.date(sYoung),movmean(sum(severe{sYoung,3:5},2),[3 3]))
 ylabel('Severe patients')
-legend('ECMO','Severe <60, 3 days shift','location','northwest')
+legend('ECMO','Severe <60','location','north')
 grid on
 box off
 set(gcf,'Color','w')
 title('ECMO vs active severe patients <60')
 ylim([0 360])
 set(gca,'YTick',0:60:360)
+set(gca,'xtick',datetime(2020,3:100,1),'FontSize',13)
+xlim([datetime(2020,12,1) datetime('today')+7])
+xtickformat('MMM')
