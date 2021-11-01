@@ -28,11 +28,11 @@ api_query = {'requests': [
     {'id': '8', 'queryName': 'infectedPerDate', 'single': False, 'parameters': {}},
     {'id': '9', 'queryName': 'updatedPatientsOverallStatus', 'single': False, 'parameters': {}},
     {'id': '10', 'queryName': 'sickPerDateTwoDays', 'single': False, 'parameters': {}},
-    {'id': '11', 'queryName': 'sickPerLocation', 'single': False, 'parameters': {}},
+    {'id': '11', 'queryName': 'sickPatientPerLocation', 'single': False, 'parameters': {}},
     {'id': '12', 'queryName': 'deadPatientsPerDate', 'single': False, 'parameters': {}},
-    {'id': '13', 'queryName': 'recoveredPerDay', 'single': False, 'parameters': {}},
-    {'id': '14', 'queryName': 'doublingRate', 'single': False, 'parameters': {}},
-    {'id': '15', 'queryName': 'CalculatedVerified', 'single': False, 'parameters': {}},
+    # {'id': '13', 'queryName': 'recoveredPerDay', 'single': False, 'parameters': {}},
+    # {'id': '14', 'queryName': 'doublingRate', 'single': False, 'parameters': {}},
+    # {'id': '15', 'queryName': 'CalculatedVerified', 'single': False, 'parameters': {}},
     {'id': '16',
      'queryName': 'deadByPeriodAndAgeAndGender',
       'single': False,  'parameters': {}},
@@ -44,9 +44,9 @@ api_query = {'requests': [
      'single': False,  'parameters': {}},
     {'id': '19', 'queryName': 'spotlightLastupdate', 'single': False, 'parameters': {}},
     {'id': '20', 'queryName': 'patientsStatus', 'single': False, 'parameters': {}},
-    {'id': '21', 'queryName': 'cumSeriusAndBreath', 'single': False, 'parameters': {}},
-    {'id': '22', 'queryName': 'LastWeekLabResults', 'single': False, 'parameters': {}},
-    {'id': '23', 'queryName': 'verifiedDoctorsAndNurses', 'single': False, 'parameters': {}},
+    # {'id': '21', 'queryName': 'cumSeriusAndBreath', 'single': False, 'parameters': {}},
+    # {'id': '22', 'queryName': 'LastWeekLabResults', 'single': False, 'parameters': {}},
+    # {'id': '23', 'queryName': 'verifiedDoctorsAndNurses', 'single': False, 'parameters': {}},
     {'id': '24', 'queryName': 'isolatedVerifiedDoctorsAndNurses', 'single': False, 'parameters': {}},
     {'id': '25', 'queryName': 'spotlightPublic', 'single': False, 'parameters': {}},
     {'id': '26', 'queryName': 'vaccinated', 'single': False, 'parameters': {}},
@@ -56,21 +56,28 @@ api_query = {'requests': [
     {'id': '30', 'queryName': 'spotlightAggregatedPublic', 'single': True, 'parameters': {}},
     {'id': '31', 'queryName': 'HospitalBedStatusSegmentation', 'single': False, 'parameters': {}},
     {'id': '32', 'queryName': 'infectionFactor', 'single': False, 'parameters': {}},
-    {'id': '33', 'queryName': 'vaccinatedVerifiedDaily', 'single': False, 'parameters': {'days': 0}},
-    {'id': '34', 'queryName': 'vaccinatedVerifiedByAge', 'single': False, 'parameters': {}},
+    # {'id': '33', 'queryName': 'vaccinatedVerifiedDaily', 'single': False, 'parameters': {'days': 0}},
+    # {'id': '34', 'queryName': 'vaccinatedVerifiedByAge', 'single': False, 'parameters': {}},
     {'id': '35', 'queryName': 'researchGraph', 'single': False, 'parameters': {}},
     {'id': '36', 'queryName': 'tileDisplay', 'single': False, 'parameters': {}},
     {'id': '37', 'queryName': 'deathVaccinationStatusDaily', 'single': False, 'parameters': {}},
     {'id': '38', 'queryName': 'SeriousVaccinationStatusDaily', 'single': False, 'parameters': {}},
     {'id': '39', 'queryName': 'VerfiiedVaccinationStatusDaily', 'single': False, 'parameters': {}},
     {'id': '40', 'queryName': 'VaccinationStatusAgg', 'single': False, 'parameters': {}},
+    {'id': '41', 'queryName': 'arrivingAboardCountry', 'single': False, 'parameters': {}},
+    {'id': '42', 'queryName': 'arrivingAboardDaily', 'single': False, 'parameters': {}},
+    {'id': '43', 'queryName': 'positiveArrivingAboardDaily', 'single': False, 'parameters': {}},
+    {'id': '44', 'queryName': 'hardPatient', 'single': True, 'parameters': {}},
+    {'id': '45', 'queryName': 'hospitalizationStatusDaily', 'single': False, 'parameters': {}},
+    {'id': '46', 'queryName': 'summaryLast7Days', 'single': True, 'parameters': {}},
+    {'id': '47', 'queryName': 'hospVaccinationDuration', 'single': False, 'parameters': {}},
     ]}
 api_address = 'https://datadashboardapi.health.gov.il/api/queries/_batch'
 def get_api_data():
     data = requests.post(api_address, json=api_query).json()
     data_dict = {
-        r['queryName']:(data[int(r['id'])]['data'] if 'data' in data[int(r['id'])] else None)
-        for r in api_query['requests']}
+        r['queryName']:(data[i]['data'] if 'data' in data[i] else None)
+        for i, r in enumerate(api_query['requests'])}
     return data_dict
 
 #  GIT_DIR = r'C:\GitHub\israel_moh_covid_dashboard_data'
@@ -243,19 +250,19 @@ def create_patients_csv(data):
     
     pat_lines = list(map(patients_to_csv_line, patients))
     
-    recs = data['recoveredPerDay'][-N:]
+    # recs = data['recoveredPerDay'][-N:]
     inf = data['infectedPerDate'][-N:]
-    assert recs[0]['date'] == inf[0]['date'] == start_date
+    assert inf[0]['date'] == start_date
 
     tests = [t for t in data['testResultsPerDate'] if t['positiveAmount']!=-1][-N:]
     tests2 = data['testsPerDate'][-N:]
     assert tests[0]['date'] == tests2[0]['date'] == start_date
     epi_lines = [','.join(map(str, [t['positiveAmount'], i['sum'],
-                                    i['amount'], r['amount'],
+                                    i['amount'], i['recovered'],
                                     t['amount'], t['amountVirusDiagnosis'],
                                     t['amountPersonTested'], t['amountMagen'],
                                     t2['amountSurvey']])) for \
-                 i, r, t, t2 in zip(inf, recs, tests, tests2)]
+                 i, t, t2 in zip(inf, tests, tests2)]
 
     inff = data['infectionFactor']
     def repr_if_not_none(x):
@@ -438,12 +445,10 @@ def extend_hospital_csv(data):
 
 def update_isolated_csv(data):
     csv_lines = file(ISOLATED_FNAME).read().splitlines()
-    isols = {item['name'] : item['amount'] for item in data['isolatedDoctorsAndNurses']}
-    veris = {item['name'] : item['amount'] for item in data['verifiedDoctorsAndNurses']}
-    new_line = [data['lastUpdate']['lastUpdate']] + [str(dic[names_trans[k]]) for dic,k in
-                 [(isols, 'doctors'),(veris, 'doctors'),
-                  (isols, 'nurses'), (veris, 'nurses'),
-                  (isols, 'others'), (veris, 'others')]]
+    isolveris = {item['name'] : item['amount'] for item in data['isolatedVerifiedDoctorsAndNurses']}
+    # veris = {item['name'] : item['amount'] for item in data['verifiedDoctorsAndNurses']}
+    new_line = [data['lastUpdate']['lastUpdate']] + [str(isolveris[names_trans[k]]) for k in
+                 ['doctors', 'nurses', 'others']]
 ##    new_line = [data['lastUpdate']['lastUpdate']] + [str(data['isolatedDoctorsAndNurses'][k]) for k in
 ##                 ['Verified_Doctors', 'Verified_Nurses', 'isolated_Doctors', 'isolated_Nurses', 'isolated_Other_Sector']]
     if new_line[1:] == csv_lines[-1].split(',')[1:]: return
