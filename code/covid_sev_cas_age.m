@@ -237,141 +237,141 @@ cpm30 = round(10^6.*[sum(nansum(posS(:,4:10))),sum(nansum(posS(:,14:20)))]./[sum
 %     % plot(listD.date(1:end-8),movsum(listD.tests_positive1(1:end-8),[3 3]),'k','linewidth',2);
 % end
 
-
-
-function [pos, tests, dateW, ages] = getTimna
-json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
-json = jsondecode(json);
-week = struct2table(json.result.records);
-% week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
-week.weekly_cases(ismember(week.weekly_cases,'<15')) = {'2'};
-week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {'2'};
-week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
-writetable(week,'tmp.csv','Delimiter',',','WriteVariableNames',true);
-week = readtable('tmp.csv');
-% week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
-% week = [week0;week];
-dateW = unique(week.last_week_day);
-ages = unique(week.age_group);
-for ii = 1:length(dateW)
-    for iAge = 1:14
-        tests(ii,iAge) = nansum(week.weekly_tests_num(week.last_week_day == dateW(ii) &...
-            ismember(week.age_group,ages(iAge))));%,nansum(week.weekly_newly_tested(week.last_week_day == dateW(ii) & ismember(week.age_group,ages(10:14))))]
-        pos(ii,iAge) = nansum(week.weekly_cases(week.last_week_day == dateW(ii) &...
-            ismember(week.age_group,ages(iAge))));
-    end
-end
-ages(end) = [];
-dateW = dateW-3;
-% pos20 = [pos(:,1),sum(pos(:,2:5),2),sum(pos(:,6:9),2),sum(pos(:,10:13),2),pos(:,14)];
-% posYoung = sum(pos(:,1:9),2);
-
-function [pos, tests, date, ages] = getTimnaY
-json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=767ffb4e-a473-490d-be80-faac0d83cae7&limit=10000');
-json = jsondecode(json);
-weekkk = struct2table(json.result.records);
-% week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
-weekkk.weekly_cases(ismember(weekkk.weekly_cases,'<15')) = {'2'};
-st15 = find(ismember(weekkk.weekly_newly_tested,'<15'));
-% weekkk.weekly_newly_tested(st15) = {'2'};
-% weekkk.weekly_tests_num(ismember(weekkk.weekly_tests_num,'<15')) = {'2'};
-weekkk.last_week_day = strrep(weekkk.last_week_day,'T00:00:00','');
+% 
+% 
+% function [pos, tests, dateW, ages] = getTimna
+% json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=89f61e3a-4866-4bbf-bcc1-9734e5fee58e&limit=10000');
+% json = jsondecode(json);
+% week = struct2table(json.result.records);
+% % week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
+% week.weekly_cases(ismember(week.weekly_cases,'<15')) = {'2'};
+% week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {'2'};
 % week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
-writetable(weekkk,'tmp.csv','Delimiter',',','WriteVariableNames',true);
-weekkk = readtable('tmp.csv');
-% week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
-% week = [week0;week];
-date = unique(weekkk.last_week_day);
-ages = unique(weekkk.age_group);
-ages = ages([1,5,6,7,2,3,4]);
-for ii = 1:length(date)
-    for iAge = 1:7
-        tests(ii,iAge) = nansum(weekkk.weekly_tests_num(weekkk.last_week_day == date(ii) &...
-            ismember(weekkk.age_group,ages(iAge))));%,nansum(week.weekly_newly_tested(week.last_week_day == dateW(ii) & ismember(week.age_group,ages(10:14))))]
-        pos(ii,iAge) = nansum(weekkk.weekly_cases(weekkk.last_week_day == date(ii) &...
-            ismember(weekkk.age_group,ages(iAge))));
-    end
-end
-date = date-3;
-
-
-function [dash, dateW, ages] = get_dashboard
-txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/ages_dists.csv');
-txt = txt(find(ismember(txt,newline),1)+1:end);
-fid = fopen('tmp.csv','w');
-fwrite(fid,txt);
-fclose(fid);
-ag = readtable('tmp.csv');
-pos = ag{:,2:11};
-% pos = sum(ag{:,2:3},2);
-% pos(:,2) = sum(ag{:,4:5},2);
-% pos(:,3) = sum(ag{:,6:7},2);
-% pos(:,4) = sum(ag{:,8:9},2);
-% pos(:,5) = sum(ag{:,10:11},2);
-date = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
-dd = dateshift(date,'start','day');
-dU = unique(dd);
-sunday = dU(10);
-sunday = sunday:7:dU(end);
-end7 = unique([sunday';dU(end-1)]);
-dash = nan(size(end7,1),10);
-for iWeek = 1:length(end7)
-    start = find(dd == end7(iWeek)-7,1,'last');
-    wend = find(dd == end7(iWeek),1,'last');
-    if ~isempty(start) && ~isempty(wend)
-        dash(iWeek,:) = pos(wend,:)-pos(start,:);
-    end
-end
-dash(59,:) = nan;
-% end7(59) = [];
-dash(dash < 0) = 0;
-ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
-ages = strrep(ages,'_','-');
-ages{end} = '90+';
-dateW = end7-4;
-
-function [dash, end7, ages] = get_severe
-txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/severe_ages_dists.csv');
-txt = txt(find(ismember(txt,newline),1)+1:end);
-fid = fopen('tmp.csv','w');
-fwrite(fid,txt);
-fclose(fid);
-ag = readtable('tmp.csv');
-sev = ag{:,2:11};
-sev = sev(611:end,:);
-date = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
-date = date(611:end);
-dd = dateshift(date,'start','day');
-dU = unique(dd);
-sunday = dU(10);
-sunday = sunday:7:dU(end);
-end7 = unique([sunday';dU(end-1)]);
-dash = nan(size(end7,1),10);
-for iWeek = 1:length(end7)
-    start = find(dd == end7(iWeek)-7,1,'last');
-    wend = find(dd == end7(iWeek),1,'last');
-    if ~isempty(start) && ~isempty(wend)
-        dash(iWeek,:) = sev(wend,:)-sev(start,:);
-    end
-end
+% writetable(week,'tmp.csv','Delimiter',',','WriteVariableNames',true);
+% week = readtable('tmp.csv');
+% % week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
+% % week = [week0;week];
+% dateW = unique(week.last_week_day);
+% ages = unique(week.age_group);
+% for ii = 1:length(dateW)
+%     for iAge = 1:14
+%         tests(ii,iAge) = nansum(week.weekly_tests_num(week.last_week_day == dateW(ii) &...
+%             ismember(week.age_group,ages(iAge))));%,nansum(week.weekly_newly_tested(week.last_week_day == dateW(ii) & ismember(week.age_group,ages(10:14))))]
+%         pos(ii,iAge) = nansum(week.weekly_cases(week.last_week_day == dateW(ii) &...
+%             ismember(week.age_group,ages(iAge))));
+%     end
+% end
+% ages(end) = [];
+% dateW = dateW-3;
+% % pos20 = [pos(:,1),sum(pos(:,2:5),2),sum(pos(:,6:9),2),sum(pos(:,10:13),2),pos(:,14)];
+% % posYoung = sum(pos(:,1:9),2);
+% 
+% function [pos, tests, date, ages] = getTimnaY
+% json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=767ffb4e-a473-490d-be80-faac0d83cae7&limit=10000');
+% json = jsondecode(json);
+% weekkk = struct2table(json.result.records);
+% % week.weekly_newly_tested(ismember(week.weekly_newly_tested,'<15')) = {''};
+% weekkk.weekly_cases(ismember(weekkk.weekly_cases,'<15')) = {'2'};
+% st15 = find(ismember(weekkk.weekly_newly_tested,'<15'));
+% % weekkk.weekly_newly_tested(st15) = {'2'};
+% % weekkk.weekly_tests_num(ismember(weekkk.weekly_tests_num,'<15')) = {'2'};
+% weekkk.last_week_day = strrep(weekkk.last_week_day,'T00:00:00','');
+% % week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
+% writetable(weekkk,'tmp.csv','Delimiter',',','WriteVariableNames',true);
+% weekkk = readtable('tmp.csv');
+% % week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
+% % week = [week0;week];
+% date = unique(weekkk.last_week_day);
+% ages = unique(weekkk.age_group);
+% ages = ages([1,5,6,7,2,3,4]);
+% for ii = 1:length(date)
+%     for iAge = 1:7
+%         tests(ii,iAge) = nansum(weekkk.weekly_tests_num(weekkk.last_week_day == date(ii) &...
+%             ismember(weekkk.age_group,ages(iAge))));%,nansum(week.weekly_newly_tested(week.last_week_day == dateW(ii) & ismember(week.age_group,ages(10:14))))]
+%         pos(ii,iAge) = nansum(weekkk.weekly_cases(weekkk.last_week_day == date(ii) &...
+%             ismember(weekkk.age_group,ages(iAge))));
+%     end
+% end
+% date = date-3;
+% 
+% 
+% function [dash, dateW, ages] = get_dashboard
+% txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/ages_dists.csv');
+% txt = txt(find(ismember(txt,newline),1)+1:end);
+% fid = fopen('tmp.csv','w');
+% fwrite(fid,txt);
+% fclose(fid);
+% ag = readtable('tmp.csv');
+% pos = ag{:,2:11};
+% % pos = sum(ag{:,2:3},2);
+% % pos(:,2) = sum(ag{:,4:5},2);
+% % pos(:,3) = sum(ag{:,6:7},2);
+% % pos(:,4) = sum(ag{:,8:9},2);
+% % pos(:,5) = sum(ag{:,10:11},2);
+% date = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
+% dd = dateshift(date,'start','day');
+% dU = unique(dd);
+% sunday = dU(10);
+% sunday = sunday:7:dU(end);
+% end7 = unique([sunday';dU(end-1)]);
+% dash = nan(size(end7,1),10);
+% for iWeek = 1:length(end7)
+%     start = find(dd == end7(iWeek)-7,1,'last');
+%     wend = find(dd == end7(iWeek),1,'last');
+%     if ~isempty(start) && ~isempty(wend)
+%         dash(iWeek,:) = pos(wend,:)-pos(start,:);
+%     end
+% end
 % dash(59,:) = nan;
-% end7(59) = [];
-dash(dash < 0) = 0;
-ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
-ages = strrep(ages,'_','-');
-ages{end} = '90+';
-
-function tt = tocsv(date,pos,ages)
-ages = strrep(ages,'-','_');
-ages = strrep(ages,'+','_');
-for ii = 1:length(ages)
-    ages{ii} = ['y',ages{ii}];
-end
-% date = dateW;
-tte = 'tt = table(date,';
-for ii = 1:length(ages)
-    tte = [tte,ages{ii},','];
-    eval([ages{ii},'=pos(:,ii);']);
-end
-eval([tte(1:end-1),');'])
-    
+% % end7(59) = [];
+% dash(dash < 0) = 0;
+% ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
+% ages = strrep(ages,'_','-');
+% ages{end} = '90+';
+% dateW = end7-4;
+% 
+% function [dash, end7, ages] = get_severe
+% txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/severe_ages_dists.csv');
+% txt = txt(find(ismember(txt,newline),1)+1:end);
+% fid = fopen('tmp.csv','w');
+% fwrite(fid,txt);
+% fclose(fid);
+% ag = readtable('tmp.csv');
+% sev = ag{:,2:11};
+% sev = sev(611:end,:);
+% date = cellfun(@(x) datetime([x(1:10),' ',x(12:19)]),ag.UpdateTime);
+% date = date(611:end);
+% dd = dateshift(date,'start','day');
+% dU = unique(dd);
+% sunday = dU(10);
+% sunday = sunday:7:dU(end);
+% end7 = unique([sunday';dU(end-1)]);
+% dash = nan(size(end7,1),10);
+% for iWeek = 1:length(end7)
+%     start = find(dd == end7(iWeek)-7,1,'last');
+%     wend = find(dd == end7(iWeek),1,'last');
+%     if ~isempty(start) && ~isempty(wend)
+%         dash(iWeek,:) = sev(wend,:)-sev(start,:);
+%     end
+% end
+% % dash(59,:) = nan;
+% % end7(59) = [];
+% dash(dash < 0) = 0;
+% ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
+% ages = strrep(ages,'_','-');
+% ages{end} = '90+';
+% 
+% function tt = tocsv(date,pos,ages)
+% ages = strrep(ages,'-','_');
+% ages = strrep(ages,'+','_');
+% for ii = 1:length(ages)
+%     ages{ii} = ['y',ages{ii}];
+% end
+% % date = dateW;
+% tte = 'tt = table(date,';
+% for ii = 1:length(ages)
+%     tte = [tte,ages{ii},','];
+%     eval([ages{ii},'=pos(:,ii);']);
+% end
+% eval([tte(1:end-1),');'])
+%     
