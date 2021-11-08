@@ -17,13 +17,13 @@ mm = movmean(listD.tests_positive,[6 0]);
 % mm = floor(movmean(listD.tests_positive,[6 0]));
 days = 7;
 rr = mm(days+1:end)./mm(1:end-days);
-abroad = readtable('~/covid-19-israel-matlab/data/Israel/infected_abroad.xlsx');
-if sum(abroad{end,4:6}) == 0
-    abroad(end,:) = [];
-end
-% abroad(end,:) = [];
-Ra = movmean(abroad.local,[6 0]);
-Ra = Ra(days+1:end)./Ra(1:end-days);
+% abroad = readtable('~/covid-19-israel-matlab/data/Israel/infected_abroad.xlsx');
+% if sum(abroad{end,4:6}) == 0
+%     abroad(end,:) = [];
+% end
+% % abroad(end,:) = [];
+% Ra = movmean(abroad.local,[6 0]);
+% Ra = Ra(days+1:end)./Ra(1:end-days);
 %%
 pow = 0.65;
 shift = 3;

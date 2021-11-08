@@ -133,7 +133,7 @@ heb_translit = {
     '\u05d6': 'z',
     '\u05d7': 'j',
     '\u05d8': 't',
-    '\u05d9': 'y',
+    '\u05d9': 'yyAge',
     '\u05da': 'C',
     '\u05db': 'c',
     '\u05dc': 'l',
@@ -313,7 +313,7 @@ def create_patients_csv(data):
 #     dailys = [data[pre + 'VaccinationStatusDaily'] for pre in ['death', 'Serious', 'Verfiied']]
 #     assert len(set([tuple([x['day_date'] for x in d]) for d in dailys])) == 1
 #     assert len(set([tuple([x['age_group'] for x in d]) for d in dailys])) == 1
-#     merged = [dict(x.items()+y.items()+z.items()) for x,y,z in zip(*dailys)]
+#     merged = [dict(x.items()+yyAge.items()+z.items()) for x,yyAge,z in zip(*dailys)]
 #     for m in merged:
 #         m.update({s.lower():m[s] for s in [
 #             'new_Serious_amount_boost_vaccinated', 'new_Serious_boost_vaccinated_normalized']})

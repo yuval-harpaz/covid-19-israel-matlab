@@ -22,8 +22,8 @@ server = app.server
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 
 # fig = go.Figure(layout=layout)
-# for ii,line in enumerate(y.T):
-#     fig.add_trace(go.Scatter(x=x, y=line,
+# for ii,line in enumerate(yyAge.T):
+#     fig.add_trace(go.Scatter(x=x, yyAge=line,
 #                         mode='lines',
 #                         line_color = color[ii],
 #                         name=label[ii]))
