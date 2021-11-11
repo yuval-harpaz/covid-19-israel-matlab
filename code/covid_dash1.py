@@ -5,33 +5,37 @@ import dash
 from dash import dcc
 from dash import html
 import plotly.express as px
-import os
+# import os
+from dash.dependencies import Input, Output
 # get age data
-if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
-    api = '/home/innereye/Downloads/'
-    df = pd.read_csv(
-        '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
-else:
-    api = 'https://datadashboardapi.health.gov.il/api/queries/'
-    df = pd.read_csv(
-        'https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
+# if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
+#     api = '/home/innereye/Downloads/'
+#     df = pd.read_csv(
+#         '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
+# else:
+api = 'https://datadashboardapi.health.gov.il/api/queries/'
+df = pd.read_csv(
+    'https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
 url = [api+'VerfiiedVaccinationStatusDaily',
        api+'SeriousVaccinationStatusDaily',
        api+'deathVaccinationStatusDaily']
 measure = ['Cases', 'New Severe', 'Deaths']
-vars = [['verified_vaccinated_normalized', 'verified_expired_normalized', 'verified_not_vaccinated_normalized'],
-        ['new_serious_vaccinated_normalized', 'new_serious_expired_normalized', 'new_serious_not_vaccinated_normalized'],
-        ['death_vaccinated_normalized', 'death_expired_normalized', 'death_not_vaccinated_normalized']]
+varsNorm = [['verified_vaccinated_normalized', 'verified_expired_normalized', 'verified_not_vaccinated_normalized'],
+            ['new_serious_vaccinated_normalized', 'new_serious_expired_normalized', 'new_serious_not_vaccinated_normalized'],
+            ['death_vaccinated_normalized', 'death_expired_normalized', 'death_not_vaccinated_normalized']]
+varsAbs = [['verified_amount_vaccinated', 'verified_amount_expired', 'verified_amount_not_vaccinated'],
+        ['new_serious_amount_vaccinated', 'new_serious_amount_expired', 'new_serious_amount_not_vaccinated'],
+        ['death_amount_vaccinated', 'death_amount_expired', 'death_amount_not_vaccinated']]
 
-dfs = [[],[],[]]
-for ii in [0,1,2]:
-    dfs[ii] = pd.read_json(url[ii])
-    # x = dfs[ii]['date']
-    # x = pd.to_datetime(x)
-    dfs[ii]['date'] = pd.to_datetime(dfs[ii]['day_date'])
-    dfs[ii] = dfs[ii].rename(columns={vars[ii][0]: 'vaccinated', vars[ii][1]: 'expired', vars[ii][2]: 'unvaccinated'})
-    # date60 = dfs[ii].loc[dfs[ii]["age_group"] == 'מעל גיל 60', "date"]
-    dfs[ii] = dfs[ii][['date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
+dfsNorm = [[], [], []]
+dfsAbs = [[], [], []]
+for ii in [0, 1, 2]:
+    dfs = pd.read_json(url[ii])
+    dfs['date'] = pd.to_datetime(dfs['day_date'])
+    dfsNorm[ii] = dfs.rename(columns={varsNorm[ii][0]: 'vaccinated', varsNorm[ii][1]: 'expired', varsNorm[ii][2]: 'unvaccinated'})
+    dfsNorm[ii] = dfsNorm[ii][['date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
+    dfsAbs[ii] = dfs.rename(columns={varsAbs[ii][0]: 'vaccinated', varsAbs[ii][1]: 'expired', varsAbs[ii][2]: 'unvaccinated'})
+    dfsAbs[ii] = dfsAbs[ii][['date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
 
 
 
@@ -43,12 +47,12 @@ updatemenus = [
         buttons=list([
             dict(
                 args=[{'yaxis.type': 'linear'}],
-                label="Linear Scale",
+                label="Linear",
                 method="relayout"
             ),
             dict(
                 args=[{'yaxis.type': 'log'}],
-                label="Log Scale",
+                label="Log",
                 method="relayout"
             )
         ])
@@ -73,19 +77,27 @@ fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 fig1.update_layout(title_text="Weekly cases by age, Israel", font_size=15, updatemenus=updatemenus)
 
 
-def make_figs3(df_in,meas):
-    df_age = df_in.loc[df_in["age_group"] == 'מעל גיל 60']
+def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k '):
+    df_age = df_in.loc[df_in["age_group"] == age_gr]
     date = df_age['date']
-    df_age = df_age.rolling(7, min_periods=7).mean()
-    df_age['date'] = date - pd.to_timedelta(df_age.shape[0] * [3], 'd')
+    mx = np.max(df_age.max()[2:5])*1.05
+    xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
+    if smoo == 'sm':
+        df_age = df_age.rolling(7, min_periods=7).mean()
+        df_age['date'] = date - pd.to_timedelta(df_age.shape[0] * [3], 'd')
     fig = px.line(df_age, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
     fig['data'][0]['line']['color'] = '#0e7d7d'
     fig['data'][1]['line']['color'] = '#b9c95b'
     fig['data'][2]['line']['color'] = '#2fcdfb'
     fig.layout = layout
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_layout(title_text=meas+' by vaccination status, per 100k people (60+)', font_size=15)
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray',
+                     range=[0, mx])
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl)
+    if age_gr == 'מעל גיל 60':
+        txt60 = '(60+)'
+    else:
+        txt60 = '(<60)'
+    fig.update_layout(title_text=meas+' by vaccination status'+nrm+txt60, font_size=15)
     return fig
 
 app = dash.Dash(__name__)
@@ -108,7 +120,7 @@ app.layout = html.Div([
         ], className="row"),
         html.Div([
             html.Div([
-                dcc.RadioItems(
+                dcc.RadioItems(id='age',
                     options=[
                         {'label': '60+', 'value': 'מעל גיל 60'},
                         {'label': '<60', 'value': 'מתחת לגיל 60'}
@@ -116,9 +128,9 @@ app.layout = html.Div([
                     value='מעל גיל 60',
                     labelStyle={'display': 'inline-block'}
                 )
-            ], className="six columns"),
+            ], className="one columns"),
             html.Div([
-                dcc.RadioItems(
+                dcc.RadioItems(id='doNorm',
                     options=[
                         {'label': 'absolute', 'value': 'absolute'},
                         {'label': 'per 100k', 'value': 'normalized'}
@@ -126,12 +138,23 @@ app.layout = html.Div([
                     value='normalized',
                     labelStyle={'display': 'inline-block'}
                 )
-            ], className="six columns"),
+            ], className="one columns"),
+            html.Div([
+                dcc.RadioItems(id='smoo',
+                    options=[
+                        {'label': 'smooth', 'value': 'sm'},
+                        {'label': 'raw', 'value': 'rw'}
+                    ],
+                    value='sm',
+                    labelStyle={'display': 'inline-block'}
+                )
+            ], className="one columns"),
         ], className="row"),
         html.Div([
             html.Div([
                 # html.H3('@yuvharpaz'),
-                dcc.Graph(id='g1', figure=make_figs3(dfs[0], measure[0]))
+                dcc.Graph(id='infected')
+                # dcc.Graph(id='g1', figure=make_figs3(dfs[0], measure[0]))
             ], className="six columns"),
             html.Div([
                 dcc.Graph(id='g2', figure=fig1)
@@ -139,20 +162,32 @@ app.layout = html.Div([
         ], className="row"),
         html.Div([
             html.Div([
-                dcc.Graph(id='g3', figure=make_figs3(dfs[1], measure[1]))
+                # dcc.Graph(id='g3', figure=make_figs3(dfsNorm[1], measure[1]))
+                dcc.Graph(id='severe')
             ], className="six columns"),
             html.Div([
-                dcc.Graph(id='g4', figure=make_figs3(dfs[2], measure[2]))
+                dcc.Graph(id='death')
             ], className="six columns")
         ], className="row")
     ])
 ])
-# @app.callback(
-#     Output('indicator-graphic', 'figure'),
-#     Input('age', 'value'),
-#     Input('doNorm', 'value'))
-# def update_graph(age_group, norm_abs):
-
+@app.callback(
+    Output('infected', 'figure'),
+    Output('severe', 'figure'),
+    Output('death', 'figure'),
+    Input('age', 'value'),
+    Input('doNorm', 'value'),
+    Input('smoo', 'value'))
+def update_graph(age_group, norm_abs, smoo):
+    if norm_abs == 'normalized':
+        figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ')
+        figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ')
+        figd = make_figs3(dfsNorm[2], measure[2], age_group, smoo, ', per 100k ')
+    else:
+        figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ')
+        figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ')
+        figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ')
+    return figb, figc, figd
 if __name__ == '__main__':
     app.run_server(debug=True)
 
@@ -160,179 +195,3 @@ if __name__ == '__main__':
 
 
 
-
-
-
-
-
-
-
-
-#
-#
-# # get infected data
-# dfInf = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily')
-# dfInf['date'] = pd.to_datetime(dfInf['day_date'])
-# date60 = dfInf.loc[dfInf["age_group"] == 'מעל גיל 60', "date"]
-# dfInfOld = dfInf.loc[dfInf["age_group"] == 'מעל גיל 60', ["date",
-#                                                           "verified_vaccinated_normalized",
-#                                                           'verified_expired_normalized',
-#                                                           "verified_not_vaccinated_normalized"]]
-# yyInf = dfInfOld.rolling(7, min_periods=7).mean()
-# yyInf['date'] = dfInfOld['date'] - pd.to_timedelta(dfInfOld.shape[0] * [3], 'd')
-# yyInf = yyInf.rename(columns={'verified_vaccinated_normalized': 'vaccinated',
-#                    'verified_expired_normalized': 'expired',
-#                    'verified_not_vaccinated_normalized': 'unvaccinated'})
-#
-# # get severe data
-# dfSev = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily')
-# dfSev['date'] = pd.to_datetime(dfSev['day_date'])
-# # date60 = dfSev.loc[dfSev["age_group"] == 'מעל גיל 60', "date"]
-# dfSevOld = dfSev.loc[dfSev["age_group"] == 'מעל גיל 60', ["date",
-#                                                           "new_serious_vaccinated_normalized",
-#                                                           'new_serious_expired_normalized',
-#                                                           "new_serious_not_vaccinated_normalized"]]
-# yySev = dfSevOld.rolling(7, min_periods=7).mean()
-# yySev['date'] = dfSevOld['date'] - pd.to_timedelta(dfSevOld.shape[0] * [3], 'd')
-# yySev = yySev.rename(columns={'new_serious_vaccinated_normalized': 'vaccinated',
-#                    'new_serious_expired_normalized': 'expired',
-#                    'new_serious_not_vaccinated_normalized': 'unvaccinated'})
-#
-# dfDeath = pd.read_json('https://datadashboardapi.health.gov.il/api/queries/deathVaccinationStatusDaily')
-# dfDeath['date'] = pd.to_datetime(dfDeath['day_date'])
-# dfDeathOld = dfDeath.loc[dfDeath["age_group"] == 'מעל גיל 60', ["date",
-#                                                           "death_vaccinated_normalized",
-#                                                           'death_expired_normalized',
-#                                                           "death_not_vaccinated_normalized"]]
-# yyDeath = dfDeathOld.rolling(7, min_periods=7).mean()
-# yyDeath['date'] = dfDeathOld['date'] - pd.to_timedelta(dfDeathOld.shape[0] * [3], 'd')
-# yyDeath = yyDeath.rename(columns={'death_vaccinated_normalized': 'vaccinated',
-#                    'death_expired_normalized': 'expired',
-#                    'death_not_vaccinated_normalized': 'unvaccinated'})
-#
-#
-# figInf = px.line(yyInf, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
-# figInf['data'][0]['line']['color'] = '#0e7d7d'
-# figInf['data'][1]['line']['color'] = '#b9c95b'
-# figInf['data'][2]['line']['color'] = '#2fcdfb'
-# figInf.layout = layout
-# figInf.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
-# figInf.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-# figInf.update_layout(title_text="Cases by vaccination status, per 100k people (60+)", font_size=15)
-#
-# figSev = px.line(yySev, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
-# figSev['data'][0]['line']['color'] = '#0e7d7d'
-# figSev['data'][1]['line']['color'] = '#b9c95b'
-# figSev['data'][2]['line']['color'] = '#2fcdfb'
-# figSev.layout = layout
-# figSev.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
-# figSev.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-# figSev.update_layout(title_text="New severe patients by vaccination status, per 100k people (60+)", font_size=15)
-#
-# figDeath = px.line(yyDeath, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
-# figDeath['data'][0]['line']['color'] = '#0e7d7d'
-# figDeath['data'][1]['line']['color'] = '#b9c95b'
-# figDeath['data'][2]['line']['color'] = '#2fcdfb'
-# figDeath.layout = layout
-# figDeath.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
-# figDeath.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-# figDeath.update_layout(title_text="New deaths by vaccination status, per 100k people (60+)", font_size=15)
-#
-# updatemenus = [
-#     dict(
-#         type="buttons",
-#         direction="down",
-#         buttons=list([
-#             dict(
-#                 args=[{'yaxis.type': 'linear'}],
-#                 label="Linear Scale",
-#                 method="relayout"
-#             ),
-#             dict(
-#                 args=[{'yaxis.type': 'log'}],
-#                 label="Log Scale",
-#                 method="relayout"
-#             )
-#         ])
-#     ),
-# ]
-#
-#
-#
-# app = dash.Dash(__name__)
-# app = dash.Dash(
-#     __name__,
-#     external_stylesheets=[
-#         'https://codepen.io/chriddyp/pen/bWLwgP.css'
-#     ]
-# )
-# server = app.server
-# app.layout = html.Div([
-#     html.Div([
-#         html.Div([
-#             html.H3('Israel COVID19 data'),
-#             html.Spacer('zoom in (click and drag) and out (double click), adapted from the '),
-#             html.A('dashboard', href="https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral", target='_blank'),
-#             html.Spacer(' by '),
-#             html.A('@yuvharpaz', href="https://twitter.com/yuvharpaz", target='_blank'),
-#             html.Br(), html.Br()
-#         ], className="row"),
-#         html.Div([
-#             html.Div([
-#                 dcc.RadioItems(
-#                     options=[
-#                         {'label': '60+', 'value': 'מעל גיל 60'},
-#                         {'label': '<60', 'value': 'מתחת לגיל 60'}
-#                     ],
-#                     value='מעל גיל 60',
-#                     labelStyle={'display': 'inline-block'}
-#                 )
-#             ]),
-#
-#             html.Div([
-#                 dcc.RadioItems(
-#                     options=[
-#                         {'label': 'absolute', 'value': 'absolute'},
-#                         {'label': 'per 100k', 'value': 'normalized'}
-#                     ],
-#                     value='normalized',
-#                     labelStyle={'display': 'inline-block'}
-#                 )
-#             ]),
-#             # html.Div([dcc.RadioItems()], className="six columns"),
-#
-#         ], className="row"),
-#
-#         html.Div([
-#             html.Div([
-#                 # html.H3('@yuvharpaz'),
-#                 dcc.Graph(id='g1', figure=figInf)
-#             ], className="six columns"),
-#
-#             html.Div([
-#                 # html.Br(), html.Br(), html.Br(), html.Br(),
-#                 # html.H3(html.Span("Make Space", style={"color": "#ffffff"})),
-#                 # html.Br(),
-#                 # html.Spacer(html.Span("More Space", style={"color": "#ffffff"})),
-#                 dcc.Graph(id='g2', figure=fig1)
-#             ], className="six columns"),
-#         ], className="row"),
-#         html.Div([
-#             html.Div([
-#                 dcc.Graph(id='g3', figure=figSev)
-#             ], className="six columns"),
-#
-#             html.Div([
-#                 dcc.Graph(id='g4', figure=figDeath)
-#             ], className="six columns")
-#         ], className="row")
-#     ])
-# ])
-# @app.callback(
-#     Output('indicator-graphic', 'figure'),
-#     Input('age', 'value'),
-#     Input('doNorm', 'value'))
-# def update_graph(age_group, norm_abs):
-#
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
