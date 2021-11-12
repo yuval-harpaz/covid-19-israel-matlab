@@ -5,16 +5,16 @@ import dash
 from dash import dcc
 from dash import html
 import plotly.express as px
-# import os
+import os
 from dash.dependencies import Input, Output
-# get age data
-# if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
-#     api = '/home/innereye/Downloads/'
-#     df = pd.read_csv(
-#         '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
-# else:
-api = 'https://datadashboardapi.health.gov.il/api/queries/'
-df = pd.read_csv(
+
+if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
+    api = '/home/innereye/Downloads/'
+    df = pd.read_csv(
+        '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
+else:
+    api = 'https://datadashboardapi.health.gov.il/api/queries/'
+    df = pd.read_csv(
     'https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
 url = [api+'VerfiiedVaccinationStatusDaily',
        api+'SeriousVaccinationStatusDaily',
@@ -100,12 +100,10 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
     fig.update_layout(title_text=meas+' by vaccination status'+nrm+txt60, font_size=15)
     return fig
 
-app = dash.Dash(__name__)
 app = dash.Dash(
     __name__,
-    external_stylesheets=[
-        'https://codepen.io/chriddyp/pen/bWLwgP.css'
-    ]
+    external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'],
+    # meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
 )
 server = app.server
 app.layout = html.Div([
@@ -152,9 +150,7 @@ app.layout = html.Div([
         ], className="row"),
         html.Div([
             html.Div([
-                # html.H3('@yuvharpaz'),
                 dcc.Graph(id='infected')
-                # dcc.Graph(id='g1', figure=make_figs3(dfs[0], measure[0]))
             ], className="six columns"),
             html.Div([
                 dcc.Graph(id='g2', figure=fig1)
