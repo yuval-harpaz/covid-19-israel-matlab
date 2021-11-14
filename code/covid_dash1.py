@@ -64,7 +64,8 @@ yyAge = np.asarray(df.iloc[:, 1:11])
 label = ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+']
 color = ['#E617E6', '#6A17E6', '#1741E6', '#17BEE6', '#17E6BE', '#17E641', '#6AE617', '#E6E617', '#E69417', '#E61717']
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', legend={'traceorder': 'reversed'})
-fig1 = go.Figure(layout=layout)
+layout1 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+fig1 = go.Figure(layout=layout1)
 for ii, line in enumerate(yyAge.T):
     fig1.add_trace(go.Scatter(x=x, y=line,
                         mode='lines',
