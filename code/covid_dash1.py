@@ -7,7 +7,7 @@ from dash import html
 import plotly.express as px
 import os
 from dash.dependencies import Input, Output
-
+import dash_bootstrap_components as dbc
 if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
     api = '/home/innereye/Downloads/'
     df = pd.read_csv(
@@ -63,7 +63,7 @@ x = pd.to_datetime(x)
 yyAge = np.asarray(df.iloc[:, 1:11])
 label = ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+']
 color = ['#E617E6', '#6A17E6', '#1741E6', '#17BEE6', '#17E6BE', '#17E641', '#6AE617', '#E6E617', '#E69417', '#E61717']
-layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',legend={'traceorder':'reversed'})
+layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', legend={'traceorder': 'reversed'})
 fig1 = go.Figure(layout=layout)
 for ii, line in enumerate(yyAge.T):
     fig1.add_trace(go.Scatter(x=x, y=line,
@@ -73,7 +73,7 @@ for ii, line in enumerate(yyAge.T):
 
 fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 fig1.update_yaxes(range=(20, 19000))
-fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%b\n%Y")
 fig1.update_layout(title_text="Weekly cases by age, Israel", font_size=15, updatemenus=updatemenus)
 
 
@@ -83,50 +83,40 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
     mx = np.max(df_age.max()[2:5])*1.05
     xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
     if smoo == 'sm':
-        df_age = df_age.rolling(7, min_periods=7).mean()
+        df_age = df_age.rolling(7, min_periods=7).mean().round(1)
         df_age['date'] = date - pd.to_timedelta(df_age.shape[0] * [3], 'd')
     fig = px.line(df_age, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
+    fig.update_traces(hovertemplate="%{x|%d/%m} %{y}")
     fig['data'][0]['line']['color'] = '#0e7d7d'
     fig['data'][1]['line']['color'] = '#b9c95b'
     fig['data'][2]['line']['color'] = '#2fcdfb'
     fig.layout = layout
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray',
-                     range=[0, mx])
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl)
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, mx])
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%b\n%Y")
     if age_gr == 'מעל גיל 60':
         txt60 = '(60+)'
     else:
         txt60 = '(<60)'
-    fig.update_layout(title_text=meas+' by vaccination status'+nrm+txt60, font_size=15)
+    fig.update_layout(title_text=meas+' by vaccination status'+nrm+txt60, font_size=15, hovermode="x unified")
     return fig
 
 app = dash.Dash(
     __name__,
-    external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'],
-    # meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+    # external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'],
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
 )
 server = app.server
 app.layout = html.Div([
     html.Div([
         html.Div([
             html.H3('Israel COVID19 data'),
-            html.Spacer('zoom in (click and drag) and out (double click), adapted from the MOH '),
+            html.A('zoom in (click and drag) and out (double click), adapted from the MOH '),
             html.A('dashboard', href="https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral", target='_blank'),
-            html.Spacer(' by '),
-            html.A('@yuvharpaz', href="https://twitter.com/yuvharpaz", target='_blank'),
+            html.A(' by '),html.A('@yuvharpaz', href="https://twitter.com/yuvharpaz", target='_blank'),
             html.Br(), html.Br()
-        ], className="row"),
-        html.Div([
-            html.Div([
-                dcc.RadioItems(id='age',
-                    options=[
-                        {'label': '60+', 'value': 'מעל גיל 60'},
-                        {'label': '<60', 'value': 'מתחת לגיל 60'}
-                    ],
-                    value='מעל גיל 60',
-                    labelStyle={'display': 'inline-block'}
-                )
-            ], className="one columns"),
+        ]),
+        dbc.Row([
             html.Div([
                 dcc.RadioItems(id='doNorm',
                     options=[
@@ -136,35 +126,37 @@ app.layout = html.Div([
                     value='normalized',
                     labelStyle={'display': 'inline-block'}
                 )
-            ], className="one columns"),
+            ]),
+            html.Div([
+                dcc.RadioItems(id='age',
+                    options=[
+                        {'label': '60+', 'value': 'מעל גיל 60'},
+                        {'label': '<60', 'value': 'מתחת לגיל 60'}
+                    ],
+                    value='מעל גיל 60',
+                    labelStyle={'display': 'inline-block'}
+                )
+            ]),
+
             html.Div([
                 dcc.RadioItems(id='smoo',
                     options=[
-                        {'label': 'smooth', 'value': 'sm'},
-                        {'label': 'raw', 'value': 'rw'}
+                        {'label': 'smooth ', 'value': 'sm'},
+                        {'label': 'raw ', 'value': 'rw'}
                     ],
                     value='sm',
                     labelStyle={'display': 'inline-block'}
                 )
-            ], className="one columns"),
-        ], className="row"),
-        html.Div([
-            html.Div([
-                dcc.Graph(id='infected')
-            ], className="six columns"),
-            html.Div([
-                dcc.Graph(id='g2', figure=fig1)
-            ], className="six columns"),
-        ], className="row"),
-        html.Div([
-            html.Div([
-                # dcc.Graph(id='g3', figure=make_figs3(dfsNorm[1], measure[1]))
-                dcc.Graph(id='severe')
-            ], className="six columns"),
-            html.Div([
-                dcc.Graph(id='death')
-            ], className="six columns")
-        ], className="row")
+            ]),
+        ]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(id='g2', figure=fig1), md=6),
+            dbc.Col(dcc.Graph(id='infected'), md=6)
+        ]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(id='severe'), md=6),
+            dbc.Col(dcc.Graph(id='death'), md=6)
+        ])
     ])
 ])
 @app.callback(

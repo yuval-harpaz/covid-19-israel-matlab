@@ -12,25 +12,28 @@ yl = movsum(listD.tests_positive1(1:end-1),[3 3]);
 if strcmp(source(1),'d')
     [pos, dateW, ages] = get_dashboard;
     tt = tocsv(dateW,pos,ages);
-    tt{59,2:end} = round((tt{58,2:end}+tt{60,2:end})/2);
+    bad = [59,72];
+    for iBad = 1:length(bad)
+        tt{bad(iBad),2:end} = round((tt{bad(iBad)-1,2:end}+tt{bad(iBad)+1,2:end})/2);
+    end
     writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age.csv','Delimiter',',','WriteVariableNames',true)
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
     co = co(2:end,:)*0.9;
-    figure('position',position);
-    hh = bar(dateW-3,pos,7,'stacked','EdgeColor','none');
-    for jj = 1:length(hh)
-        hh(jj).FaceColor = co(jj,:);
-    end
-    legend(fliplr(hh),flipud(ages),'location','west');
-    xlim([dateW(1)-7 datetime('today')])
-    ax = gca;
-    ax.YRuler.Exponent = 0;
-    ax.YAxis.TickLabelFormat = '%,.0d';
-    set(gca,'xtick',datetime(2020,3:100,1),'FontSize',13)
-    grid on
-    title('weekly cases by age')
-    xtickformat('MMM')
-    set(gcf,'Color','w')
+%     figure('position',position);
+%     hh = bar(dateW-3,pos,7,'stacked','EdgeColor','none');
+%     for jj = 1:length(hh)
+%         hh(jj).FaceColor = co(jj,:);
+%     end
+%     legend(fliplr(hh),flipud(ages),'location','west');
+%     xlim([dateW(1)-7 datetime('today')])
+%     ax = gca;
+%     ax.YRuler.Exponent = 0;
+%     ax.YAxis.TickLabelFormat = '%,.0d';
+%     set(gca,'xtick',datetime(2020,3:100,1),'FontSize',13)
+%     grid on
+%     title('weekly cases by age')
+%     xtickformat('MMM')
+%     set(gcf,'Color','w')
     
     ratio = pos./sum(pos,2)*100;
     ratio(nansum(pos,2) < 2000,:) = 0;
@@ -306,7 +309,7 @@ for iWeek = 1:length(end7)
         dash(iWeek,:) = pos(wend,:)-pos(start,:);
     end
 end
-dash(59,:) = nan;
+dash([59,72],:) = nan;
 % end7(59) = [];
 dash(dash < 0) = 0;
 ages = strrep(ag.Properties.VariableNames(2:11),'x','')';
