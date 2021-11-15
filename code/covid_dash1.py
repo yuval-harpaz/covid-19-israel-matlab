@@ -87,13 +87,13 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
         df_age = df_age.rolling(7, min_periods=7).mean().round(1)
         df_age['date'] = date - pd.to_timedelta(df_age.shape[0] * [3], 'd')
     fig = px.line(df_age, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
-    fig.update_traces(hovertemplate="%{x|%d/%m} %{y}")
+    fig.update_traces(hovertemplate="%{y}")
     fig['data'][0]['line']['color'] = '#0e7d7d'
     fig['data'][1]['line']['color'] = '#b9c95b'
     fig['data'][2]['line']['color'] = '#2fcdfb'
     fig.layout = layout
     fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, mx])
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%b\n%Y")
+    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%d/%m\n%Y")
     if age_gr == 'מעל גיל 60':
         txt60 = '(60+)'
     else:
