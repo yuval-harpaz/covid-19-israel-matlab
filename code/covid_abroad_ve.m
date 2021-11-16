@@ -23,8 +23,8 @@ paad = webread(url, options);
 paad = struct2table(paad);
 paad = paad(ismember(paad.visited_country,'כלל המדינות'),:);
 date = datetime(paad.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
-ie = cellfun(@isempty,paad.sum_positive);
-paad.sum_positive(ie) = {0};
+% ie = cellfun(@isempty,paad.sum_positive);
+% paad.sum_positive(ie) = {0};
 % abr = cellfun(@(x) x,paad.sum_positive);
 % isdd = ismember(date,abroad.date);
 % abr = abr(isdd);
@@ -35,11 +35,13 @@ n = paad{:,3:4}./paad{:,5:6};
 n(isinf(n)) = nan;
 perc = movmean(paad{:,3:4},[3 3],'omitnan')./movmean(n,[3 3],'omitnan');
 ve = 100*(1-perc(:,1)./perc(:,2));
-ve = 100*(1-paad.percent_positive_Vaccination./paad.percent_Positive_None_vaccination);
+% ve = 100*(1-paad.percent_positive_Vaccination./paad.percent_Positive_None_vaccination);
 ve = movmean(ve,[3 3],'omitnan');
 figure;
 
 plot(date,ve,'b')
+
+times = 
 
 
 hold on
