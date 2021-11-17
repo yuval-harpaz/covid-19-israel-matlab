@@ -214,7 +214,8 @@ if strcmp(measure,'cases')
     if R
         ylim([0.5 2.5])
     else
-    ylim([0 1700])
+        ylim([0 1700])
+    end
 else
     ylim([0 30])
 end
