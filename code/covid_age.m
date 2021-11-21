@@ -10,7 +10,7 @@ listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv
 listD(end,:) = [];
 yl = movsum(listD.tests_positive1(1:end-1),[3 3]);
 if strcmp(source(1),'d')
-    [pos, dateW, ages] = get_dashboard;
+    [pos, dateW, ages] = get_dashboard_local;
     tt = tocsv(dateW,pos,ages);
     bad = [59,72];
     for iBad = 1:length(bad)
@@ -51,8 +51,8 @@ if strcmp(source(1),'d')
     xlim([datetime(2020,6,1) datetime('today')])
     title('cases by age  (%)  מאומתים לפי גיל')
     set(gcf,'Color','w')
-    dateW(59) = [];
-    pos(59,:) = [];
+    dateW([59, 72]) = [];
+    pos([59, 72],:) = [];
     figure('position',position);
     hl = plot(dateW-3,pos);
     set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
@@ -282,7 +282,7 @@ end
 date = date-3;
 
 
-function [dash, dateW, ages] = get_dashboard
+function [dash, dateW, ages] = get_dashboard_local
 txt = urlread('https://raw.githubusercontent.com/dancarmoz/israel_moh_covid_dashboard_data/master/ages_dists.csv');
 txt = txt(find(ismember(txt,newline),1)+1:end);
 fid = fopen('tmp.csv','w');

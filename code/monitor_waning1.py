@@ -8,7 +8,7 @@ url1 = 'https://data.gov.il/api/3/action/datastore_search?resource_id=e4bf0ab8-e
 with urllib.request.urlopen(url1) as api1:
     data1 = json.loads(api1.read().decode())
 win =21
-def movmean(vec, win, nanTail=True):
+def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
     #  to get smoothing of 3 samples back and 3 samples forward use win=7
@@ -81,7 +81,7 @@ Nexp = np.asarray(df2['verified_amount_expired']/df2['verified_expired_normalize
 # dfVax['date'] = date2
 sm = Nvax.copy()
 sm[65:160+5] = np.linspace(sm[65],sm[159+5],95+5)
-sm = movmean(sm, win)
+sm = movmean(sm, win, False)
 sm[-3] = sm[-4]
 sm[-2] = sm[-4]
 sm[-1] = sm[-4]
@@ -89,7 +89,7 @@ sm[-1] = sm[-4]
 smExp = Nexp.copy()
 smExp[0:185] = 0
 smExp[300] = smExp[301]
-smExp = movmean(smExp, win)
+smExp = movmean(smExp, win, False)
 smExp[-3] = smExp[-4]
 smExp[-2] = smExp[-4]
 smExp[-1] = smExp[-4]
@@ -99,7 +99,7 @@ ratioVax =  ((np.asarray(df2['verified_amount_vaccinated']) + \
 # ratioVax = movmean(ratioVax, 7)
 # dfVax = dfVax.rolling(7, min_periods=7).mean()
 unvax = np.asarray(df2['verified_not_vaccinated_normalized'])
-VE = 100*(1-ratioVax/(movmean(unvax, win, nanTail=False)/10**5))  # FIXME - too many nans
+VE = 100*(1-ratioVax/(movmean(unvax, win, nanTail=False)/10**5))
 
 idx = [np.where(date == date2[0])[0][0], np.where(date == date2.loc[len(date2)-1])[0][0]+1]
 ve[idx[0]:idx[1]] = movmean(VE, win, nanTail=False)

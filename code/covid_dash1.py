@@ -109,21 +109,30 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
 url1 = 'https://data.gov.il/api/3/action/datastore_search?resource_id=e4bf0ab8-ec88-4f9b-8669-f2cc78273edd&limit=10000'
 with urllib.request.urlopen(url1) as api1:
     data1 = json.loads(api1.read().decode())
-win =21
-def movmean(vec, win, nanTail=True):
+win =7
+
+
+def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
     #  to get smoothing of 3 samples back and 3 samples forward use win=7
-    padded = np.concatenate(
-        (np.ones((win,)) * vec[0], vec, np.ones((win,)) * vec[-1]))
-    smooth = np.convolve(padded, np.ones((win,)) / win, mode='valid')
-    smooth = smooth[int(win / 2) + 1:]
-    smooth = smooth[0:vec.shape[0]]
-    if nanTail:
-        smooth[-int(win / 2):-1] = np.nan
-        smooth[-1] = np.nan
-        smooth[0:int(win / 2)+1] = np.nan
+    smooth = vec.copy()
+    if win > 1:
+        if nanTail:
+            smooth[:] = np.nan
+        for ii in range(int(win/2),len(vec)-int(win/2)):
+            smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
+        # padded = np.concatenate(
+        #     (np.ones((win,)) * vec[0], vec, np.ones((win,)) * vec[-1]))
+        # smooth = np.convolve(padded, np.ones((win,)) / win, mode='valid')
+        # smooth = smooth[int(win / 2) + 1:]
+        # smooth = smooth[0:vec.shape[0]]
+        # if nanTail:
+        #     smooth[-int(win / 2):-1] = np.nan
+        #     smooth[-1] = np.nan
+        #     smooth[0:int(win / 2)+1] = np.nan
     return smooth
+
 
 df1 = pd.DataFrame(data1['result']['records'])
 date1 = pd.to_datetime(df1['תאריך'])
@@ -157,10 +166,10 @@ for ii, d in enumerate(date2):
 df = pd.DataFrame(date,columns=['date'])
 df['% unvaccinated of 60+ cases'] = cases
 df['% unvaccinated of mild hospitalizations'] = mild
-df['cases'] = casesAll
+df['cases'] = movmean(casesAll, 7, True)
 Nvax = np.asarray(df2['verified_amount_vaccinated']/df2['verified_vaccinated_normalized']*10**5)
 Nexp = np.asarray(df2['verified_amount_expired']/df2['verified_expired_normalized']*10**5)
-def make_wane(win):
+def make_wane(dfW, win):
     win = int(np.floor((int(win)-1)/2)*2+1)
     sm = Nvax.copy()
     sm[65:160+5] = np.linspace(sm[65],sm[159+5],95+5)
@@ -179,21 +188,34 @@ def make_wane(win):
                 np.asarray(df2['verified_amount_expired'])) / \
                 (sm + smExp))
     unvax = np.asarray(df2['verified_not_vaccinated_normalized'])
-    VE = 100*(1-ratioVax/(movmean(unvax, win, nanTail=False)/10**5))  # FIXME - too many nans
+    VE = 100*(1-ratioVax/(movmean(unvax, win, nanTail=False)/10**5))
     idx = [np.where(date == date2[0])[0][0], np.where(date == date2.loc[len(date2)-1])[0][0]+1]
-    ve[idx[0]:idx[1]] = movmean(VE, win, nanTail=False)
-    df7 = df.rolling(win, min_periods=3).mean().round(1)
-    df7['VE for 60+ cases (2 doses or more)'] = ve
+    VE = movmean(VE, win, nanTail=False)
+    if win > 1:
+        VE[-int(win / 2):] = np.nan
+    ve[idx[0]:idx[1]] = VE
+    # df7 = df.rolling(win, min_periods=3).mean().round(1)
+
+    dfW['VE for 60+ cases (2 doses or more)'] = ve
     # df7['cases (normalized)'] = np.round(100*df7['cases (normalized)']/np.max(df7['cases (normalized)']))
+    dfW['% unvaccinated of mild hospitalizations'] = movmean(np.asarray(dfW['% unvaccinated of mild hospitalizations']), win, True)
+    dfW['% unvaccinated of 60+ cases'] = movmean(np.asarray(dfW['% unvaccinated of 60+ cases']), win, True)
+
     xl = [str(np.datetime_as_string(date[288]))[0:10], str(np.datetime_as_string(date[-1]))[0:10]]
-    df7['date'] = date
-    # layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', xaxis_range=xl)
-    fig_wane = px.line(df7, x='date', y=['VE for 60+ cases (2 doses or more)',  '% unvaccinated of mild hospitalizations', '% unvaccinated of 60+ cases'])
-    fig_wane.layout = layout
+    dfW['date'] = date
+    layoutW = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', xaxis_range=xl)
+    fig_wane = px.line(dfW, x='date', y=['VE for 60+ cases (2 doses or more)',  '% unvaccinated of mild hospitalizations', '% unvaccinated of 60+ cases'])
+    fig_wane.layout = layoutW
     fig_wane.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, 100],
                      tickfont=dict(color="#cc3333"), titlefont=dict(color="#cc3333"), title='% unvaccinated')
-    fig_wane.add_trace(go.Scatter(x=df7['date'], y=df7['cases'], yaxis='y2', name='Cases', line_color='black'))
+    fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW['cases'], yaxis='y2', name='Cases', line_color='black'))
     fig_wane.update_layout(
+        legend=dict(
+            yanchor="top",
+            y=1.1,
+            xanchor="left",
+            x=1.05
+        ),
         title_text="Looking for signs of waning immunity", font_size=15,
         yaxis2=dict(
             title="Cases",
@@ -231,8 +253,8 @@ app.layout = html.Div([
             html.H3('Israel COVID19 data'),
             html.A('zoom in (click and drag) and out (double click), adapted from the MOH '),
             html.A('dashboard', href="https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral", target='_blank'),
-            html.A(' by '),html.A('@yuvharpaz', href="https://twitter.com/yuvharpaz.", target='_blank'),
-            html.A(' code ', href="https://twitter.com/yuvharpaz.", target='_blank'),
+            html.A(' by '),html.A('@yuvharpaz.', href="https://twitter.com/yuvharpaz", target='_blank'),html.A(' '),
+            html.A(' code ', href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_dash1.py", target='_blank'),
             html.Br(), html.Br()
         ]),
         dbc.Row([
@@ -270,17 +292,18 @@ app.layout = html.Div([
         ]),
 
         dbc.Row([
-            dbc.Col(dcc.Graph(id='infected'), md=4),
-            dbc.Col(dcc.Graph(id='severe'), md=4),
-            dbc.Col(dcc.Graph(id='death'), md=4)
+            dbc.Col(dcc.Graph(id='infected'), lg=4),
+            dbc.Col(dcc.Graph(id='severe'), lg=4),
+            dbc.Col(dcc.Graph(id='death'), lg=4)
         ]),
         dbc.Row([
-            dbc.Col([" "], md=4),
-            dbc.Col(["Smoothing factor (odd number of days): ", dcc.Input(id='gwi', value='7', type='text')], md=4)
+            dbc.Col([" "], lg=4),
+            dbc.Col(["Smoothing factor (odd number of days): ",
+                     dcc.Input(id='gwi', value='7', type='text', debounce=True)], lg=4)  # style={'width': '1%'} not working
         ]),
         dbc.Row([
-            dbc.Col(dcc.Graph(id='g2', figure=fig1), md=4),
-            dbc.Col(dcc.Graph(id='gw'), md=8)
+            dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=4, md=12),
+            dbc.Col(dcc.Graph(id='gw'), lg=8, md=12)
         ])
     ])
 ])
@@ -302,7 +325,7 @@ def update_graph(age_group, norm_abs, smoo, win):
         figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ')
         figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ')
         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ')
-    fige = make_wane(win)
+    fige = make_wane(df.copy(), win)
     return figb, figc, figd, fige
 
 
