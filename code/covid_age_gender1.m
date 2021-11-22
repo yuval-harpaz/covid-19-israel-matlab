@@ -66,8 +66,7 @@ for sp = 1:2
     ax.YRuler.Exponent = 0;
     xlim([dateW(1)-3,datetime('today')])
     xtickformat('MMM')
-    legend('0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+',...
-        'location',[0.65,0.55,0.05,0.1])
+    
     title(['weekly cases by age, ',gender{sp}])
     set(gcf,'Color','w')
     for jj = 1:length(hlp)
@@ -75,7 +74,8 @@ for sp = 1:2
     end
     ylabel('cases')
 end
-
+legend('0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+',...
+        'location','northwest')
 
 function tt = tocsv(date,pos,ages)
 ages = strrep(ages,'-','_');
