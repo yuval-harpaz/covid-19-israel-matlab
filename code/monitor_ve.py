@@ -2,8 +2,9 @@ import pandas as pd
 import json
 import urllib.request
 import plotly.express as px
-import plotly.graph_objects as go
+# import plotly.graph_objects as go
 import numpy as np
+
 urlVE = 'https://data.gov.il/api/3/action/datastore_search?resource_id=9b623a64-f7df-4d0c-9f57-09bd99a88880&limit=50000'
 with urllib.request.urlopen(urlVE) as api1:
     dataCases = json.loads(api1.read().decode())
@@ -13,8 +14,8 @@ for week in dataCases['result']['records']:
     for field in keys:
         if week[field] == '<5':
             week[field] = '2.5'
-dfVE = pd.DataFrame(dataCases['result']['records'])
-dateVE = pd.to_datetime(dfVE['Week'].str.slice(12, 23))
+cases = pd.DataFrame(dataCases['result']['records'])
+# dateVE = np.asarray(pd.to_datetime(cases['Week'].str.slice(12, 23)))
 urlVacc = 'https://data.gov.il/api/3/action/datastore_search?resource_id=57410611-936c-49a6-ac3c-838171055b1f&limit=5000'
 with urllib.request.urlopen(urlVacc) as api1:
     dataVacc = json.loads(api1.read().decode())
@@ -23,20 +24,64 @@ for day in dataVacc['result']['records']:
     for field in keys:
         if day[field] == '<15':
             day[field] = '7'
-dfVacc = pd.DataFrame(dataVacc['result']['records'])
-dateVacc = pd.to_datetime(dfVacc['VaccinationDate'])
-dfVacc['first_dose'] = dfVacc['first_dose'].astype(int)
-dfVacc['second_dose'] = dfVacc['second_dose'].astype(int)
-dfVacc['third_dose'] = dfVacc['third_dose'].astype(int)
-dd = dateVacc.sort_values()  # maybe no need to sort
+vaccA = pd.DataFrame(dataVacc['result']['records'])
+# dateVacc = pd.to_datetime(vaccA['VaccinationDate'])
+vaccA['first_dose'] = vaccA['first_dose'].astype(int)
+vaccA['second_dose'] = vaccA['second_dose'].astype(int)
+vaccA['third_dose'] = vaccA['third_dose'].astype(int)
+# dd = dateVacc.sort_values()  # maybe no need to sort
 
+# keep 60+ only
+ages = cases['Age_group'].unique()
+iAge = [5, 6, 7, 8]
+mask = cases['Age_group'].isin(ages[iAge])
+cases = cases[mask]
+dateVE = np.asarray(pd.to_datetime(cases['Week'].str.slice(12, 23)))
+weekEnd = np.unique(dateVE)
+weekEnd.sort()
+mask = vaccA['age_group'].isin(ages[iAge])
+vaccX = vaccA[mask]
+dateVacc = np.asarray(pd.to_datetime(vaccX['VaccinationDate']))
 
+pop = 1587000
 
+dose2 = np.ndarray((len(cases), 3))
+dose2[:, 0] = np.asarray(cases['positive_14_30_days_after_2nd_dose'].astype(float))
+dose2[:, 1] = cases['positive_31_90_days_after_2nd_dose'].astype(float)
+dose2[:, 2] = cases['positive_above_90_days_after_2nd_dose'].astype(float)
+dose2 = np.nansum(dose2, axis=1)
+dose3 = np.asarray(cases['positive_above_20_days_after_3rd_dose'].astype(float))
+unvacc = np.asarray(cases['Sum_positive_without_vaccination'].astype(float))
 
+ve2 = np.ndarray(len(weekEnd))
+ve3 = np.ndarray(len(weekEnd))
+for ii in range(len(weekEnd)):
+    date1 = weekEnd[ii]
+    caseRow = dateVE == weekEnd[ii]
+    # first dose a week before, used to evaluate unvaccinated
+    idx = dateVacc < (date1-7+3)
+    if np.sum(idx) == 0:
+        vacc1 = 0
+    else:
+        vacc1 = np.sum(vaccX['first_dose'][idx])
+    # third dose 20 days before
+    idx = dateVacc < (date1-20+3)
+    if np.sum(idx) == 0:
+        vacc3 = 0
+    else:
+        vacc3 = np.sum(vaccX['third_dose'][idx])
+    # 2nd dose two weeks before (but with no 3rd dose)
+    idx = dateVacc < (date1-14+3)
+    if np.sum(idx) == 0:
+        vacc2 = 0
+    else:
+        vc3 = np.sum(vaccX['third_dose'][idx])
+        vacc2 = np.sum(vaccX['second_dose'][idx]) - vc3
+    ve2[ii] = 100*(1-(np.nansum(dose2[caseRow])/vacc2)/(np.nansum(unvacc[caseRow])/(pop-vacc1)))
+    ve3[ii] = 100 * (1 - (np.nansum(dose3[caseRow]) / vacc3) / (np.nansum(unvacc[caseRow]) / (pop - vacc1)))
 
-
-
-
+fig = px.line(x=weekEnd, y=[ve2, ve3])
+fig.show()
 
 
 # date2 = pd.to_datetime(df2['day_date'].str.slice(0,10))
