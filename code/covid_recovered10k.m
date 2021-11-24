@@ -39,6 +39,6 @@ vaccA.first_dose = cellfun(@str2num,vaccA.first_dose);
 vaccA.second_dose = cellfun(@str2num,vaccA.second_dose);
 vaccA.VaccinationDate = datetime(vaccA.VaccinationDate);
 vaccA.Properties.VariableNames{2} = 'date';
-for ii = 1
+% for ii = 1
     
 
