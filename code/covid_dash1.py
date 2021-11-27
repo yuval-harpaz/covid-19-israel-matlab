@@ -169,7 +169,21 @@ df['% unvaccinated of mild hospitalizations'] = mild
 df['cases'] = movmean(casesAll, 7, True)
 Nvax = np.asarray(df2['verified_amount_vaccinated']/df2['verified_vaccinated_normalized']*10**5)
 Nexp = np.asarray(df2['verified_amount_expired']/df2['verified_expired_normalized']*10**5)
-
+sm = Nvax.copy()
+sm[65:160+5] = np.linspace(sm[65], sm[159+5], 95+5)
+sm = movmean(sm, win)
+sm[-3] = sm[-4]
+sm[-2] = sm[-4]
+sm[-1] = sm[-4]
+sm = np.round(sm, 1)
+smExp = Nexp.copy()
+smExp[0:185] = 0
+smExp[300] = smExp[301]
+# smExp = movmean(smExp, win)
+smExp[-3] = smExp[-4]
+smExp[-2] = smExp[-4]
+smExp[-1] = smExp[-4]
+unvax = np.asarray(df2['verified_not_vaccinated_normalized'])
 ## VE TIMNA
 urlVE = 'https://data.gov.il/api/3/action/datastore_search?resource_id=9b623a64-f7df-4d0c-9f57-09bd99a88880&limit=50000'
 with urllib.request.urlopen(urlVE) as api1:
@@ -253,25 +267,11 @@ ve2 = np.round(ve2, 1)
 
 def make_wane(dfW, win):
     win = int(np.floor((int(win)-1)/2)*2+1)
-    sm = Nvax.copy()
-    sm[65:160+5] = np.linspace(sm[65],sm[159+5],95+5)
-    sm = movmean(sm, win)
-    sm[-3] = sm[-4]
-    sm[-2] = sm[-4]
-    sm[-1] = sm[-4]
-    sm = np.round(sm, 1)
-    smExp = Nexp.copy()
-    smExp[0:185] = 0
-    smExp[300] = smExp[301]
-    # smExp = movmean(smExp, win)
-    smExp[-3] = smExp[-4]
-    smExp[-2] = smExp[-4]
-    smExp[-1] = smExp[-4]
+
     # smExp = np.round(smExp, 1)
     ratioVax =  ((np.asarray(df2['verified_amount_vaccinated']) + \
                 np.asarray(df2['verified_amount_expired'])) / \
                 (sm + smExp))
-    unvax = np.asarray(df2['verified_not_vaccinated_normalized'])
     VE = 100*(1-ratioVax/(movmean(unvax, win, nanTail=False)/10**5))
     idx = [np.where(date == date2[0])[0][0], np.where(date == date2.loc[len(date2)-1])[0][0]+1]
     VE = np.round(movmean(VE, win, nanTail=False), 1)
@@ -285,7 +285,7 @@ def make_wane(dfW, win):
     dfW['% unvaccinated of mild hospitalizations'] = np.round(
         movmean(np.asarray(dfW['% unvaccinated of mild hospitalizations']), win, True),1)
     dfW['% unvaccinated of 60+ cases'] = np.round(
-        movmean(np.asarray(dfW['% unvaccinated of 60+ cases']), win, True),1)
+        movmean(np.asarray(dfW['% unvaccinated of 60+ cases']), win, True), 1)
 
     xl = [str(np.datetime_as_string(date[288]))[0:10], str(np.datetime_as_string(date[-1]))[0:10]]
     dfW['date'] = date
