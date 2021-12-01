@@ -116,6 +116,13 @@ end
 % ax = gca;
 grid on
 
+nn = (3:length(yy{3})+2)';
+for ix = 1:length(nn)
+    for il = 1:nn(ix)
+        line(weekInfec(ix:length(nn)),il./nn(ix:length(nn)),'Color',[0.5 0.5 0.5])
+    end
+end
+    
 
 %% cancel group size effect, just show percent of old vaccines
 figure;

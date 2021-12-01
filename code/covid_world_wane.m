@@ -111,6 +111,7 @@ else
     y = yyyyy./mil;
     y(y < 0) = nan;
     isJump = [false(1,size(y,2));diff(y) > 20];
+    isJump(:,ismember(whoCountry,'Hungary')) = false;
     y(isJump) = nan;
     y = movmean(y,[6 0],'omitnan');
     tit = 'מאומתים למליון ליום, דירוג לפי ממוצע בשבוע האחרון';

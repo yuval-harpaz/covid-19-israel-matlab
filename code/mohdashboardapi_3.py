@@ -71,6 +71,12 @@ api_query = {'requests': [
     {'id': '45', 'queryName': 'hospitalizationStatusDaily', 'single': False, 'parameters': {}},
     {'id': '46', 'queryName': 'summaryLast7Days', 'single': True, 'parameters': {}},
     {'id': '47', 'queryName': 'hospVaccinationDuration', 'single': False, 'parameters': {}},
+    {'id': '48', 'queryName': 'testedByAge', 'single': False, 'parameters': {}},
+    {'id': '49', 'queryName': 'activeKidsSickCityPublic', 'single': False, 'parameters': {}},
+    {'id': '50', 'queryName': 'verifiedKidsAgeDaily', 'single': False, 'parameters': {}},
+    {'id': '51', 'queryName': 'isolatedKidsAgeDaily', 'single': False, 'parameters': {}},
+    {'id': '52', 'queryName': 'sickReturnsAgeVaccination', 'single': False, 'parameters': {}},
+    {'id': '53', 'queryName': 'dailyReturnSick', 'single': False, 'parameters': {}},
     ]}
 api_address = 'https://datadashboardapi.health.gov.il/api/queries/_batch'
 def get_api_data():
@@ -97,6 +103,9 @@ VAC_CASES_DAILY_ABS = 'cases_by_vaccination_daily_absolute.csv'
 VAC_CASES_DAILY_NORM = 'cases_by_vaccination_daily_normalized.csv'
 VAC_CASES_AGES = 'cases_by_vaccination_ages.csv'
 HOSPITALS_FNAME = 'hospital_occupancy.csv'
+KIDS_AGES_DAILY = 'kids_ages_daily.csv'
+AGE_TESTS_FNAME = 'tests_by_age.csv'
+SICK_RETS_AGES_FNAME = 'reinfected_by_age.csv'
 HOSP_HEB_FIELD_NAMES = [
     '\xd7\xaa\xd7\xa4\xd7\x95\xd7\xa1\xd7\x94 \xd7\x9b\xd7\x9c\xd7\x9c\xd7\x99\xd7\xaa',
     '\xd7\xaa\xd7\xa4\xd7\x95\xd7\xa1\xd7\xaa \xd7\xa7\xd7\x95\xd7\xa8\xd7\x95\xd7\xa0\xd7\x94',
@@ -218,12 +227,41 @@ def update_all_ages_csvs(data):
 def update_age_vaccinations_csv(data):
     vac_ages = data['vaccinationsPerAge']
     # Check for surprising age group
-    assert len(vac_ages) == 10
-    new_line = data['lastUpdate']['lastUpdate']+','*5 + ','.join(['%d,%d,%d,%d'%(
-        g['age_group_population'],g['vaccinated_first_dose'],
-        g['vaccinated_second_dose'],g['vaccinated_third_dose'])
-        for g in vac_ages])
+    assert len(vac_ages) == 11
+    new_line = data['lastUpdate']['lastUpdate'] + ',' * 10 + ','.join([('%d,' * 3 + '%.1f,' * 6)[:-1] % (
+        g['vaccinated_first_dose'], g['vaccinated_second_dose'], g['vaccinated_third_dose'],
+        g['percent_vaccinated_first_dose'], g['persent_vaccinated_second_dose'],
+        g['persent_vaccinated_third_dose'], g['not_vaccinated_amount_perc'],
+        g['vaccinated_amount_perc'], g['vaccinated_expired_amount_perc'])
+                                                                       for g in vac_ages])
     add_line_to_file(VAC_AGES_FNAME, new_line)
+
+def update_age_tests_csv(data):
+    test_ages = [x for x in data['testedByAge'] if x['period_desc']=='All']
+    assert ''.join([s['age_group'][0] for s in test_ages]) == '0123456789'
+    new_line = data['lastUpdate']['lastUpdate'] + ',' +','.join(
+        str(s[item]) for item in ['count_testeds', 'positive_testeds'] for s in test_ages)
+    add_line_to_file(AGE_TESTS_FNAME, new_line)
+
+def update_sick_returns_ages_csv(data):
+    srages = [x for x in data['sickReturnsAgeVaccination'] if x['period']=='All']
+    assert [s['ageGroup'] for s in srages] == [
+        '5-11', '12-15', '16-19', '20-29', '30-39',
+        '40-49', '50-59', '60-69', '70-79', '80-89', '90+']
+    new_line = data['lastUpdate']['lastUpdate'] + ',' +','.join(
+        str(s[item]) for item in ['sickReturnsVaccinated', 'sickReturnsNotVaccinated']
+        for s in srages)
+    add_line_to_file(SICK_RETS_AGES_FNAME, new_line)
+
+# def update_age_vaccinations_csv_old_ver(data):
+#     vac_ages = data['vaccinationsPerAge']
+#     # Check for surprising age group
+#     assert len(vac_ages) == 11
+#     new_line = data['lastUpdate']['lastUpdate']+','*5 + ','.join(['%d,%d,%d,%d'%(
+#         0,g['vaccinated_first_dose'],
+#         g['vaccinated_second_dose'],g['vaccinated_third_dose'])
+#         for g in vac_ages])
+#     add_line_to_file(VAC_AGES_FNAME, new_line)
 
 def patients_to_csv_line(pat):
     keys = ['Counthospitalized', 'Counthospitalized_without_release',
@@ -256,13 +294,19 @@ def create_patients_csv(data):
 
     tests = [t for t in data['testResultsPerDate'] if t['positiveAmount']!=-1][-N:]
     tests2 = data['testsPerDate'][-N:]
-    assert tests[0]['date'] == tests2[0]['date'] == start_date
+    rets = data['dailyReturnSick'][-N:]
+    assert tests[0]['date'] == tests2[0]['date'] == rets[0]['date'] == start_date
+    # assert tests[0]['date'] == tests2[0]['date'] == start_date
     epi_lines = [','.join(map(str, [t['positiveAmount'], i['sum'],
                                     i['amount'], i['recovered'],
                                     t['amount'], t['amountVirusDiagnosis'],
                                     t['amountPersonTested'], t['amountMagen'],
-                                    t2['amountSurvey']])) for \
-                 i, t, t2 in zip(inf, tests, tests2)]
+                                    t2['numAntigenOfficialTest'],
+                                    r['verifiedReturnsVaccinated'],
+                                    r['verifiedReturnsNotVaccinated'],
+                                    r['verifiedReturnsCumPerc']
+                                    ])) for \
+                 i, t, t2, r in zip(inf, tests, tests2, rets)]
 
     inff = data['infectionFactor']
     def repr_if_not_none(x):
@@ -279,8 +323,10 @@ def create_patients_csv(data):
                            
                            'Positive results', 'Total infected', 'New infected',
                            'New receovered', 'Total tests', 'Tests for idenitifaction',
-                           'People tested', 'Tests for Magen', 'Survey tests',
-                           'Official R'])
+                           'People tested', 'Tests for Magen', 'Official antigen tests',
+                           'Vaccinated reinfected', 'Unvaccinated reinfected',
+                           'Reinfected cumulative percentage',
+                           'Official R', 'Epidemiological Event'])
     csv_data = '\n'.join([title_line] + [
         ','.join([p,e,i]) for p,e,i in zip(pat_lines, epi_lines, inff_lines)])
     opf = open(HOSP_FNAME,'w')
@@ -288,38 +334,25 @@ def create_patients_csv(data):
     #  assert os.system('git add '+HOSP_FNAME) == 0    
 
 
-# def create_cases_by_vaccinations_daily(data):
-# ##    res = ',' + (','*9).join(['All ages', 'Above 60', 'Below 60']) + ','*8 + '\n'
-#     res = ',' + ',,,'.join([pre+' - '+suf
-#                             for pre in ['All ages', 'Above 60', 'Below 60']
-#                             for suf in ['fully vaccinated', 'partially vaccinated', 'not vaccinated']
-#                             ]) + ','*2 + '\n'    
-#     res += 'Date' + ',Total Amount,Daily verified,Total serious'*9 + '\n'
-#     vvd = data['vaccinatedVerifiedDaily']
-#     for i in range(0, len(vvd), 3):
-#         s = sorted(vvd[i:i+3], key=lambda x: x['age_group'])
-#         assert s[0]['day_date'] == s[2]['day_date'] == s[2]['day_date']
-#         line = s[0]['day_date']+','
-#         line += ','.join([
-#             str(ss[case_type%vacc_type])
-#             for ss in s
-#             for vacc_type in ['vaccinated', 'vaccinated_procces', 'not_vaccinated']
-#             for case_type in ['%s_amount_cum', 'verified_amount_%s', 'Serious_amount_%s']])
-#         res += line + '\n'
-#     opf = open(VAC_CASES_DAILY,'w')
-#     opf.write(res)
-#     #  assert os.system('git add '+VAC_CASES_DAILY) == 0        
-# def simulate_vvd(data):
-#     dailys = [data[pre + 'VaccinationStatusDaily'] for pre in ['death', 'Serious', 'Verfiied']]
-#     assert len(set([tuple([x['day_date'] for x in d]) for d in dailys])) == 1
-#     assert len(set([tuple([x['age_group'] for x in d]) for d in dailys])) == 1
-#     merged = [dict(x.items()+yyAge.items()+z.items()) for x,yyAge,z in zip(*dailys)]
-#     for m in merged:
-#         m.update({s.lower():m[s] for s in [
-#             'new_Serious_amount_boost_vaccinated', 'new_Serious_boost_vaccinated_normalized']})
-#         m.update({
-#             'death_boost_vaccinated_normalized':m['death_amount_boost_vaccinated_normalized']})
-#     return merged
+def create_kids_ages_daily(data):
+    isols, vers = data['isolatedKidsAgeDaily'], data['verifiedKidsAgeDaily']
+    N = min(len(isols), len(vers))
+    isols, vers = isols[-N:], vers[-N:]
+    assert all([i['dayDate']==v['dayDate'] for i,v in zip(isols,vers)])
+    lines = 'Date,' + ','.join(
+        age + ' ' + suf
+        for suf in ['verified', 'verified normalized', 'isolated', 'isolated normalized']
+        for age in ['0-4', '5-11', '12-15', '16-19']) + '\n'
+    for i in range(0, N, 4):
+        line = vers[0]['dayDate'][:10]+','+','.join(
+            str(arr[j][item]) for arr,item in [
+                (vers, 'verified'), (vers, 'verifiedNormalized'),
+                (isols, 'isolated'), (isols, 'isolatedNormalized')]
+            for j in range(i, i+4) )
+        lines += line + '\n'
+    # file(KIDS_AGES_DAILY, 'w').write(lines)
+    opf = open(KIDS_AGES_DAILY, 'w')
+    opf.write(lines)
 
 def simulate_vvd(data):
     dailys = [data[pre + 'VaccinationStatusDaily'] for pre in ['death', 'Serious', 'Verfiied']]
@@ -519,3 +552,7 @@ vacc.to_csv("VaccinationStatusAgg.csv")
 
 create_cases_by_vaccinations_normalized(data)
 create_cases_by_vaccinations_absolute(data)
+create_kids_ages_daily(data)
+
+tmp = pd.read_json("https://datadashboardapi.health.gov.il/api/queries/testedByAge")
+tmp.to_csv("testedByAge.csv")
