@@ -1,10 +1,8 @@
 function covid_age_gender1
 % source can be 'd' for dashboard (confirmed), 's' for severe (dashboard too), 't' for timna
-if nargin == 0
-    source = 'dashboard';
-end
+
 position = [100,100,900,600];
-pop = [1735000;1565000;1320000;1209000;1112000;874000;747217;526929;238729;58687];
+% pop = [1735000;1565000;1320000;1209000;1112000;874000;747217;526929;238729;58687];
 % [posDash, dateD] = get_dashboard;
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 listD(end,:) = [];
