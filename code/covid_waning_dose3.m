@@ -20,11 +20,12 @@ m = month(weekInfec);
 mn = cellstr(datestr(datetime(1,m,1),'mmm'));
 [a,b,c] = unique(m);
 xtick = sort(b);
-xtick(1) = [];
+% xtick(1) = [];
 xtl = mn(xtick);
 yy = cases;
 yy(:,:,2) = cpm;
 tit = {'Cases','Cases per million'};
+%%
 figure;
 for sp = 1:2
     subplot(2,1,sp)
@@ -32,163 +33,57 @@ for sp = 1:2
     xlabel('Infection week')
     ylabel('Vaccination week')
     set(gca,'Ydir','normal')
-    set(gca,'Xtick',xtick,'XtickLabel',xtl,'Ytick',xtick,'YtickLabel',xtl)
+    set(gca,'Xtick',xtick,'XtickLabel',xtl,'Ytick',[2;xtick(2:end)],'YtickLabel',xtl)
     colormap('hot')
-    ylim([0.5 25.5])
+    ylim([1.5 10.5])
     title(tit{sp})
     colorbar
 %     axis square
 end
 set(gcf,'Color','w')
-% 
-% cpm4 = movsum(cpm,[2 2]);
-% pct = cpm4./sum(cpm4);
-% 
-% pctnn = cases./sum(cases);
-% 
-% col = flipud(jet(length(weekVacc)));
-% yy{1} = cpm4;
-% yy{3} = pct;
-% 
-% t_ = t(ismember(t.age_group,'<60'),:);
-% weekStartVacc = datetime(cellfun(@(x) x(1:10),t_.First_dose_week,'UniformOutput',false));
-% [weekVacc,order] = sort(weekStartVacc);
-% t_ = t_(order,:);
-% % weekVacc = (min(weekStartVacc):7:max(weekStartVacc))';
-% weekInfec = datetime(cellfun(@(x) strrep(x(10:19),'_','-'),t_.Properties.VariableNames(5:end),'UniformOutput',false))';
-% % weekInfec = (min(weekStartInfec):7:max(weekStartInfec))';
-% cells = t_{:,5:end};
-% cells(cellfun(@isempty, cells)) = {'0'};
-% cells = strrep(cells,'1-5','2.5');
-% cases = cellfun(@str2num, cells);
-% cases(cases == -4) = 8;
-% cpm = round(cases./cellfun(@str2num, t_.group_size).*10^6,1);
-% cpm4 = movsum(cpm,[2 2]);
-% pct = cpm4./sum(cpm4);
-% col = flipud(jet(length(weekVacc)));
-% yy{2} = cpm4;
-% yy{4} = pct;
-% tit= {'Amount of 60+ y/o infections by date and vaccine age',...
-%     'Amount of <60 y/o infections by date and vaccine age',...
-%     'Ratio of 60+ y/o infections by date and vaccine age',...
-%     'Ratio of <60 y/o infections by date and vaccine age'};
-% %%
-% figure;
-% for isp = 1:4
-%     subplot(2,2,isp)
-%     for ii = 1:length(weekVacc)
-%         if ii == 1
-%             prev = zeros(1,length(weekInfec));
-%             %     else
-%             %         prev = fliplr(cumsum(cpm(1:ii-1,:)));
-%         end
-%         curr = sum(yy{isp}(1:ii,:),1);
-%         h(ii) = fill([weekInfec;flipud(weekInfec)],[curr,prev],col(ii,:),'LineStyle','none');
-%         prev = fliplr(curr);
-%         hold on
-%     end
-%     xlim(weekInfec([1,end]))
-%     if isp > 2
-%         ylim([0 1])
-%         set(gca,'YTick',0:0.1:1,'YTickLabel',0:10:100)
-%         ylabel('% of aged vaccines')
-%     else
-%         ax = gca;
-%         ax.YRuler.Exponent = 0;
-%         ax.YAxis.TickLabelFormat = '%,.0g';
-%         ylabel('cases per 1M per 5 weeks')
-%         ylim([0 200000])
-%     end
-%     box off
-%     set(gca,'Layer','top')
-%     xlabel('infection date')
-%     title(tit{isp})
-% end
-% set(gcf,'Color','w')
-% 
-% %% normalized by group size
-% figure;
-% isp = 3;
-% for ii = 1:length(weekVacc)
-%     if ii == 1
-%         prev = zeros(1,length(weekInfec));
-%         %     else
-%         %         prev = fliplr(cumsum(cpm(1:ii-1,:)));
-%     end
-%     curr = sum(yy{isp}(1:ii,:),1);
-%     h(ii) = fill([weekInfec;flipud(weekInfec)],[curr,prev],col(ii,:),'LineStyle','none');
-% %     h(ii).FaceAlpha = 0.5;
-%     prev = fliplr(curr);
-%     hold on
-% end
-% axis tight
-% set(gca,'YTick',0:0.1:1,'YTickLabel',0:10:100)
-% ylabel('% of aged vaccines')
-% box off
-% set(gca,'Layer','top')
-% xlabel('infection date     תאריך ההדבקה')
-% title(tit{isp})
-% set(gcf,'Color','w')
-% ylabel('percent of aged vaccines    אחוז החיסונים הוותיקים')
-% gap = 0;
-% yc = 1:length(weekInfec);
-% yc = yc/max(yc);
-% for ic = 1:length(col)
-%     fill([weekInfec(end)+gap+1,weekInfec(end)+gap+7,weekInfec(end)+gap+7,weekInfec(end)+gap+1],...
-%         [yc(ic)-yc(1),yc(ic)-yc(1),yc(ic),yc(ic)],col(ic,:))
-%     text(weekInfec(end)+gap+9,yc(ic)-yc(1)/2,datestr(weekInfec(ic),'dd-mmm'))
-% end
-% % ax = gca;
-% grid on
-% 
-% nn = (3:length(yy{3})+2)';
-% for ix = 1:length(nn)
-%     for il = 1:nn(ix)
-%         line(weekInfec(ix:length(nn)),il./nn(ix:length(nn)),'Color',[0.5 0.5 0.5])
-%     end
-% end
-%     
-% 
-% %% cancel group size effect, just show percent of old vaccines
-% figure;
-% clear isp
-% for ii = 1:length(weekVacc)
-%     if ii == 1
-%         prev = zeros(1,length(weekInfec));
-%         %     else
-%         %         prev = fliplr(cumsum(cpm(1:ii-1,:)));
-%     end
-%     curr = sum(pctnn(1:ii,:),1);
-%     h(ii) = fill([weekInfec;flipud(weekInfec)],[curr,prev],col(ii,:),'LineStyle','none');
-% %     h(ii).FaceAlpha = 0.5;
-%     prev = fliplr(curr);
-%     hold on
-% end
-% axis tight
-% set(gca,'YTick',0:0.1:1,'YTickLabel',0:10:100)
-% ylabel('% of aged vaccines')
-% box off
-% set(gca,'Layer','top')
-% xlabel('infection date     תאריך ההדבקה')
-% title(tit{3})
-% set(gcf,'Color','w')
-% ylabel('percent of aged vaccines    אחוז החיסונים הוותיקים')
-% gap = 0;
-% yc = 1:length(weekInfec);
-% yc = yc/max(yc);
-% for ic = 1:length(col)
-%     fill([weekInfec(end)+gap+1,weekInfec(end)+gap+7,weekInfec(end)+gap+7,weekInfec(end)+gap+1],...
-%         [yc(ic)-yc(1),yc(ic)-yc(1),yc(ic),yc(ic)],col(ic,:))
-%     text(weekInfec(end)+gap+9,yc(ic)-yc(1)/2,datestr(weekInfec(ic),'dd-mmm'))
-% end
-% % ax = gca;
-% grid on
-% %% dots
-% % vecCases = cases(:);
-% % vecCases(vecCases == 0) = nan;
-% % x = 1:31;
-% % x = repmat(x,1,31)';
-% % y = reshape(reshape(x,31,31)',31^2,1);
-% % figure;
-% % scatter(y,x,vecCases./max(vecCases)*100,'fill')
-% % surf(weekInfec,
+%%
+[yy1, xtl1, xtick1] = covid_waning_dose1(false);
+yy1 = yy1(:,2:end,:);
+xtick1 = xtick1-1;
+yy(end+1:size(yy1,1),end+1:size(yy1,2),:) = nan;
+%%
+xEnd = length(weekInfec)+0.5;
+figure;
+subplot(2,1,1)
+imagesc(yy(:,:,2))
+set(gca,'Ydir','normal')
+set(gca,'Xtick',[xtick; xEnd],'XtickLabel',[xtl;datestr(weekInfec(end)+6,'dd/mm')],...
+    'Ytick',[2;xtick(2:end)],'YtickLabel',xtl)
+colormap('hot')
+ylim([1.5 12.5])
+caxis([0 3000])
+% xlim([0.5 length(yy)+0.5])
+
+
+hold on
+hh(1) = fill([0,0,0,0],[0,0,0,0],[1 1 1]);
+hh(2) = line([xEnd,xEnd],[0,12.5],'Color','b');
+yl3 = yy(2,:,2)/3000*12.5+2;
+yl3(yl3 == 2) = nan;
+yl3(1) = nan;
+hh(3) = plot(yl3,'g');
+lg = legend(hh,'3000 cases per M','last update','first group to vaccinate');
+set(lg, 'Color','none','TextColor','w','Box','off')
+title('Cases per million by Infection time and by dose III vaccination group')
+xlabel('Infection week')
+ylabel('Dose III vaccination week')
+subplot(2,1,2)
+imagesc(yy1(:,:,2))
+set(gca,'Ydir','normal')
+set(gca,'Xtick',xtick1,'XtickLabel',xtl1,'Ytick',xtick1,'YtickLabel',xtl1)
+colormap('hot')
+ylim([1.5 12.5])
+caxis([0 3000])
+set(gcf,'Color','w')
+hold on
+yl1 = yy1(2,:,2)/3000*12.5+2;
+yl1(1) = nan;
+plot(yl1,'g')
+title('Cases per million by Infection time and by dose I vaccination group')
+xlabel('Infection week')
+ylabel('Dose I vaccination week')

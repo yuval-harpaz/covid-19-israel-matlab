@@ -1,3 +1,7 @@
+function [yy, xtl, xtick] = covid_waning_dose1(plt)
+if nargin == 0
+    plt = true;
+end
 cd ~/covid-19-israel-matlab/data/Israel
 json = urlread('https://data.gov.il/api/3/action/datastore_search?resource_id=32150ead-89f2-461e-9cc3-f785e9e8608f&limit=5000');
 json = jsondecode(json);
@@ -24,22 +28,24 @@ xtick(1) = [];
 xtl = mn(xtick);
 yy = cases;
 yy(:,:,2) = cpm;
-tit = {'Cases','Cases per million'};
-figure;
-for sp = 1:2
-    subplot(2,1,sp)
-    imagesc(yy(:,:,sp))
-    xlabel('Infection week')
-    ylabel('Vaccination week')
-    set(gca,'Ydir','normal')
-    set(gca,'Xtick',xtick,'XtickLabel',xtl,'Ytick',xtick,'YtickLabel',xtl)
-    colormap('hot')
-    ylim([0.5 25.5])
-    title(tit{sp})
-    colorbar
-%     axis square
+if plt
+    tit = {'Cases','Cases per million'};
+    figure;
+    for sp = 1:2
+        subplot(2,1,sp)
+        imagesc(yy(:,:,sp))
+        xlabel('Infection week')
+        ylabel('Vaccination week')
+        set(gca,'Ydir','normal')
+        set(gca,'Xtick',xtick,'XtickLabel',xtl,'Ytick',xtick,'YtickLabel',xtl)
+        colormap('hot')
+        ylim([0.5 25.5])
+        title(tit{sp})
+        colorbar
+        %     axis square
+    end
+    set(gcf,'Color','w')
 end
-set(gcf,'Color','w')
 % 
 % cpm4 = movsum(cpm,[2 2]);
 % pct = cpm4./sum(cpm4);
