@@ -1,11 +1,11 @@
+import os
 import pandas as pd
 import numpy as np
-import plotly.graph_objects as go
 import dash
 from dash import dcc
 from dash import html
 import plotly.express as px
-import os
+import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import urllib.request
@@ -122,15 +122,6 @@ def movmean(vec, win, nanTail=False):
             smooth[:] = np.nan
         for ii in range(int(win/2),len(vec)-int(win/2)):
             smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
-        # padded = np.concatenate(
-        #     (np.ones((win,)) * vec[0], vec, np.ones((win,)) * vec[-1]))
-        # smooth = np.convolve(padded, np.ones((win,)) / win, mode='valid')
-        # smooth = smooth[int(win / 2) + 1:]
-        # smooth = smooth[0:vec.shape[0]]
-        # if nanTail:
-        #     smooth[-int(win / 2):-1] = np.nan
-        #     smooth[-1] = np.nan
-        #     smooth[0:int(win / 2)+1] = np.nan
     return smooth
 
 
