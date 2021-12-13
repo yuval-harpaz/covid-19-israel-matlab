@@ -70,14 +70,16 @@ for ff in np.asarray(field)[[2, 4, 5, 6, 7, 8]]:
             spike = np.where(dfr['Date'] == '2021-11-23')[0][0]
             yy[spike] = (yy[spike-1]+yy[spike+1])/2
             yy = np.diff(yy)
-            for bad in [129, 130, 131, 132, 205, 221, 366]:
+            bad1 = np.where(dfr['Date'] == '2020-10-05')[0][0]
+
+            for bad in np.asarray([0, 1, 2, 3, 76, 92, 237])+bad1:
                 yy[bad] = np.nan
             for bad in np.where(yy < 0)[0]:
                 yy[bad] = np.nan
             if ff == 'Died to Date' and rr == 'South Africa':
                 deaths = yy
         else:
-            for bad in [222]:
+            for bad in [bad1+93]:
                 yy[bad] = np.nan
             if ff == 'Admissions in Previous Day' and rr == 'South Africa':
                 hosp = yy
@@ -89,6 +91,8 @@ figCases = go.Figure(layout=layout)
 for rr in region[:-1]+['Total']:
     figCases.add_trace(go.Scatter(x=date2, y=dfCases[rr], name=rr))
 figCases.layout['title'] = 'Cases'
+figCases.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
+figCases.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 
 figHospDeath = go.Figure(layout=layout)
 figHospDeath.add_trace(go.Scatter(x=dfr['Date'], y=movmean(deaths, 7, True), name='deaths', line_color='black'))
@@ -163,10 +167,22 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.H3('South Africa COVID19 hospitalizations data'),
-            html.A("The "), html.A('data', href="https://github.com/alex1770/Covid-19/blob/master/VOCgrowth/EarlyOmicronEstimate/extracthospdata/SouthAfricaHospData.json",
+            html.A("The "),
+            html.A('data',
+                   href="https://github.com/alex1770/Covid-19/blob/master/VOCgrowth/EarlyOmicronEstimate/extracthospdata/SouthAfricaHospData.json",
                    target='_blank'),
-            html.A(' is provided by '), html.A('@alexselby1770.', href="https://twitter.com/alexselby1770",target='_blank'),
-            html.A(' and visualized by '), html.A('@yuvharpaz', href="https://twitter.com/yuvharpaz", target='_blank'),
+            html.A(' is provided by '),
+            html.A('NICD',
+                   href='https://www.nicd.ac.za/diseases-a-z-index/disease-index-covid-19/surveillance-reports/daily-hospital-surveillance-datcov-report/',
+                   target='_blank'),
+            html.A(' via '),
+            html.A('@alexselby1770',
+                   href="https://twitter.com/alexselby1770",
+                   target='_blank'),
+            html.A(' and visualized by '),
+            html.A('@yuvharpaz',
+                   href="https://twitter.com/yuvharpaz",
+                   target='_blank'),
             html.A(' '),
             html.A(' code ',
                    href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_SA_plot1.py",
