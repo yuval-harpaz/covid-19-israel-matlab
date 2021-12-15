@@ -187,6 +187,7 @@ app.layout = html.Div([
             html.A(' code ',
                    href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_SA_plot1.py",
                    target='_blank'),
+            html.Br(), html.A('Note that data here is by reporting date. Last update: '+str(date2[-1])),
             html.Br(), html.Br()
         ]),
         dbc.Row([html.H3('Incidence data: new cases, hospital admissions and deaths.')]),
