@@ -234,6 +234,8 @@ week = struct2table(json.result.records);
 week.weekly_cases(ismember(week.weekly_cases,'<15')) = {'2'};
 week.weekly_deceased(ismember(week.weekly_deceased,'<15')) = {'2'};
 week.weekly_tests_num(ismember(week.weekly_tests_num,'<15')) = {'2'};
+week.last_week_day = strrep(week.last_week_day,'/','-');
+week.first_week_day = strrep(week.first_week_day,'/','-');
 writetable(week,'tmp.csv','Delimiter',',','WriteVariableNames',true);
 week = readtable('tmp.csv');
 % week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
