@@ -92,12 +92,16 @@ date2 = unique(lonC.date);
 for ii = 1:length(date2)
     yy(ii,1) = sum(lonC.new_cases(ismember(lonC.date,date2(ii))));
 end
+%%
 if plt
     figure;
     yyaxis right
     plot(date2(1:end-2),yy(1:end-2))
     ylabel('cases per day')
-    ylim([0 16000])
+    ylim([0 25000])
+    yt = 5000:5000:25000;
+    yt = yt';
+    set(gca,'YTick',yt,'YTickLabel',str(yt))
     yyaxis left
     bar(date(2:end),diff(y));
     hold on
@@ -110,5 +114,7 @@ if plt
     box off
     xlim([datetime(2020,3,15) datetime('tomorrow')+3])
     xtickformat('MMM')
+    ax = gca;
+    ax.YRuler.Exponent = 0;
 end
 
