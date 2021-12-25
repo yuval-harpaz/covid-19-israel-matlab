@@ -6,8 +6,8 @@ Deaths data was converted from cumulative to daily, and some bad data was ignore
 
 import pandas as pd
 import numpy as np
-import urllib.request
-import json
+# import urllib.request
+# import json
 import dash
 from dash import dcc
 from dash import html
