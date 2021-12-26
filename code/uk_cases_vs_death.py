@@ -165,4 +165,72 @@ figEng.update_layout(hovermode="x unified",
 figEng.layout['yaxis']['title'] = "Deaths"
 figEng.layout['yaxis']['titlefont']['color'] = "black"
 figEng.layout['yaxis2']['titlefont']['color'] = "blue"
-figEng.show()
+# figEng.show()
+
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.BOOTSTRAP],
+    meta_tags=[{"name": "viewport", "content": "width=device-width, initial-scale=1"}]
+)
+
+server = app.server
+app.layout = html.Div([
+    html.Div([
+        html.Div([
+            html.H3('England (not UK) and London COVID19 deaths, and cases by age'),
+            html.A("The "),
+            html.A('data',
+                   href="https://github.com/dsfsi/covid19za/blob/master/data/covid19za_provincial_raw_hospitalization.csv",
+                   target='_blank'),
+            html.A(" and "),
+            html.A('cases',
+                   href='https://github.com/dsfsi/covid19za/blob/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv',
+                   target='_blank'),
+            html.A(' data are provided by '),
+            # html.A(&#128081;)	U+1F451
+            html.A('GOV.UK',
+                   href='https://coronavirus.data.gov.uk/details/download',
+                   target='_blank'),
+            html.A(' via '),
+            html.A('@vokusi',
+                   href="https://twitter.com/vukosi",
+                   target='_blank'),
+            html.A(' and '),
+            html.A('@SalomonKabongo',
+                   href="https://twitter.com/SalomonKabongo",
+                   target='_blank'),
+            html.A('. Visualization by '),
+            html.A('@yuvharpaz',
+                   href="https://twitter.com/yuvharpaz",
+                   target='_blank'),
+            html.A(' . '),
+            html.A('<code>',
+                   href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_SA_plot2.py",
+                   target='_blank'),
+            html.Br(), html.A('Note that data here is by reporting date. Last cases update: '+str(date2[-1])[0:10]+'. Last hospitalizations update: '+str(date[-1])),
+            html.Br(), html.Br()
+        ]),
+        dbc.Row([html.H3('Incidence data: new cases, hospital admissions and deaths.')]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(figure=figHospDeath), lg=6),
+            dbc.Col(dcc.Graph(figure=figCaseHosp), lg=6)
+        ]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(figure=figCases), lg=6),
+            dbc.Col(dcc.Graph(figure=figs[5]), lg=6),
+            dbc.Col(dcc.Graph(figure=figs[0]), lg=6)
+        ]),
+    dbc.Row([html.H3('Prevalence data: currently hospitalized cases, cases with oxygen support, in ICU and with mechanical ventilation.')]),
+        dbc.Row([dbc.Col(dcc.Graph(figure=figCurrent), lg=6)]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(figure=figs[1]), lg=6),
+            dbc.Col(dcc.Graph(figure=figs[4]), lg=6)
+        ]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(figure=figs[2]), lg=6),
+            dbc.Col(dcc.Graph(figure=figs[3]), lg=6)
+        ]),
+    ])
+])
+if __name__ == '__main__':
+    app.run_server(debug=True)
