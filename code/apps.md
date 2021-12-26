@@ -5,7 +5,7 @@ The dashboards were written in python, using plotly and dash. The python engine 
 My dashboard is based on Israel's ministry of health's [dashboard](https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral), some data is taken from [Data Gov](https://data.gov.il/dataset/covid-19)
 # [South Afrika](https://sa-covid.herokuapp.com/)
 The data is from [NICD](https://www.nicd.ac.za/diseases-a-z-index/disease-index-covid-19/surveillance-reports/daily-hospital-surveillance-datcov-report/), as collected by [DSfSI (Uni Pretoria)](https://github.com/dsfsi/covid19za)
-# England
+# [England](https://uk-covid.herokuapp.com/)
 Data for london and England (not UK) is taken from [GOV.UK](https://coronavirus.data.gov.uk/details/download) using API queries such as this: 
 <br>
 https://api.coronavirus.data.gov.uk/v2/data?areaType=nation&areaName=England&metric=maleCases&release=2021-12-24
