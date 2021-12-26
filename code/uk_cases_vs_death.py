@@ -37,7 +37,8 @@ for ll in loc:
 
     dataLoc = {'maleCases': [], 'femaleCases': [], 'deaths': []}
     for s in metric:
-        req = 'areaType='+at+'&areaName='+ll+'&metric='+s+'&release='+str(date)
+        # req = 'areaType='+at+'&areaName='+ll+'&metric='+s+'&release='+str(date)
+        req = 'areaType=' + at + '&areaName=' + ll + '&metric=' + s
         response = requests.get(url+req, timeout=10)
         gen = response.json()['body'][::-1]
         if s == 'newDeaths28DaysByDeathDate':
@@ -186,12 +187,12 @@ app.layout = html.Div([
             html.A('cases',
                    href='https://github.com/dsfsi/covid19za/blob/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv',
                    target='_blank'),
-            html.A(' data are provided by '),
+            html.A('Data are provided by '),
             # html.A(&#128081;)	U+1F451
             html.A('GOV.UK',
                    href='https://coronavirus.data.gov.uk/details/download',
                    target='_blank'),
-            html.A(' via '),
+            html.A(', see API cheat sheet here: '),
             html.A('@vokusi',
                    href="https://twitter.com/vukosi",
                    target='_blank'),

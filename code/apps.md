@@ -8,7 +8,7 @@ The data is from [NICD](https://www.nicd.ac.za/diseases-a-z-index/disease-index-
 # England
 Data for london and England (not UK) is taken from [GOV.UK](https://coronavirus.data.gov.uk/details/download) using such queries: 
 <br>
-https://api.coronavirus.data.gov.uk/v2/data?areaType=nation&areaName=England&metric=maleCases&release=2021-12-25
+https://api.coronavirus.data.gov.uk/v2/data?areaType=nation&areaName=England&metric=maleCases&release=2021-12-24
 <br>
 with the following options:
 <br>
