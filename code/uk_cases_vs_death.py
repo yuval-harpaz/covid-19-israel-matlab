@@ -85,7 +85,7 @@ figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
 figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
                             y=movmean(np.sum(London[:,0:3], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases <15', line_color='#ccccff'))
-figLon.layout['title'] = 'London daily cases (60+, shifted 21 days ahead) and deaths (all)'
+figLon.layout['title'] = 'London daily cases by age (shifted 21 days ahead) and deaths (all ages)'
 figLon.layout['yaxis']['dtick'] = 25
 figLon.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, 250])
 figLon.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
@@ -98,7 +98,7 @@ figLon.update_layout(hovermode="x unified",
             position=1,
             zerolinecolor='lightgray',
             gridcolor='lightgray',
-            dtick=250,
+            dtick=500,
             range=[0, 2500]
         ),
         legend = dict(
@@ -111,7 +111,7 @@ figLon.update_layout(hovermode="x unified",
 figLon.layout['yaxis']['title'] = "Deaths"
 figLon.layout['yaxis']['titlefont']['color'] = "black"
 figLon.layout['yaxis2']['titlefont']['color'] = "blue"
-figLon.show()
+# figLon.show()
 
 
 ##
@@ -140,7 +140,7 @@ figEng.add_trace(go.Scatter(x=dateE[:-1]+np.timedelta64(shift),
 figEng.add_trace(go.Scatter(x=dateE[:-1]+np.timedelta64(shift),
                             y=movmean(np.sum(England[:,0:3], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases <15', line_color='#ccccff'))
-figEng.layout['title'] = 'England daily cases (60+, shifted '+str(shift)+' days ahead) and deaths (all)'
+figEng.layout['title'] = 'England daily cases by age (shifted '+str(shift)+' days ahead) and deaths (all ages)'
 figEng.layout['yaxis']['dtick'] = 100
 figEng.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, 1500])
 figEng.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
@@ -179,26 +179,14 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.H3('England (not UK) and London COVID19 deaths, and cases by age'),
-            html.A("The "),
-            html.A('data',
-                   href="https://github.com/dsfsi/covid19za/blob/master/data/covid19za_provincial_raw_hospitalization.csv",
-                   target='_blank'),
-            html.A(" and "),
-            html.A('cases',
-                   href='https://github.com/dsfsi/covid19za/blob/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv',
-                   target='_blank'),
             html.A('Data are provided by '),
             # html.A(&#128081;)	U+1F451
             html.A('GOV.UK',
                    href='https://coronavirus.data.gov.uk/details/download',
                    target='_blank'),
-            html.A(', see API cheat sheet here: '),
-            html.A('@vokusi',
-                   href="https://twitter.com/vukosi",
-                   target='_blank'),
-            html.A(' and '),
-            html.A('@SalomonKabongo',
-                   href="https://twitter.com/SalomonKabongo",
+            html.A(', see API cheat sheet '),
+            html.A('here',
+                   href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/apps.md",
                    target='_blank'),
             html.A('. Visualization by '),
             html.A('@yuvharpaz',
@@ -206,31 +194,23 @@ app.layout = html.Div([
                    target='_blank'),
             html.A(' . '),
             html.A('<code>',
-                   href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_SA_plot2.py",
+                   href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/uk_cases_vs_death.py",
                    target='_blank'),
-            html.Br(), html.A('Note that data here is by reporting date. Last cases update: '+str(date2[-1])[0:10]+'. Last hospitalizations update: '+str(date[-1])),
-            html.Br(), html.Br()
+            html.Br(), html.A('Cases data were manually shifted to sync the Jan-2021 deaths rise with 60+ cases, and smoothed -3+ days. Last cases update: '+str(dateL[-1])[0:10]+'. Last deaths update: '+str(dateLdeaths[-1])),
+            html.Br(), html.A('Interactive tips: You can zoom-in, double-click to zooms out, home button for reset. Hover for data preview and hide lines by clicks on legend items.'),
+            html.Br(), html.A('other dashboards: '),
+            html.A('South Africa',
+                   href="https://sa-covid.herokuapp.com/",
+                   target='_blank'),
+            html.A(' , '),
+            html.A('Israel',
+                   href="https://covid-israel.herokuapp.com/",
+                   target='_blank'),
         ]),
-        dbc.Row([html.H3('Incidence data: new cases, hospital admissions and deaths.')]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=figHospDeath), lg=6),
-            dbc.Col(dcc.Graph(figure=figCaseHosp), lg=6)
-        ]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=figCases), lg=6),
-            dbc.Col(dcc.Graph(figure=figs[5]), lg=6),
-            dbc.Col(dcc.Graph(figure=figs[0]), lg=6)
-        ]),
-    dbc.Row([html.H3('Prevalence data: currently hospitalized cases, cases with oxygen support, in ICU and with mechanical ventilation.')]),
-        dbc.Row([dbc.Col(dcc.Graph(figure=figCurrent), lg=6)]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=figs[1]), lg=6),
-            dbc.Col(dcc.Graph(figure=figs[4]), lg=6)
-        ]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(figure=figs[2]), lg=6),
-            dbc.Col(dcc.Graph(figure=figs[3]), lg=6)
-        ]),
+        dbc.Row([html.H3('London')]),
+        dbc.Row([dbc.Col(dcc.Graph(figure=figLon), lg=8)]),
+        dbc.Row([html.H3('England')]),
+        dbc.Row([dbc.Col(dcc.Graph(figure=figEng), lg=8)]),
     ])
 ])
 if __name__ == '__main__':

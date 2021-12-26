@@ -399,6 +399,14 @@ app.layout = html.Div([
             html.A('dashboard', href="https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral", target='_blank'),
             html.A(' by '),html.A('@yuvharpaz.', href="https://twitter.com/yuvharpaz", target='_blank'),html.A(' '),
             html.A(' code ', href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_dash1.py", target='_blank'),
+            html.Br(), html.A('other dashboards: '),
+            html.A('South Africa',
+                   href="https://sa-covid.herokuapp.com/",
+                   target='_blank'),
+            html.A(' , '),
+            html.A('England',
+                   href="https://uk-covid.herokuapp.com/",
+                   target='_blank'),
             html.Br(), html.Br()
         ]),
         dbc.Row([

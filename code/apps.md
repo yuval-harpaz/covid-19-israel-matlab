@@ -6,7 +6,7 @@ My dashboard is based on Israel's ministry of health's [dashboard](https://datad
 # [South Afrika](https://sa-covid.herokuapp.com/)
 The data is from [NICD](https://www.nicd.ac.za/diseases-a-z-index/disease-index-covid-19/surveillance-reports/daily-hospital-surveillance-datcov-report/), as collected by [DSfSI (Uni Pretoria)](https://github.com/dsfsi/covid19za)
 # England
-Data for london and England (not UK) is taken from [GOV.UK](https://coronavirus.data.gov.uk/details/download) using such queries: 
+Data for london and England (not UK) is taken from [GOV.UK](https://coronavirus.data.gov.uk/details/download) using API queries such as this: 
 <br>
 https://api.coronavirus.data.gov.uk/v2/data?areaType=nation&areaName=England&metric=maleCases&release=2021-12-24
 <br>
@@ -16,4 +16,4 @@ areaName=England or London<br>
 when London, areaType=region, and not nation as in the example<br>
 for cases, run seperate queries using metrics maleCases and femaleCases<br>
 for deaths use metric=newDeaths28DaysByDeathDate<br>
-use yesterday's date for release
+use yesterday's date for release, or no release field.
