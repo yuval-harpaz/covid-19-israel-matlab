@@ -103,3 +103,4 @@ ax.YAxis.TickLabelFormat = '%,.0g';
 % sh=lin1;
 % text(datetime('tomorrow')-5,pred(length(abroad)-sh),str(pred(length(abroad)-sh)))
 xlim([dateR(1)-7*4 datetime('today')+20.48])
+disp(nthroot(mult,7).^(1:7))
