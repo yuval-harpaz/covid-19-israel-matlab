@@ -33,6 +33,8 @@ df = df[df.Owner.isin(['Total'])]
 
 url2 = 'https://raw.githubusercontent.com/dsfsi/covid19za/master/data/covid19za_provincial_cumulative_timeline_confirmed.csv'
 dfCases = pd.read_csv(url2)
+if dfCases['FS'].loc[663] == 1808972.0:
+    dfCases['FS'].at[663] = 188972.0
 date2 = pd.to_datetime(dfCases['date'], format='%d-%m-%Y')
 date2 = [np.datetime64(x) for x in date2]
 region = ['Eastern Cape', 'Free State', 'Gauteng', 'KwaZulu-Natal', 'Limpopo', 'Mpumalanga',

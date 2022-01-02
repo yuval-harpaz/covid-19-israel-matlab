@@ -7,6 +7,7 @@ from dash import dcc
 from dash import html
 import plotly.graph_objects as go
 import dash_bootstrap_components as dbc
+from dash.dependencies import Input, Output
 
 def movmean(vec, win, nanTail=False):
     smooth = vec.copy()
@@ -58,11 +59,18 @@ for ll in loc:
     data[ll] = dataLoc
     dates[ll] = dt
     dates_deaths[ll] = dtd
+data['London']['hosp'] = pd.read_csv('https://api.coronavirus.data.gov.uk/v2/data?areaType=nhsRegion&areaCode=E40000003&metric=cumAdmissionsByAge&format=csv').iloc[::-1]
+i65 = data['London']['hosp']['age'] == '65_to_84'
+i85 = data['London']['hosp']['age'] == '85+'
+dateLhosp = [np.datetime64(x) for x in data['London']['hosp']['date'][i65]]
+old = np.asarray(data['London']['hosp']['value'][i65]) + np.asarray(data['London']['hosp']['value'][i85])
+old[1:] = np.diff(old)
 # df = pd.read_json(response.text)
 start = 13  # avoid empty
 male = np.asarray(data['London']['maleCases'][start:])
 female = np.asarray(data['London']['femaleCases'][start:])
 London = np.diff(male + female, axis=0)
+
 dateL = [np.datetime64(dates['London'][x]) for x in range(start+1,len(dates['London']))]
 dateLdeaths = [np.datetime64(dates_deaths['London'][x]) for x in range(start+1,len(dates_deaths['London']))]
 
@@ -70,6 +78,8 @@ layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 figLon = go.Figure(layout=layout)
 figLon.add_trace(go.Scatter(x=dateLdeaths, y=movmean(np.asarray(data['London']['deaths']), 7, nanTail=False),
                             name='deaths', line_color='black', line_width=3))
+# figLon.add_trace(go.Scatter(x=dateLhosp+np.timedelta64(21), y=movmean(old, 7, nanTail=False),
+#                             name='hosp 65+', line_color='red', line_width=1))
 figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
                             y=movmean(np.sum(London[:-1,12:], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases 60+', line_color='#0000cc', line_width=3))
@@ -86,7 +96,7 @@ figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
                             y=movmean(np.sum(London[:,0:3], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases <15', line_color='#ccccff'))
 figLon.layout['title'] = 'London daily cases by age (shifted 21 days ahead) and deaths (all ages)'
-figLon.layout['yaxis']['dtick'] = 25
+figLon.layout['yaxis']['dtick'] = 50
 figLon.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, 250])
 figLon.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 figLon.update_layout(hovermode="x unified",
@@ -110,10 +120,32 @@ figLon.update_layout(hovermode="x unified",
                      )
 figLon.layout['yaxis']['title'] = "Deaths"
 figLon.layout['yaxis']['titlefont']['color'] = "black"
+figLon.layout['yaxis']['showgrid'] = False
 figLon.layout['yaxis2']['titlefont']['color'] = "blue"
 # figLon.show()
-
-
+def make_fig_shift(case_shift=21, hosp_shift=18, death_shift=0):
+    figLonNorm = go.Figure(layout=layout)
+    figLonNorm.add_trace(go.Scatter(x=dateLdeaths+np.timedelta64(death_shift), y=movmean(np.asarray(data['London']['deaths']), 7, nanTail=False)/196,
+                                    name='deaths', line_color='black', line_width=3))
+    figLonNorm.add_trace(go.Scatter(x=dateLhosp+np.timedelta64(hosp_shift), y=movmean(old, 7, nanTail=False)/453,
+                                    name='hosp 65+', line_color='red', line_width=1))
+    figLonNorm.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(case_shift),
+                                    y=movmean(np.sum(London[:-1, 13:], axis=1), 7, nanTail=False)/1279,
+                                    name='cases 65+', line_color='#0000cc', line_width=3))
+    figLonNorm.layout['xaxis']['range'] = ['2020-12-1', str(dateL[-1]+np.timedelta64(31))]
+    figLonNorm.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
+    figLonNorm.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    figLonNorm.update_layout(hovermode="x unified",
+                             legend=dict(
+                                 yanchor="top",
+                                 y=0.99,
+                                 xanchor="left",
+                                 x=0.5
+                             ))
+    figLonNorm.layout['yaxis']['title'] = "1 = Jan 2021 peak"
+    figLonNorm.layout['title'] = 'London - normalized deaths (all), hospital admissions (65+) and cases (65+).<br>' \
+                                 'Time shifts (days)->   cases: '+str(case_shift)+',  hospitalizations: '+str(hosp_shift)+', deaths:'+str(death_shift)
+    return figLonNorm
 ##
 start = 25
 male = np.asarray(data['England']['maleCases'][start:])
@@ -141,7 +173,7 @@ figEng.add_trace(go.Scatter(x=dateE[:-1]+np.timedelta64(shift),
                             y=movmean(np.sum(England[:,0:3], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases <15', line_color='#ccccff'))
 figEng.layout['title'] = 'England daily cases by age (shifted '+str(shift)+' days ahead) and deaths (all ages)'
-figEng.layout['yaxis']['dtick'] = 100
+figEng.layout['yaxis']['dtick'] = 250
 figEng.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, 1500])
 figEng.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 figEng.update_layout(hovermode="x unified",
@@ -153,7 +185,7 @@ figEng.update_layout(hovermode="x unified",
             position=1,
             zerolinecolor='lightgray',
             gridcolor='lightgray',
-            dtick=1000,
+            dtick=2500,
             range=[0, 15000]
         ),
         legend = dict(
@@ -165,6 +197,7 @@ figEng.update_layout(hovermode="x unified",
                      )
 figEng.layout['yaxis']['title'] = "Deaths"
 figEng.layout['yaxis']['titlefont']['color'] = "black"
+figEng.layout['yaxis']['showgrid'] = False
 figEng.layout['yaxis2']['titlefont']['color'] = "blue"
 # figEng.show()
 
@@ -208,10 +241,33 @@ app.layout = html.Div([
                    target='_blank'),
         ]),
         dbc.Row([html.H3('London')]),
-        dbc.Row([dbc.Col(dcc.Graph(figure=figLon), lg=8)]),
+        dbc.Row([
+            dbc.Col([" "], lg=6),
+            dbc.Col(["shift cases by N days ",
+                     dcc.Input(id='shc', value=21, type='number')], lg=2),  # style={'width': '1%'} not working
+            dbc.Col(["shift hospitalizations by N days",
+                     dcc.Input(id='shh', value=18, type='number')], lg=2),
+            dbc.Col(["shift deaths by N days",
+                     dcc.Input(id='shd', value=0, type='number')], lg=2)
+        ]),
+        dbc.Row([dbc.Col(dcc.Graph(figure=figLon), lg=6),
+                 dbc.Col(dcc.Graph(id='lonorm'), lg=6)]),
         dbc.Row([html.H3('England')]),
-        dbc.Row([dbc.Col(dcc.Graph(figure=figEng), lg=8)]),
+        dbc.Row([dbc.Col(dcc.Graph(figure=figEng), lg=6)]),
     ])
 ])
+
+@app.callback(
+    Output('lonorm', 'figure'),
+    Input('shc', 'value'),
+    Input('shh', 'value'),
+    Input('shd', 'value'))
+
+
+def update_graph(case_shift, hosp_shift, death_shift):
+    fig_shift = make_fig_shift(case_shift, hosp_shift, death_shift)
+    return fig_shift
+
+
 if __name__ == '__main__':
     app.run_server(debug=True)
