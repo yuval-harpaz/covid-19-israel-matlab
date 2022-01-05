@@ -120,7 +120,7 @@ def movmean(vec, win, nanTail=False):
     if win > 1:
         if nanTail:
             smooth[:] = np.nan
-        for ii in range(int(win/2),len(vec)-int(win/2)):
+        for ii in range(int(win/2), len(vec)-int(win/2)):
             smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
     return smooth
 

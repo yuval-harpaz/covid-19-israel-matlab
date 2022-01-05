@@ -73,27 +73,27 @@ London = np.diff(male + female, axis=0)
 
 dateL = [np.datetime64(dates['London'][x]) for x in range(start+1,len(dates['London']))]
 dateLdeaths = [np.datetime64(dates_deaths['London'][x]) for x in range(start+1,len(dates_deaths['London']))]
-
+clipEnd = 3
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 figLon = go.Figure(layout=layout)
 figLon.add_trace(go.Scatter(x=dateLdeaths, y=movmean(np.asarray(data['London']['deaths']), 7, nanTail=False),
                             name='deaths', line_color='black', line_width=3))
 # figLon.add_trace(go.Scatter(x=dateLhosp+np.timedelta64(21), y=movmean(old, 7, nanTail=False),
 #                             name='hosp 65+', line_color='red', line_width=1))
-figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
-                            y=movmean(np.sum(London[:-1,12:], axis=1), 7, nanTail=False),
+figLon.add_trace(go.Scatter(x=dateL[:-clipEnd]+np.timedelta64(21),
+                            y=movmean(np.sum(London[:-clipEnd, 12:], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases 60+', line_color='#0000cc', line_width=3))
-figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
-                            y=movmean(np.sum(London[:,9:12], axis=1), 7, nanTail=False),
+figLon.add_trace(go.Scatter(x=dateL[:-clipEnd]+np.timedelta64(21),
+                            y=movmean(np.sum(London[:-clipEnd, 9:12], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases 45-60', line_color='#5555ff'))
-figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
-                            y=movmean(np.sum(London[:,6:9], axis=1), 7, nanTail=False),
+figLon.add_trace(go.Scatter(x=dateL[:-clipEnd]+np.timedelta64(21),
+                            y=movmean(np.sum(London[:-clipEnd, 6:9], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases 30-45', line_color='#7777ff'))
-figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
-                            y=movmean(np.sum(London[:,3:6], axis=1), 7, nanTail=False),
+figLon.add_trace(go.Scatter(x=dateL[:-clipEnd]+np.timedelta64(21),
+                            y=movmean(np.sum(London[:-clipEnd, 3:6], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases 15-30', line_color='#9999ff'))
-figLon.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(21),
-                            y=movmean(np.sum(London[:,0:3], axis=1), 7, nanTail=False),
+figLon.add_trace(go.Scatter(x=dateL[:-clipEnd]+np.timedelta64(21),
+                            y=movmean(np.sum(London[:-clipEnd, 0:3], axis=1), 7, nanTail=False),
                             yaxis='y2', name='cases <15', line_color='#ccccff'))
 figLon.layout['title'] = 'London daily cases by age (shifted 21 days ahead) and deaths (all ages)'
 figLon.layout['yaxis']['dtick'] = 50
@@ -122,17 +122,18 @@ figLon.layout['yaxis']['title'] = "Deaths"
 figLon.layout['yaxis']['titlefont']['color'] = "black"
 figLon.layout['yaxis']['showgrid'] = False
 figLon.layout['yaxis2']['titlefont']['color'] = "blue"
-# figLon.show()
-def make_fig_shift(case_shift=21, hosp_shift=18, death_shift=0):
+ratios = {'Sep': [10, 44, 198], 'Jan': [196, 453, 1279]}
+start_date = {'Sep': '2021-8-1', 'Jan': '2020-12-1'}
+def make_fig_shift(case_shift=21, hosp_shift=18, death_shift=0, rat='Sep'):
     figLonNorm = go.Figure(layout=layout)
-    figLonNorm.add_trace(go.Scatter(x=dateLdeaths+np.timedelta64(death_shift), y=movmean(np.asarray(data['London']['deaths']), 7, nanTail=False)/196,
+    figLonNorm.add_trace(go.Scatter(x=dateLdeaths+np.timedelta64(death_shift), y=movmean(np.asarray(data['London']['deaths']), 7, nanTail=False)/ratios[rat][0],
                                     name='deaths', line_color='black', line_width=3))
-    figLonNorm.add_trace(go.Scatter(x=dateLhosp+np.timedelta64(hosp_shift), y=movmean(old, 7, nanTail=False)/453,
+    figLonNorm.add_trace(go.Scatter(x=dateLhosp[:-clipEnd]+np.timedelta64(hosp_shift), y=movmean(old[:-clipEnd], 7, nanTail=False)/ratios[rat][1],
                                     name='hosp 65+', line_color='red', line_width=1))
-    figLonNorm.add_trace(go.Scatter(x=dateL[:-1]+np.timedelta64(case_shift),
-                                    y=movmean(np.sum(London[:-1, 13:], axis=1), 7, nanTail=False)/1279,
+    figLonNorm.add_trace(go.Scatter(x=dateL[:-clipEnd]+np.timedelta64(case_shift),
+                                    y=movmean(np.sum(London[:-clipEnd, 13:], axis=1), 7, nanTail=False)/ratios[rat][2],
                                     name='cases 65+', line_color='#0000cc', line_width=3))
-    figLonNorm.layout['xaxis']['range'] = ['2020-12-1', str(dateL[-1]+np.timedelta64(31))]
+    figLonNorm.layout['xaxis']['range'] = [start_date[rat], str(dateL[-1]+np.timedelta64(31))]
     figLonNorm.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
     figLonNorm.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
     figLonNorm.update_layout(hovermode="x unified",
@@ -142,7 +143,7 @@ def make_fig_shift(case_shift=21, hosp_shift=18, death_shift=0):
                                  xanchor="left",
                                  x=0.5
                              ))
-    figLonNorm.layout['yaxis']['title'] = "1 = Jan 2021 peak"
+    figLonNorm.layout['yaxis']['title'] = "1 = "+rat+" 2021 peak"
     figLonNorm.layout['title'] = 'London - normalized deaths (all), hospital admissions (65+) and cases (65+).<br>' \
                                  'Time shifts (days)->   cases: '+str(case_shift)+',  hospitalizations: '+str(hosp_shift)+', deaths:'+str(death_shift)
     return figLonNorm
@@ -240,7 +241,17 @@ app.layout = html.Div([
                    href="https://covid-israel.herokuapp.com/",
                    target='_blank'),
         ]),
-        dbc.Row([html.H3('London')]),
+        dbc.Row([dbc.Col(html.H3('London'), lg=6),
+                 dbc.Col(dcc.RadioItems(id='lon_rat',
+                                options=[
+                                    {'label': 'Sep 2021 ratios', 'value': 'Sep'},
+                                    {'label': 'Jan 2020 ratios', 'value': 'Jan'}
+                                ],
+                                value='Sep',
+                                labelStyle={'display': 'inline-block'}
+                                ), lg=1,
+                         )
+                 ]),
         dbc.Row([
             dbc.Col([" "], lg=6),
             dbc.Col(["shift cases by N days ",
@@ -261,11 +272,12 @@ app.layout = html.Div([
     Output('lonorm', 'figure'),
     Input('shc', 'value'),
     Input('shh', 'value'),
-    Input('shd', 'value'))
+    Input('shd', 'value'),
+    Input('lon_rat', 'value'))
 
 
-def update_graph(case_shift, hosp_shift, death_shift):
-    fig_shift = make_fig_shift(case_shift, hosp_shift, death_shift)
+def update_graph(case_shift, hosp_shift, death_shift, lr):
+    fig_shift = make_fig_shift(case_shift, hosp_shift, death_shift, rat=lr)
     return fig_shift
 
 
