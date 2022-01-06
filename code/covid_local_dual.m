@@ -4,7 +4,11 @@ if ~exist('mult','var')
 end
 ww =  [0.8,1.2,1,1,1,1,0.6];
 ww = ww./mean(ww);
-rr = [500,456];
+tot0 = 500+456;
+% ratio = 500/tot0;
+ratio = 0.6;
+rr = round([ratio*tot0,(1-ratio)*tot0]);
+% rr = [500,456];
 day1 = datetime(2021,11,17+7*5);
 dateR = day1:7:datetime('today')+20;
 for idr = 2:length(dateR)

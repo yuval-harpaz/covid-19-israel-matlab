@@ -27,7 +27,7 @@ end
 mn = dateshift(cases.date,'start','month');
 mnu = unique(mn);
 clear ve2 ve3
-for ii = 1:month(datetime('today'))
+for ii = 1:12+month(datetime('today'))
     im = ismember(mn,mnu(ii));
     y = nanmean(cases.verified_expired_normalized(cOld & im));
     yso(ii,1) = y;
