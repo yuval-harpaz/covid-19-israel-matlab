@@ -41,6 +41,22 @@ for ii in [0, 1, 2]:
     dfsAbs[ii] = dfs.rename(columns={varsAbs[ii][0]: 'vaccinated', varsAbs[ii][1]: 'expired', varsAbs[ii][2]: 'unvaccinated'})
     dfsAbs[ii] = dfsAbs[ii][['date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
 
+ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
+yy = np.zeros((3,2,2))
+for im in [0, 1, 2]:
+    for ia in [0, 1]:
+        df_age1 = dfsAbs[im].loc[dfsAbs[im]['age_group'] == ages2[ia]]
+        df_age1.reset_index()
+        meas = np.asarray(df_age1['unvaccinated'])
+        date = np.asarray(df_age1['date'])
+        d0 = np.where(date == np.datetime64('2021-06-15'))[0][0]
+        d1 = np.where(date == np.datetime64('2021-11-01'))[0][0]
+        d2 = np.where(date == np.datetime64('2021-12-11'))[0][0]
+        #  FIXME: why missing date???
+        yy[im, ia, 0] = np.sum(cases[d0:d1])
+        yy[im, ia, 1] = np.sum(cases[d2:])
+
+
 
 
 
