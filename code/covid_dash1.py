@@ -37,25 +37,34 @@ for ii in [0, 1, 2]:
     dfs = pd.read_json(url[ii])
     dfs['date'] = pd.to_datetime(dfs['day_date'])
     dfsNorm[ii] = dfs.rename(columns={varsNorm[ii][0]: 'vaccinated', varsNorm[ii][1]: 'expired', varsNorm[ii][2]: 'unvaccinated'})
-    dfsNorm[ii] = dfsNorm[ii][['date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
+    dfsNorm[ii] = dfsNorm[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
     dfsAbs[ii] = dfs.rename(columns={varsAbs[ii][0]: 'vaccinated', varsAbs[ii][1]: 'expired', varsAbs[ii][2]: 'unvaccinated'})
-    dfsAbs[ii] = dfsAbs[ii][['date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
-
+    dfsAbs[ii] = dfsAbs[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
+shifts = [0, 11, 21]
 ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
 yy = np.zeros((3,2,2))
-for im in [0, 1, 2]:
-    for ia in [0, 1]:
+dd = [[], [], []]
+for im in [0, 1, 2]:  # cases, severe, deaths
+    for ia in [0, 1]:  # young, old
         df_age1 = dfsAbs[im].loc[dfsAbs[im]['age_group'] == ages2[ia]]
         df_age1.reset_index()
         meas = np.asarray(df_age1['unvaccinated'])
-        date = np.asarray(df_age1['date'])
-        d0 = np.where(date == np.datetime64('2021-06-15'))[0][0]
-        d1 = np.where(date == np.datetime64('2021-11-01'))[0][0]
-        d2 = np.where(date == np.datetime64('2021-12-11'))[0][0]
-        #  FIXME: why missing date???
-        yy[im, ia, 0] = np.sum(cases[d0:d1])
-        yy[im, ia, 1] = np.sum(cases[d2:])
+        day_date = np.asarray(df_age1['day_date'])
+        d0 = np.where(day_date == '2021-06-20T00:00:00.000Z')[0][0]
+        d1 = np.where(day_date == '2021-10-21T00:00:00.000Z')[0][0]
+        d2 = np.where(day_date == '2021-12-11T00:00:00.000Z')[0][0]
+        yy[im, ia, 0] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
+        yy[im, ia, 1] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
+    dd[im] = [str(day_date[d0+shifts[im]]),
+              str(day_date[d1+shifts[im]]),
+              str(day_date[d2+shifts[im]]),
+              str(day_date[-shifts[-im-1]-1])]
 
+dfRat = pd.DataFrame([['Delta', yy[2, 1, 0]/yy[1, 1, 0]], ['Omi', yy[2, 1, 1]/yy[1, 1, 1]]], columns=['wave','death ratio'])
+fig = px.histogram(dfRat, x="wave", y="death ratio")
+             # color='smoker', barmode='group',
+             # height=1)
+fig.show()
 
 
 

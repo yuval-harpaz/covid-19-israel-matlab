@@ -36,7 +36,7 @@ plot(cases.date(cOld)+5,predOmi,'g')
 % plot(severe.date(ages{1,1})+11,predCases,'b')
 legend('hospital admissions','predicttion for Δ','prediction for  O')
 grid on
-title({'predict hospitalizations by cases','assumes 100% Δ or 100% O'})
+title({'predict hospitalizations by cases','assumes 100% Δ or 100% O (42% fewer)'})
 set(gcf,'Color','w')
 set(gca,'FontSize',13)
 ylabel('new patients')

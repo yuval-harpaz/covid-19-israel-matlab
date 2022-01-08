@@ -81,8 +81,15 @@ for ff in np.asarray(field)[[2, 4, 5, 6, 7, 8]]:
             for bad in np.where(yy < 0)[0]:
                 yy[bad] = np.nan
             if ff == 'Died to Date' and rr == 'Total':
+                if yy[552] == 526:
+                    yy[552] = 526-306+17  # WC backlog
                 deaths = yy
                 dateDeaths = dfr['Date']
+            if ff == 'Died to Date' and rr == 'Western Cape':
+                if yy[552] == 306:
+                    yy[552] = (11+23)/2
+                else:
+                    print('where is the WC backlog?')
         else:
             for bad in [bad1 + 94]:
                 yy[bad] = np.nan
