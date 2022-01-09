@@ -71,7 +71,7 @@ if strcmp(source(1),'d')
     
     
     figure('position',position);
-    hlp = plot(dateW-3,pos./pop'*10000,'linewidth',1.5);
+    hlp = plot(dateW-3,pos./pop'*10000);
     set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
     grid on
     ax = gca;
