@@ -55,7 +55,7 @@ fig.add_trace(go.Scatter(x=date[:-clipEnd]+np.timedelta64(shift), y=y, name='cas
 y65 = movmean(cases65[:-clipEnd], 7)/nrm[2]
 fig.add_trace(go.Scatter(x=date65[:-clipEnd]+np.timedelta64(shift), y=y65, name='cases 65+', line_color='blue', line_width=3))
 fig.layout['title'] = 'Australia, cases vs deaths'
-fig.layout['yaxis']['dtick'] = 1
+fig.layout['yaxis']['dtick'] = 10
 fig.update_layout(hovermode="x unified", legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.1))
 fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')  #  range=[0, 250]
 fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
