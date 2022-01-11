@@ -10,7 +10,9 @@ dataPrev = readtable('data/Israel/dashboard_timeseries.csv');
     '{"id":"conf2days","queryName":"sickPerDateTwoDays","single":false,"parameters":{}},',...
     '{"id":"table","queryName":"patientsPerDate","single":false,"parameters":{}},',...
     '{"id":"tests_positive","queryName":"testResultsPerDate","single":false,"parameters":{}},',...
-    '{"id":"hospital","queryName":"hospitalStatus","single":false,"parameters":{}}]}''',...,...
+    '{"id":"hospital","queryName":"hospitalizationStatusDaily","single":false,"parameters":{}},',...
+    '{"id":"ecmo","queryName":"hardPatient","single":false,"parameters":{}},',...
+    '{"id":"deaths","queryName":"deadPatientsPerDate","single":false,"parameters":{}}]}''',...
     ' --compressed -o data/Israel/dashboard.json']);
 
 fid = fopen('data/Israel/dashboard.json','r');
@@ -25,6 +27,8 @@ writetable(confirmed,'data/Israel/confirmed.csv','Delimiter',',','WriteVariableN
 
 iTests = find(ismember({json(:).id},'tests_positive'));
 date = datetime(cellfun(@(x) x(1:10),{json(iTests).data.date}','UniformOutput',false));
+iDeaths = find(ismember({json(:).id},'deaths'));
+dateDeaths = datetime(cellfun(@(x) x(1:10),{json(iDeaths).data.date}','UniformOutput',false));
 tests = [json(iTests).data.amount]';
 tests_result = [json(iTests).data.amountVirusDiagnosis]';
 tests_positive = [json(iTests).data.positiveAmount]';
@@ -33,6 +37,34 @@ bad = cellfun(@(x) str2double(x(13)),{json(iTests).data.date}');
 bad(1:find(tests_positive == 0,1)-1) = true;
 data = table(date,tests,tests_result,tests_positive,tests_survey);
 data = data(~bad,:);
+[isx, idx] = ismember(dateDeaths, date);
+if any(idx == 0)
+    error('deaths dates not in dates')
+end
+if ismember('CountDeaths',data.Properties.VariableNames)
+    error('CountDeaths already there')
+end
+iHosp = find(ismember({json(:).id},'table'));
+if ~isequal({json(iDeaths).data.date},{json(iHosp).data.date})
+    error('patients and deaths table not the same dates')
+end
+iHosp1 = find(ismember({json(:).id},'hospital'));
+if ~isequal({json(iDeaths).data.date},{json(iHosp1).data.dayDate})
+    error('patients and other stuff not the same dates')
+end
+data.CountDeath(1) = nan;
+data.CountDeath(:) = nan;
+data.CountDeathCum = data.CountDeath;
+data.CountEasyStatus(:) = data.CountDeath;
+data.CountMediumStatus(:) = data.CountDeath;
+data.CountHardStatus(:) = data.CountDeath;
+data.CountDeath(idx) = [json(iDeaths).data.amount];
+data.CountDeathCum(idx) = [json(iDeaths).data.total];
+data.CountEasyStatus(idx) = [json(iHosp1).data.countEasyStatus];
+data.CountMediumStatus(idx) = [json(iHosp1).data.countMediumStatus];
+data.CountHardStatus(idx) = [json(iHosp1).data.countHardStatus];
+
+
 if ~isequal(data(end,1:4),dataPrev(end,1:4))
     tests0 = sum(tests(1:find(tests_positive == 0,1)-1));
     data.tests_cumulative = cumsum(data.tests)+tests0;
@@ -76,9 +108,26 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     data.tests1 = nan(height(data),1);
     [isRow,row] = ismember(datePeople,data.date);
     data.tests1(row(isRow)) = tests1(isRow);
-    
-    data = [dataPrev(1:find(ismember(dataPrev.date,data.date),1)-1,:);data];
-    nanwritetable(data,'data/Israel/dashboard_timeseries.csv');
+    iStart = find(ismember(dataPrev.date,data.date),1);
+    iEnd = days(data.date(end)-dataPrev.date(end))+height(dataPrev);
+    dataNew = dataPrev;
+    for iField = 1:length(dataPrev.Properties.VariableNames)
+        col = find(ismember(data.Properties.VariableNames,dataPrev.Properties.VariableNames{iField}));
+        if ~isempty(col)
+            dataNew{iStart:iEnd,iField} = data{:,col};
+        end
+    end
+    iEcmo = find(ismember({json(:).id},'ecmo'));
+    dataNew.count_ecmo(end) = json(iEcmo).data.countEcmo;
+    dataNew.CountBreath(end) = json(iEcmo).data.countBreath;
+    dataNew.CountCriticalStatus(end) = json(iEcmo).data.countCriticalStatus;
+    dataNew.CountHospitalized(end) = json(iEcmo).data.countEasyStatus+json(iEcmo).data.countMediumStatus+json(iEcmo).data.countHardStatus;
+%     data = [dataPrev(1:find(ismember(dataPrev.date,data.date),1)-1,:);data];
+    missingNew = find(isnan(dataNew.new_hospitalized),1,'last');
+    if missingNew < height(dataNew)
+        dataNew.new_hospitalized(missingNew:end) = nan;
+    end
+    nanwritetable(dataNew,'data/Israel/dashboard_timeseries.csv');
 end
 
 %% age gender 

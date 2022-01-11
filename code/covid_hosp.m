@@ -62,25 +62,25 @@ if newFig
 else
     subplot(1,2,2)
 end
-hh1(1) = scatter(listE.date,listE.on_ventilator,'.','MarkerEdgeAlpha',alf);
+hh1(1) = scatter(listE.date,listE.CountBreath,'.','MarkerEdgeAlpha',alf);
 hold on
-hh1(2) = plot(listE.date(1:end-1),movmean(listE.on_ventilator(1:end-1),[3 3]),'linewidth',1.5);
+hh1(2) = plot(listE.date(1:end-1),movmean(listE.CountBreath(1:end-1),[3 3]),'linewidth',1.5);
 hh1(2).Color = ccc(1,:);
 listE.CountCriticalStatus(1:find(listE.CountCriticalStatus > 10,1)-1) = nan;
 hh1(3) = scatter(listE.date,listE.CountCriticalStatus,'.','MarkerEdgeAlpha',alf);
 hh1(3).MarkerEdgeColor = ccc(2,:);
 hh1(4) = plot(listE.date(1:end-1),movmean(listE.CountCriticalStatus(1:end-1),[3 3]),'linewidth',1.5);
 hh1(4).Color = ccc(2,:);
-hh1(5) = scatter(listE.date,listE.critical,'.','MarkerEdgeAlpha',alf);
+hh1(5) = scatter(listE.date,listE.CountHardStatus,'.','MarkerEdgeAlpha',alf);
 hh1(5).MarkerEdgeColor = ccc(3,:);
-hh1(6) = plot(listE.date(1:end-1),movmean(listE.critical(1:end-1),[3 3]),'linewidth',1.5);
+hh1(6) = plot(listE.date(1:end-1),movmean(listE.CountHardStatus(1:end-1),[3 3]),'linewidth',1.5);
 hh1(6).Color = ccc(3,:);
-hh1(7) = scatter(listE.date,listE.hospitalized,'.','MarkerEdgeAlpha',alf);
+hh1(7) = scatter(listE.date,listE.CountHospitalized,'.','MarkerEdgeAlpha',alf);
 hh1(7).MarkerEdgeColor = ccc(4,:);
-hh1(8) = plot(listE.date(1:end-1),movmean(listE.hospitalized(1:end-1),[3 3]),'linewidth',1.5);
+hh1(8) = plot(listE.date(1:end-1),movmean(listE.CountHospitalized(1:end-1),[3 3]),'linewidth',1.5);
 hh1(8).Color = ccc(4,:);
 critSeger = listE.CountCriticalStatus(iDates);
-severeSeger = listE.critical(iDates);
+severeSeger = listE.CountHardStatus(iDates);
 % text(dates,critSeger,str(critSeger),'Color',[0,0,0],'FontWeight','Bold')
 
 title('Patients    חולים')
