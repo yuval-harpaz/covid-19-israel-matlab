@@ -1,4 +1,4 @@
-function covid_abroad4
+function covid_abroad_ve
 
 
 cd ~/covid-19-israel-matlab/data/Israel
@@ -41,7 +41,7 @@ figure;
 
 plot(date,ve,'b')
 
-times = 
+% times = 
 
 
 hold on

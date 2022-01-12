@@ -1,11 +1,11 @@
 function covid_exp_fit
 
-listName = 'data/Israel/dashboard_timeseries.csv';
+listName = '~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv';
 list = readtable(listName);
-list.Properties.VariableNames(1+[7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
+% list.Properties.VariableNames(1+[7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
 list.deceased = nan(height(list),1);
 list.deceased =list.CountDeath;
-i1 = find(~isnan(list.hospitalized),1);
+i1 = find(~isnan(list.CountHospitalized),1);
 list = list(i1:end,:);
 fid = fopen('data/Israel/dashboard.json','r');
 txt = fread(fid)';
@@ -25,7 +25,7 @@ yy = movmean(yy,[3 3]);
 yy(end-2:end,:) = nan;
 coef = yy(650:675,:)./yy(650-1:675-1,:);
 coef = median(coef(24-6:24,:));
-proj = 
+% proj = 
 figure('units','normalized','position',[0,0,1,1]);
 hh = plot(list.date(1:end-1), yy, 'linewidth', 1.5);
 hh(1).Color = [0.3 0.7 0.3];
