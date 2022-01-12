@@ -40,33 +40,95 @@ for ii in [0, 1, 2]:
     dfsNorm[ii] = dfsNorm[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
     dfsAbs[ii] = dfs.rename(columns={varsAbs[ii][0]: 'vaccinated', varsAbs[ii][1]: 'expired', varsAbs[ii][2]: 'unvaccinated'})
     dfsAbs[ii] = dfsAbs[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
+# shifts = [0, 11, 21]
+# ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
+# yy = np.zeros((3,2,2))
+# dd = [[], [], []]
+# for im in [0, 1, 2]:  # cases, severe, deaths
+#     for ia in [0, 1]:  # young, old
+#         df_age1 = dfsAbs[im].loc[dfsAbs[im]['age_group'] == ages2[ia]]
+#         df_age1.reset_index()
+#         meas = np.asarray(df_age1['unvaccinated'])
+#         day_date = np.asarray(df_age1['day_date'])
+#         d0 = np.where(day_date == '2021-06-20T00:00:00.000Z')[0][0]
+#         d1 = np.where(day_date == '2021-10-21T00:00:00.000Z')[0][0]
+#         d2 = np.where(day_date == '2021-12-11T00:00:00.000Z')[0][0]
+#         yy[im, ia, 0] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
+#         yy[im, ia, 1] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
+#     dd[im] = [str(day_date[d0+shifts[im]]),
+#               str(day_date[d1+shifts[im]]),
+#               str(day_date[d2+shifts[im]]),
+#               str(day_date[-shifts[-im-1]-1])]
+
+
 shifts = [0, 11, 21]
 ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
-yy = np.zeros((3,2,2))
+yy = np.zeros((3, 2, 2, 2))
 dd = [[], [], []]
 for im in [0, 1, 2]:  # cases, severe, deaths
     for ia in [0, 1]:  # young, old
         df_age1 = dfsAbs[im].loc[dfsAbs[im]['age_group'] == ages2[ia]]
         df_age1.reset_index()
-        meas = np.asarray(df_age1['unvaccinated'])
-        day_date = np.asarray(df_age1['day_date'])
-        d0 = np.where(day_date == '2021-06-20T00:00:00.000Z')[0][0]
-        d1 = np.where(day_date == '2021-10-21T00:00:00.000Z')[0][0]
-        d2 = np.where(day_date == '2021-12-11T00:00:00.000Z')[0][0]
-        yy[im, ia, 0] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
-        yy[im, ia, 1] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
-    dd[im] = [str(day_date[d0+shifts[im]]),
-              str(day_date[d1+shifts[im]]),
-              str(day_date[d2+shifts[im]]),
-              str(day_date[-shifts[-im-1]-1])]
+        for iv, vax in enumerate(['vaccinated','unvaccinated']):
+            meas = np.asarray(df_age1[vax])
+            day_date = np.asarray(df_age1['day_date'])
+            d0 = np.where(day_date == '2021-06-20T00:00:00.000Z')[0][0]
+            d1 = np.where(day_date == '2021-10-21T00:00:00.000Z')[0][0]
+            d2 = np.where(day_date == '2021-12-11T00:00:00.000Z')[0][0]
+            yy[im, ia, 0, iv] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
+            yy[im, ia, 1, iv] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
+    dd[im] = [str(day_date[d0+shifts[im]])[:10],
+              str(day_date[d1+shifts[im]])[:10],
+              str(day_date[d2+shifts[im]])[:10],
+              str(day_date[-shifts[-im-1]-1])[:10]]
+print('severe')
+print(dd[1])
+print('deaths')
+print(dd[2])
 
-dfRat = pd.DataFrame([['Delta', yy[2, 1, 0]/yy[1, 1, 0]], ['Omi', yy[2, 1, 1]/yy[1, 1, 1]]], columns=['wave','death ratio'])
-fig = px.histogram(dfRat, x="wave", y="death ratio")
-             # color='smoker', barmode='group',
-             # height=1)
-fig.show()
+dfRat = pd.DataFrame([['Delta', 'vaccinated', yy[2, 1, 0, 0]/yy[1, 1, 0, 0]],
+                      ['Omi', 'vaccinated', yy[2, 1, 1, 0]/yy[1, 1, 1, 0]],
+                      ['Delta', 'unvaccinated', yy[2, 1, 0, 1]/yy[1, 1, 0, 1]],
+                      ['Omi', 'unvaccinated', yy[2, 1, 1, 1]/yy[1, 1, 1, 1]]],
+                     columns=['wave', 'vaccination', 'death ratio'])
+dfSD = pd.DataFrame([['Delta', 'vaccinated', 'deaths', yy[2, 1, 0, 0]],
+                     ['Delta', 'vaccinated', 'severe', yy[1, 1, 0, 0]],
+                     ['Omi', 'vaccinated', 'deaths', yy[2, 1, 1, 0]],
+                     ['Omi', 'vaccinated', 'severe', yy[1, 1, 1, 0]],
+                     ['Delta', 'unvaccinated', 'deaths', yy[2, 1, 0, 1]],
+                     ['Delta', 'unvaccinated', 'severe', yy[1, 1, 0, 1]],
+                     ['Omi', 'unvaccinated', 'deaths', yy[2, 1, 1, 1]],
+                     ['Omi', 'unvaccinated', 'severe', yy[1, 1, 1, 1], ]],
+                     columns=['wave', 'vaccination', 'measure', 'value'])
 
+figDelta = px.histogram(dfSD[dfSD['wave'] == 'Delta'], x="vaccination", y="value", color='measure', barmode='group')
+figOmi = px.histogram(dfSD[dfSD['wave'] == 'Omi'], x="vaccination", y="value", color='measure', barmode='group')
+figR = px.histogram(dfRat, x="vaccination", y="death ratio", color='wave', barmode='group')
 
+figOmi.layout['yaxis']['title']['text'] = 'patients'
+figOmi.layout['xaxis']['title']['text'] = ''
+figOmi['data'][0]['marker']['color'] = 'black'
+figOmi['layout']['title'] = 'Wave V'
+figOmi['layout']['title']['x'] = 0.45
+figOmi['layout']['title']['font_color'] = "purple"
+figOmi['layout']['title']['xanchor'] = 'center'
+
+figDelta.layout['yaxis']['title']['text'] = 'patients'
+figDelta.layout['xaxis']['title']['text'] = ''
+figDelta['data'][0]['marker']['color'] = 'black'
+figDelta['layout']['title'] = 'Wave IV'
+figDelta['layout']['title']['x'] = 0.45
+figDelta['layout']['title']['font_color'] = "green"
+figDelta['layout']['title']['xanchor'] = 'center'
+
+figR.layout['yaxis']['title']['text'] = 'death to severe ratio'
+figR.layout['xaxis']['title']['text'] = ''
+figR['data'][0]['marker']['color'] = 'green'
+figR['data'][1]['marker']['color'] = 'purple'
+figR['layout']['title'] = 'Death ratio'
+figR['layout']['title']['x'] = 0.45
+figR['layout']['title']['font_color'] = "black"
+figR['layout']['title']['xanchor'] = 'center'
 
 
 updatemenus = [
@@ -472,6 +534,11 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='infected'), lg=4),
             dbc.Col(dcc.Graph(id='severe'), lg=4),
             dbc.Col(dcc.Graph(id='death'), lg=4)
+        ]),
+        dbc.Row([
+            dbc.Col(dcc.Graph(figure=figDelta), lg=4),
+            dbc.Col(dcc.Graph(figure=figOmi), lg=4),
+            dbc.Col(dcc.Graph(figure=figR), lg=4)
         ]),
         dbc.Row([
             dbc.Col([" "], lg=4),
