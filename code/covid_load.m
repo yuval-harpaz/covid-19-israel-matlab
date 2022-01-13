@@ -7,42 +7,44 @@
 % col = flipud(col);
 % col(col == 1) = 0.8;
 cd /home/innereye/covid-19-israel-matlab/data/Israel
+sync = find(ismember(listD.date,tt.date(1)));
 listD = readtable('dashboard_timeseries.csv');
 tt = readtable('Load.csv');
-tt.mild(1:+height(listD)-69) = listD.CountEasyStatus(70:end);
-tt.medium(1:+height(listD)-69) = listD.CountMediumStatus(70:end);
-tt.severe(1:+height(listD)-69) = listD.CountHardStatus(70:end);
-tt.vent(1:+height(listD)-69) = listD.CountBreath(70:end);
-tt.date(1:+height(listD)-69) = listD.date(70:end);
-%% fill ecmo data
-if tt.ECMO(end) == 0
-    count = find(tt.ECMO > 0,1,'last');
-    feed = true;
-    while feed
-        count = count + 1;
-        if count > height(tt)
-            feed = false;
-        else
-            ip = input(['last date is ',datestr(tt.date(count)),'. new ecmo data? no / number : '],'s');
-            if strcmp(ip(1),'n')
-                feed = false;
-            else
-                tt.ECMO(count) = str2num(ip);
-                tt.ECMO_filled(count) = tt.ECMO(count);
-                
-            end
-        end
-    end
-end
+tt.mild(1:+height(listD)-sync+1) = listD.CountEasyStatus(sync:end);
+tt.medium(1:+height(listD)-sync+1) = listD.CountMediumStatus(sync:end);
+tt.severe(1:+height(listD)-sync+1) = listD.CountHardStatus(sync:end);
+tt.vent(1:+height(listD)-sync+1) = listD.CountBreath(sync:end);
+tt.date(1:+height(listD)-sync+1) = listD.date(sync:end);
+tt.ECMO(1:+height(listD)-sync+1) = listD.count_ecmo(sync:end);
+% %% fill ecmo data
+% if tt.ECMO(end) == 0
+%     count = find(tt.ECMO > 0,1,'last');
+%     feed = true;
+%     while feed
+%         count = count + 1;
+%         if count > height(tt)
+%             feed = false;
+%         else
+%             ip = input(['last date is ',datestr(tt.date(count)),'. new ecmo data? no / number : '],'s');
+%             if strcmp(ip(1),'n')
+%                 feed = false;
+%             else
+%                 tt.ECMO(count) = str2num(ip);
+%                 tt.ECMO_filled(count) = tt.ECMO(count);
+%                 
+%             end
+%         end
+%     end
+% end
 %%
-if tt.ECMO(end) == 0
-    tt = tt(1:find(tt.ECMO > 0,1,'last'),:);
-end
+% if tt.ECMO(end) == 0
+%     tt = tt(1:find(tt.ECMO > 0,1,'last'),:);
+% end
 tt.level1 = tt.mild+tt.medium;
-no_mechanical = tt.severe-tt.vent-tt.ECMO_filled;
+no_mechanical = tt.severe-tt.vent-tt.ECMO;
 tt.level2 =  no_mechanical*1*0.75 + no_mechanical*2*0.25; % no support + oxygen support
 tt.level3 = tt.vent*3;  % (tt.vent-tt.ECMO_filled)*3;
-tt.level6 = round(tt.ECMO_filled)*6;
+tt.level6 = round(tt.ECMO)*6;
 tt.load = tt.level1+tt.level2+tt.level3+tt.level6;
 
 writetable(tt,'Load.csv','Delimiter',',','WriteVariableNames',true)
@@ -55,9 +57,10 @@ conf = readtable('confirmed.csv');
 % dateSeger = [datetime(202
 dateSeger = conf.date(ismember(conf.coronaEvents,{'סגר שני','סגר שלישי'}));
 %%
-figure;
-hh = plot(tt.date,[tt.level1,tt.level2,tt.level3,tt.level6,tt.load]);
+yy = [tt.level1,tt.level2,tt.level3,tt.level6,tt.load];
 
+figure;
+hh = plot(tt.date(1:end-1),yy(1:end-1,:));
 xlim([tt.date(1),datetime('tomorrow')])
 grid on
 title('Load on health system measure   מדד עומס על מערכת הבריאות')

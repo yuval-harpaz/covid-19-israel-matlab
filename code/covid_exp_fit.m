@@ -20,19 +20,47 @@ ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,
 yy = [list.tests_positive1, list.new_hospitalized, list.serious_critical_new];
 yy(2:end,4) = diff(list.CountBreathCum);
 yy(:,5) = list.CountDeath;
-yy = yy(1:end-1,:);
+% yy = yy(1:end-1,:);
+last3 = yy(end-2:end,:);
 yy = movmean(yy,[3 3]);
-yy(end-2:end,:) = nan;
-coef = yy(650:675,:)./yy(650-1:675-1,:);
-coef = median(coef(24-6:24,:));
-% proj = 
+% yy(end-2:end,:) = nan;
+%%
+linEst = 669:675;
+coef = yy(linEst(1)+1:linEst(end),:)./yy(linEst(1):linEst(end-1),:);
+coef = median(coef);
+sevShift = 3;
+coef(3) = median(yy(linEst(1)+1+sevShift:linEst(end)+sevShift,3)./yy(linEst(1)+sevShift:linEst(end-1)+sevShift,3));
+coef(3) = coef(3)*0.98;
+finEst = days(datetime('today')-list.date(linEst(1))+14);
+dateEst = list.date(linEst(1)):list.date(linEst(1))+finEst;
+proj = nan(length(dateEst),5);
+for pr = 1:5
+    proj(:,pr) = yy(linEst(1),pr)*coef(pr).^(0:length(dateEst)-1);
+end
 figure('units','normalized','position',[0,0,1,1]);
-hh = plot(list.date(1:end-1), yy, 'linewidth', 1.5);
+hh = plot(list.date(1:end-3), yy(1:end-3,:), 'linewidth', 1.5);
 hh(1).Color = [0.3 0.7 0.3];
 hh(2).Color = ccc(4,:);
 hh(3).Color = ccc(3,:);
 hh(4).Color = ccc(1,:);
 hh(5).Color = [0 0 0];
+hold on
+% hhe = plot(list.date(linEst), yy(linEst,:), 'linewidth', 2.5);
+% hhe(1).Color = [0.3 0.7 0.3];
+% hhe(2).Color = ccc(4,:);
+% hhe(3).Color = ccc(3,:);
+% hhe(4).Color = ccc(1,:);
+% hhe(5).Color = [0 0 0];
+hhd = plot(list.date(end-2:end), last3,'.','markersize',8);
+hhd(1).Color = [0.3 0.7 0.3];
+hhd(2).Color = ccc(4,:);
+hhd(3).Color = ccc(3,:);
+hhd(4).Color = ccc(1,:);
+hhd(5).Color = [0 0 0];
+bias = [0,0,-1];
+for pr = 1:3
+    line(dateEst,proj(:,pr),'Color','k','linestyle',':')
+end
 title('New cases / patients')
 legend('cases     מאומתים','hospitalized מאושפזים','severe                קשה',...
     'on vent          מונשמים','deceased        נפטרים','location','northwest')
@@ -41,7 +69,17 @@ box off
 set(gcf,'Color','w')
 grid minor
 set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
-xlim([list.date(1) datetime('tomorrow')])
+xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
 set(gca, 'YScale', 'log')
 ylim([2 100000])
+
+date = dateEst';
+cases = proj(:,1);
+hosp = proj(:,2);
+severe = proj(:,3);
+tt = table(date,cases,hosp,severe);
+tt{:,2:end} = round(tt{:,2:end});
+writetable(tt,'~/Documents/proj.csv')
+disp((coef(1:3)').^(1:7))
+
