@@ -28,8 +28,8 @@ varsNorm = [['verified_vaccinated_normalized', 'verified_expired_normalized', 'v
             ['new_serious_vaccinated_normalized', 'new_serious_expired_normalized', 'new_serious_not_vaccinated_normalized'],
             ['death_vaccinated_normalized', 'death_expired_normalized', 'death_not_vaccinated_normalized']]
 varsAbs = [['verified_amount_vaccinated', 'verified_amount_expired', 'verified_amount_not_vaccinated'],
-        ['new_serious_amount_vaccinated', 'new_serious_amount_expired', 'new_serious_amount_not_vaccinated'],
-        ['death_amount_vaccinated', 'death_amount_expired', 'death_amount_not_vaccinated']]
+           ['new_serious_amount_vaccinated', 'new_serious_amount_expired', 'new_serious_amount_not_vaccinated'],
+           ['death_amount_vaccinated', 'death_amount_expired', 'death_amount_not_vaccinated']]
 
 dfsNorm = [[], [], []]
 dfsAbs = [[], [], []]
@@ -40,25 +40,6 @@ for ii in [0, 1, 2]:
     dfsNorm[ii] = dfsNorm[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
     dfsAbs[ii] = dfs.rename(columns={varsAbs[ii][0]: 'vaccinated', varsAbs[ii][1]: 'expired', varsAbs[ii][2]: 'unvaccinated'})
     dfsAbs[ii] = dfsAbs[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
-# shifts = [0, 11, 21]
-# ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
-# yy = np.zeros((3,2,2))
-# dd = [[], [], []]
-# for im in [0, 1, 2]:  # cases, severe, deaths
-#     for ia in [0, 1]:  # young, old
-#         df_age1 = dfsAbs[im].loc[dfsAbs[im]['age_group'] == ages2[ia]]
-#         df_age1.reset_index()
-#         meas = np.asarray(df_age1['unvaccinated'])
-#         day_date = np.asarray(df_age1['day_date'])
-#         d0 = np.where(day_date == '2021-06-20T00:00:00.000Z')[0][0]
-#         d1 = np.where(day_date == '2021-10-21T00:00:00.000Z')[0][0]
-#         d2 = np.where(day_date == '2021-12-11T00:00:00.000Z')[0][0]
-#         yy[im, ia, 0] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
-#         yy[im, ia, 1] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
-#     dd[im] = [str(day_date[d0+shifts[im]]),
-#               str(day_date[d1+shifts[im]]),
-#               str(day_date[d2+shifts[im]]),
-#               str(day_date[-shifts[-im-1]-1])]
 
 
 shifts = [0, 11, 21]
@@ -172,7 +153,7 @@ fig1.update_layout(title_text="Weekly cases by age", font_size=15, updatemenus=u
 def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k '):
     df_age = df_in.loc[df_in["age_group"] == age_gr]
     date = df_age['date']
-    mx = np.max(df_age.max()[2:5])*1.05
+    mx = np.max(df_age.max()[3:6])*1.05
     xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
     if smoo == 'sm':
         df_age = df_age.rolling(7, min_periods=7).mean().round(1)
@@ -350,7 +331,7 @@ ve3 = np.round(ve3, 1)
 ve2 = np.round(ve2, 1)
 
 
-def make_wane(dfW, win):
+def make_wane(dfW, win=7):
     win = int(np.floor((int(win)-1)/2)*2+1)
 
     # smExp = np.round(smExp, 1)
@@ -378,14 +359,14 @@ def make_wane(dfW, win):
     fig_wane = go.Figure(layout=layoutW)
     fig_wane.add_trace(go.Scatter(x=weekEnd - 3, y=ve2, name='VE dose 2, Data.Gov', line_color='#66ff66'))
     fig_wane.add_trace(go.Scatter(x=weekEnd - 3, y=ve3, name='VE dose 3, Data.Gov', line_color='#227722'))
-    name = 'VE for 60+ cases (2 doses or more)'
-    fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='VE dose 2+3, dashboard'))
-    name = '% unvaccinated of mild hospitalizations'
-    fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of mild hospitalizations'))
-    name = '% unvaccinated of 60+ cases'
-    fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of 60+ cases'))
-    # fig_wane.layout = layoutW
-    fig_wane.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, 100],
+    # name = 'VE for 60+ cases (2 doses or more)'
+    # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='VE dose 2+3, dashboard'))
+    # name = '% unvaccinated of mild hospitalizations'
+    # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of mild hospitalizations'))
+    # name = '% unvaccinated of 60+ cases'
+    # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of 60+ cases'))
+
+    fig_wane.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[-50, 100],
                           tickfont=dict(color="#cc3333"), titlefont=dict(color="#cc3333"), title='% unvaccinated or VE',
                           hoverformat=None)
     fig_wane.add_trace(go.Scatter(x=dfW['date'], y=np.round(dfW['cases']), yaxis='y2', name='Cases', line_color='#bbbbbb'))
@@ -396,21 +377,26 @@ def make_wane(dfW, win):
                         xanchor="left",
                         x=1.05
                     ),
-        title_text="Looking for signs of waning immunity.", font_size=15, hovermode="x unified",
-        yaxis2=dict(
-            title="Cases",
-            anchor="free",
-            overlaying="y",
+        title_text="Crude VE (60+) for dose II and dose III.", font_size=15, hovermode="x unified",
+        yaxis=dict(
             side="right",
-            position=1,
+            gridcolor='lightgray',
+            zerolinecolor='lightgray'
+        ),
+        yaxis2=dict(
+        #     title="Cases",
+        #     anchor="free",
+        #     overlaying="y",
+        #     side="right",
+        #     position=1,
+            showgrid=False,
             zerolinecolor='lightgray',
             gridcolor='lightgray',
-            range=[0, 10000]
-        ), )
-    fig_wane['data'][2]['line']['dash'] = 'dash'
-    fig_wane['data'][3]['line']['dash'] = 'dot'
+        #     range=[0, 50000])
+        ))
     fig_wane.layout['yaxis']['titlefont']['color'] = "#cc3333"
-    fig_wane.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%d/%m\n%Y", range=xl)
+    fig_wane.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
+                          dtick="M1", tickformat="%d/%m\n%Y", range=xl)
     fig_wane.layout['xaxis']['title'] = 'Month'
     fig_wane.layout['yaxis']['dtick'] = 10
     # fig_wane.show()
@@ -536,18 +522,19 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='death'), lg=4)
         ]),
         dbc.Row([
-            dbc.Col(dcc.Graph(figure=figDelta), lg=4),
-            dbc.Col(dcc.Graph(figure=figOmi), lg=4),
-            dbc.Col(dcc.Graph(figure=figR), lg=4)
+            dbc.Col(dcc.Graph(figure=figDelta), lg=2),
+            dbc.Col(dcc.Graph(figure=figOmi), lg=2),
+            dbc.Col(dcc.Graph(figure=figR), lg=2),
+            dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=6, md=12)
         ]),
-        dbc.Row([
-            dbc.Col([" "], lg=4),
-            dbc.Col(["Smoothing factor (odd number of days): ",
-                     dcc.Input(id='gwi', value='7', type='text', debounce=True)], lg=4)  # style={'width': '1%'} not working
-        ]),
+        # dbc.Row([
+        #     dbc.Col([" "], lg=4),
+        #     dbc.Col(["Smoothing factor (odd number of days): ",
+        #              dcc.Input(id='gwi', value='7', type='text', debounce=True)], lg=4)  # style={'width': '1%'} not working
+        # ]),
         dbc.Row([
             dbc.Col(dcc.Graph(id='gw'), lg=8, md=12),
-            dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=4, md=12)
+            # dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=4, md=12)
         ]),
         dbc.Row([
             html.Div([
@@ -573,10 +560,10 @@ app.layout = html.Div([
     Input('age', 'value'),
     Input('doNorm', 'value'),
     Input('smoo', 'value'),
-    Input('gwi', 'value'),
+    # Input('gwi', 'value'),
     Input('age60w', 'value'))
 
-def update_graph(age_group, norm_abs, smoo, win, age60w):
+def update_graph(age_group, norm_abs, smoo, age60w):
     if norm_abs == 'normalized':
         figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ')
         figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ')
@@ -585,7 +572,7 @@ def update_graph(age_group, norm_abs, smoo, win, age60w):
         figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ')
         figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ')
         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ')
-    fige = make_wane(df.copy(), win)
+    fige = make_wane(df.copy())
     figf = makeVE(dfsNorm[0].copy(), age60w)
     return figb, figc, figd, fige, figf
 
