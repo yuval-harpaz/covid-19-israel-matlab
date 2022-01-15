@@ -366,9 +366,9 @@ def make_wane(dfW, win=7):
     # name = '% unvaccinated of 60+ cases'
     # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of 60+ cases'))
 
-    fig_wane.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[-50, 100],
-                          tickfont=dict(color="#cc3333"), titlefont=dict(color="#cc3333"), title='% unvaccinated or VE',
-                          hoverformat=None)
+    fig_wane.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray',
+                          # tickfont=dict(color="#cc3333"), titlefont=dict(color="#cc3333"), title='VE',
+                          range=[-50, 100], title='VE', hoverformat=None)
     fig_wane.add_trace(go.Scatter(x=dfW['date'], y=np.round(dfW['cases']), yaxis='y2', name='Cases', line_color='#bbbbbb'))
     fig_wane.update_layout(
         legend=dict(
@@ -394,7 +394,8 @@ def make_wane(dfW, win=7):
             gridcolor='lightgray',
         #     range=[0, 50000])
         ))
-    fig_wane.layout['yaxis']['titlefont']['color'] = "#cc3333"
+    # fig_wane.layout['yaxis']['titlefont']['color'] = "#cc3333"
+    fig_wane.layout['yaxis2']['title'] = 'Cases'
     fig_wane.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
                           dtick="M1", tickformat="%d/%m\n%Y", range=xl)
     fig_wane.layout['xaxis']['title'] = 'Month'
