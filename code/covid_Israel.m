@@ -1,17 +1,17 @@
-function covid_Israel(figs)
+function covid_Israel
 % plot 20 most active countries
-if ~exist('figs','var')
-    figs = 3;
-end
+% if ~exist('figs','var')
+figs = 0;
+% end
 listName = 'data/Israel/dashboard_timeseries.csv';
 cd ~/covid-19-israel-matlab/
 
-try
-    fig7 = covid_plot_who;
-    fig6 = covid_plot_who(1,1,1);
-catch
-    disp('no WHO, try later')
-end
+% try
+%     fig7 = covid_plot_who;
+%     fig6 = covid_plot_who(1,1,1);
+% catch
+%     disp('no WHO, try later')
+% end
 
 list = readtable(listName);
 % colm = [13,15,9,8,]
@@ -33,93 +33,22 @@ dateSeger = datetime({'14-Mar-2020';'18-Sep-2020';'27-Dec-2020'});
 
 %% plot israel only
 fig8 = figure('units','normalized','position',[0,0.25,0.8,0.6]);
-subplot(1,2,1)
-yyaxis right
-idx = ~isnan(list.CountHospitalized);
-hh(1) = plot(list.date(idx),list.CountHospitalized(idx)-list.CountHardStatus(idx)-list.CountMediumStatus(idx),...
-    'color',[0 1 0],'linewidth',1);
-hold on
-idx = ~isnan(list.CountMediumStatus);
-hh(2) = plot(list.date(idx),list.CountMediumStatus(idx),'b','linewidth',1,'linestyle','-');
-idx = ~isnan(list.CountHardStatus);
-hh(3) = plot(list.date(idx),list.CountHardStatus(idx),'color',[0.7 0 0.7],'linewidth',1,'linestyle','-');
-idx = ~isnan(list.CountBreath);
-hh(4) = plot(list.date(idx),list.CountBreath(idx),'r','linewidth',1,'linestyle','-');
-idx = ~isnan(list.deceased);
-deceased = movmean(list.CountDeath(idx(1:end-1)),[3 3],'omitnan');
-ylim([0 1000])
-ylabel('חולים')
-yyaxis left
-hh(5) = plot(list.date(idx(1:end-1)),deceased,'k','linewidth',1);
-ylim([0 100])
+
+hh = plot(list.date,[list.CountEasyStatus,list.CountMediumStatus,list.CountHardStatus],'linewidth',2);
+hh(1).Color = [0.055,0.49,0.49];
+hh(2).Color = [0.725,0.788,0.357];
+hh(3).Color = [0.184,0.804,0.984];
+legend('mild             קל','medium    בינוני','severe       קשה','location','northwest')
+ylabel('patients   חולים')
 set(gca,'FontSize',13)
-xlim([list.date(1)-1 list.date(end)+1])
-ax = gca;
-ax.YAxis(2).Color = 'r';
-ax.YAxis(1).Color = 'k';
-
 grid on
 box off
-legHeb = {['מאושפזים',''],'קל','בינוני','קשה','מונשמים','נפטרים'};
-iLast = find(idx,1,'last');
-legNum = {str(list.CountHospitalized(iLast)),...
-    str(list.CountHospitalized(iLast)-list.CountHardStatus(iLast)-list.CountMediumStatus(iLast)),...
-    str(list.CountMediumStatus(iLast)),...
-    str(list.CountHardStatus(iLast)),...
-    str(list.CountBreath(iLast)),...
-    str(round(deceased(end)))};
-legend(hh,[legHeb{2},' (',legNum{2},')'],[legHeb{3},' (',legNum{3},')'],...
-    [legHeb{4},' (',legNum{4},')'],[legHeb{5},' (',legNum{5},')'],[legHeb{6},' (',legNum{6},')'],'location','north')
-ylabel('נפטרים')
-title({['המצב בבתי החולים עד ה- ',datestr(list.date(end),'dd/mm')],...
-    ['נפטרו במצטבר ',str(nansum(list.deceased)),', הנפטרים בגרף לפי ממוצע נע']})
-xtickangle(30)
-
-yy = list.CountHardStatus;
-y = movmean(yy,7,'omitnan');
-y(end-1:end) = yy(end-1:end);
-y(end-2) = mean(yy(end-3:end-1));
-y(end-3) = mean(yy(end-5:end-1));
-crit = y;
-yy = list.CountHospitalized;
-y = movmean(yy,7,'omitnan');
-y(end-1:end) = yy(end-1:end);
-y(end-2) = mean(yy(end-3:end-1));
-y(end-3) = mean(yy(end-5:end-1));
-hosp = y;
-yy = list.CountMediumStatus;
-y = movmean(yy,7,'omitnan');
-y(end-1:end) = yy(end-1:end);
-y(end-2) = mean(yy(end-3:end-1));
-y(end-3) = mean(yy(end-5:end-1));
-seve = y;
-mild = hosp-crit-seve;
-yy = list.CountBreath;
-y = movmean(yy,7,'omitnan');
-y(end-1:end) = yy(end-1:end);
-y(end-2) = mean(yy(end-3:end-1));
-y(end-3) = mean(yy(end-5:end-1));
-vent = y;
-subplot(1,2,2)
-fill([list.date;flipud(list.date)],[crit+seve+mild;flipud(crit+seve)],[0.9 0.9 0.9],'LineStyle','none')
-hold on
-fill([list.date;flipud(list.date)],[crit+seve;flipud(crit)],[0.7 0.7 0.7],'LineStyle','none')
-fill([list.date;flipud(list.date)],[crit;zeros(size(crit))],[0.5 0.5 0.5],'LineStyle','none')
-fill([list.date;flipud(list.date)],[vent;zeros(size(crit))],[0.3 0.3 0.3],'LineStyle','none')
-fill([list.date;flipud(list.date)],[list.deceased;zeros(height(list),1)],[0,0,0],'LineStyle','none')
-legend('mild                קל','severe          בינוני','critical          קשה',...
-    'on vent    מונשמים','deceased  נפטרים','location','north')
-box off
-% xTick = fliplr(dateshift(list.date(end),'start','day'):-7:list.date(1));
-set(gca,'fontsize',13,'YTick',100:100:max(list.CountHospitalized)+20)
-xtickangle(30)
-grid on
-xlim([list.date(1) list.date(end)])
-ylim([0 max(list.CountHospitalized)+20])
-title({'מאושפזים לפי חומרה במצטבר','הקו העליון מציין את סך הכל מאושפזים'})
-ylabel('חולים')
+title('Currently hospitalized patients, by condition   סך הכל מאושפזים לפי מצב')
+xlim([datetime(2020,3,1) datetime('today')+3])
 set(gcf,'Color','w')
-
+set(gca,'XTick',datetime(2020,1:300,1))
+xtickformat('MM/yy')
+xtickangle(90)
 %%
 covid_israel_percent_positive(figs);
 %%
