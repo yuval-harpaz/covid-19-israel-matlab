@@ -15,6 +15,7 @@ col = colormap(jet(21));
 col = flipud(col);
 listD = readtable('data/Israel/dashboard_timeseries.csv');
 isr = [nansum(listD.CountDeath(1:140))./9.2,sum(listD.CountDeath(141:end))./9.2];
+%%
 figure;
 h = plot(date(2:end),ysm*10^6);
 for ii=1:21
@@ -23,16 +24,17 @@ end
 hold on
 h(end+1) = plot(listD.date(1:end-1),movmean(listD.CountDeath(1:end-1),[3 3],'omitnan')./9.2,'k');
 legend([h(order);h(end)],[popreg.region(order);{'Israel'}],'location','north')
-set(gca,'xtick',datetime(2020,3:20,1))
+set(gca,'xtick',datetime(2020,3:100,1))
 xlim([datetime(2020,3,1) datetime('tomorrow')])
 set(gcf,'Color','w')
 box off
 grid on
-title({'תמותה למליון ליום במחוזות איטליה','ישראל בשחור'})
+title({'Deaths per million by province (and Israel)'})
 accum1 = ita{190,:}./popreg.population'*10^6;
 accum2 = (ita{end,:}-ita{190,:})./popreg.population'*10^6;
-ylabel('מתים למליון')
-xtickformat('MMM')
+ylabel('Deaths per million')
+xtickformat('MMM yy')
+%%
 [r,p] = corr(accum1',accum2');
 
 figure;
