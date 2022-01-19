@@ -1,5 +1,5 @@
 function covid_exp_fit
-
+cd covid-19-israel-matlab
 listName = '~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv';
 list = readtable(listName);
 % list.Properties.VariableNames(1+[7,9:12]) = {'hospitalized','critical','severe','mild','on_ventilator'};
