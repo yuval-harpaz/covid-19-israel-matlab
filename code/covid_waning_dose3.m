@@ -12,7 +12,9 @@ weekInfec = datetime(cellfun(@(x) strrep(x(10:19),'_','-'),t60.Properties.Variab
 % weekInfec = (min(weekStartInfec):7:max(weekStartInfec))';
 cells = t60{:,5:end};
 cells(cellfun(@isempty, cells)) = {'0'};
-cells = strrep(cells,'1-5','0');
+cells = strrep(cells,'1-5','2');
+cells = strrep(cells,'6-10','7');
+cells = strrep(cells,'10-14','12');
 cases = cellfun(@str2num, cells);
 cases(cases == -4) = 0;
 cpm = round(cases./cellfun(@str2num, t60.group_size).*10^6,1);
@@ -161,6 +163,65 @@ zlabel('cases')
 title('Infections by time from dose I')
 
 %%
+
+fig24 = figure('units','normalized','position',[0.1 0.1 0.7 0.7]);
+% subplot(2,1,1)
+iEnd = find(nansum(yy(:,:,2)) > 0,1,'last')+1;
+co2 = flipud(jet(iEnd));
+co2(iEnd-9:iEnd-2,:) = 1/3;
+for ii = 1:iEnd
+    fill3([1:size(yy,2),size(yy,2):-1:1],ii*ones(size(yy,2)*2,1),[yy(ii,:,2),zeros(1,size(yy,2))],co2(ii,:))
+    hold on
+end
+grid on
+% view([-7,38])
+% view([-2,39])
+% view([190,45])
+view([-158,20])
+
+% zlim([0 3500]);
+xlim([0 iEnd+1])
+% ylim([0 13])
+xlabel('infection week')
+ylabel('vaccination week')
+zlabel('cases per million')
+title('Infections by time from dose III, 60+')
+
+%% young
+ty = t(ismember(t.age_group,'<60'),:);
+weekStartVaccy = datetime(cellfun(@(x) x(1:10),ty.Third_dose_week,'UniformOutput',false));
+[weekVaccy,ordery] = sort(weekStartVaccy);
+ty = ty(ordery,:);
+% weekInfecy = datetime(cellfun(@(x) strrep(x(10:19),'_','-'),ty.Properties.VariableNames(5:end),'UniformOutput',false))';
+
+cellsy = ty{:,5:end};
+cellsy(cellfun(@isempty, cellsy)) = {'0'};
+cellsy = strrep(cellsy,'1-5','2');
+cellsy = strrep(cellsy,'6-10','7');
+cellsy = strrep(cellsy,'10-14','12');
+casesy = cellfun(@str2num, cellsy);
+cpmy = round(casesy./cellfun(@str2num, ty.group_size).*10^6,1);
+
+fig25 = figure('units','normalized','position',[0.1 0.1 0.7 0.7]);
+% subplot(2,1,1)
+iEndy = find(nansum(cpmy) > 0,1,'last')+1;
+
+for ii = 1:iEndy
+    fill3([1:size(cpmy,2),size(cpmy,2):-1:1],ii*ones(size(cpmy,2)*2,1),[cpmy(ii,:),zeros(1,size(cpmy,2))],co2(ii,:))
+    hold on
+end
+grid on
+% view([-7,38])
+% view([190,45])
+% view([-165,45])
+view([-158,20])
+% zlim([0 3500]);
+xlim([0 iEndy+1])
+% ylim([0 13])
+xlabel('infection week')
+ylabel('vaccination week')
+zlabel('cases per million')
+title('Infections by time from dose III, <60')
 % [pos, testsW, dateW, ages] = getTimna;
 % pos60 = nansum(pos(find(dateW+3 == datetime(2021,08,07)):end,end-4:end),2);
 % pos60(end+1:size(yy,2)) = nan;
