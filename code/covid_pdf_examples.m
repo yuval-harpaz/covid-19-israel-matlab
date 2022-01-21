@@ -7,19 +7,31 @@ cases = struct2table(cases);
 date = datetime(cases.date, 'InputFormat', 'yyyy-MM-dd''T''hh:mm:ss.SSS''Z');
 vec = cases.amount;
 
-R = covid_R31(vec);
+[R, pdf] = covid_R31(vec);
 mu = 2.5:0.5:4.5;
+sd = mu/4.5*3.5;
 for ii = 1:length(mu)
-    R(:,7-ii) = covid_R31(vec,[mu(ii),3.5]);
+    [r, p] = covid_R31(vec,[mu(ii),sd(ii)]);
+    R(:,7-ii) = r;
+    pdf(7-ii,:) = p;
 end
+
+figure;
+hhp = plot(0:30,pdf);
+hhp(1).Color = [0 0 0];
+hhp(2).LineStyle = '--';
+hhp(2).Color = [1 0.2 0.2];
+legend('MoH','4.5,  3.5','4,     3.111','3.5,  2.722','3,     2.333','2.5,  1.944')
+title('pdf by (\mu, σ)')
+grid on
 figure;
 hh = plot(date(19:end-10), R(26:end-3,:));
 hh(1).Color = [0 0 0];
 hh(2).LineStyle = '--';
 hh(2).Color = [1 0.2 0.2];
-legend('MoH','4.5','4','3.5','3','2.5')
+legend('MoH','4.5,  3.5','4,     3.111','3.5,  2.722','3,     2.333','2.5,  1.944')
 grid on
-title('R by \mu')
+title('R by (\mu, σ)')
 
 %% @MarkZlochin
 a = (4.5/3.5)^2;

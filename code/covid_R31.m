@@ -1,4 +1,4 @@
-function R = covid_R31(vec, mu_sd, plt)
+function [R, pdf] = covid_R31(vec, mu_sd, plt)
 %% set default input arguments to empty
 if ~exist('vec','var')
     vec = [];
@@ -36,13 +36,22 @@ if isempty(mu_sd) % if no mu and sd are provided, use MOH prob
         0.0009710, 0.0006950, 0.0004960, 0.0003540, 0.0002520, 0.0001790, 0.0001270,...
         0.0000903, 0.0000641, 0.0000454, 0.0000322];
 else
-%     x = 0:30;
-    x = [0.07,0.915,2:30];
+    x = 0:30;
+%     x = [0.07,0.915,2:30];
     mu = mu_sd(1);
     sd = mu_sd(2);
     a = (mu/sd)^2;
     b = sd^2/mu;
     pdf = gampdf(x , a, b);
+    if sum(isinf(pdf)) > 1
+        error('too many infs')
+    elseif isinf(pdf(1))
+%         pdf(2) = gampdf(0.915 , a, b);
+        pdf(1) = 1-sum(pdf(2:end));
+    end
+end
+if abs(sum(pdf)-1 ) > 10^6
+    error('sum pdf not one')
 end
 %% Compute R
 effective_cases = conv(vec, pdf);
