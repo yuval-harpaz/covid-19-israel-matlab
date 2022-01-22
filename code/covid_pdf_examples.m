@@ -83,6 +83,17 @@ ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,
 casesA = movmean(listD.tests_positive1,[3 3]);
 casesA(isnan(casesA)) = 0;
 casesA = casesA/max(casesA)*2+0.5;
+pp = listD.tests_positive1./listD.tests1;
+R(:,4) = covid_R31(pp);
+figure;
+plot(listD.date, pp);
+set(gca,'YScale','log')
+set(gca,'XTick',datetime(2020,1:300,1))
+ylim([0.001 0.25])
+grid on
+title('percents positive')
+xtickangle(90)
+xtickformat('MM/yy')
 %%
 figure;
 fill([listD.date;flipud(listD.date)],[casesA;0.5+zeros(size(casesA))],[0.8 0.8 0.8], 'linestyle','none')
@@ -91,7 +102,9 @@ hh3 = plot(listD.date(19:end-11), R(26:end-4,:), 'linewidth',1.5);
 hh3(1).Color = [0.3 0.7 0.3];
 hh3(2).Color = ccc(4,:);
 hh3(3).Color = ccc(3,:);
-legend(hh3, 'cases','new hospitalizations','new severe','location','northwest')
+hh3(4).Color = ccc(2,:);
+
+legend(hh3, 'cases','new hospitalizations','new severe','% positive', 'location','northwest')
 grid on
 box off
 title('R')
@@ -100,6 +113,7 @@ set(gca,'XTick',datetime(2020,1:300,1))
 xtickangle(90)
 xtickformat('MM/yy')
 %%
+
 figure;
 hh3 = plot(listD.date(19:end-11), R2_5(26:end-4,:), 'linewidth',1.5);
 hh3(1).Color = [0.3 0.7 0.3];
