@@ -142,7 +142,7 @@ for ii, line in enumerate(yyAge.T):
     fig1.add_trace(go.Scatter(x=x, y=line, mode='lines', line_color=color[ii], name=label[ii]))
 
 fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-fig1.update_yaxes(range=(20, int(10000*np.ceil(np.max(yyAge)/10000))))
+fig1.update_yaxes(range=(20, int(10000*np.ceil(np.nanmax(yyAge)/10000))))
 fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%b\n%Y")
 fig1.update_layout(title_text="Weekly cases by age", font_size=15, updatemenus=updatemenus)
 

@@ -7,9 +7,9 @@
 % col = flipud(col);
 % col(col == 1) = 0.8;
 cd /home/innereye/covid-19-israel-matlab/data/Israel
-sync = find(ismember(listD.date,tt.date(1)));
 listD = readtable('dashboard_timeseries.csv');
 tt = readtable('Load.csv');
+sync = find(ismember(listD.date,tt.date(1)));
 tt.mild(1:+height(listD)-sync+1) = listD.CountEasyStatus(sync:end);
 tt.medium(1:+height(listD)-sync+1) = listD.CountMediumStatus(sync:end);
 tt.severe(1:+height(listD)-sync+1) = listD.CountHardStatus(sync:end);
