@@ -72,7 +72,7 @@ set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
 set(gca, 'YScale', 'log')
-ylim([2 100000])
+ylim([2 500000])
 
 date = dateEst';
 cases = proj(:,1);

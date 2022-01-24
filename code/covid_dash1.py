@@ -139,13 +139,10 @@ layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
 layout1 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 fig1 = go.Figure(layout=layout1)
 for ii, line in enumerate(yyAge.T):
-    fig1.add_trace(go.Scatter(x=x, y=line,
-                        mode='lines',
-                        line_color = color[ii],
-                        name=label[ii]))
+    fig1.add_trace(go.Scatter(x=x, y=line, mode='lines', line_color=color[ii], name=label[ii]))
 
 fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-fig1.update_yaxes(range=(20, 19000))
+fig1.update_yaxes(range=(20, int(10000*np.ceil(np.max(yyAge)/10000))))
 fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%b\n%Y")
 fig1.update_layout(title_text="Weekly cases by age", font_size=15, updatemenus=updatemenus)
 
@@ -522,6 +519,10 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='severe'), lg=4),
             dbc.Col(dcc.Graph(id='death'), lg=4)
         ]),
+        html.Br(),
+        html.A('Deaths for wave IV (11-Jul-2021 to 11-Nov-2021) and V (1-Jan-22 to present) vs new severe cases, 10 days earlier.'),
+        html.Br(),
+        html.A('Ratio plot is black/red for Delta wave IV and (mainly) Omicron wave V.'),
         dbc.Row([
             dbc.Col(dcc.Graph(figure=figDelta), lg=2),
             dbc.Col(dcc.Graph(figure=figOmi), lg=2),
