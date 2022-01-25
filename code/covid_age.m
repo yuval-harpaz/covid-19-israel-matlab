@@ -15,6 +15,7 @@ if strcmp(source(1),'d')
     bad = [59,72];
     for iBad = 1:length(bad)
         tt{bad(iBad),2:end} = round((tt{bad(iBad)-1,2:end}+tt{bad(iBad)+1,2:end})/2);
+        pos(bad(iBad),:) = tt{bad(iBad),2:end};
     end
     writetable(tt,'~/covid-19-israel-matlab/data/Israel/cases_by_age.csv','Delimiter',',','WriteVariableNames',true)
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
@@ -38,7 +39,7 @@ if strcmp(source(1),'d')
     ratio = pos./sum(pos,2)*100;
     ratio(nansum(pos,2) < 2000,:) = 0;
     figure('position',position);
-    hp = bar(dateW-3,ratio,7,'stacked','EdgeColor','none');
+    hp = bar(dateW,ratio,7,'stacked','EdgeColor','none');
     for jj = 1:length(hp)
         hp(jj).FaceColor = co(jj,:);
     end
@@ -54,7 +55,7 @@ if strcmp(source(1),'d')
     dateW([59, 72]) = [];
     pos([59, 72],:) = [];
     figure('position',position);
-    hl = plot(dateW-3,pos);
+    hl = plot(dateW,pos);
     set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
     grid on
     ax = gca;
@@ -69,23 +70,28 @@ if strcmp(source(1),'d')
         hl(jj).Color = co(jj,:);
     end
     
-    
+    popt = [pop;sum(pop)];
+    post = [pos,sum(pos,2)];
     figure('position',position);
-    hlp = plot(dateW-3,pos./pop'*10000);
-    set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
+    hlp = plot(dateW,post./popt'*100000);
+    set(gca,'FontSize',13);
     grid on
     ax = gca;
     ax.YRuler.Exponent = 0;
-    xlim([dateW(1)-3,datetime('today')])
-    xtickformat('MMM')
-    legend('0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+',...
+    xlim([dateW(1),datetime('today')])
+    legend('0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+','All',...
         'location',[0.65,0.55,0.05,0.1])
-    title('weekly cases/10k by age')
+    title('weekly cases/100k by age')
     set(gcf,'Color','w')
-    for jj = 1:length(hlp)
+    for jj = 1:length(hlp)-1
         hlp(jj).Color = co(jj,:);
     end
-    ylabel('cases per 10k')
+    hlp(end).Color = [0 0 0];
+    hlp(end).LineWidth = 1.5;
+    hlp(end).LineStyle = '--';
+    ylabel('cases per 100k')
+    xtickformat('MMM')
+    set(gca,'Xtick',datetime(2020,1:50,1))
 elseif strcmp(source(1),'s')
     [pos, dateW, ages] = get_severe;
     co = flipud(hsv(11)); co = co + 0.1; co(co > 1) = 1;
@@ -270,6 +276,7 @@ writetable(weekkk,'tmp.csv','Delimiter',',','WriteVariableNames',true);
 weekkk = readtable('tmp.csv');
 % week0(ismember(week0.last_week_day,week.last_week_day),:) = [];
 % week = [week0;week];
+weekkk.last_week_day = datetime(strrep(weekkk.last_week_day,'/','-'));
 date = unique(weekkk.last_week_day);
 ages = unique(weekkk.age_group);
 ages = ages([1,5,6,7,2,3,4]);
@@ -291,7 +298,11 @@ fid = fopen('tmp.csv','w');
 fwrite(fid,txt);
 fclose(fid);
 ag = readtable('tmp.csv');
+if strcmp(ag.UpdateTime{1586},'2022-01-24T06:17:25.833Z')
+    ag(1586,:) = [];
+end
 pos = ag{:,2:11};
+
 % pos = sum(ag{:,2:3},2);
 % pos(:,2) = sum(ag{:,4:5},2);
 % pos(:,3) = sum(ag{:,6:7},2);
@@ -302,15 +313,24 @@ dd = dateshift(date,'start','day');
 dU = unique(dd);
 sunday = dU(10);
 sunday = sunday:7:dU(end);
-end7 = unique([sunday';dU(end-1)]);
+% end7 = unique([sunday';dU(end-1)]);
+% 37684	61870	46041	38989	35736	23308	18477	9953	3282	803
+end7 = sunday';
 dash = nan(size(end7,1),10);
 for iWeek = 1:length(end7)
     start = find(dd == end7(iWeek)-7,1,'last');
+    if isempty(start)
+        [~,start] = min(abs(dd - (end7(iWeek)-7)));
+    end
     wend = find(dd == end7(iWeek),1,'last');
+%     if isempty(wend)
+%         [~,wend] = min(abs(dd - (end7(iWeek))));
+%     end
     if ~isempty(start) && ~isempty(wend)
         dash(iWeek,:) = pos(wend,:)-pos(start,:);
     end
 end
+dash(83,:) = [79779	95390	62517	63324	56666	35725	23492	11890	4711	1298];
 dash([59,72],:) = nan;
 % end7(59) = [];
 dash(dash < 0) = 0;
