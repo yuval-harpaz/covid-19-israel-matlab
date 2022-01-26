@@ -163,31 +163,6 @@ zlabel('cases')
 title('Infections by time from dose I')
 
 %%
-
-fig24 = figure('units','normalized','position',[0.1 0.1 0.7 0.7]);
-% subplot(2,1,1)
-iEnd = find(nansum(yy(:,:,2)) > 0,1,'last')+1;
-co2 = flipud(jet(iEnd));
-co2(iEnd-9:iEnd-2,:) = 1/3;
-for ii = 1:iEnd
-    fill3([1:size(yy,2),size(yy,2):-1:1],ii*ones(size(yy,2)*2,1),[yy(ii,:,2),zeros(1,size(yy,2))],co2(ii,:))
-    hold on
-end
-grid on
-% view([-7,38])
-% view([-2,39])
-% view([190,45])
-view([-158,20])
-
-% zlim([0 3500]);
-xlim([0 iEnd+1])
-% ylim([0 13])
-xlabel('infection week')
-ylabel('vaccination week')
-zlabel('cases per million')
-title('Infections by time from dose III, 60+')
-
-%% young
 ty = t(ismember(t.age_group,'<60'),:);
 weekStartVaccy = datetime(cellfun(@(x) x(1:10),ty.Third_dose_week,'UniformOutput',false));
 [weekVaccy,ordery] = sort(weekStartVaccy);
@@ -202,63 +177,44 @@ cellsy = strrep(cellsy,'10-14','12');
 casesy = cellfun(@str2num, cellsy);
 cpmy = round(casesy./cellfun(@str2num, ty.group_size).*10^6,1);
 
-fig25 = figure('units','normalized','position',[0.1 0.1 0.7 0.7]);
-% subplot(2,1,1)
+%%
+fig24 = figure('units','normalized','position',[0.1 0 0.7 1]);
+subplot(2,1,1)
+iEnd = find(nansum(yy(:,:,2)) > 0,1,'last')+1;
+co2 = flipud(jet(iEnd));
+co2(iEnd-9:iEnd-2,:) = 1/3;
+for ii = 1:iEnd
+    fill3([1:size(yy,2),size(yy,2):-1:1],ii*ones(size(yy,2)*2,1),[yy(ii,:,2),...
+        zeros(1,size(yy,2))],co2(ii,:))
+    hold on
+end
+grid on
+view([-50,25])
+xlim([0 iEnd])
+xlabel('infection week')
+ylabel('vaccination week')
+zlabel('cases per million')
+title('Infections by time from dose III, 60+')
+
+% young
+subplot(2,1,2)
 iEndy = find(nansum(cpmy) > 0,1,'last')+1;
 
 for ii = 1:iEndy
-    fill3([1:size(cpmy,2),size(cpmy,2):-1:1],ii*ones(size(cpmy,2)*2,1),[cpmy(ii,:),zeros(1,size(cpmy,2))],co2(ii,:))
+    fill3([1:size(cpmy,2),size(cpmy,2):-1:1],ii*ones(size(cpmy,2)*2,1),...
+        [cpmy(ii,:),zeros(1,size(cpmy,2))],co2(ii,:))
     hold on
 end
 grid on
 % view([-7,38])
 % view([190,45])
 % view([-165,45])
-view([-158,20])
+% view([-158,20])
+view([-50,25])
 % zlim([0 3500]);
-xlim([0 iEndy+1])
+xlim([0 iEndy])
 % ylim([0 13])
 xlabel('infection week')
 ylabel('vaccination week')
 zlabel('cases per million')
 title('Infections by time from dose III, <60')
-% [pos, testsW, dateW, ages] = getTimna;
-% pos60 = nansum(pos(find(dateW+3 == datetime(2021,08,07)):end,end-4:end),2);
-% pos60(end+1:size(yy,2)) = nan;
-% yyw = (yy(:,:,2)'./pos60)';
-% 
-% pos60 = nansum(pos(find(dateW+3 == datetime(2020,12,26)):end,end-4:end),2);
-% pos60 = pos60(1:size(yy,2));
-% yyw1 = (yy1(:,:,2)'./pos60)';
-% 
-% figure('units','normalized','position',[0.1 0.1 0.7 0.7])
-% subplot(2,1,1)
-% for ii = 1:12
-%     fill3([1:size(yy,2),size(yy,2):-1:1],ii*ones(size(yy,2)*2,1),...
-%         [yyw(ii,:),zeros(1,size(yy,2))],co(ii,:),'FaceAlpha',0.8)
-%     hold on
-% end
-% grid on
-% view([-7,38])
-% % zlim([0 1100]);
-% xlim([0 45])
-% ylim([0 13])
-% xlabel('infection week')
-% ylabel('vaccination week')
-% zlabel('cases')
-% title('Infections by time from dose III')
-% subplot(2,1,2)
-% for ii = 1:12
-%     fill3([1:size(yy1,2),size(yy1,2):-1:1],ii*ones(size(yy1,2)*2,1),...
-%         [yyw1(ii,:),zeros(1,size(yy1,2))],co(ii,:),'FaceAlpha',0.8)
-%     hold on
-% end
-% grid on
-% view([-7,38])
-% xlim([0 45])
-% ylim([0 13])
-% % zlim([0 1100]);
-% xlabel('infection week')
-% ylabel('vaccination week')
-% zlabel('cases')
-% title('Infections by time from dose I')

@@ -127,6 +127,13 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     if missingNew < height(dataNew) && missingNew > 700
         dataNew.new_hospitalized(missingNew:end) = nan;
     end
+    for column = find(ismember(dataNew.Properties.VariableNames,{'CountBreathCum','CountSeriousCriticalCum'}))
+        missingNew = find(dataNew{:,column} > 0,1,'last');
+        if missingNew < height(dataNew) && missingNew > 700
+            dataNew{missingNew+1:end,column} = nan;
+        end
+    end
+    %
     nanwritetable(dataNew,'data/Israel/dashboard_timeseries.csv');
 end
 
