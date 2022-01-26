@@ -30,6 +30,7 @@ h2(1) = plot(dateTests(idx),tests);
 ylabel('tests')
 ax = gca;
 ax.YRuler.Exponent = 0;
+ylim([0 500000])
 yyaxis right
 plot(dateCases(idx),round(100*cases./tests,1),':')
 ylabel('positive tests (%)')
@@ -43,6 +44,11 @@ pos = round(100*cases./tests,1);
 % pos1 = pos;
 % pos1(80:85) = linspace(pos(80),pos(85),6);
 posSmooth = smot(pos);
+posAnti = nan(size(posSmooth,1)+1,1);
+posAnti(686:end) = smot([tTests.positiveRateAntigen{686:end}]');
+posAnti = posAnti(1:end-1);
+posPCR = smot(tTests.positiveRatePCR);
+posPCR = posPCR(1:end-1);
 % posMagen = round(100*list.tests_positive(idx)./(list.tests_result(idx)-list.tests_survey(idx)),1);
 % posMagenSmooth = smot(posMagen);
 hold on
@@ -55,18 +61,19 @@ legend(h2,'tests                      בדיקות','positive (%) בדיקות �
 title('Tests and positive tests (%) בדיקות ובדיקות חיוביות ')
 set(gca,'xtick',datetime(2020,3:30,1))
 
+%%
+
 fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
-yyaxis left
-plot(list.date(idx),list.new_hospitalized(idx),'.');
-hold on
-hh(1) = plot(list.date(idx),hospSmooth,'linewidth',2,'linestyle','-');
-ylabel(['new hospitalized     ','מאושפזים חדשים'])
-ax = gca;
-ax.YRuler.Exponent = 0;
-yyaxis right
-plot(dateSmooth,pos,'.')
+
+hh(1) = plot(dateSmooth(end-2:end),pos(end-2:end),'.');
 hold on
 hh(2) = plot(dateSmooth,posSmooth,'linewidth',2,'linestyle','-');
+hh(3) = plot(dateSmooth(end-2:end),posPCR(end-2:end),'.');
+hh(4) = plot(dateSmooth,posPCR,'linewidth',2,'linestyle','-');
+hh(3) = plot(dateSmooth(end-2:end),posAnti(end-2:end),'.');
+hh(4) = plot(dateSmooth,posAnti,'linewidth',2,'linestyle','-');
+
+
 ylabel(['positive ','(%)',' בדיקות חיוביות '])
 set(gca,'ygrid', 'on','fontsize',13)
 % xlim([list.date(idx(1))-1 list.date(idx(end))+1]);
@@ -78,33 +85,33 @@ title({'אחוז הבדיקות החיוביות ומספר המאושפזים �
 legend(hh,'hospitalized מאושפזים','positive בדיקות חיוביות','location','northwest')
 xtickformat('MMM')
 set(gca,'xtick',datetime(2020,3:30,1))
+
+%%
 % 
-% if saveFigs == 1
-%     saveas(fig,'docs/percent_positive.png');
-%     saveas(fig1,'docs/positiveVShosp.png');
-    % update html
-%     pp = str(round(100*cases./tests,1));
-%     fName = 'docs/myCountry.html';
-%     fid = fopen(fName,'r');
-%     txt = fread(fid);
-%     fclose(fid);
-%     txt = native2unicode(txt');
-%     iSpace = strfind(txt,' ');
-%     iPos = strfind(txt,'% מהתוצאות');
-%     iSpace = iSpace(find(iSpace < iPos,1,'last'):find(iSpace > iPos,1));
-%     txt = [txt(1:iSpace(1)),pp,'%',txt(iSpace(2):end)];
-%     
-%     pp = str(round(mean(100*list.tests_positive1(idx(end-6:end))./list.tests1(idx(end-6:end))),1));
-%     iPos = strfind(txt,'ממוצע שבועי');
-%     iSpace = strfind(txt,' ');
-%     iSpace = iSpace(find(iSpace > iPos,3));
-%     txt = [txt(1:iSpace(2)),pp,'%',txt(iSpace(3):end)];
-%     
-%     txt = unicode2native(txt);
-%     fid = fopen(fName,'w');
-%     fwrite(fid,txt);
-%     fclose(fid);
-% end
+% fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
+% yyaxis left
+% plot(list.date(idx),list.new_hospitalized(idx),'.');
+% hold on
+% hh(1) = plot(list.date(idx),hospSmooth,'linewidth',2,'linestyle','-');
+% ylabel(['new hospitalized     ','מאושפזים חדשים'])
+% ax = gca;
+% ax.YRuler.Exponent = 0;
+% yyaxis right
+% plot(dateSmooth,pos,'.')
+% hold on
+% hh(2) = plot(dateSmooth,posSmooth,'linewidth',2,'linestyle','-');
+% ylabel(['positive ','(%)',' בדיקות חיוביות '])
+% set(gca,'ygrid', 'on','fontsize',13)
+% % xlim([list.date(idx(1))-1 list.date(idx(end))+1]);
+% set(gcf,'Color','w')
+% ylim([0 15])
+% grid minor
+% box off
+% title({'אחוז הבדיקות החיוביות ומספר המאושפזים החדשים','% positive tests vs new hospitalized'})
+% legend(hh,'hospitalized מאושפזים','positive בדיקות חיוביות','location','northwest')
+% xtickformat('MMM')
+% set(gca,'xtick',datetime(2020,3:30,1))
+
 
 function sm = smot(vec)
 sm = movmean(vec,[3 3]);
