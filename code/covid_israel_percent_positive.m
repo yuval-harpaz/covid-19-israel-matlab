@@ -62,27 +62,28 @@ title('Tests and positive tests (%) בדיקות ובדיקות חיוביות '
 set(gca,'xtick',datetime(2020,3:30,1))
 
 %%
-
+ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,0.5560;0.4660,0.6740,0.1880;0.3010,0.7450,0.9330;0.6350,0.07800,0.1840];
 fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
-
-hh(1) = plot(dateSmooth(end-2:end),pos(end-2:end),'.');
 hold on
-hh(2) = plot(dateSmooth,posSmooth,'linewidth',2,'linestyle','-');
-hh(3) = plot(dateSmooth(end-2:end),posPCR(end-2:end),'.');
-hh(4) = plot(dateSmooth,posPCR,'linewidth',2,'linestyle','-');
-hh(3) = plot(dateSmooth(end-2:end),posAnti(end-2:end),'.');
-hh(4) = plot(dateSmooth,posAnti,'linewidth',2,'linestyle','-');
 
-
+hh(2) = plot(dateSmooth(1:end-3),posSmooth(1:end-3),'linewidth',2,'Color',ccc(4,:));
+hh(1) = plot(dateSmooth(1:end-3),posPCR(1:end-3),'linewidth',2,'Color',ccc(1,:));
+hh(3) = plot(dateSmooth(1:end-3),posAnti(1:end-3),'linewidth',2,'Color',ccc(2,:));
+hh(4) = plot(dateSmooth(end-2:end),posPCR(end-2:end),'.');
+hh(5) = plot(dateSmooth(end-2:end),pos(end-2:end),'.');
+hh(6) = plot(dateSmooth(end-2:end),posAnti(end-2:end),'.');
+for ii = 1:3
+    hh(ii+3).Color = hh(ii).Color;
+end
 ylabel(['positive ','(%)',' בדיקות חיוביות '])
 set(gca,'ygrid', 'on','fontsize',13)
-% xlim([list.date(idx(1))-1 list.date(idx(end))+1]);
+xlim([datetime(2021,6,15) datetime('tomorrow')]);
 set(gcf,'Color','w')
-ylim([0 15])
+% ylim([0 15])
 grid minor
 box off
-title({'אחוז הבדיקות החיוביות ומספר המאושפזים החדשים','% positive tests vs new hospitalized'})
-legend(hh,'hospitalized מאושפזים','positive בדיקות חיוביות','location','northwest')
+title({'אחוז הבדיקות החיוביות','% positive tests'})
+legend(hh,'PCR','All','Antigen','location','northwest')
 xtickformat('MMM')
 set(gca,'xtick',datetime(2020,3:30,1))
 
