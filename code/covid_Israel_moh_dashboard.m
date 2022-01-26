@@ -124,7 +124,7 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
     dataNew.CountHospitalized(end) = json(iEcmo).data.countEasyStatus+json(iEcmo).data.countMediumStatus+json(iEcmo).data.countHardStatus;
 %     data = [dataPrev(1:find(ismember(dataPrev.date,data.date),1)-1,:);data];
     missingNew = find(isnan(dataNew.new_hospitalized),1,'last');
-    if missingNew < height(dataNew)
+    if missingNew < height(dataNew) && missingNew > 700
         dataNew.new_hospitalized(missingNew:end) = nan;
     end
     nanwritetable(dataNew,'data/Israel/dashboard_timeseries.csv');
