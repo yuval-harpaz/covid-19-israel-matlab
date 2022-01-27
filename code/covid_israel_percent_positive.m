@@ -77,7 +77,7 @@ for ii = 1:3
 end
 ylabel(['positive ','(%)',' בדיקות חיוביות '])
 set(gca,'ygrid', 'on','fontsize',13)
-xlim([datetime(2021,6,15) datetime('tomorrow')]);
+xlim([datetime(2021,6,15) datetime('tomorrow')+3]);
 set(gcf,'Color','w')
 % ylim([0 15])
 grid minor
@@ -86,7 +86,8 @@ title({'אחוז הבדיקות החיוביות','% positive tests'})
 legend(hh,'PCR','All','Antigen','location','northwest')
 xtickformat('MMM')
 set(gca,'xtick',datetime(2020,3:30,1))
-
+new = copyobj(gca,gcf);
+set(new,'YAxisLocation','right');
 %%
 % 
 % fig1 = figure('position',[50,50,800,500]); %#ok<NASGU>
