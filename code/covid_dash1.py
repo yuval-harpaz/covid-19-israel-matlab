@@ -11,6 +11,17 @@ import dash_bootstrap_components as dbc
 import urllib.request
 import json
 
+def movmean(vec, win, nanTail=False):
+    #  smooth a vector with a moving average. win should be an odd number of samples.
+    #  vec is np.ndarray size (N,) or (N,0)
+    #  to get smoothing of 3 samples back and 3 samples forward use win=7
+    smooth = vec.copy()
+    if win > 1:
+        if nanTail:
+            smooth[:] = np.nan
+        for ii in range(int(win/2), len(vec)-int(win/2)):
+            smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
+    return smooth
 
 if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
     api = '/home/innereye/Downloads/'
@@ -67,50 +78,55 @@ print(dd[1])
 print('deaths')
 print(dd[2])
 
-dfRat = pd.DataFrame([['Delta', 'vaccinated', yy[2, 1, 0, 0]/yy[1, 1, 0, 0]],
-                      ['Omi', 'vaccinated', yy[2, 1, 1, 0]/yy[1, 1, 1, 0]],
-                      ['Delta', 'unvaccinated', yy[2, 1, 0, 1]/yy[1, 1, 0, 1]],
-                      ['Omi', 'unvaccinated', yy[2, 1, 1, 1]/yy[1, 1, 1, 1]]],
-                     columns=['wave', 'vaccination', 'death ratio'])
-dfSD = pd.DataFrame([['Delta', 'vaccinated', 'deaths', yy[2, 1, 0, 0]],
-                     ['Delta', 'vaccinated', 'severe', yy[1, 1, 0, 0]],
-                     ['Omi', 'vaccinated', 'deaths', yy[2, 1, 1, 0]],
-                     ['Omi', 'vaccinated', 'severe', yy[1, 1, 1, 0]],
-                     ['Delta', 'unvaccinated', 'deaths', yy[2, 1, 0, 1]],
-                     ['Delta', 'unvaccinated', 'severe', yy[1, 1, 0, 1]],
-                     ['Omi', 'unvaccinated', 'deaths', yy[2, 1, 1, 1]],
-                     ['Omi', 'unvaccinated', 'severe', yy[1, 1, 1, 1], ]],
-                     columns=['wave', 'vaccination', 'measure', 'value'])
 
-figDelta = px.histogram(dfSD[dfSD['wave'] == 'Delta'], x="vaccination", y="value", color='measure', barmode='group')
-figOmi = px.histogram(dfSD[dfSD['wave'] == 'Omi'], x="vaccination", y="value", color='measure', barmode='group')
-figR = px.histogram(dfRat, x="vaccination", y="death ratio", color='wave', barmode='group')
+def make_ratios(age=1):
+    dfRat = pd.DataFrame([['Delta', 'vaccinated', yy[2, age, 0, 0]/yy[1, 1, 0, 0]],
+                          ['Omi', 'vaccinated', yy[2, age, 1, 0]/yy[1, 1, 1, 0]],
+                          ['Delta', 'unvaccinated', yy[2, age, 0, 1]/yy[1, 1, 0, 1]],
+                          ['Omi', 'unvaccinated', yy[2, age, 1, 1]/yy[1, 1, 1, 1]]],
+                         columns=['wave', 'vaccination', 'death ratio'])
+    dfSD = pd.DataFrame([['Delta', 'vaccinated', 'deaths', yy[2, age, 0, 0]],
+                         ['Delta', 'vaccinated', 'severe', yy[1, age, 0, 0]],
+                         ['Omi', 'vaccinated', 'deaths', yy[2, age, 1, 0]],
+                         ['Omi', 'vaccinated', 'severe', yy[1, age, 1, 0]],
+                         ['Delta', 'unvaccinated', 'deaths', yy[2, age, 0, 1]],
+                         ['Delta', 'unvaccinated', 'severe', yy[1, age, 0, 1]],
+                         ['Omi', 'unvaccinated', 'deaths', yy[2, age, 1, 1]],
+                         ['Omi', 'unvaccinated', 'severe', yy[1, age, 1, 1], ]],
+                         columns=['wave', 'vaccination', 'measure', 'value'])
+    if age == 1:
+        ag = ' 60+'
+    else:
+        ag = ' <60'
+    figDelta = px.histogram(dfSD[dfSD['wave'] == 'Delta'], x="vaccination", y="value", color='measure', barmode='group')
+    figOmi = px.histogram(dfSD[dfSD['wave'] == 'Omi'], x="vaccination", y="value", color='measure', barmode='group')
+    figR = px.histogram(dfRat, x="vaccination", y="death ratio", color='wave', barmode='group')
 
-figOmi.layout['yaxis']['title']['text'] = 'patients'
-figOmi.layout['xaxis']['title']['text'] = ''
-figOmi['data'][0]['marker']['color'] = 'black'
-figOmi['layout']['title'] = 'Wave V'
-figOmi['layout']['title']['x'] = 0.45
-figOmi['layout']['title']['font_color'] = "purple"
-figOmi['layout']['title']['xanchor'] = 'center'
+    figOmi.layout['yaxis']['title']['text'] = 'patients'+ag
+    figOmi.layout['xaxis']['title']['text'] = ''
+    figOmi['data'][0]['marker']['color'] = 'black'
+    figOmi['layout']['title'] = 'Wave V'
+    figOmi['layout']['title']['x'] = 0.45
+    figOmi['layout']['title']['font_color'] = "purple"
+    figOmi['layout']['title']['xanchor'] = 'center'
 
-figDelta.layout['yaxis']['title']['text'] = 'patients'
-figDelta.layout['xaxis']['title']['text'] = ''
-figDelta['data'][0]['marker']['color'] = 'black'
-figDelta['layout']['title'] = 'Wave IV'
-figDelta['layout']['title']['x'] = 0.45
-figDelta['layout']['title']['font_color'] = "green"
-figDelta['layout']['title']['xanchor'] = 'center'
+    figDelta.layout['yaxis']['title']['text'] = 'patients'+ag
+    figDelta.layout['xaxis']['title']['text'] = ''
+    figDelta['data'][0]['marker']['color'] = 'black'
+    figDelta['layout']['title'] = 'Wave IV'
+    figDelta['layout']['title']['x'] = 0.45
+    figDelta['layout']['title']['font_color'] = "green"
+    figDelta['layout']['title']['xanchor'] = 'center'
 
-figR.layout['yaxis']['title']['text'] = 'death to severe ratio'
-figR.layout['xaxis']['title']['text'] = ''
-figR['data'][0]['marker']['color'] = 'green'
-figR['data'][1]['marker']['color'] = 'purple'
-figR['layout']['title'] = 'Death ratio'
-figR['layout']['title']['x'] = 0.45
-figR['layout']['title']['font_color'] = "black"
-figR['layout']['title']['xanchor'] = 'center'
-
+    figR.layout['yaxis']['title']['text'] = 'death to severe ratio'
+    figR.layout['xaxis']['title']['text'] = ''
+    figR['data'][0]['marker']['color'] = 'green'
+    figR['data'][1]['marker']['color'] = 'purple'
+    figR['layout']['title'] = 'Death ratio'+ag
+    figR['layout']['title']['x'] = 0.45
+    figR['layout']['title']['font_color'] = "black"
+    figR['layout']['title']['xanchor'] = 'center'
+    return figDelta, figOmi, figR
 
 updatemenus = [
     dict(
@@ -153,8 +169,13 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
     mx = np.max(df_age.max()[3:6])*1.05
     xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
     if smoo == 'sm':
-        df_age = df_age.rolling(7, min_periods=7).mean().round(1)
-        df_age['date'] = date - pd.to_timedelta(df_age.shape[0] * [3], 'd')
+        for yts in ['vaccinated', 'expired', 'unvaccinated']:
+            yybef = np.asarray(df_age[yts])
+            yyaft = np.round(movmean(yybef, 7, nanTail=True),1)
+            yyaft[-4] = np.nan
+            df_age[yts] = yyaft
+        # df_age = df_age.rolling(7, min_periods=7).mean().round(1)
+        # df_age['date'] = date - pd.to_timedelta(df_age.shape[0] * [3], 'd')
     fig = px.line(df_age, x="date", y=['vaccinated', 'expired', 'unvaccinated'])
     fig.update_traces(hovertemplate="%{y}")
     fig['data'][0]['line']['color'] = '#0e7d7d'
@@ -177,17 +198,6 @@ with urllib.request.urlopen(url1) as api1:
 win = 7
 
 
-def movmean(vec, win, nanTail=False):
-    #  smooth a vector with a moving average. win should be an odd number of samples.
-    #  vec is np.ndarray size (N,) or (N,0)
-    #  to get smoothing of 3 samples back and 3 samples forward use win=7
-    smooth = vec.copy()
-    if win > 1:
-        if nanTail:
-            smooth[:] = np.nan
-        for ii in range(int(win/2), len(vec)-int(win/2)):
-            smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
-    return smooth
 
 
 df1 = pd.DataFrame(data1['result']['records'])
@@ -524,9 +534,9 @@ app.layout = html.Div([
         html.Br(),
         html.A('Ratio plot is black/red for Delta wave IV and (mainly) Omicron wave V.'),
         dbc.Row([
-            dbc.Col(dcc.Graph(figure=figDelta), lg=2),
-            dbc.Col(dcc.Graph(figure=figOmi), lg=2),
-            dbc.Col(dcc.Graph(figure=figR), lg=2),
+            dbc.Col(dcc.Graph(id='frat1'), lg=2),
+            dbc.Col(dcc.Graph(id='frat2'), lg=2),
+            dbc.Col(dcc.Graph(id='frat3'), lg=2),
             dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=6, md=12)
         ]),
         # dbc.Row([
@@ -559,6 +569,9 @@ app.layout = html.Div([
     Output('death', 'figure'),
     Output('gw', 'figure'),
     Output('gw60', 'figure'),
+    Output('frat1', 'figure'),
+    Output('frat2', 'figure'),
+    Output('frat3', 'figure'),
     Input('age', 'value'),
     Input('doNorm', 'value'),
     Input('smoo', 'value'),
@@ -576,7 +589,12 @@ def update_graph(age_group, norm_abs, smoo, age60w):
         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ')
     fige = make_wane(df.copy())
     figf = makeVE(dfsNorm[0].copy(), age60w)
-    return figb, figc, figd, fige, figf
+    if age_group == 'מעל גיל 60':
+        age = 1
+    else:
+        age = 0
+    figG, figH, figI = make_ratios(age=age)
+    return figb, figc, figd, fige, figf, figG, figH, figI
 
 
 if __name__ == '__main__':

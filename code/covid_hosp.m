@@ -16,12 +16,12 @@ hh(1).MarkerEdgeColor = ccc(1,:);
 hh(2) = plot(list.date(2:end-1),movmean(diff(list.CountBreathCum(1:end-1)),[3 3]),'linewidth',1.5);
 hh(2).Color = ccc(1,:);
 commonDate = datetime(2020,8,18):newc.date(end);
-crit = list.serious_critical_new(2:end) - diff(list.CountSeriousCriticalCum);
-hh(3) = scatter(list.date(2:end),crit,'.','MarkerEdgeAlpha',alf);
-hh(3).MarkerEdgeColor = ccc(2,:);
-crit = movmean(crit,[3 3]);
-hh(4) = plot(list.date(2:end),crit,'linewidth',1.5);
-hh(4).Color = ccc(2,:);
+% crit = list.serious_critical_new(2:end) - diff(list.CountSeriousCriticalCum);
+% hh(3) = scatter(list.date(2:end),crit,'.','MarkerEdgeAlpha',alf);
+% hh(3).MarkerEdgeColor = ccc(2,:);
+% crit = movmean(crit,[3 3]);
+% hh(4) = plot(list.date(2:end),crit,'linewidth',1.5);
+% hh(4).Color = ccc(2,:);
 hh(5) = scatter(list.date,list.serious_critical_new,'.','MarkerEdgeAlpha',alf);
 hh(5).MarkerEdgeColor = ccc(3,:);
 severe = movmean(list.serious_critical_new(1:end),[3 3]);
@@ -33,12 +33,12 @@ hh(8) = plot(list.date(1:end-1),movmean(list.new_hospitalized(1:end-1),[3 3]),'l
 hh(8).Color = ccc(4,:);
 dates = [dateSeger;list.date(end)];
 iDates = find(ismember(list.date,dates));
-critSeger = round(crit(iDates-1));
+% critSeger = round(crit(iDates-1));
 severeSeger = round(severe(iDates));
 % text(dates,critSeger,str(critSeger),'Color',[0,0,0],'FontWeight','Bold')
 
 title('New Patients    חולים חדשים')
-legend(hh([8,6,4,2,10]),'hospitalized מאושפזים','severe                קשה','critical               קריטי',...
+legend(hh([8,6,2,10]),'hospitalized מאושפזים','severe                קשה',...
     'on vent          מונשמים','deceased        נפטרים','location','northwest')
 % end  
 grid on
@@ -51,10 +51,10 @@ xlim([list.date(1) datetime('tomorrow')])
 xtickformat('MMM')
 if isLog
     set(gca, 'YScale', 'log')
-    ylim([2 300])
+    ylim([2 600])
 else
-    ylim([0 300])
-    text(dates,critSeger-[2,7,7,7]',str(critSeger),'Color',ccc(2,:))
+    ylim([0 550])
+%     text(dates,critSeger-[2,7,7,7]',str(critSeger),'Color',ccc(2,:))
     text(dates,severeSeger-7,str(severeSeger),'Color',ccc(3,:))
 end
 if newFig

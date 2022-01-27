@@ -32,8 +32,8 @@ list = listE(1:end-1,:);
 dateSeger = datetime({'14-Mar-2020';'18-Sep-2020';'27-Dec-2020'});
 
 %% plot israel only
-fig8 = figure('units','normalized','position',[0,0.25,0.8,0.6]);
-
+fig8 = figure('units','normalized','position',[0,0.25,0.8,1]);
+subplot(2,1,1)
 hh = plot(list.date,[list.CountEasyStatus,list.CountMediumStatus,list.CountHardStatus],'linewidth',2);
 hh(1).Color = [0.055,0.49,0.49];
 hh(2).Color = [0.725,0.788,0.357];
@@ -49,6 +49,25 @@ set(gcf,'Color','w')
 set(gca,'XTick',datetime(2020,1:300,1))
 xtickformat('MM/yy')
 xtickangle(90)
+
+subplot(2,1,2)
+hh = plot(list.date,[list.easy_new,list.medium_new,list.serious_critical_new],'linewidth',2);
+hh(1).Color = [0.055,0.49,0.49];
+hh(2).Color = [0.725,0.788,0.357];
+hh(3).Color = [0.184,0.804,0.984];
+legend('mild             קל','medium    בינוני','severe       קשה','location','northwest')
+ylabel('patients   חולים')
+set(gca,'FontSize',13)
+grid on
+box off
+title({'New patients by condition   מאושפזים חדשים לפי מצב',...
+    'Including patients that got better   כולל חולים שמצבם השתפר'})
+xlim([datetime(2020,3,1) datetime('today')+3])
+set(gcf,'Color','w')
+set(gca,'XTick',datetime(2020,1:300,1))
+xtickformat('MM/yy')
+xtickangle(90)
+
 %%
 covid_israel_percent_positive(figs);
 %%
