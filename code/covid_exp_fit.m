@@ -74,29 +74,29 @@ xtickformat('MMM')
 set(gca, 'YScale', 'log')
 ylim([2 500000])
 
-date = dateEst';
-cases = proj(:,1);
-hosp = proj(:,2);
-severe = proj(:,3);
-tt = table(date,cases,hosp,severe);
-tt{:,2:end} = round(tt{:,2:end});
-writetable(tt,'~/Documents/proj.csv')
-disp((coef(1:3)').^(1:7))
-
-confOmi = [list.tests_positive1(640:669);proj(1:end,1)];
-cs = cumsum(confOmi);
-cs = cs(cs < 9500000);
-ds = datetime(2021,12,1:100);
-ds = ds(1:length(cs));
-figure;
-plot(ds,cs);
-% set(gca, 'YScale', 'log')
-for ii = 1:9
-    xt(ii) = find(cs > 9500000/10*ii,1);
-end
-set(gca,'XTick',ds(xt(1:7)))
-xtickformat('dd/MM')
-xlim([datetime('today') ds(end)])
-grid on
-xtickangle(45)
-title('percents of infected population without slow-down')
+% date = dateEst';
+% cases = proj(:,1);
+% hosp = proj(:,2);
+% severe = proj(:,3);
+% tt = table(date,cases,hosp,severe);
+% tt{:,2:end} = round(tt{:,2:end});
+% writetable(tt,'~/Documents/proj.csv')
+% disp((coef(1:3)').^(1:7))
+% 
+% confOmi = [list.tests_positive1(640:669);proj(1:end,1)];
+% cs = cumsum(confOmi);
+% cs = cs(cs < 9500000);
+% ds = datetime(2021,12,1:100);
+% ds = ds(1:length(cs));
+% figure;
+% plot(ds,cs);
+% % set(gca, 'YScale', 'log')
+% for ii = 1:9
+%     xt(ii) = find(cs > 9500000/10*ii,1);
+% end
+% set(gca,'XTick',ds(xt(1:7)))
+% xtickformat('dd/MM')
+% xlim([datetime('today') ds(end)])
+% grid on
+% xtickangle(45)
+% title('percents of infected population without slow-down')
