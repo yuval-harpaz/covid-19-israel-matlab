@@ -47,7 +47,7 @@ fig.update_layout(hovermode="x unified", legend=dict(yanchor="top", y=0.99, xanc
 fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')  #  range=[0, 250]
 fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 fig.layout['xaxis']['range'] = ['2020-11-1', str(date[-1]+np.timedelta64(31))]
-fig.layout['yaxis']['title'] = "1 = Aug peak"
+fig.layout['yaxis']['title'] = "Deaths"
 fig.layout['yaxis']['titlefont']['color'] = "black"
 # fig.layout['yaxis']['showgrid'] = False
 # fig.show()

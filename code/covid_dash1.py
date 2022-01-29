@@ -11,10 +11,12 @@ import dash_bootstrap_components as dbc
 import urllib.request
 import json
 
+
 def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
     #  to get smoothing of 3 samples back and 3 samples forward use win=7
+    vec = vec.astype('float')
     smooth = vec.copy()
     if win > 1:
         if nanTail:
@@ -163,15 +165,16 @@ fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1",
 fig1.update_layout(title_text="Weekly cases by age", font_size=15, updatemenus=updatemenus)
 
 
-def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k '):
+def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ', start_date=[], end_date=[]):
     df_age = df_in.loc[df_in["age_group"] == age_gr]
-    date = df_age['date']
+    # date = df_age['date']
     mx = np.max(df_age.max()[3:6])*1.05
-    xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
+    # xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
+    xl = [start_date, end_date]
     if smoo == 'sm':
         for yts in ['vaccinated', 'expired', 'unvaccinated']:
             yybef = np.asarray(df_age[yts])
-            yyaft = np.round(movmean(yybef, 7, nanTail=True),1)
+            yyaft = np.round(movmean(yybef, 7, nanTail=True), 1)
             yyaft[-4] = np.nan
             df_age[yts] = yyaft
         # df_age = df_age.rolling(7, min_periods=7).mean().round(1)
@@ -499,7 +502,7 @@ app.layout = html.Div([
                     ],
                     value='normalized',
                     labelStyle={'display': 'inline-block'}
-                )
+                ),
             ]),
             html.Div([
                 dcc.RadioItems(id='age',
@@ -529,7 +532,16 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='severe'), lg=4),
             dbc.Col(dcc.Graph(id='death'), lg=4)
         ]),
-        html.Br(),
+        dcc.DatePickerRange(
+            id='date-picker',
+            display_format='DD/MM/Y',
+            min_date_allowed=dfsNorm[0]['date'][0].date(),
+            max_date_allowed=dfsNorm[0]['date'][len(dfsNorm[0])-1].date(),
+            initial_visible_month=dfsNorm[0]['date'][0].date(),
+            start_date=dfsNorm[0]['date'][0].date(),
+            end_date=dfsNorm[0]['date'][len(dfsNorm[0])-1].date()
+        ),
+        html.Br(),html.Br(),html.Br(),
         html.A('Deaths for wave IV (11-Jul-2021 to 11-Nov-2021) and V (1-Jan-22 to present) vs new severe cases, 10 days earlier.'),
         html.Br(),
         html.A('Ratio plot is black/red for Delta wave IV and (mainly) Omicron wave V.'),
@@ -539,11 +551,6 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='frat3'), lg=2),
             dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=6, md=12)
         ]),
-        # dbc.Row([
-        #     dbc.Col([" "], lg=4),
-        #     dbc.Col(["Smoothing factor (odd number of days): ",
-        #              dcc.Input(id='gwi', value='7', type='text', debounce=True)], lg=4)  # style={'width': '1%'} not working
-        # ]),
         dbc.Row([
             dbc.Col(dcc.Graph(id='gw'), lg=8, md=12),
             # dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=4, md=12)
@@ -576,17 +583,19 @@ app.layout = html.Div([
     Input('doNorm', 'value'),
     Input('smoo', 'value'),
     # Input('gwi', 'value'),
-    Input('age60w', 'value'))
+    Input('age60w', 'value'),
+    Input('date-picker', 'start_date'),
+    Input('date-picker', 'end_date'))
 
-def update_graph(age_group, norm_abs, smoo, age60w):
+def update_graph(age_group, norm_abs, smoo, age60w, start_date, end_date):
     if norm_abs == 'normalized':
-        figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ')
-        figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ')
-        figd = make_figs3(dfsNorm[2], measure[2], age_group, smoo, ', per 100k ')
+        figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ', start_date, end_date)
+        figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ', start_date, end_date)
+        figd = make_figs3(dfsNorm[2], measure[2], age_group, smoo, ', per 100k ', start_date, end_date)
     else:
-        figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ')
-        figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ')
-        figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ')
+        figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ', start_date, end_date)
+        figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date)
+        figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ', start_date, end_date)
     fige = make_wane(df.copy())
     figf = makeVE(dfsNorm[0].copy(), age60w)
     if age_group == 'מעל גיל 60':

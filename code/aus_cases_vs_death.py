@@ -24,6 +24,8 @@ data = data[data['administrative_area_level_2'].isna()]
 date = np.asarray(data['date'])
 cases = np.asarray(data['confirmed'])
 cases[1:] = np.diff(cases)
+raise Exception('fix hole')
+cases[730] = (cases[279]+cases[731])/2
 # casesAge = pd.read_csv('/home/innereye/Downloads/tmp.csv')
 casesAge = pd.read_csv('https://data.nsw.gov.au/data/dataset/nsw-covid-19-cases-by-age-range/resource/24b34cb5-8b01-4008-9d93-d14cf5518aec/download/confirmed_cases_table2_age_group.csv')
 date65 = np.asarray(casesAge['notification_date'])
@@ -32,12 +34,16 @@ ages = np.asarray(casesAge['age_group'])
 ages = np.unique(ages)
 cases65 = np.zeros(len(date65))
 ratio = np.zeros(len(date65))
+missing = []
 for row, ymd in enumerate(date65):
-    all = int(cases[date == ymd])
+    alll = int(cases[date == ymd])
     dat = np.asarray(casesAge['age_group'][casesAge['notification_date'] == ymd])
+    count0 = len(dat)
     dat = np.delete(dat, dat == 'AgeGroup_None')
+    count1 = len(dat)
+    missing.append((count0-count1)/count0)
     ratio[row] = (np.sum(dat == 'AgeGroup_65-69') + np.sum(dat == 'AgeGroup_70+'))/len(dat)
-    cases65[row] = np.round(ratio[row]*all)
+    cases65[row] = np.round(ratio[row]*alll)
 
 deaths = np.asarray(data['deaths'])
 deaths[1:] = np.diff(deaths)
