@@ -165,10 +165,12 @@ fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1",
 fig1.update_layout(title_text="Weekly cases by age", font_size=15, updatemenus=updatemenus)
 
 
-def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ', start_date=[], end_date=[]):
+def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ', start_date=[], end_date=[], loglin='linear'):
     df_age = df_in.loc[df_in["age_group"] == age_gr]
     # date = df_age['date']
     mx = np.max(df_age.max()[3:6])*1.05
+    if loglin == 'log':
+        mx = np.ceil(np.log(mx)/np.log(10))
     # xl = [df_age.iloc[0,0], df_age.iloc[-1,0]]
     xl = [start_date, end_date]
     if smoo == 'sm':
@@ -185,7 +187,7 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
     fig['data'][1]['line']['color'] = '#b9c95b'
     fig['data'][2]['line']['color'] = '#2fcdfb'
     fig.layout = layout
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, mx])
+    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray', range=[0, mx], type=loglin)
     fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%d/%m\n%Y")
     if age_gr == 'מעל גיל 60':
         txt60 = '(60+)'
@@ -525,6 +527,16 @@ app.layout = html.Div([
                     labelStyle={'display': 'inline-block'}
                 )
             ]),
+            html.Div([
+                dcc.RadioItems(id='loglin',
+                    options=[
+                        {'label': 'lin', 'value': 'linear'},
+                        {'label': 'log', 'value': 'log'}
+                    ],
+                    value='linear',
+                    labelStyle={'display': 'inline-block'}
+                )
+            ])
         ]),
 
         dbc.Row([
@@ -582,20 +594,20 @@ app.layout = html.Div([
     Input('age', 'value'),
     Input('doNorm', 'value'),
     Input('smoo', 'value'),
-    # Input('gwi', 'value'),
+    Input('loglin', 'value'),
     Input('age60w', 'value'),
     Input('date-picker', 'start_date'),
     Input('date-picker', 'end_date'))
 
-def update_graph(age_group, norm_abs, smoo, age60w, start_date, end_date):
+def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date):
     if norm_abs == 'normalized':
-        figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ', start_date, end_date)
-        figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ', start_date, end_date)
-        figd = make_figs3(dfsNorm[2], measure[2], age_group, smoo, ', per 100k ', start_date, end_date)
+        figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ', start_date, end_date, loglin)
+        figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ', start_date, end_date, loglin)
+        figd = make_figs3(dfsNorm[2], measure[2], age_group, smoo, ', per 100k ', start_date, end_date, loglin)
     else:
-        figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ', start_date, end_date)
-        figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date)
-        figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ', start_date, end_date)
+        figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ', start_date, end_date, loglin)
+        figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date, loglin)
+        figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ', start_date, end_date, loglin)
     fige = make_wane(df.copy())
     figf = makeVE(dfsNorm[0].copy(), age60w)
     if age_group == 'מעל גיל 60':
