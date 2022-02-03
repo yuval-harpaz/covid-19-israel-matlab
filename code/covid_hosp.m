@@ -99,9 +99,9 @@ xtickformat('MMM')
 set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 if isLog
     set(gca, 'YScale', 'log')
-    ylim([10 2600])
+    ylim([10 3750])
 else
-    ylim([0 2600])
+    ylim([0 3750])
     text(dates,critSeger-7,str(critSeger),'Color',ccc(2,:))
     text(dates,severeSeger-7,str(severeSeger),'Color',ccc(3,:))
 end

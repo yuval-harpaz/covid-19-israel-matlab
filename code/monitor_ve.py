@@ -111,10 +111,10 @@ fig.show()
 # for ii, d in enumerate(date2):
 #     total = df2['verified_amount_vaccinated'][ii]+df2['verified_amount_expired'][ii]+df2['verified_amount_not_vaccinated'][ii]
 #     cases[np.where(date == date2[ii])[0][0]] = np.round(100*df2['verified_amount_not_vaccinated'][ii]/total, 1)
-# df = pd.DataFrame(date,columns=['date'])
-# df['% unvaccinated of 60+ cases'] = cases
-# df['% unvaccinated of mild hospitalizations'] = mild
-# df['cases'] = casesAll
+# dfAge = pd.DataFrame(date,columns=['date'])
+# dfAge['% unvaccinated of 60+ cases'] = cases
+# dfAge['% unvaccinated of mild hospitalizations'] = mild
+# dfAge['cases'] = casesAll
 #
 # ##
 # # dfVax = df2[['verified_amount_vaccinated','verified_amount_expired','verified_not_vaccinated_normalized']]
@@ -148,9 +148,9 @@ fig.show()
 # ve[idx[0]:idx[1]] = movmean(VE, win, nanTail=False)
 #
 #
-# # df['VE'] = ve
+# # dfAge['VE'] = ve
 # ##
-# df7 = df.rolling(win, min_periods=3).mean().round(1)
+# df7 = dfAge.rolling(win, min_periods=3).mean().round(1)
 # df7['VE for 60+ cases (2 doses or more)'] = ve
 # # df7['cases (normalized)'] = np.round(100*df7['cases (normalized)']/np.max(df7['cases (normalized)']))
 # xl = [str(np.datetime_as_string(date[288]))[0:10], str(np.datetime_as_string(date[-1]))[0:10]]

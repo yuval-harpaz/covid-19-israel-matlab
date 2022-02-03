@@ -105,7 +105,7 @@ idx = [np.where(date == date2[0])[0][0], np.where(date == date2.loc[len(date2)-1
 ve[idx[0]:idx[1]] = movmean(VE, win, nanTail=False)
 
 
-# df['VE'] = ve
+# dfAge['VE'] = ve
 ##
 df7 = df.rolling(win, min_periods=3).mean().round(1)
 df7['VE for 60+ cases (2 doses or more)'] = np.round(ve,1)

@@ -157,9 +157,9 @@ if __name__ == '__main__':
 #         ])
 #     ),
 # ]
-# x = df['date']
+# x = dfAge['date']
 # x = pd.to_datetime(x)
-# yyAge = np.asarray(df.iloc[:, 1:11])
+# yyAge = np.asarray(dfAge.iloc[:, 1:11])
 # label = ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+']
 # color = ['#E617E6', '#6A17E6', '#1741E6', '#17BEE6', '#17E6BE', '#17E641', '#6AE617', '#E6E617', '#E69417', '#E61717']
 # layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', legend={'traceorder': 'reversed'})
@@ -249,10 +249,10 @@ if __name__ == '__main__':
 # for ii, d in enumerate(date2):
 #     total = df2['verified_amount_vaccinated'][ii]+df2['verified_amount_expired'][ii]+df2['verified_amount_not_vaccinated'][ii]
 #     cases[np.where(date == date2[ii])[0][0]] = np.round(100*df2['verified_amount_not_vaccinated'][ii]/total, 1)
-# df = pd.DataFrame(date,columns=['date'])
-# df['% unvaccinated of 60+ cases'] = cases
-# df['% unvaccinated of mild hospitalizations'] = mild
-# df['cases'] = movmean(casesAll, 7, True)
+# dfAge = pd.DataFrame(date,columns=['date'])
+# dfAge['% unvaccinated of 60+ cases'] = cases
+# dfAge['% unvaccinated of mild hospitalizations'] = mild
+# dfAge['cases'] = movmean(casesAll, 7, True)
 # Nvax = np.asarray(df2['verified_amount_vaccinated']/df2['verified_vaccinated_normalized']*10**5)
 # Nexp = np.asarray(df2['verified_amount_expired']/df2['verified_expired_normalized']*10**5)
 # sm = Nvax.copy()
@@ -371,7 +371,7 @@ if __name__ == '__main__':
 #     if win > 1:
 #         VE[-int(win / 2):] = np.nan
 #     ve[idx[0]:idx[1]] = VE
-#     # df7 = df.rolling(win, min_periods=3).mean().round(1)
+#     # df7 = dfAge.rolling(win, min_periods=3).mean().round(1)
 #
 #     dfW['VE for 60+ cases (2 doses or more)'] = ve
 #     # df7['cases (normalized)'] = np.round(100*df7['cases (normalized)']/np.max(df7['cases (normalized)']))
@@ -588,7 +588,7 @@ if __name__ == '__main__':
 #         figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ')
 #         figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ')
 #         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ')
-#     fige = make_wane(df.copy(), win)
+#     fige = make_wane(dfAge.copy(), win)
 #     figf = makeVE(dfsNorm[0].copy(), age60w)
 #     return figb, figc, figd, fige, figf
 #

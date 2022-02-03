@@ -62,7 +62,7 @@ for pr = 1:3
     line(dateEst,proj(:,pr),'Color','k','linestyle',':')
 end
 title('New cases / patients')
-legend('cases     מאומתים','hospitalized מאושפזים','severe                קשה',...
+legend('cases            מאומתים','hospitalized מאושפזים','severe                קשה',...
     'on vent          מונשמים','deceased        נפטרים','location','northwest')
 grid on
 box off
@@ -72,7 +72,7 @@ set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
 set(gca, 'YScale', 'log')
-ylim([2 500000])
+ylim([2 100000])
 
 % date = dateEst';
 % cases = proj(:,1);

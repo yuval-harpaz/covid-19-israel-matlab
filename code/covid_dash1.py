@@ -25,14 +25,23 @@ def movmean(vec, win, nanTail=False):
             smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
     return smooth
 
-if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
-    api = '/home/innereye/Downloads/'
-    df = pd.read_csv(
-        '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
-else:
-    api = 'https://datadashboardapi.health.gov.il/api/queries/'
-    df = pd.read_csv(
-    'https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
+# if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
+#     api = '/home/innereye/Downloads/'
+#     dfAge = pd.read_csv(
+#         '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
+# else:
+api = 'https://datadashboardapi.health.gov.il/api/queries/'
+dfAge = pd.read_csv('https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
+dfTS = pd.read_json(api+'hospitalizationStatus')
+cn = list(dfTS.columns)
+cn[0] = 'date'
+dfTS.columns = cn
+# dfTS = dfTS[dfTS.duplicated(['date'], keep=False)]
+dfTS = dfTS.drop_duplicates(subset=['date'], keep='first')
+dfTS.sort_values('date')
+dfTS['date'] = dfTS['date'].str.slice(start=None, stop=10)
+hospitalizationStatus = dfTS.to_csv(index=False)
+
 url = [api+'VerfiiedVaccinationStatusDaily',
        api+'SeriousVaccinationStatusDaily',
        api+'deathVaccinationStatusDaily']
@@ -148,9 +157,9 @@ updatemenus = [
         ])
     ),
 ]
-x = df['date']
+x = dfAge['date']
 x = pd.to_datetime(x)
-yyAge = np.asarray(df.iloc[:, 1:11])
+yyAge = np.asarray(dfAge.iloc[:, 1:11])
 label = ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80-89', '90+']
 color = ['#E617E6', '#6A17E6', '#1741E6', '#17BEE6', '#17E6BE', '#17E641', '#6AE617', '#E6E617', '#E69417', '#E61717']
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', legend={'traceorder': 'reversed'})
@@ -234,10 +243,10 @@ for ii, d in enumerate(date1):
 for ii, d in enumerate(date2):
     total = df2['verified_amount_vaccinated'][ii]+df2['verified_amount_expired'][ii]+df2['verified_amount_not_vaccinated'][ii]
     cases[np.where(date == date2[ii])[0][0]] = np.round(100*df2['verified_amount_not_vaccinated'][ii]/total, 1)
-df = pd.DataFrame(date,columns=['date'])
-df['% unvaccinated of 60+ cases'] = cases
-df['% unvaccinated of mild hospitalizations'] = mild
-df['cases'] = movmean(casesAll, 7, True)
+dfAge = pd.DataFrame(date, columns=['date'])
+dfAge['% unvaccinated of 60+ cases'] = cases
+dfAge['% unvaccinated of mild hospitalizations'] = mild
+dfAge['cases'] = movmean(casesAll, 7, True)
 Nvax = np.asarray(df2['verified_amount_vaccinated']/df2['verified_vaccinated_normalized']*10**5)
 Nexp = np.asarray(df2['verified_amount_expired']/df2['verified_expired_normalized']*10**5)
 sm = Nvax.copy()
@@ -356,7 +365,7 @@ def make_wane(dfW, win=7):
     if win > 1:
         VE[-int(win / 2):] = np.nan
     ve[idx[0]:idx[1]] = VE
-    # df7 = df.rolling(win, min_periods=3).mean().round(1)
+    # df7 = dfAge.rolling(win, min_periods=3).mean().round(1)
 
     dfW['VE for 60+ cases (2 doses or more)'] = ve
     # df7['cases (normalized)'] = np.round(100*df7['cases (normalized)']/np.max(df7['cases (normalized)']))
@@ -483,8 +492,15 @@ app.layout = html.Div([
             html.H3('Israel COVID19 data'),
             html.A('zoom in (click and drag) and out (double click), adapted from the MOH '),
             html.A('dashboard', href="https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral", target='_blank'),
-            html.A(' by '),html.A('@yuvharpaz.', href="https://twitter.com/yuvharpaz", target='_blank'),html.A(' '),
+            html.A(' by '), html.A('@yuvharpaz.', href="https://twitter.com/yuvharpaz", target='_blank'),html.A(' '),
             html.A(' code ', href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_dash1.py", target='_blank'),
+            html.Div([
+                html.A('To get hospitalizations data click  '),
+                html.Button("Download", id="btn-download-txt"),
+                dcc.Download(id="download-text"),
+                html.A(' '),
+                html.A('<json>', href='https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus', target='_blank')]
+            ),
             html.Br(), html.A('other dashboards: '),
             html.A('South Africa',
                    href="https://sa-covid.herokuapp.com/",
@@ -597,7 +613,8 @@ app.layout = html.Div([
     Input('loglin', 'value'),
     Input('age60w', 'value'),
     Input('date-picker', 'start_date'),
-    Input('date-picker', 'end_date'))
+    Input('date-picker', 'end_date'),
+    )
 
 def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date):
     if norm_abs == 'normalized':
@@ -608,7 +625,7 @@ def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date
         figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ', start_date, end_date, loglin)
         figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date, loglin)
         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ', start_date, end_date, loglin)
-    fige = make_wane(df.copy())
+    fige = make_wane(dfAge.copy())
     figf = makeVE(dfsNorm[0].copy(), age60w)
     if age_group == 'מעל גיל 60':
         age = 1
@@ -617,6 +634,13 @@ def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date
     figG, figH, figI = make_ratios(age=age)
     return figb, figc, figd, fige, figf, figG, figH, figI
 
+@app.callback(
+    Output("download-text", "data"),
+    Input("btn-download-txt", "n_clicks"),
+    prevent_initial_call=True
+)
+def func(n_clicks):
+    return dict(content=hospitalizationStatus, filename="hospitalizationStatus.csv")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
