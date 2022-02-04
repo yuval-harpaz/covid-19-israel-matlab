@@ -17,7 +17,7 @@ ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,
 % severe = movmean((1:end),[3 3]);
 
 % hh(9) = scatter(list.date(list.CountDeath > 0),list.CountDeath(list.CountDeath > 0),'k.','MarkerEdgeAlpha',alf);
-yy = [list.tests_positive1, list.new_hospitalized, list.serious_critical_new];
+yy = [list.tests_positive1, list.new_hospitalized, [0;diff(list.CountSeriousCriticalCum)]];
 yy(2:end,4) = diff(list.CountBreathCum);
 yy(:,5) = list.CountDeath;
 % yy = yy(1:end-1,:);

@@ -55,14 +55,20 @@ varsAbs = [['verified_amount_vaccinated', 'verified_amount_expired', 'verified_a
 
 dfsNorm = [[], [], []]
 dfsAbs = [[], [], []]
+downloads = []
 for ii in [0, 1, 2]:
     dfs = pd.read_json(url[ii])
+    downloads.append(dfs.copy())
+    downloads[-1]['day_date'] = downloads[-1]['day_date'].str.slice(0, 10)
+    downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('מעל גיל 60', 'over 60')
+    downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('מתחת לגיל 60', 'under 60')
+    downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('כלל האוכלוסיה', 'all')
     dfs['date'] = pd.to_datetime(dfs['day_date'])
     dfsNorm[ii] = dfs.rename(columns={varsNorm[ii][0]: 'vaccinated', varsNorm[ii][1]: 'expired', varsNorm[ii][2]: 'unvaccinated'})
     dfsNorm[ii] = dfsNorm[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
     dfsAbs[ii] = dfs.rename(columns={varsAbs[ii][0]: 'vaccinated', varsAbs[ii][1]: 'expired', varsAbs[ii][2]: 'unvaccinated'})
     dfsAbs[ii] = dfsAbs[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
-
+# writer = pd.ExcelWriter(engine='xlsxwriter')
 
 shifts = [0, 11, 21]
 ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
@@ -499,7 +505,16 @@ app.layout = html.Div([
                 html.Button("Download", id="btn-download-txt"),
                 dcc.Download(id="download-text"),
                 html.A(' '),
-                html.A('<json>', href='https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus', target='_blank')]
+                html.A('<json>', href='https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus', target='_blank'),
+                html.A('. Vacination status for  '),
+                html.Button("Cases", id="btn-inf"),
+                dcc.Download(id="download-inf"),
+                html.A(' '),
+                html.Button("Severe", id="btn-sev"),
+                dcc.Download(id="download-sev"),
+                html.A('  '),
+                html.Button("Deaths", id="btn-dea"),
+                dcc.Download(id="download-dea")]
             ),
             html.Br(), html.A('other dashboards: '),
             html.A('South Africa',
@@ -554,7 +569,6 @@ app.layout = html.Div([
                 )
             ])
         ]),
-
         dbc.Row([
             dbc.Col(dcc.Graph(id='infected'), lg=4),
             dbc.Col(dcc.Graph(id='severe'), lg=4),
@@ -641,6 +655,34 @@ def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date
 )
 def func(n_clicks):
     return dict(content=hospitalizationStatus, filename="hospitalizationStatus.csv")
+@app.callback(
+    Output("download-inf", "data"),
+    Input("btn-inf", "n_clicks"),
+    prevent_initial_call=True
+)
+def func(n_clicks):
+    return dict(content=downloads[0].to_csv(), filename="VerifiedStatusDaily.csv")
+@app.callback(
+    Output("download-sev", "data"),
+    Input("btn-sev", "n_clicks"),
+    prevent_initial_call=True
+)
+def func(n_clicks):
+    return dict(content=downloads[1].to_csv(), filename="SeriousVaccinationStatusDaily.csv")
+@app.callback(
+    Output("download-dea", "data"),
+    Input("btn-dea", "n_clicks"),
+    prevent_initial_call=True
+)
+def func(n_clicks):
+    return dict(content=downloads[2].to_csv(), filename="DeathVaccinationStatusDaily.csv")
+# @app.callback(
+#     Output("download-text", "data"),
+#     Input("btn-download-txt", "n_clicks"),
+#     prevent_initial_call=True
+# )
+# def func(n_clicks):
+#     return dict(content=hospitalizationStatus, filename="VerfiiedVaccinationStatusDaily.csv")
 
 if __name__ == '__main__':
     app.run_server(debug=True)
