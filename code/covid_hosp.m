@@ -8,12 +8,18 @@ if newFig
 else
     subplot(1,2,1)
 end
-hh(9) = scatter(list.date(list.CountDeath > 0),list.CountDeath(list.CountDeath > 0),'k.','MarkerEdgeAlpha',alf);
+hh(9) = scatter(list.date(end-3:end),list.CountDeath(end-3:end),'k.');
 hold on
-hh(10) = plot(list.date(1:end-1),movmean(list.CountDeath(1:end-1),[3 3]),'k','linewidth',1.5);
-hh(1) = scatter(list.date(2:end),diff(list.CountBreathCum(1:end)),'.','MarkerEdgeAlpha',alf);
+y = [movmean(list.CountDeath(1:end-1),[3 3]);nan];
+y(end-3:end) = nan;
+lastDeath = y(end-4);
+hh(10) = plot(list.date,y,'k','linewidth',1.5);
+hh(1) = scatter(list.date(end-3:end),diff(list.CountBreathCum(end-4:end)),'.');
 hh(1).MarkerEdgeColor = ccc(1,:);
-hh(2) = plot(list.date(2:end-1),movmean(diff(list.CountBreathCum(1:end-1)),[3 3]),'linewidth',1.5);
+y = [nan;movmean(diff(list.CountBreathCum(1:end-1)),[3 3]);nan];
+y(end-3:end) = nan;
+lastBreath = y(end-4);
+hh(2) = plot(list.date,y,'linewidth',1.5);
 hh(2).Color = ccc(1,:);
 commonDate = datetime(2020,8,18):newc.date(end);
 % crit = list.serious_critical_new(2:end) - diff(list.CountSeriousCriticalCum);
@@ -23,16 +29,22 @@ commonDate = datetime(2020,8,18):newc.date(end);
 % hh(4) = plot(list.date(2:end),crit,'linewidth',1.5);
 % hh(4).Color = ccc(2,:);
 severe = [0;diff(list.CountSeriousCriticalCum)];
-hh(5) = scatter(list.date,severe,'.','MarkerEdgeAlpha',alf);
+y = [movmean(severe(1:end-1),[3 3]);nan];
+y(end-3:end) = nan;
+lastSevere = y(end-4);
+hh(5) = scatter(list.date(end-3:end),severe(end-3:end),'.','MarkerEdgeAlpha',alf);
 hh(5).MarkerEdgeColor = ccc(3,:);
-severe = movmean(severe,[3 3]);
-hh(6) = plot(list.date(1:end),severe,'linewidth',1.5);
+% severe = movmean(severe,[3 3]);
+hh(6) = plot(list.date(1:end),y,'linewidth',1.5);
 hh(6).Color = ccc(3,:);
-hh(7) = scatter(list.date,list.new_hospitalized,'.','MarkerEdgeAlpha',alf);
+y = [movmean(list.new_hospitalized(1:end-1),[3 3]);nan];
+y(end-3:end) = nan;
+lastHosp = y(end-4);
+hh(7) = scatter(list.date(end-3:end),list.new_hospitalized(end-3:end),'.','MarkerEdgeAlpha',alf);
 hh(7).MarkerEdgeColor = ccc(4,:);
-hh(8) = plot(list.date(1:end-1),movmean(list.new_hospitalized(1:end-1),[3 3]),'linewidth',1.5);
+hh(8) = plot(list.date,y,'linewidth',1.5);
 hh(8).Color = ccc(4,:);
-dates = [dateSeger;list.date(end)];
+dates = dateSeger;  % [dateSeger;list.date(end-3)];
 iDates = find(ismember(list.date,dates));
 % critSeger = round(crit(iDates-1));
 severeSeger = round(severe(iDates));
@@ -56,7 +68,12 @@ if isLog
 else
     ylim([0 550])
 %     text(dates,critSeger-[2,7,7,7]',str(critSeger),'Color',ccc(2,:))
+%     dates(end) = datetime('today');
     text(dates,severeSeger-7,str(severeSeger),'Color',ccc(3,:))
+    text(datetime('today'),lastSevere,str(round(lastSevere)),'Color',ccc(3,:))
+    text(datetime('today'),lastDeath,str(round(lastDeath)),'Color',[0 0 0])
+    text(datetime('today'),lastBreath,str(round(lastBreath)),'Color',ccc(1,:))
+    text(datetime('today'),lastHosp,str(round(lastHosp)),'Color',ccc(4,:))
 end
 if newFig
     figure('units','normalized','position',[0,0,1,1]);
@@ -103,6 +120,6 @@ if isLog
     ylim([10 3750])
 else
     ylim([0 3750])
-    text(dates,critSeger-7,str(critSeger),'Color',ccc(2,:))
-    text(dates,severeSeger-7,str(severeSeger),'Color',ccc(3,:))
+%     text(dates,critSeger-7,str(critSeger),'Color',ccc(2,:))
+%     text(dates,severeSeger-7,str(severeSeger),'Color',ccc(3,:))
 end
