@@ -90,10 +90,10 @@ for im in [0, 1, 2]:  # cases, severe, deaths
               str(day_date[d1+shifts[im]])[:10],
               str(day_date[d2+shifts[im]])[:10],
               str(day_date[-shifts[-im-1]-1])[:10]]
-print('severe')
-print(dd[1])
-print('deaths')
-print(dd[2])
+# print('severe')
+# print(dd[1])
+# print('deaths')
+# print(dd[2])
 
 
 def make_ratios(age=1):
@@ -284,6 +284,8 @@ for week in dataCases['result']['records']:
             week[field] = '7'
 cases = pd.DataFrame(dataCases['result']['records'])
 # dateVE = np.asarray(pd.to_datetime(cases['Week'].str.slice(12, 23)))
+# doVE3 = False
+# if doVE3:
 urlVacc = 'https://data.gov.il/api/3/action/datastore_search?resource_id=57410611-936c-49a6-ac3c-838171055b1f&limit=5000'
 with urllib.request.urlopen(urlVacc) as api1:
     dataVacc = json.loads(api1.read().decode())
@@ -485,6 +487,124 @@ def makeVE(dfW60, age_gr):
         ))
     figW60.add_trace(go.Scatter(x=date2ve, y=unvaccW60, yaxis='y2', name='unvaccinated', line_color='#ff9999'))
     return figW60
+#%% world
+JH = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+pop = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/scripts/input/un/population_latest.csv')
+JHT = JH.T
+jhn = JHT.to_numpy()
+# owid = pd.read_csv('https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-data.csv?raw=true')
+JHisr = JH[JH['Country/Region'] == 'Israel']
+date_str = list(JHisr.columns[4:])
+dateW = []
+for ii, dd in enumerate(date_str):
+    parsed = dd.split('/')
+    for dm in [0, 1]:
+        if len(parsed[dm]) == 1:
+            parsed[dm] = '0'+parsed[dm]
+    dateW.append(np.datetime64('20'+parsed[2]+'-'+parsed[0]+'-'+parsed[1]))
+dateW = np.asarray(dateW)
+WHO = pd.read_csv('https://covid19.who.int/WHO-COVID-19-global-data.csv')
+wc = np.unique(np.asarray(WHO['Country']))
+WHOisr = WHO[WHO['Country'] == 'Israel']
+dateWho = np.asarray(list(WHOisr['Date_reported']))
+deathWho = np.asarray(list(WHOisr['New_deaths']))
+fixJH = np.asarray([['US', 'United States'], ['Korea, South', 'South Korea']])
+for ii in range(len(fixJH)):
+    col = np.where(jhn[1, :] == fixJH[ii, 0])[0][0]
+    jhn[1,col] = fixJH[ii, 1]
+country = []
+for cntr in list(pop['entity']):
+    if cntr in jhn[1, :] and pop['population'][pop['entity'] == cntr].to_numpy()[0] > 3*10**6:
+        country.append(cntr)
+
+date_who_list = np.asarray(WHO['Date_reported'])
+death_who_list = np.asarray(WHO['New_deaths'])
+country_who_list = np.asarray(WHO['Country'])
+country_whu = np.unique(country_who_list)
+# for ii in country_whu:
+#     if 'ussia' in ii:
+#         print(ii)
+WHO = WHO.replace('Republic of Korea', 'South Korea')
+WHO = WHO.replace('United States of America', 'United States')
+WHO = WHO.replace('Russian Federation', 'Russia')
+WHO = WHO.replace('The United Kingdom', 'United Kingdom')
+country_who_list = np.asarray(WHO['Country'])
+country_whu = np.unique(country_who_list)
+country_common = []
+for cntr in country:
+    if cntr in list(WHO['Country']):
+        country_common.append(cntr)
+
+
+country_v = ['Canada', 'Germany', 'India', 'Italy', 'United Kingdom', 'United States', 'Israel']
+
+#%% compute deaths per million
+day0 = np.where(date_who_list == str(dateW[0]))[0][0]
+day1 = np.where(date_who_list == str(dateW[-1]))[0][0]+1
+dpm = {'WHO': {}, 'JH': {}}
+for cc, ctr in enumerate(country_common):
+    # print(str(cc)+' of '+str(len(country_common))+' '+ctr)
+    pp = list(pop['population'][pop['entity'] == ctr])
+    if len(pp) == 1:
+        pp = pp[0]
+    else:
+        raise Exception('population for '+ctr+' wrong')
+    row = np.where(country_who_list == country_common[cc])[0]
+    yW = death_who_list[row][day0:day1]
+    yyW = np.sum(jhn[4:, jhn[1, :] == ctr], axis=1)
+    yyW[1:] = np.diff(yyW)
+    yyW =yyW / pp * 10 ** 6
+    yyW = yyW.astype(float)
+    yyW[yyW > 200] = np.nan
+    dpm['JH'][ctr] = yyW
+    yW = np.asarray(yW) / pp * 10 ** 6
+    yW[yW > 200] = np.nan
+    dpm['WHO'][ctr] = yW
+
+
+layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+# layout1 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
+    figW = go.Figure(layout=layout)
+    figW.update_layout(font_size=15)
+    data = dpm[srcl]
+    xl = [dateW[start_date], dateW[end_date]]
+    if srcl == 'WHO':
+        td = -1
+    else:
+        td = 0
+    for ct in checklist:
+        yyy = data[ct]
+        if smooth == 'sm':
+            yyy = np.round(movmean(yyy, 7, nanTail=False), 2)
+        if cum == 'cum':
+            yyy = np.cumsum(yyy)
+        else:
+            yyy[-4:] = np.nan
+        figW.add_trace(go.Scatter(x=dateW+np.timedelta64(td), y=yyy, mode='lines', name=ct))
+    figW.update_layout(title_text=srcl, font_size=15, showlegend=True, hovermode="x unified",
+                       hoverlabel=dict(bgcolor='rgba(255,255,255,0.25)',
+                       bordercolor='rgba(255,255,255,0.25)',
+                       font=dict(color='black')),
+                       legend=dict(
+                           yanchor="top",
+                           y=0.99,
+                           xanchor="left",
+                           x=0.01
+                       ),
+                       margin=dict(
+                           l=50,
+                           r=250,
+                           b=100,
+                           t=100,
+                           pad=4
+                       ),
+                       )
+    figW.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%d/%m\n%Y")
+    figW.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    return figW
+
+
 app = dash.Dash(
     __name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
@@ -593,24 +713,75 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='frat3'), lg=2),
             dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=6, md=12)
         ]),
-        dbc.Row([
-            dbc.Col(dcc.Graph(id='gw'), lg=8, md=12),
-            # dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=4, md=12)
+    ]),
+    html.Div([
+        html.Div([
+            html.H3('COVID19 deaths per million, WHO vs JH'),
+            html.A('World Health Organization vs Johns Hopkins data (=OWID)'),
         ]),
         dbc.Row([
             html.Div([
-                dcc.RadioItems(id='age60w',
-                    options=[
-                        {'label': '60+', 'value': 'מעל גיל 60'},
-                        {'label': '<60', 'value': 'מתחת לגיל 60'}
-                    ],
-                    value='מעל גיל 60',
-                    labelStyle={'display': 'inline-block'}
-                )
+                dcc.RadioItems(id='src',
+                               options=[
+                                   {'label': 'WHO', 'value': 'WHO'},
+                                   {'label': 'JH', 'value': 'JH'}
+                               ],
+                               value='WHO',
+                               labelStyle={'display': 'inline-block'}
+                               ),
             ]),
-            dbc.Col(dcc.Graph(id='gw60'), lg=8, md=12)
+            html.Div([
+                dcc.RadioItems(id='cum',
+                               options=[
+                                   {'label': 'cumulative', 'value': 'cum'},
+                                   {'label': 'daily', 'value': 'dif'}
+                               ],
+                               value='dif',
+                               labelStyle={'display': 'inline-block'}
+                               )
+            ]),
+
+            html.Div([
+                dcc.RadioItems(id='smoot',
+                               options=[
+                                   {'label': 'smooth ', 'value': 'sm'},
+                                   {'label': 'raw ', 'value': 'rw'}
+                               ],
+                               value='sm',
+                               labelStyle={'display': 'inline-block'}
+                               )
+            ])
         ])
-    ])
+    ]),
+
+    dbc.Row([dbc.Col(dcc.Graph(id='deathW'), lg=7, md=12),
+        dbc.Col(dcc.Checklist(
+            id="checklist",
+            options=[{"label": x, "value": x} for x in country_common],
+            value=country_v,
+            labelStyle={'display': 'inline-block'}),
+        lg=5, md=12)]),
+    dbc.Col(dcc.RangeSlider(
+        id='rangeslider',
+        min=0,
+        max=len(dateW) - 1,
+        value=[161, len(dateW) - 1],
+        allowCross=False
+    ), lg=6, md=12),
+    dbc.Row([
+        html.Div([
+            dcc.RadioItems(id='age60w',
+                           options=[
+                               {'label': '60+', 'value': 'מעל גיל 60'},
+                               {'label': '<60', 'value': 'מתחת לגיל 60'}
+                           ],
+                           value='מעל גיל 60',
+                           labelStyle={'display': 'inline-block'}
+                           )
+        ]),
+        dbc.Col(dcc.Graph(id='gw60'), lg=8, md=12)
+    ]),
+    dbc.Row([dbc.Col(dcc.Graph(id='gw'), lg=8, md=12)]),
 ])
 @app.callback(
     Output('infected', 'figure'),
@@ -683,6 +854,16 @@ def func(n_clicks):
 # )
 # def func(n_clicks):
 #     return dict(content=hospitalizationStatus, filename="VerfiiedVaccinationStatusDaily.csv")
-
+@app.callback(
+    Output('deathW', 'figure'),
+    Input('src', 'value'),
+    Input('cum', 'value'),
+    Input('smoot', 'value'),
+    Input('rangeslider', 'value'),
+    Input("checklist", "value")
+    )
+def update_world(src, cum, smoot, rangeslider, checklist):
+    figWorld = make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist)
+    return figWorld
 if __name__ == '__main__':
     app.run_server(debug=True)
