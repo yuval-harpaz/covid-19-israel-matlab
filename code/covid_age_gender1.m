@@ -8,7 +8,7 @@ listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv
 listD(end,:) = [];
 yl = movsum(listD.tests_positive1(1:end-1),[3 3]);
 
-[pos, dateW, ages] = get_dashboard_cases;
+[pos, dateW, ages] = get_dashboard_cases(1);
 tt = tocsv(dateW,pos,ages);
 bad = [59,72];
 for iBad = 1:length(bad)
@@ -20,37 +20,8 @@ co = co(2:end,:)*0.9;
 
 ratio = pos./sum(pos,2)*100;
 ratio(nansum(pos,2) < 2000,:) = 0;
-% figure('position',position);
-% hp = bar(dateW-3,ratio,7,'stacked','EdgeColor','none');
-% for jj = 1:length(hp)
-%     hp(jj).FaceColor = co(jj,:);
-% end
-% hold on
-% % plot(listD.date,movsum(listD.tests,[3 3]),'r','linewidth',2);
-% ylim([0 100])
-% plot(listD.date(1:end-1),yl./max(yl)*100,'k','linewidth',2);
-% legend(fliplr(hp),flipud(ages))
-% 
-% xlim([datetime(2020,6,1) datetime('today')])
-% title('cases by age  (%)  מאומתים לפי גיל')
-% set(gcf,'Color','w')
 dateW(bad) = [];
 pos(bad,:) = [];
-% figure('position',position);
-% hl = plot(dateW-3,pos);
-% set(gca,'FontSize',13,'Xtick',datetime(2020,1:50,1))
-% grid on
-% ax = gca;
-% ax.YRuler.Exponent = 0;
-% xlim([dateW(1)-3,datetime('today')])
-% xtickformat('MMM')
-% legend('0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+',...
-%     'location',[0.65,0.55,0.05,0.1])
-% title('weekly cases by age')
-% set(gcf,'Color','w')
-% for jj = 1:length(hl)
-%     hl(jj).Color = co(jj,:);
-% end
 
 gender = {'male','female'};
 idx = [1:10;11:20];
@@ -71,6 +42,8 @@ for sp = 1:2
         hlp(jj).Color = co(jj,:);
     end
     ylabel('cases')
+    ylim([0 80000])
+    xlim([datetime('16-May-2021') datetime('today')])
 end
 legend('0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+',...
         'location','northwest')
