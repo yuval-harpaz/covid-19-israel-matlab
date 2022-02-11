@@ -24,7 +24,7 @@ data = data[data['administrative_area_level_2'].isna()]
 date = np.asarray(data['date'])
 cases = np.asarray(data['confirmed'])
 cases[1:] = np.diff(cases)
-raise Exception('fix hole')
+# raise Exception('fix hole')
 cases[730] = (cases[279]+cases[731])/2
 # casesAge = pd.read_csv('/home/innereye/Downloads/tmp.csv')
 casesAge = pd.read_csv('https://data.nsw.gov.au/data/dataset/nsw-covid-19-cases-by-age-range/resource/24b34cb5-8b01-4008-9d93-d14cf5518aec/download/confirmed_cases_table2_age_group.csv')
