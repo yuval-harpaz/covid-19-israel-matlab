@@ -115,9 +115,18 @@ def make_ratios(age=1):
         ag = ' 60+'
     else:
         ag = ' <60'
+    # figDelta = go.Figure()
+    # figDelta.add_trace(go.Histogram(dfSD[dfSD['wave'] == 'Delta'], x="vaccination", y="value", color='measure',
+    #                         barmode='group'))
     figDelta = px.histogram(dfSD[dfSD['wave'] == 'Delta'], x="vaccination", y="value", color='measure', barmode='group')
+    figDelta.data[0].text = figDelta.data[0]['y']
+    figDelta.data[1].text = figDelta.data[1]['y']
     figOmi = px.histogram(dfSD[dfSD['wave'] == 'Omi'], x="vaccination", y="value", color='measure', barmode='group')
+    figOmi.data[0].text = figOmi.data[0]['y']
+    figOmi.data[1].text = figOmi.data[1]['y']
     figR = px.histogram(dfRat, x="vaccination", y="death ratio", color='wave', barmode='group')
+    figR.data[0].text = np.round(figR.data[0]['y'], 2)
+    figR.data[1].text = np.round(figR.data[1]['y'], 2)
 
     figOmi.layout['yaxis']['title']['text'] = 'patients'+ag
     figOmi.layout['xaxis']['title']['text'] = ''
@@ -540,7 +549,10 @@ country_v = ['Canada', 'Germany', 'India', 'Italy', 'United Kingdom', 'United St
 
 #%% compute deaths per million
 day0 = np.where(date_who_list == str(dateW[0]))[0][0]
-day1 = np.where(date_who_list == str(dateW[-1]))[0][0]+1
+day1 = np.where(date_who_list == str(dateW[-1]))[0]
+if len(day1) == 0:
+    day1 = np.where(date_who_list == str(dateW[-2]))[0]
+day1 = day1[0]+1
 dpm = {'WHO': {}, 'JH': {}}
 for cc, ctr in enumerate(country_common):
     # print(str(cc)+' of '+str(len(country_common))+' '+ctr)
@@ -647,70 +659,61 @@ app.layout = html.Div([
             html.Br(), html.Br()
         ]),
         dbc.Row([
-            html.Div([
-                dcc.RadioItems(id='doNorm',
-                    options=[
-                        {'label': 'absolute', 'value': 'absolute'},
-                        {'label': 'per 100k', 'value': 'normalized'}
-                    ],
-                    value='normalized',
-                    labelStyle={'display': 'inline-block'}
-                ),
-            ]),
-            html.Div([
-                dcc.RadioItems(id='age',
-                    options=[
-                        {'label': '60+', 'value': 'מעל גיל 60'},
-                        {'label': '<60', 'value': 'מתחת לגיל 60'}
-                    ],
-                    value='מעל גיל 60',
-                    labelStyle={'display': 'inline-block'}
-                )
-            ]),
-
-            html.Div([
-                dcc.RadioItems(id='smoo',
-                    options=[
-                        {'label': 'smooth ', 'value': 'sm'},
-                        {'label': 'raw ', 'value': 'rw'}
-                    ],
-                    value='sm',
-                    labelStyle={'display': 'inline-block'}
-                )
-            ]),
-            html.Div([
-                dcc.RadioItems(id='loglin',
-                    options=[
-                        {'label': 'lin', 'value': 'linear'},
-                        {'label': 'log', 'value': 'log'}
-                    ],
-                    value='linear',
-                    labelStyle={'display': 'inline-block'}
-                )
-            ])
-        ]),
-        dbc.Row([
             dbc.Col(dcc.Graph(id='infected'), lg=4),
             dbc.Col(dcc.Graph(id='severe'), lg=4),
             dbc.Col(dcc.Graph(id='death'), lg=4)
         ]),
-        dcc.DatePickerRange(
-            id='date-picker',
-            display_format='DD/MM/Y',
-            min_date_allowed=dfsNorm[0]['date'][0].date(),
-            max_date_allowed=dfsNorm[0]['date'][len(dfsNorm[0])-1].date(),
-            initial_visible_month=dfsNorm[0]['date'][0].date(),
-            start_date=dfsNorm[0]['date'][0].date(),
-            end_date=dfsNorm[0]['date'][len(dfsNorm[0])-1].date()
-        ),
-        html.Br(),html.Br(),html.Br(),
+        dbc.Row([
+            dbc.Col([dcc.RadioItems(id='loglin',
+                options=[
+                    {'label': 'lin', 'value': 'linear'},
+                    {'label': 'log', 'value': 'log'}
+                ],
+                value='linear',
+                labelStyle={'display': 'inline-block'}
+                )], lg=1),
+            dbc.Col([dcc.RadioItems(id='age',
+                options=[
+                    {'label': '60+', 'value': 'מעל גיל 60'},
+                    {'label': '<60', 'value': 'מתחת לגיל 60'}
+                ],
+                value='מעל גיל 60',
+                labelStyle={'display': 'inline-block'}
+            )], lg=1),
+            dbc.Col([dcc.RadioItems(id='smoo',
+                options=[
+                    {'label': 'smooth ', 'value': 'sm'},
+                    {'label': 'raw ', 'value': 'rw'}
+                ],
+                value='sm',
+                labelStyle={'display': 'inline-block'}
+            )], lg=1),
+            dbc.Col([dcc.RadioItems(id='doNorm',
+                options=[
+                    {'label': 'absolute', 'value': 'absolute'},
+                    {'label': 'per 100k', 'value': 'normalized'}
+                ],
+                value='normalized',
+                labelStyle={'display': 'inline-block'}
+            )], lg=2),
+            dbc.Col([dcc.DatePickerRange(
+                id='date-picker',
+                display_format='DD/MM/Y',
+                min_date_allowed=dfsNorm[0]['date'][0].date(),
+                max_date_allowed=dfsNorm[0]['date'][len(dfsNorm[0])-1].date(),
+                initial_visible_month=dfsNorm[0]['date'][0].date(),
+                start_date=dfsNorm[0]['date'][0].date(),
+                end_date=dfsNorm[0]['date'][len(dfsNorm[0])-1].date()
+            )], lg=2),
+        ]),
+        html.Br(), html.Br(), html.Br(),
         html.A('Deaths for wave IV (11-Jul-2021 to 11-Nov-2021) and V (1-Jan-22 to present) vs new severe cases, 10 days earlier.'),
         html.Br(),
         html.A('Ratio plot is black/red for Delta wave IV and (mainly) Omicron wave V.'),
         dbc.Row([
-            dbc.Col(dcc.Graph(id='frat1'), lg=2),
-            dbc.Col(dcc.Graph(id='frat2'), lg=2),
-            dbc.Col(dcc.Graph(id='frat3'), lg=2),
+            dbc.Col(dcc.Graph(id='frat1'), lg=3),
+            dbc.Col(dcc.Graph(id='frat2'), lg=3),
+            dbc.Col(dcc.Graph(id='frat3'), lg=3),
             dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=6, md=12)
         ]),
     ]),
