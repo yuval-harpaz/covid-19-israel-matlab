@@ -72,7 +72,7 @@ female = np.asarray(data['London']['femaleCases'][start:])
 London = np.diff(male + female, axis=0)
 
 dateL = [np.datetime64(dates['London'][x]) for x in range(start+1,len(dates['London']))]
-dateLdeaths = [np.datetime64(dates_deaths['London'][x]) for x in range(start+1,len(dates_deaths['London']))]
+dateLdeaths = [np.datetime64(dates_deaths['London'][x]) for x in range(start+1, len(dates_deaths['London']))]
 clipEnd = 3
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 def make_lon(smoo):

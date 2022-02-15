@@ -1,13 +1,10 @@
-import os
 import pandas as pd
 import numpy as np
-import dash
-from dash import dcc
-from dash import html
+from dash import dcc, callback_context, html, Dash
+from dash.dependencies import Input, Output, State
+import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
-from dash.dependencies import Input, Output
-import dash_bootstrap_components as dbc
 import urllib.request
 import json
 
@@ -520,11 +517,14 @@ deathWho = np.asarray(list(WHOisr['New_deaths']))
 fixJH = np.asarray([['US', 'United States'], ['Korea, South', 'South Korea']])
 for ii in range(len(fixJH)):
     col = np.where(jhn[1, :] == fixJH[ii, 0])[0][0]
-    jhn[1,col] = fixJH[ii, 1]
+    jhn[1, col] = fixJH[ii, 1]
 country = []
+pop_jh = []
 for cntr in list(pop['entity']):
-    if cntr in jhn[1, :] and pop['population'][pop['entity'] == cntr].to_numpy()[0] > 3*10**6:
+    if cntr in jhn[1, :]:  # and pop['population'][pop['entity'] == cntr].to_numpy()[0] > 10**6:
         country.append(cntr)
+        pop_jh.append(pop['population'][pop['entity'] == cntr].to_numpy()[0])
+pop_jh = np.asarray(pop_jh)
 
 date_who_list = np.asarray(WHO['Date_reported'])
 death_who_list = np.asarray(WHO['New_deaths'])
@@ -540,20 +540,25 @@ WHO = WHO.replace('The United Kingdom', 'United Kingdom')
 country_who_list = np.asarray(WHO['Country'])
 country_whu = np.unique(country_who_list)
 country_common = []
-for cntr in country:
+pop_common = []
+for ii, cntr in enumerate(country):
     if cntr in list(WHO['Country']):
         country_common.append(cntr)
+        pop_common.append(pop_jh[ii])
 
 
-country_v = ['Canada', 'Germany', 'India', 'Italy', 'United Kingdom', 'United States', 'Israel']
+
 
 #%% compute deaths per million
 day0 = np.where(date_who_list == str(dateW[0]))[0][0]
 day1 = np.where(date_who_list == str(dateW[-1]))[0]
 if len(day1) == 0:
     day1 = np.where(date_who_list == str(dateW[-2]))[0]
+if len(day1) == 0:
+    day1 = np.where(date_who_list == str(dateW[-3]))[0]
 day1 = day1[0]+1
 dpm = {'WHO': {}, 'JH': {}}
+lastWeek = []
 for cc, ctr in enumerate(country_common):
     # print(str(cc)+' of '+str(len(country_common))+' '+ctr)
     pp = list(pop['population'][pop['entity'] == ctr])
@@ -572,15 +577,30 @@ for cc, ctr in enumerate(country_common):
     yW = np.asarray(yW) / pp * 10 ** 6
     yW[yW > 200] = np.nan
     dpm['WHO'][ctr] = yW
+    lastWeek.append(np.mean(yW[-7:]))
 
-
+order = np.argsort(lastWeek)
+order = order[::-1]
+large = []
+c = -1
+while len(large) < 10:
+    c += 1
+    if pop_common[order[c]] > 10**6:
+        large.append(country_common[order[c]])
+if 'Israel' not in large:
+    large.append('Israel')
+country_v = large  # list(np.asarray(country_common)[np.argsort(lastWeek)[-10:]])
+# country_v = ['Canada', 'Germany', 'India', 'Italy', 'United Kingdom', 'United States', 'Israel']
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
-# layout1 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+jet = ['#0000AA', '#0000FF', '#0055FF', '#00AAFF', '#00FFFF', '#55FFAA', '#AAFF55', '#FFFF00', '#FFAA00', '#FF5500'][::-1]*5
 def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
     figW = go.Figure(layout=layout)
-    figW.update_layout(font_size=15)
+    # figW.layout['colorscale']['sequential'] = 'inferno'
+    # figW.layout.colorscale = {'sequential': 'hot'}
     data = dpm[srcl]
     xl = [dateW[start_date], dateW[end_date]]
+    titW = 'Daily deaths per million. '
+    color_count = -1
     if srcl == 'WHO':
         td = -1
     else:
@@ -591,21 +611,29 @@ def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
             yyy = np.round(movmean(yyy, 7, nanTail=False), 2)
         if cum == 'cum':
             yyy = np.cumsum(yyy)
+            titW = 'Cumulative deaths per million. '
         else:
             yyy[-4:] = np.nan
-        figW.add_trace(go.Scatter(x=dateW+np.timedelta64(td), y=yyy, mode='lines', name=ct))
-    figW.update_layout(title_text=srcl, font_size=15, showlegend=True, hovermode="x unified",
+        if ct == 'Israel':
+            color_trace = '#000000'
+        else:
+            color_count += 1
+            color_trace = jet[color_count]
+        figW.add_trace(go.Scatter(x=dateW+np.timedelta64(td), y=yyy, mode='lines', name=ct, line={'color': color_trace}))
+    figW.update_layout(font_size=14, showlegend=True, hovermode="x unified",
                        hoverlabel=dict(bgcolor='rgba(255,255,255,0.25)',
                        bordercolor='rgba(255,255,255,0.25)',
                        font=dict(color='black')),
+                       title_text=titW+'Source: '+srcl,
+                       # sequential='hot',
                        legend=dict(
                            yanchor="top",
                            y=0.99,
                            xanchor="left",
-                           x=0.01
+                           x=-0.2
                        ),
                        margin=dict(
-                           l=50,
+                           l=150,
                            r=250,
                            b=100,
                            t=100,
@@ -614,10 +642,12 @@ def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
                        )
     figW.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%d/%m\n%Y")
     figW.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    # figW.layout.colorscale['sequential'] = 'hot'
+    figW.layout.colorscale.update()
     return figW
 
 
-app = dash.Dash(
+app = Dash(
     __name__,
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     # external_stylesheets=['https://codepen.io/chriddyp/pen/bWLwgP.css'],
@@ -719,11 +749,13 @@ app.layout = html.Div([
     ]),
     html.Div([
         html.Div([
-            html.H3('COVID19 deaths per million, WHO vs JH'),
-            html.A('World Health Organization vs Johns Hopkins data (=OWID)'),
+            html.H3('COVID19 deaths per million'),
+            html.A('First display is for World Health Organization (WHO) data.'), html.Br(),
+            html.A('Countries are selected for high mortality in last 7 days.'), html.Br(),
+            html.A('Deselect countries by clicking the legend, or uncheck from list.'),
         ]),
         dbc.Row([
-            html.Div([
+            dbc.Col([
                 dcc.RadioItems(id='src',
                                options=[
                                    {'label': 'WHO', 'value': 'WHO'},
@@ -732,8 +764,8 @@ app.layout = html.Div([
                                value='WHO',
                                labelStyle={'display': 'inline-block'}
                                ),
-            ]),
-            html.Div([
+            ], lg=1),
+            dbc.Col([
                 dcc.RadioItems(id='cum',
                                options=[
                                    {'label': 'cumulative', 'value': 'cum'},
@@ -741,10 +773,9 @@ app.layout = html.Div([
                                ],
                                value='dif',
                                labelStyle={'display': 'inline-block'}
-                               )
-            ]),
-
-            html.Div([
+                )
+            ], lg=2),
+            dbc.Col([
                 dcc.RadioItems(id='smoot',
                                options=[
                                    {'label': 'smooth ', 'value': 'sm'},
@@ -753,7 +784,8 @@ app.layout = html.Div([
                                value='sm',
                                labelStyle={'display': 'inline-block'}
                                )
-            ])
+            ], lg=1),
+            dbc.Col([html.Button('clear', id='btn-clear', n_clicks=0)], lg=1),
         ])
     ]),
 
@@ -859,14 +891,22 @@ def func(n_clicks):
 #     return dict(content=hospitalizationStatus, filename="VerfiiedVaccinationStatusDaily.csv")
 @app.callback(
     Output('deathW', 'figure'),
+    Output('checklist', 'value'),
     Input('src', 'value'),
     Input('cum', 'value'),
     Input('smoot', 'value'),
     Input('rangeslider', 'value'),
-    Input("checklist", "value")
+    Input("checklist", "value"),
+    Input('btn-clear', 'n_clicks'),
+    State("checklist", "options")
     )
-def update_world(src, cum, smoot, rangeslider, checklist):
-    figWorld = make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist)
-    return figWorld
+def update_world(src, cum, smoot, rangeslider, checklist, clear, options):
+    print(clear)
+    changed_id = [p['prop_id'] for p in callback_context.triggered][0]
+    if 'btn-clear' in changed_id:
+        checklist = ['Israel']
+    return make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist), checklist
+
+
 if __name__ == '__main__':
     app.run_server(debug=True)
