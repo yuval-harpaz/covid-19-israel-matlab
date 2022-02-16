@@ -214,7 +214,14 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
         txt60 = '(60+)'
     else:
         txt60 = '(<60)'
-    fig.update_layout(title_text=meas+' by vaccination status'+nrm+txt60, font_size=15, hovermode="x unified")
+    fig.update_layout(title_text=meas+' by vaccination status'+nrm+txt60, font_size=15, hovermode="x unified",
+                      legend=dict(
+                          yanchor="top",
+                          y=1.1,
+                          xanchor="left",
+                          x=0.05
+                      ),
+                      )
     return fig
 
 ## waning
@@ -495,9 +502,15 @@ def makeVE(dfW60, age_gr):
     return figW60
 #%% world
 JH = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+JHC = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+
 pop = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/scripts/input/un/population_latest.csv')
 JHT = JH.T
 jhn = JHT.to_numpy()
+jhc = JHC.T.to_numpy()
+if jhc.shape != jhn.shape:
+    raise Exception('JH different sizes')
+
 # owid = pd.read_csv('https://github.com/owid/covid-19-data/blob/master/public/data/owid-covid-data.csv?raw=true')
 JHisr = JH[JH['Country/Region'] == 'Israel']
 date_str = list(JHisr.columns[4:])
@@ -513,7 +526,8 @@ WHO = pd.read_csv('https://covid19.who.int/WHO-COVID-19-global-data.csv')
 wc = np.unique(np.asarray(WHO['Country']))
 WHOisr = WHO[WHO['Country'] == 'Israel']
 dateWho = np.asarray(list(WHOisr['Date_reported']))
-deathWho = np.asarray(list(WHOisr['New_deaths']))
+# deathWho = np.asarray(list(WHOisr['New_deaths']))
+# casesWho = np.asarray(list(WHOisr['New_cases']))
 fixJH = np.asarray([['US', 'United States'], ['Korea, South', 'South Korea']])
 for ii in range(len(fixJH)):
     col = np.where(jhn[1, :] == fixJH[ii, 0])[0][0]
@@ -528,6 +542,7 @@ pop_jh = np.asarray(pop_jh)
 
 date_who_list = np.asarray(WHO['Date_reported'])
 death_who_list = np.asarray(WHO['New_deaths'])
+cases_who_list = np.asarray(WHO['New_cases'])
 country_who_list = np.asarray(WHO['Country'])
 country_whu = np.unique(country_who_list)
 # for ii in country_whu:
@@ -559,6 +574,8 @@ if len(day1) == 0:
 day1 = day1[0]+1
 dpm = {'WHO': {}, 'JH': {}}
 lastWeek = []
+cpm = {'WHO': {}, 'JH': {}}
+lastWeekC = []
 for cc, ctr in enumerate(country_common):
     # print(str(cc)+' of '+str(len(country_common))+' '+ctr)
     pp = list(pop['population'][pop['entity'] == ctr])
@@ -567,17 +584,31 @@ for cc, ctr in enumerate(country_common):
     else:
         raise Exception('population for '+ctr+' wrong')
     row = np.where(country_who_list == country_common[cc])[0]
-    yW = death_who_list[row][day0:day1]
+
     yyW = np.sum(jhn[4:, jhn[1, :] == ctr], axis=1)
     yyW[1:] = np.diff(yyW)
     yyW =yyW / pp * 10 ** 6
     yyW = yyW.astype(float)
     yyW[yyW > 200] = np.nan
     dpm['JH'][ctr] = yyW
+
+    yyWc = np.sum(jhc[4:, jhc[1, :] == ctr], axis=1)
+    yyWc[1:] = np.diff(yyWc)
+    yyWc = yyWc / pp * 10 ** 6
+    yyWc = yyWc.astype(float)
+    # yyWc[yyWc > 200] = np.nan
+    cpm['JH'][ctr] = yyWc
+
+    yW = death_who_list[row][day0:day1]
     yW = np.asarray(yW) / pp * 10 ** 6
     yW[yW > 200] = np.nan
     dpm['WHO'][ctr] = yW
     lastWeek.append(np.mean(yW[-7:]))
+    yWc = cases_who_list[row][day0:day1]
+    yWc = np.asarray(yWc) / pp * 10 ** 6
+    # yWc[yWc > 200] = np.nan
+    cpm['WHO'][ctr] = yWc
+    lastWeekC.append(np.mean(yWc[-7:]))
 
 order = np.argsort(lastWeek)
 order = order[::-1]
@@ -589,17 +620,29 @@ while len(large) < 10:
         large.append(country_common[order[c]])
 if 'Israel' not in large:
     large.append('Israel')
-country_v = large  # list(np.asarray(country_common)[np.argsort(lastWeek)[-10:]])
+country_v = large
+orderC = np.argsort(lastWeekC)
+orderC = orderC[::-1]
+largeC = []
+c = -1
+while len(largeC) < 10:
+    c += 1
+    if pop_common[orderC[c]] > 10**6:
+        largeC.append(country_common[orderC[c]])
+if 'Israel' not in largeC:
+    largeC.append('Israel')
+country_c = largeC
 # country_v = ['Canada', 'Germany', 'India', 'Italy', 'United Kingdom', 'United States', 'Israel']
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 jet = ['#0000AA', '#0000FF', '#0055FF', '#00AAFF', '#00FFFF', '#55FFAA', '#AAFF55', '#FFFF00', '#FFAA00', '#FF5500'][::-1]*5
-def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
+def make_figW(srcl, cum, smooth, start_date, end_date, checklist, measure='deaths'):
     figW = go.Figure(layout=layout)
-    # figW.layout['colorscale']['sequential'] = 'inferno'
-    # figW.layout.colorscale = {'sequential': 'hot'}
-    data = dpm[srcl]
+    if measure == 'deaths':
+        data = dpm[srcl]
+    else:
+        data = cpm[srcl]
     xl = [dateW[start_date], dateW[end_date]]
-    titW = 'Daily deaths per million. '
+    titW = 'Daily '+measure+' per million. '
     color_count = -1
     if srcl == 'WHO':
         td = -1
@@ -611,7 +654,7 @@ def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
             yyy = np.round(movmean(yyy, 7, nanTail=False), 2)
         if cum == 'cum':
             yyy = np.cumsum(yyy)
-            titW = 'Cumulative deaths per million. '
+            titW = 'Cumulative '+measure+' per million. '
         else:
             yyy[-4:] = np.nan
         if ct == 'Israel':
@@ -624,7 +667,7 @@ def make_figW(srcl, cum, smooth, start_date, end_date, checklist):
                        hoverlabel=dict(bgcolor='rgba(255,255,255,0.25)',
                        bordercolor='rgba(255,255,255,0.25)',
                        font=dict(color='black')),
-                       title_text=titW+'Source: '+srcl,
+                       title_text=titW,
                        # sequential='hot',
                        legend=dict(
                            yanchor="top",
@@ -668,7 +711,7 @@ app.layout = html.Div([
                 dcc.Download(id="download-text"),
                 html.A(' '),
                 html.A('<json>', href='https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus', target='_blank'),
-                html.A('. Vacination status for  '),
+                html.A('. Download vaccination status for  '),
                 html.Button("Cases", id="btn-inf"),
                 dcc.Download(id="download-inf"),
                 html.A(' '),
@@ -749,10 +792,10 @@ app.layout = html.Div([
     ]),
     html.Div([
         html.Div([
-            html.H3('COVID19 deaths per million'),
-            html.A('First display is for World Health Organization (WHO) data.'), html.Br(),
-            html.A('Countries are selected for high mortality in last 7 days.'), html.Br(),
-            html.A('Deselect countries by clicking the legend, or uncheck from list.'),
+            html.H3('COVID19 deaths and cases per million'),
+            html.A('First display is for World Health Organization (WHO) data, you can switch to Johns Hopkins (OWID).'), html.Br(),
+            html.A('Countries are selected for high mortality in last 7 days. Use button to switch to top-cases countries'), html.Br(),
+            html.A('Deselect countries by clicking the legend, or uncheck from list. Select time with slider below.'),
         ]),
         dbc.Row([
             dbc.Col([
@@ -785,7 +828,10 @@ app.layout = html.Div([
                                labelStyle={'display': 'inline-block'}
                                )
             ], lg=1),
-            dbc.Col([html.Button('clear', id='btn-clear', n_clicks=0)], lg=1),
+            dbc.Col([html.Button('clear', id='btn-clear', n_clicks=0),
+                    html.A('       '), html.A('sort by: '),
+                    html.Button('deaths', id='btn-death-sort', n_clicks=0),
+                    html.Button('cases', id='btn-cases-sort', n_clicks=0)], lg=2),
         ])
     ]),
 
@@ -796,6 +842,7 @@ app.layout = html.Div([
             value=country_v,
             labelStyle={'display': 'inline-block'}),
         lg=5, md=12)]),
+    dbc.Row([dbc.Col(dcc.Graph(id='casesW'), lg=7, md=12)]),
     dbc.Col(dcc.RangeSlider(
         id='rangeslider',
         min=0,
@@ -891,6 +938,7 @@ def func(n_clicks):
 #     return dict(content=hospitalizationStatus, filename="VerfiiedVaccinationStatusDaily.csv")
 @app.callback(
     Output('deathW', 'figure'),
+    Output('casesW', 'figure'),
     Output('checklist', 'value'),
     Input('src', 'value'),
     Input('cum', 'value'),
@@ -898,14 +946,22 @@ def func(n_clicks):
     Input('rangeslider', 'value'),
     Input("checklist", "value"),
     Input('btn-clear', 'n_clicks'),
+    Input('btn-death-sort', 'n_clicks'),
+    Input('btn-cases-sort', 'n_clicks'),
     State("checklist", "options")
     )
-def update_world(src, cum, smoot, rangeslider, checklist, clear, options):
+def update_world(src, cum, smoot, rangeslider, checklist, clear, sortD, sortC, options):
     print(clear)
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     if 'btn-clear' in changed_id:
         checklist = ['Israel']
-    return make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist), checklist
+    elif 'btn-death-sort' in changed_id:
+        checklist = country_v
+    elif 'btn-cases-sort' in changed_id:
+        checklist = country_c
+    figDeaths = make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist)
+    figCases = make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist, measure='cases')
+    return figDeaths, figCases, checklist
 
 
 if __name__ == '__main__':
