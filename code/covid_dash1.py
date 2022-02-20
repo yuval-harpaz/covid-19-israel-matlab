@@ -576,6 +576,7 @@ dpm = {'WHO': {}, 'JH': {}}
 lastWeek = []
 cpm = {'WHO': {}, 'JH': {}}
 lastWeekC = []
+lastWeekRise = []
 for cc, ctr in enumerate(country_common):
     # print(str(cc)+' of '+str(len(country_common))+' '+ctr)
     pp = list(pop['population'][pop['entity'] == ctr])
@@ -596,10 +597,10 @@ for cc, ctr in enumerate(country_common):
     yyWc[1:] = np.diff(yyWc)
     yyWc = yyWc / pp * 10 ** 6
     yyWc = yyWc.astype(float)
-    bad = np.where(yyWc[1:]-yyWc[0:-1] > 15000)[0]
-    FIXME - too many nans for Israel
+    bad = np.where((yyWc[1:-1]-yyWc[0:-2] > 15000) & (yyWc[1:-1]-yyWc[2:] > 15000))[0]
+
     if len(bad) > 0:
-        yyWc[np.asarray(bad)+1] = np.nan
+        yyWc[bad+1] = np.nan
     # yyWc[yyWc > 200] = np.nan
     cpm['JH'][ctr] = yyWc
 
@@ -607,26 +608,26 @@ for cc, ctr in enumerate(country_common):
     yW = np.asarray(yW) / pp * 10 ** 6
     yW[yW > 200] = np.nan
     dpm['WHO'][ctr] = yW
-    lastWeek.append(np.mean(yW[-7:]))
+    lastWeek.append(np.nanmean(yW[-7:]))
     yWc = cases_who_list[row][day0:day1]
     yWc = np.asarray(yWc) / pp * 10 ** 6
-    bad = np.where(yWc[1:] - yWc[0:-1] > 20)[0]
+    bad = np.where((yWc[1:-1] - yWc[0:-2] > 15000) & (yWc[1:-1]-yWc[2:] > 15000))[0]
     if len(bad) > 0:
-        yWc[np.asarray(bad)+1] = np.nan
-    # yWc[yWc > 200] = np.nan
+        yWc[bad+1] = np.nan
     cpm['WHO'][ctr] = yWc
-    lastWeekC.append(np.mean(yWc[-7:]))
+    lastWeekC.append(np.nanmean(yWc[-7:]))
+    lastWeekRise.append(np.nanmean(yWc[-7:])-np.nanmean(yWc[-14:-7]))
+    # lastWeekRise.append(np.nanmean(yWc[-7:])/np.nanmean(yWc[-14:-7]))
 
+maxCountry = 3*10**5
 order = np.argsort(lastWeek)
 order = order[::-1]
 large = []
 c = -1
 while len(large) < 10:
     c += 1
-    if pop_common[order[c]] > 10**6:
+    if pop_common[order[c]] > maxCountry:
         large.append(country_common[order[c]])
-if 'Israel' not in large:
-    large.append('Israel')
 country_v = large
 orderC = np.argsort(lastWeekC)
 orderC = orderC[::-1]
@@ -634,11 +635,20 @@ largeC = []
 c = -1
 while len(largeC) < 10:
     c += 1
-    if pop_common[orderC[c]] > 10**6:
+    if pop_common[orderC[c]] > maxCountry:
         largeC.append(country_common[orderC[c]])
-if 'Israel' not in largeC:
-    largeC.append('Israel')
 country_c = largeC
+
+orderRise = np.argsort(lastWeekRise)
+orderRise = orderRise[::-1]
+largeRise = []
+c = -1
+while len(largeRise) < 10:
+    c += 1
+    if pop_common[orderRise[c]] > maxCountry:
+        largeRise.append(country_common[orderRise[c]])
+country_Rise = largeRise
+
 # country_v = ['Canada', 'Germany', 'India', 'Italy', 'United Kingdom', 'United States', 'Israel']
 layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 jet = ['#0000AA', '#0000FF', '#0055FF', '#00AAFF', '#00FFFF', '#55FFAA', '#AAFF55', '#FFFF00', '#FFAA00', '#FF5500'][::-1]*5
@@ -838,7 +848,8 @@ app.layout = html.Div([
             dbc.Col([html.Button('clear', id='btn-clear', n_clicks=0),
                     html.A('       '), html.A('sort by: '),
                     html.Button('deaths', id='btn-death-sort', n_clicks=0),
-                    html.Button('cases', id='btn-cases-sort', n_clicks=0)], lg=2),
+                    html.Button('cases', id='btn-cases-sort', n_clicks=0),
+                    html.Button('rise', id='btn-rise-sort', n_clicks=0)], lg=2),
         ])
     ]),
 
@@ -955,10 +966,10 @@ def func(n_clicks):
     Input('btn-clear', 'n_clicks'),
     Input('btn-death-sort', 'n_clicks'),
     Input('btn-cases-sort', 'n_clicks'),
+    Input('btn-rise-sort', 'n_clicks'),
     State("checklist", "options")
     )
-def update_world(src, cum, smoot, rangeslider, checklist, clear, sortD, sortC, options):
-    print(clear)
+def update_world(src, cum, smoot, rangeslider, checklist, clear, sortD, sortC, sortRise, options):
     changed_id = [p['prop_id'] for p in callback_context.triggered][0]
     if 'btn-clear' in changed_id:
         checklist = ['Israel']
@@ -966,6 +977,8 @@ def update_world(src, cum, smoot, rangeslider, checklist, clear, sortD, sortC, o
         checklist = country_v
     elif 'btn-cases-sort' in changed_id:
         checklist = country_c
+    elif 'btn-rise-sort' in changed_id:
+        checklist = country_Rise
     figDeaths = make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist)
     figCases = make_figW(src, cum, smoot, rangeslider[0], rangeslider[1], checklist, measure='cases')
     return figDeaths, figCases, checklist
