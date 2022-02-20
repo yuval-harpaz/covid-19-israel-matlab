@@ -596,6 +596,10 @@ for cc, ctr in enumerate(country_common):
     yyWc[1:] = np.diff(yyWc)
     yyWc = yyWc / pp * 10 ** 6
     yyWc = yyWc.astype(float)
+    bad = np.where(yyWc[1:]-yyWc[0:-1] > 15000)[0]
+    FIXME - too many nans for Israel
+    if len(bad) > 0:
+        yyWc[np.asarray(bad)+1] = np.nan
     # yyWc[yyWc > 200] = np.nan
     cpm['JH'][ctr] = yyWc
 
@@ -606,6 +610,9 @@ for cc, ctr in enumerate(country_common):
     lastWeek.append(np.mean(yW[-7:]))
     yWc = cases_who_list[row][day0:day1]
     yWc = np.asarray(yWc) / pp * 10 ** 6
+    bad = np.where(yWc[1:] - yWc[0:-1] > 20)[0]
+    if len(bad) > 0:
+        yWc[np.asarray(bad)+1] = np.nan
     # yWc[yWc > 200] = np.nan
     cpm['WHO'][ctr] = yWc
     lastWeekC.append(np.mean(yWc[-7:]))
