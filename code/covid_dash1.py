@@ -87,17 +87,43 @@ for im in [0, 1, 2]:  # cases, severe, deaths
               str(day_date[d1+shifts[im]])[:10],
               str(day_date[d2+shifts[im]])[:10],
               str(day_date[-shifts[-im-1]-1])[:10]]
-# print('severe')
-# print(dd[1])
-# print('deaths')
-# print(dd[2])
 
+hs = dfTS.to_numpy()
+deathTot = hs[:, np.where(dfTS.columns == 'countDeath')[0][0]]
+severeTot = hs[:, np.where(dfTS.columns == 'countSeriousCriticalCum')[0][0]]
+severeTot[1:] = np.diff(severeTot)
+dd0 = np.where(hs[:, 0] == '2021-06-20')[0][0]
+dd1 = np.where(hs[:, 0] == '2021-10-21')[0][0]
+dd2 = np.where(hs[:, 0] == '2021-12-11')[0][0]
+# yy[im, ia, 0, iv] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
+# yy[im, ia, 1, iv] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
+dfWaveTot = pd.DataFrame([['Delta', 'deaths', np.sum(deathTot[dd0+shifts[2]:dd1+shifts[2]])],
+                          ['Omi', 'deaths', np.sum(deathTot[dd2+shifts[2]:])],
+                          ['Delta', 'severe', np.sum(severeTot[dd0+shifts[1]:dd1+shifts[1]])],
+                          ['Omi', 'severe', np.sum(severeTot[dd2+shifts[1]:])]],
+                         columns=['wave', 'measure', 'patients'])
 
+figWaves = px.histogram(dfWaveTot, x="measure", y="patients", color='wave', barmode='group')
+figWaves.data[0].text = np.round(figWaves.data[0]['y'], 2)
+figWaves.data[1].text = np.round(figWaves.data[1]['y'], 2)
+figWaves.layout['yaxis']['title']['text'] = 'patients'
+figWaves.layout['xaxis']['title']['text'] = ''
+figWaves['data'][0]['marker']['color'] = 'green'
+figWaves['data'][1]['marker']['color'] = 'purple'
+figWaves['layout']['title'] = 'Deaths and severe patients (all ages)'
+figWaves['layout']['title']['x'] = 0.45
+figWaves['layout']['title']['font_color'] = "black"
+figWaves['layout']['title']['xanchor'] = 'center'
+
+# dfWaveTot = pd.DataFrame([['Delta', 'deaths', yy[2, 0, 0, 0]+yy[2, 1, 0, 0]+],
+#                           ['Omi', 'vaccinated', yy[2, age, 1, 0]/yy[1, age, 1, 0]],
+#                           ['Delta', 'unvaccinated', yy[2, age, 0, 1]/yy[1, age, 0, 1]],
+#                           ['Omi', 'unvaccinated', yy[2, age, 1, 1]/yy[1, age, 1, 1]]],
 def make_ratios(age=1):
-    dfRat = pd.DataFrame([['Delta', 'vaccinated', yy[2, age, 0, 0]/yy[1, 1, 0, 0]],
-                          ['Omi', 'vaccinated', yy[2, age, 1, 0]/yy[1, 1, 1, 0]],
-                          ['Delta', 'unvaccinated', yy[2, age, 0, 1]/yy[1, 1, 0, 1]],
-                          ['Omi', 'unvaccinated', yy[2, age, 1, 1]/yy[1, 1, 1, 1]]],
+    dfRat = pd.DataFrame([['Delta', 'vaccinated', yy[2, age, 0, 0]/yy[1, age, 0, 0]],
+                          ['Omi', 'vaccinated', yy[2, age, 1, 0]/yy[1, age, 1, 0]],
+                          ['Delta', 'unvaccinated', yy[2, age, 0, 1]/yy[1, age, 0, 1]],
+                          ['Omi', 'unvaccinated', yy[2, age, 1, 1]/yy[1, age, 1, 1]]],
                          columns=['wave', 'vaccination', 'death ratio'])
     dfSD = pd.DataFrame([['Delta', 'vaccinated', 'deaths', yy[2, age, 0, 0]],
                          ['Delta', 'vaccinated', 'severe', yy[1, age, 0, 0]],
@@ -585,39 +611,49 @@ for cc, ctr in enumerate(country_common):
     else:
         raise Exception('population for '+ctr+' wrong')
     row = np.where(country_who_list == country_common[cc])[0]
-
-    yyW = np.sum(jhn[4:, jhn[1, :] == ctr], axis=1)
-    yyW[1:] = np.diff(yyW)
-    yyW =yyW / pp * 10 ** 6
+    yyWcum = np.sum(jhn[4:, jhn[1, :] == ctr], axis=1)
+    yyWcum = yyWcum / pp * 10 ** 6
+    yyW = yyWcum.copy()
+    yyW[1:] = np.diff(yyWcum)
+    yyW =yyW
     yyW = yyW.astype(float)
     yyW[yyW > 200] = np.nan
-    dpm['JH'][ctr] = yyW
-
+    dpm['JH'][ctr] = {}
+    dpm['JH'][ctr]['daily'] = yyW
+    dpm['JH'][ctr]['cum'] = yyWcum
     yyWc = np.sum(jhc[4:, jhc[1, :] == ctr], axis=1)
-    yyWc[1:] = np.diff(yyWc)
     yyWc = yyWc / pp * 10 ** 6
-    yyWc = yyWc.astype(float)
-    bad = np.where((yyWc[1:-1]-yyWc[0:-2] > 15000) & (yyWc[1:-1]-yyWc[2:] > 15000))[0]
-
+    yyWd = yyWc.copy()
+    yyWd[1:] = np.diff(yyWc)
+    yyWd = yyWd.astype(float)
+    bad = np.where((yyWd[1:-1]-yyWd[0:-2] > 15000) & (yyWd[1:-1]-yyWd[2:] > 15000))[0]
     if len(bad) > 0:
-        yyWc[bad+1] = np.nan
-    # yyWc[yyWc > 200] = np.nan
-    cpm['JH'][ctr] = yyWc
+        yyWd[bad+1] = np.nan
+    cpm['JH'][ctr] = {}
+    cpm['JH'][ctr]['daily'] = np.round(yyWd)
+    cpm['JH'][ctr]['cum'] = np.round(yyWc.astype('float'))
 
     yW = death_who_list[row][day0:day1]
     yW = np.asarray(yW) / pp * 10 ** 6
+    yWcum = np.cumsum(yW)
     yW[yW > 200] = np.nan
-    dpm['WHO'][ctr] = yW
+    dpm['WHO'][ctr] = {}
+    dpm['WHO'][ctr]['daily'] = yW
+    dpm['WHO'][ctr]['cum'] = yWcum
     lastWeek.append(np.nanmean(yW[-7:]))
     yWc = cases_who_list[row][day0:day1]
     yWc = np.asarray(yWc) / pp * 10 ** 6
+    yWccum = np.cumsum(yWc)
     bad = np.where((yWc[1:-1] - yWc[0:-2] > 15000) & (yWc[1:-1]-yWc[2:] > 15000))[0]
     if len(bad) > 0:
         yWc[bad+1] = np.nan
-    cpm['WHO'][ctr] = yWc
+    cpm['WHO'][ctr] = {}
+    cpm['WHO'][ctr]['daily'] = np.round(yWc)
+    cpm['WHO'][ctr]['cum'] = np.round(yWccum.astype('float'))
     lastWeekC.append(np.nanmean(yWc[-7:]))
     lastWeekRise.append(np.nanmean(yWc[-7:])-np.nanmean(yWc[-14:-7]))
     # lastWeekRise.append(np.nanmean(yWc[-7:])/np.nanmean(yWc[-14:-7]))
+
 
 maxCountry = 3*10**5
 order = np.argsort(lastWeek)
@@ -666,14 +702,14 @@ def make_figW(srcl, cum, smooth, start_date, end_date, checklist, measure='death
     else:
         td = 0
     for ct in checklist:
-        yyy = data[ct]
-        if smooth == 'sm':
+        yyy = data[ct][cum]
+        if smooth == 'sm' and cum == 'daily':
             yyy = np.round(movmean(yyy, 7, nanTail=False), 2)
-        if cum == 'cum':
-            yyy = np.cumsum(yyy)
-            titW = 'Cumulative '+measure+' per million. '
-        else:
             yyy[-4:] = np.nan
+        if cum == 'cum':
+            # yyy = np.cumsum(yyy)
+            titW = 'Cumulative '+measure+' per million. '
+
         if ct == 'Israel':
             color_trace = '#000000'
         else:
@@ -701,7 +737,7 @@ def make_figW(srcl, cum, smooth, start_date, end_date, checklist, measure='death
                        ),
                        )
     figW.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', range=xl, dtick="M1", tickformat="%d/%m\n%Y")
-    figW.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
+    figW.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray')
     # figW.layout.colorscale['sequential'] = 'hot'
     figW.layout.colorscale.update()
     return figW
@@ -804,6 +840,7 @@ app.layout = html.Div([
             dbc.Col(dcc.Graph(id='frat1'), lg=3),
             dbc.Col(dcc.Graph(id='frat2'), lg=3),
             dbc.Col(dcc.Graph(id='frat3'), lg=3),
+            dbc.Col(dcc.Graph(figure=figWaves), lg=3),
             dbc.Col(dcc.Graph(id='g2', figure=fig1), lg=6, md=12)
         ]),
     ]),
@@ -829,9 +866,9 @@ app.layout = html.Div([
                 dcc.RadioItems(id='cum',
                                options=[
                                    {'label': 'cumulative', 'value': 'cum'},
-                                   {'label': 'daily', 'value': 'dif'}
+                                   {'label': 'daily', 'value': 'daily'}
                                ],
-                               value='dif',
+                               value='daily',
                                labelStyle={'display': 'inline-block'}
                 )
             ], lg=2),
