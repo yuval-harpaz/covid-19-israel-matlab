@@ -29,6 +29,8 @@ iTests = find(ismember({json(:).id},'tests_positive'));
 date = datetime(cellfun(@(x) x(1:10),{json(iTests).data.date}','UniformOutput',false));
 iDeaths = find(ismember({json(:).id},'deaths'));
 dateDeaths = datetime(cellfun(@(x) x(1:10),{json(iDeaths).data.date}','UniformOutput',false));
+
+
 tests = [json(iTests).data.amount]';
 tests_result = [json(iTests).data.amountVirusDiagnosis]';
 tests_positive = [json(iTests).data.positiveAmount]';
@@ -64,6 +66,7 @@ data.CountEasyStatus(idx) = [json(iHosp1).data.countEasyStatus];
 data.CountMediumStatus(idx) = [json(iHosp1).data.countMediumStatus];
 data.CountHardStatus(idx) = [json(iHosp1).data.countHardStatus];
 
+death2 = [json(iHosp1).data.countDeaths];
 
 if ~isequal(data(end,1:4),dataPrev(end,1:4))
     tests0 = sum(tests(1:find(tests_positive == 0,1)-1));

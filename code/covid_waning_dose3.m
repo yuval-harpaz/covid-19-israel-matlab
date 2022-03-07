@@ -220,7 +220,23 @@ xlabel('infection week')
 ylabel('vaccination week')
 zlabel('cases per million')
 title('Infections by time from dose III, <60')
+%% 
+% c = 0;
+clear X Y Z
+for ii = 1:size(cpm,1)
+    for jj = 1:size(cpm,2)
+%         c = c + 1;
+        X(ii,jj) = jj;
+        Y(ii,jj) = ii;
+%         Z(c,1) = yy(ii,jj,1);
+    end
+end
 
+figure;
+contourf(X,Y,cpm, 50,'linestyle','none');
+hold on
+contour(X,Y,cpm, 10,'k');
+axis square
 %%
 views = [-15;-15;-15;(-15:-15:-175)';-175;-175;-175]+3;
 views(:,2) = 43;
