@@ -18,6 +18,7 @@ cells = strrep(cells,'10-14','12');
 cases = cellfun(@str2num, cells);
 cases(cases == -4) = 0;
 cpm = round(cases./cellfun(@str2num, t60.group_size).*10^6,1);
+cpm(25,25) = round((cpm(24,24)+cpm(26,26))/2); % noisy spike
 m = month(weekInfec);
 mn = cellstr(datestr(datetime(1,m,1),'mmm'));
 [a,b,c] = unique(m);
@@ -182,7 +183,7 @@ figure;
 mesh(X,Y,cpm,'FaceColor','interp','EdgeColor','interp');
 % contour3(X,Y,cpm, 10);
 hold on
-contour3(X,Y,cpm, 10000:10000:40000,'k');
+contour3(X,Y,cpm, 5000:5000:40000,'k');
 % surf(X,Y,cpm,'linestyle','none');
 % contour3(X,Y,cpm, 50,'linestyle','none');
 xlabel('infection week')
@@ -192,7 +193,7 @@ title('Infections by time from dose III, 60+')
 grid on
 views = [-15;-15;-15;(-15:-15:-175)';-175;-175;-175]+3;
 views(:,2) = 43;
-view(views(vv,:))
+view(views(17,:))
 zlim([0 40000])
 set(gca,'ZTick',0:10000:40000)
 % axis square
