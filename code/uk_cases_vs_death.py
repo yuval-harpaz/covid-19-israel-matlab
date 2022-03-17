@@ -66,7 +66,11 @@ dateLhosp = [np.datetime64(x) for x in data['London']['hosp']['date'][i65]]
 old = np.asarray(data['London']['hosp']['value'][i65]) + np.asarray(data['London']['hosp']['value'][i85])
 old[1:] = np.diff(old)
 # dfAge = pd.read_json(response.text)
-start = 21  # avoid empty
+emp = []
+for dat in data['London']['maleCases']:
+    emp.append(dat[0] == [])
+start = np.where(emp)[0][-1]+1
+
 male = np.asarray(data['London']['maleCases'][start:])
 female = np.asarray(data['London']['femaleCases'][start:])
 London = np.diff(male + female, axis=0)
