@@ -50,7 +50,7 @@ yy1 = yy1(:,2:end,:);
 xtick1 = xtick1-1;
 yy(end+1:size(yy1,1),end+1:size(yy1,2),:) = nan;
 %%
-for clim = [3000, 30000];
+for clim = [3000, 20000];
     xEnd = length(weekInfec)+0.5;
     figure;
     subplot(2,1,1)
