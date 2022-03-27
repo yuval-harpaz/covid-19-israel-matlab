@@ -17,11 +17,11 @@ json = jsondecode(json);
 cases = struct2table(json);
 cases.day_date = datetime(strrep(cases.day_date,'T00:00:00.000Z',''));
 cases.Properties.VariableNames{1} = 'date';
-
-cOld = ismember(cases.age_group,'מעל גיל 60');
-sOld = ismember(severe.age_group,'מעל גיל 60');
-dOld = ismember(deathsm.age_group,'מעל גיל 60');
-if ~isequal(cOld,dOld) && ~isequal(cOld,sOld)
+age = 'מעל גיל 60';  % age = 'מתחת לגיל 60';
+ccc = ismember(cases.age_group,age);
+sss = ismember(severe.age_group,age);
+ddd = ismember(deathsm.age_group,age);
+if ~isequal(ccc,ddd) && ~isequal(ccc,sss)
     error('not same index')
 end
 mn = dateshift(cases.date,'start','month');
@@ -29,30 +29,30 @@ mnu = unique(mn);
 clear ve2 ve3
 for ii = 1:12+month(datetime('today'))
     im = ismember(mn,mnu(ii));
-    y = nanmean(cases.verified_expired_normalized(cOld & im));
+    y = nanmean(cases.verified_expired_normalized(ccc & im));
     yso(ii,1) = y;
 %     if y < 1
 %         y = nan;
 %     end
-    veOld(ii,1) = 100*(1-(y./nanmean(cases.verified_not_vaccinated_normalized(cOld & im))));
-    y = mean(severe.serious_expired_normalized(cOld & im));
+    veOld(ii,1) = 100*(1-(y./nanmean(cases.verified_not_vaccinated_normalized(ccc & im))));
+    y = mean(severe.serious_expired_normalized(ccc & im));
     yso(ii,2) = y;
-    veOld(ii,2) = 100*(1-(y./mean(severe.serious_not_vaccinated_normalized(cOld & im))));
-    y = mean(deathsm.death_expired_normalized(cOld & im));
+    veOld(ii,2) = 100*(1-(y./mean(severe.serious_not_vaccinated_normalized(ccc & im))));
+    y = mean(deathsm.death_expired_normalized(ccc & im));
     yso(ii,3) = y;
-    veOld(ii,3) = 100*(1-(y./mean(deathsm.death_not_vaccinated_normalized(cOld & im))));
-    y = nanmean(cases.verified_vaccinated_normalized(cOld & im));
+    veOld(ii,3) = 100*(1-(y./mean(deathsm.death_not_vaccinated_normalized(ccc & im))));
+    y = nanmean(cases.verified_vaccinated_normalized(ccc & im));
     yso(ii,4) = y;
-    veNew(ii,1) = 100*(1-(y./nanmean(cases.verified_not_vaccinated_normalized(cOld & im))));
-    boost(ii,1) = 100*(1-(y./nanmean(cases.verified_expired_normalized(cOld & im))));
-    y = mean(severe.serious_vaccinated_normalized(cOld & im));
+    veNew(ii,1) = 100*(1-(y./nanmean(cases.verified_not_vaccinated_normalized(ccc & im))));
+    boost(ii,1) = 100*(1-(y./nanmean(cases.verified_expired_normalized(ccc & im))));
+    y = mean(severe.serious_vaccinated_normalized(ccc & im));
     yso(ii,5) = y;
-    veNew(ii,2) = 100*(1-(y./mean(severe.serious_not_vaccinated_normalized(cOld & im))));
-    boost(ii,2) = 100*(1-(y./mean(severe.serious_expired_normalized(cOld & im))));
-    y = mean(deathsm.death_vaccinated_normalized(cOld & im));
+    veNew(ii,2) = 100*(1-(y./mean(severe.serious_not_vaccinated_normalized(ccc & im))));
+    boost(ii,2) = 100*(1-(y./mean(severe.serious_expired_normalized(ccc & im))));
+    y = mean(deathsm.death_vaccinated_normalized(ccc & im));
     yso(ii,6) = y;
-    veNew(ii,3) = 100*(1-(y./mean(deathsm.death_not_vaccinated_normalized(cOld & im))));
-    boost(ii,3) = 100*(1-(y./mean(deathsm.death_expired_normalized(cOld & im))));
+    veNew(ii,3) = 100*(1-(y./mean(deathsm.death_not_vaccinated_normalized(ccc & im))));
+    boost(ii,3) = 100*(1-(y./mean(deathsm.death_expired_normalized(ccc & im))));
     
     
 end

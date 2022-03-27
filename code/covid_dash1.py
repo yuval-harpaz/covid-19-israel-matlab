@@ -257,8 +257,6 @@ with urllib.request.urlopen(url1) as api1:
 win = 7
 
 
-
-
 df1 = pd.DataFrame(data1['result']['records'])
 date1 = np.asarray(pd.to_datetime(df1['תאריך']))
 url2 = 'https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily'
@@ -309,222 +307,101 @@ smExp[-3] = smExp[-4]
 smExp[-2] = smExp[-4]
 smExp[-1] = smExp[-4]
 unvax = np.asarray(df2['verified_not_vaccinated_normalized'])
-## VE TIMNA
-urlVE = 'https://data.gov.il/api/3/action/datastore_search?resource_id=9b623a64-f7df-4d0c-9f57-09bd99a88880&limit=50000'
-with urllib.request.urlopen(urlVE) as api1:
-    dataCases = json.loads(api1.read().decode())
 
-for week in dataCases['result']['records']:
-    keys = list(week.keys())
-    for field in keys:
-        if week[field] == '<5':
-            week[field] = '2.5'
-        if week[field] == '<15':
-            week[field] = '7'
-cases = pd.DataFrame(dataCases['result']['records'])
-# dateVE = np.asarray(pd.to_datetime(cases['Week'].str.slice(12, 23)))
-# doVE3 = False
-# if doVE3:
-urlVacc = 'https://data.gov.il/api/3/action/datastore_search?resource_id=57410611-936c-49a6-ac3c-838171055b1f&limit=5000'
-with urllib.request.urlopen(urlVacc) as api1:
-    dataVacc = json.loads(api1.read().decode())
-for day in dataVacc['result']['records']:
-    keys = list(day.keys())
-    for field in keys:
-        if day[field] == '<15':
-            day[field] = '7'
-        if day[field] == '<5':
-            day[field] = '2'
-vaccA = pd.DataFrame(dataVacc['result']['records'])
-# dateVacc = pd.to_datetime(vaccA['VaccinationDate'])
-vaccA['first_dose'] = vaccA['first_dose'].astype(int)
-vaccA['second_dose'] = vaccA['second_dose'].astype(int)
-vaccA['third_dose'] = vaccA['third_dose'].astype(int)
-# dd = dateVacc.sort_values()  # maybe no need to sort
+date_ve = np.sort(np.unique(np.asarray(pd.to_datetime(dfsNorm[0]['day_date'].str.slice(0,10)))))
+month_u = date2.astype('datetime64[M]').astype(int)
+month = date2.astype('datetime64[M]').astype(int) % 12 + 1
+year = date2.astype('datetime64[Y]').astype(int) + 1970
+date_m = np.array(np.unique(month_u), dtype='datetime64[M]')
+ms = measure.copy()
+ms.append('Date')
+# ve_by_month = [{'heb': ages2[0], 'eng': 'under 60', 'data': dict(zip(ms, [[], [], [], date_m]))},
+#                {'heb': ages2[1], 'eng': 'over 60', 'data': dict(zip(ms, [[], [], [], date_m]))}]
+ve_ages = ['60+','<60']
+ve_list = [[], []]
+dfVE2 = []
+for iage, age in enumerate(ages2):
+    for imon, mon in enumerate(np.unique(month_u)):
+        for imea, mea in enumerate(measure):
+            dfve = dfsNorm[imea].copy()
+            dfve = dfve.loc[dfsNorm[imea]['age_group'] == age]
+            dfve.reset_index(drop=True, inplace=True)
+            vem = 1-dfve['vaccinated'][month_u == mon].sum() / dfve['unvaccinated'][month_u == mon].sum()
+            ve_list[iage].append([date_m[imon], mea, vem])
+    dfVE2.append(pd.DataFrame(ve_list[iage], columns = ['Date', 'measure', 'patients']))
+            # ve_by_month[iage]['data'][mea].append(vem)
 
-# keep 60+ only
-ages = cases['Age_group'].unique()
-iAge = [5, 6, 7, 8]
-mask = cases['Age_group'].isin(ages[iAge])
-cases = cases[mask]
-dateVE = np.asarray(pd.to_datetime(cases['Week'].str.slice(12, 23)))
-weekEnd = np.unique(dateVE)
-weekEnd.sort()
-mask = vaccA['age_group'].isin(ages[iAge])
-vaccX = vaccA[mask]
-dateVacc = np.asarray(pd.to_datetime(vaccX['VaccinationDate']))
+# for iage, age in enumerate(ages2):
+#     for imea, mea in enumerate(measure):
+#         dfve = dfsNorm[imea].copy()
+#         dfve = dfve.loc[dfsNorm[imea]['age_group'] == age]
+#         dfve.reset_index(drop=True, inplace=True)
+#         for mon in np.unique(month_u):
+#             vem = 1-dfve['vaccinated'][month_u == mon].sum() / dfve['unvaccinated'][month_u == mon].sum()
+#             ve_by_month[iage]['data'][mea].append(vem)
 
-pop = 1587000
-
-dose2 = np.ndarray((len(cases), 3))
-dose3 = np.ndarray((len(cases), 3))
-dose2[:, 0] = np.asarray(cases['positive_14_30_days_after_2nd_dose'].astype(float))
-dose2[:, 1] = cases['positive_14_30_days_after_3rd_dose'].astype(float)
-dose2[:, 2] = cases['positive_above_3_month_after_2nd_before_3rd_dose'].astype(float)
-dose2 = np.nansum(dose2, axis=1)
-dose3[:, 0] = np.asarray(cases['positive_14_30_days_after_3rd_dose'].astype(float))
-dose3[:, 1] = np.asarray(cases['positive_31_90_days_after_3rd_dose'].astype(float))
-dose3[:, 2] = np.asarray(cases['positive_above_90_days_after_3rd_dose'].astype(float))
-dose3 = np.nansum(dose3, axis=1)
-unvacc = np.asarray(cases['Sum_positive_without_vaccination'].astype(float))
-ve2 = np.ndarray(len(weekEnd))
-ve3 = np.ndarray(len(weekEnd))
-for ii in range(len(weekEnd)):
-    date1 = weekEnd[ii]
-    caseRow = dateVE == weekEnd[ii]
-    # first dose a week before, used to evaluate unvaccinated
-    idx = dateVacc < (date1-7+3)
-    if np.sum(idx) == 0:
-        vacc1 = 0
-    else:
-        vacc1 = np.sum(vaccX['first_dose'][idx])
-    # third dose 20 days before
-    idx = dateVacc < (date1-20+3)
-    if np.sum(idx) == 0:
-        vacc3 = 0
-    else:
-        vacc3 = np.sum(vaccX['third_dose'][idx])
-    # 2nd dose two weeks before (but with no 3rd dose)
-    idx = dateVacc < (date1-14+3)
-    if np.sum(idx) == 0:
-        vacc2 = 0
-    else:
-        vc3 = np.sum(vaccX['third_dose'][idx])
-        vacc2 = np.sum(vaccX['second_dose'][idx]) - vc3
-    ve2[ii] = 100*(1-(np.nansum(dose2[caseRow])/vacc2)/(np.nansum(unvacc[caseRow])/(pop-vacc1)))
-    ve3[ii] = 100 * (1 - (np.nansum(dose3[caseRow]) / vacc3) / (np.nansum(unvacc[caseRow]) / (pop - vacc1)))
-
-ve3[[31, 32, 33]] = np.nan  # 100% VE, too few vaccinated
-ve3 = np.round(ve3, 1)
-ve2 = np.round(ve2, 1)
+figW60 = px.histogram(dfVE2[0], x="Date", y='patients', color='measure', barmode='group', nbins=len(date_m))
+figW60.update_layout(bargap=0.2)
+figW60.show()
+print('okay')
 
 
-def make_wane(dfW, win=7):
-    win = int(np.floor((int(win)-1)/2)*2+1)
 
-    # smExp = np.round(smExp, 1)
-    ratioVax =  ((np.asarray(df2['verified_amount_vaccinated']) + \
-                np.asarray(df2['verified_amount_expired'])) / \
-                (sm + smExp))
-    VE = 100*(1-ratioVax/(movmean(unvax, win, nanTail=False)/10**5))
-    idx = [np.where(date == date2[0])[0][0], np.where(date == date2[-1])[0][0]+1]
-    VE = np.round(movmean(VE, win, nanTail=False), 1)
-    if win > 1:
-        VE[-int(win / 2):] = np.nan
-    ve[idx[0]:idx[1]] = VE
-    # df7 = dfAge.rolling(win, min_periods=3).mean().round(1)
-
-    dfW['VE for 60+ cases (2 doses or more)'] = ve
-    # df7['cases (normalized)'] = np.round(100*df7['cases (normalized)']/np.max(df7['cases (normalized)']))
-    dfW['% unvaccinated of mild hospitalizations'] = np.round(
-        movmean(np.asarray(dfW['% unvaccinated of mild hospitalizations']), win, True),1)
-    dfW['% unvaccinated of 60+ cases'] = np.round(
-        movmean(np.asarray(dfW['% unvaccinated of 60+ cases']), win, True), 1)
-
-    xl = [str(np.datetime_as_string(date[288]))[0:10], str(np.datetime_as_string(date[-1]))[0:10]]
-    dfW['date'] = date
-    layoutW = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', xaxis_range=xl)
-    fig_wane = go.Figure(layout=layoutW)
-    fig_wane.add_trace(go.Scatter(x=weekEnd - 3, y=ve2, name='VE dose 2, Data.Gov', line_color='#66ff66'))
-    fig_wane.add_trace(go.Scatter(x=weekEnd - 3, y=ve3, name='VE dose 3, Data.Gov', line_color='#227722'))
-    # name = 'VE for 60+ cases (2 doses or more)'
-    # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='VE dose 2+3, dashboard'))
-    # name = '% unvaccinated of mild hospitalizations'
-    # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of mild hospitalizations'))
-    # name = '% unvaccinated of 60+ cases'
-    # fig_wane.add_trace(go.Scatter(x=dfW['date'], y=dfW[name], line_color='red', name='% unvax of 60+ cases'))
-
-    fig_wane.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', zerolinecolor='lightgray',
-                          # tickfont=dict(color="#cc3333"), titlefont=dict(color="#cc3333"), title='VE',
-                          range=[-50, 100], title='VE', hoverformat=None)
-    fig_wane.add_trace(go.Scatter(x=dfW['date'], y=np.round(dfW['cases']), yaxis='y2', name='Cases', line_color='#bbbbbb'))
-    fig_wane.update_layout(
-        legend=dict(
-                        yanchor="top",
-                        y=1.1,
-                        xanchor="left",
-                        x=1.05
-                    ),
-        title_text="Crude VE (60+) for dose II and dose III.", font_size=15, hovermode="x unified",
-        yaxis=dict(
-            side="right",
-            gridcolor='lightgray',
-            zerolinecolor='lightgray'
-        ),
-        yaxis2=dict(
-        #     title="Cases",
-        #     anchor="free",
-        #     overlaying="y",
-        #     side="right",
-        #     position=1,
-            showgrid=False,
-            zerolinecolor='lightgray',
-            gridcolor='lightgray',
-        #     range=[0, 50000])
-        ))
-    # fig_wane.layout['yaxis']['titlefont']['color'] = "#cc3333"
-    fig_wane.layout['yaxis2']['title'] = 'Cases'
-    fig_wane.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray',
-                          dtick="M1", tickformat="%d/%m\n%Y", range=xl)
-    fig_wane.layout['xaxis']['title'] = 'Month'
-    fig_wane.layout['yaxis']['dtick'] = 10
-    # fig_wane.show()
-    return fig_wane
-
-
-def makeVE(dfW60, age_gr):
+def makeVE(age_gr):
+    # dfW60 = dfsNorm[0].copy()
     if age_gr == 'מעל גיל 60':
         tit = "Crude VE (60+) vs cases per 100k, for recently vaccinated (<6m) and unvaccinated"
+        ag = 0
     else:
         tit = "Crude VE (<60) vs cases per 100k, for recently vaccinated (<6m) and unvaccinated"
-    df_age = dfW60.loc[dfW60["age_group"] == age_gr]
-    df_age = df_age.reset_index()
-    tm = df_age['date'].to_numpy()
-    date2ve = []
-    for t in tm:
-        date2ve.append(pd.Timestamp.to_datetime64(t))
-    date2ve = np.asarray(date2ve)
-    # date2ve = np.datetime64(df_age['date'].to_string.str.slice(0,10))
-    # date2ve = np.asarray(pd.to_datetime(df2['day_date'].str.slice(0, 10)))
-    vaccW60 = np.round(movmean(np.asarray(df_age['vaccinated']), 7, nanTail=False), 2)
-    unvaccW60 = np.round(movmean(np.asarray(df_age['unvaccinated']), 7, nanTail=False), 2)
-    veW60 = np.round(100 * (1 - vaccW60 / unvaccW60))
-    xlW60 = [str(np.datetime_as_string(date2ve[4]))[0:10],
-             str(np.datetime_as_string(date2ve[-1] + np.timedelta64(1, 'D')))[0:10]]
-    layoutW60 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-                          xaxis_range=xlW60)  # , xaxis_range=xl)
-    figW60 = go.Figure(layout=layoutW60)
-    figW60.add_trace(go.Scatter(x=date2ve, y=veW60, name='VE                                      ', line_color='#222277'))
-    figW60.add_trace(go.Scatter(x=date2ve[-4:], y=veW60[-4:], name='not final', line_color='#aaaaaa'))
-    figW60.update_yaxes(range=[-50, 100], dtick=10, zeroline=True, zerolinecolor='#aaaaaa', gridcolor='#bdbdbd')
-    figW60.add_trace(go.Scatter(x=date2ve, y=vaccW60, yaxis='y2', name='vaccinated   ', line_color='#99ff99'))
-    figW60.update_xaxes(dtick="M1", tickformat="%d-%b \n%Y", gridcolor='#bdbdbd')
-    figW60.update_layout(
-        yaxis_title="crude VE (%)",
-        yaxis=dict(
-            tickmode='linear',
-            zeroline=True,
-        ),
-        legend=dict(
-            yanchor="top",
-            y=1.1,
-            xanchor="left",
-            x=1.05
-        ),
-        title_text=tit, font_size=15, hovermode="x unified",
-        yaxis2=dict(
-            title="Cases per 100k",
-            color='#ff9999',
-            anchor="free",
-            overlaying="y",
-            side="right",
-            position=1,
-            zerolinecolor='lightgray',
-            gridcolor='lightgray',
-            zeroline=True,
-            range=[0, 150]
-        ))
-    figW60.add_trace(go.Scatter(x=date2ve, y=unvaccW60, yaxis='y2', name='unvaccinated', line_color='#ff9999'))
+        ag = 1
+
+    figW60 = px.histogram(dfVE2[ag], x="Date", y='patients', color='measure', barmode='group')
+    figWaves.data[0].text = np.round(figWaves.data[0]['y'], 2)
+    figWaves.data[1].text = np.round(figWaves.data[1]['y'], 2)
+    figWaves.layout['yaxis']['title']['text'] = 'patients'
+    figWaves.layout['xaxis']['title']['text'] = ''
+    figWaves['data'][0]['marker']['color'] = 'green'
+    figWaves['data'][1]['marker']['color'] = 'purple'
+    figWaves['layout']['title'] = 'Deaths and severe patients (all ages)'
+    figWaves['layout']['title']['x'] = 0.45
+    figWaves['layout']['title']['font_color'] = "black"
+    figWaves['layout']['title']['xanchor'] = 'center'
+
+    # layoutW60 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+    #                       xaxis_range=xlW60)  # , xaxis_range=xl)
+    # # figW60 = go.Figure(layout=layoutW60)
+    # figW60.add_trace(go.Scatter(x=date2ve, y=veW60, name='VE                                      ', line_color='#222277'))
+    # figW60.add_trace(go.Scatter(x=date2ve[-4:], y=veW60[-4:], name='not final', line_color='#aaaaaa'))
+    # figW60.update_yaxes(range=[-50, 100], dtick=10, zeroline=True, zerolinecolor='#aaaaaa', gridcolor='#bdbdbd')
+    # figW60.add_trace(go.Scatter(x=date2ve, y=vaccW60, yaxis='y2', name='vaccinated   ', line_color='#99ff99'))
+    # figW60.update_xaxes(dtick="M1", tickformat="%d-%b \n%Y", gridcolor='#bdbdbd')
+    # figW60.update_layout(
+    #     yaxis_title="crude VE (%)",
+    #     yaxis=dict(
+    #         tickmode='linear',
+    #         zeroline=True,
+    #     ),
+    #     legend=dict(
+    #         yanchor="top",
+    #         y=1.1,
+    #         xanchor="left",
+    #         x=1.05
+    #     ),
+    #     title_text=tit, font_size=15, hovermode="x unified",
+    #     yaxis2=dict(
+    #         title="Cases per 100k",
+    #         color='#ff9999',
+    #         anchor="free",
+    #         overlaying="y",
+    #         side="right",
+    #         position=1,
+    #         zerolinecolor='lightgray',
+    #         gridcolor='lightgray',
+    #         zeroline=True,
+    #         range=[0, 150]
+    #     ))
+    # figW60.add_trace(go.Scatter(x=date2ve, y=unvaccW60, yaxis='y2', name='unvaccinated', line_color='#ff9999'))
     return figW60
 #%% world
 JH = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
@@ -918,13 +795,13 @@ app.layout = html.Div([
         ]),
         dbc.Col(dcc.Graph(id='gw60'), lg=8, md=12)
     ]),
-    dbc.Row([dbc.Col(dcc.Graph(id='gw'), lg=8, md=12)]),
+    # dbc.Row([dbc.Col(dcc.Graph(id='gw'), lg=8, md=12)]),
 ])
 @app.callback(
     Output('infected', 'figure'),
     Output('severe', 'figure'),
     Output('death', 'figure'),
-    Output('gw', 'figure'),
+    # Output('gw', 'figure'),
     Output('gw60', 'figure'),
     Output('frat1', 'figure'),
     Output('frat2', 'figure'),
@@ -947,14 +824,14 @@ def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date
         figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ', start_date, end_date, loglin)
         figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date, loglin)
         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ', start_date, end_date, loglin)
-    fige = make_wane(dfAge.copy())
-    figf = makeVE(dfsNorm[0].copy(), age60w)
+    # fige = make_wane(dfAge.copy())
+    figf = makeVE(age60w)
     if age_group == 'מעל גיל 60':
         age = 1
     else:
         age = 0
     figG, figH, figI = make_ratios(age=age)
-    return figb, figc, figd, fige, figf, figG, figH, figI
+    return figb, figc, figd, figf, figG, figH, figI
 
 @app.callback(
     Output("download-text", "data"),
