@@ -342,8 +342,8 @@ for iage, age in enumerate(ages2):
 
 figW60 = px.histogram(dfVE2[0], x="Date", y='patients', color='measure', barmode='group', nbins=len(date_m))
 figW60.update_layout(bargap=0.2)
-figW60.show()
-print('okay')
+# figW60.show()
+# print('okay')
 
 
 
