@@ -79,7 +79,7 @@ xlim(xl);
 legend('VE for positive tests','VE for severe illness','VE for deaths','new severe cases (normalized)','location','north')
 xtickformat('MMM')
 xtickangle(0)
-set(gca,'ygrid','on','YTick',0:10:100)
+set(gca,'ygrid','on','YTick',0:10:100,'XTick',datetime(2021,1:50,1))
 title('VE for 60+ by month, recently vaccinated')
 set(gcf,'Color','w')
 box off
@@ -98,7 +98,7 @@ xlim(xl);
 % legend('VE for positive tests','VE for severe illness','VE for deaths','new severe cases (normalized)')
 xtickformat('MMM')
 xtickangle(0)
-set(gca,'ygrid','on','YTick',0:10:100)
+set(gca,'ygrid','on','YTick',0:10:100,'XTick',datetime(2021,1:50,1))
 title('VE for 60+ by month, expired vaccination')
 set(gcf,'Color','w')
 box off
@@ -117,7 +117,7 @@ xlim(xl);
 % legend('VE for positive tests','VE for severe illness','VE for deaths','new severe cases (normalized)')
 xtickformat('MMM')
 xtickangle(0)
-set(gca,'ygrid','on','YTick',0:10:100)
+set(gca,'ygrid','on','YTick',0:10:100,'XTick',datetime(2021,1:50,1))
 title('VE for 60+ by month, valid vaccine compared to expired')
 set(gcf,'Color','w')
 box off
