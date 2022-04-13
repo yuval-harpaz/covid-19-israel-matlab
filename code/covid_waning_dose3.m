@@ -92,6 +92,7 @@ for clim = [3000, 20000];
     title('Cases per million by Infection time and by dose I vaccination group')
     xlabel('Infection week')
     ylabel('Dose I vaccination week')
+    pause(0.3)
 end
 %%
 co = flipud(jet(10));
@@ -161,6 +162,7 @@ xlabel('infection week')
 ylabel('vaccination week')
 zlabel('cases per million')
 title('Infections by time from dose III, <60')
+pause(0.3)
 %% 
 % c = 0;
 clear X Y Z
@@ -198,6 +200,7 @@ zlim([0 40000])
 set(gca,'ZTick',0:10000:40000)
 % axis square
 set(gcf,'Color','w')
+pause(0.3)
 %%
 
 fig25 = figure('units','normalized','position',[0.1 0 0.7 1]);
