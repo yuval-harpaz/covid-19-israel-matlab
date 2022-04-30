@@ -76,7 +76,7 @@ for ff in np.asarray(field)[[2, 4, 5, 6, 7, 8]]:
             yy = np.diff(yy)
             bad1 = np.where(dfr['Date'] == '2020-10-05')[0][0]
 
-            for bad in np.asarray([0, 1, 2, 3, 77, 92, 238]) + bad1:
+            for bad in np.asarray([0, 1, 2, 3, 77, 92, 238, 621-bad1, 650-bad1]) + bad1:
                 yy[bad] = np.nan
             for bad in np.where(yy < 0)[0]:
                 yy[bad] = np.nan
