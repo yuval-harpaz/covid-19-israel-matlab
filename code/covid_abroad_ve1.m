@@ -25,7 +25,7 @@ hh(1).Color = [0.055,0.49,0.49];
 hh(2).Color = [0.725,0.788,0.357];
 hh(3).Color = [0.184,0.804,0.984];
 title('Airport percent positive by vaccination status')
-ve = 100*(1-(pos(:,1)./tests(:,1))./(pos(:,3)./tests(:,3)))
+ve = 100*(1-(pos(:,1)./tests(:,1))./(pos(:,3)./tests(:,3)));
 legend('vaccinated','outdated','unvaccinated')
 grid on
 figure;
