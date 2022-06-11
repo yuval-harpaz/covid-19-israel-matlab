@@ -4,9 +4,25 @@ deaths = struct2table(json);
 deaths.day_date = datetime(strrep(deaths.day_date,'T00:00:00.000Z',''));
 deaths.Properties.VariableNames{1} = 'date';
 
+for col = 6:8
+    if iscell(deaths{1,col})
+        tmp = deaths{:,col};
+        tmp(cellfun(@isempty, tmp)) = {nan};
+        tmp = [tmp{:}]';
+        eval(['deaths.',deaths.Properties.VariableNames{col},' = tmp;']);
+    end
+end
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily');
 json = jsondecode(json);
 severe = struct2table(json);
+for col = 12:14
+    if iscell(severe{1,col})
+        tmp = severe{:,col};
+        tmp(cellfun(@isempty, tmp)) = {nan};
+        tmp = [tmp{:}]';
+        eval(['severe.',severe.Properties.VariableNames{col},' = tmp;']);
+    end
+end
 severe.day_date = datetime(strrep(severe.day_date,'T00:00:00.000Z',''));
 severe.Properties.VariableNames{1} = 'date';
 
@@ -43,9 +59,12 @@ if iAge == 1
 else
     dd3 = deaths{ages{iAge,1},6:8};
 end
+%%
 rat = dd3(8:end,:)./cd3(1:end-7,:);
-rat(100:153,:) = nan;
-rat(195:204,1) = nan;
+rat(100:205,:) = nan;
+rat(275:359,:) = nan;
+rat(rat > 0.7) = nan;
+rat = movmean(rat,[3 3], 'omitnan');
 dt = deaths.date(ages{iAge,1});
 dt = dt(8:end);
 % plot norm
