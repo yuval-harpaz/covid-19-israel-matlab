@@ -29,7 +29,11 @@ for ii = 1:height(tt)
     row = find(death.date == week(ii));
     row = (row-13):row;
     row = row + shift;
-    death2w(ii,1) = sum(death.amount(row));
+    if row(end) <= height(death)
+        death2w(ii,1) = sum(death.amount(row));
+    else
+        death2w(ii,1) = nan;
+    end
     
     row = find(cases.date == week(ii));
     row = (row-13):row;
@@ -52,7 +56,7 @@ figure;
 plot(week,dbv)
 
 %%
-tot = round(sum(dbv));
+tot = round(nansum(dbv));
 yy = [tot(7);tot(16)+tot(17);tot(18);tot(19);tot(20)];
 figure;
 pie(yy,{['Alpha ',str(yy(1))],['Delta ',str(yy(2))],['Omicron BA1 ',str(yy(3))],...
@@ -75,6 +79,51 @@ end
 figure;bar(weekk,isr,1,'stacked','EdgeColor','none')
 legend({jsonClust.distributions(jvr).cluster}')
 
+%%
+jvr = 7:11;
+omi = nan(length(weekk),length(jvr));
+for iVar = 1:length(jvr)
+    fr = {jsonClust.distributions(jvr(iVar)).distribution(:).frequencies}';
+    for ii = 1:length(fr)
+        if isfield(fr{ii},'Israel')
+            omi(ii,iVar) = fr{ii}.Israel;
+        end
+    end
+end
+%%
+figure('position',[100,100,1000,700]);
+subplot(2,1,1)
+ho = bar(weekk,100*omi,1,'stacked','EdgeColor','none');
+tit = {'22C BA.2.12.1';'22B BA.5';'22A BA.4';'21L BA.2';'21K BA.1'};
+lh1 = legend(fliplr(ho),tit);
+lh1.Position(1) = 0.6; 
+lh1.Position(2) = 0.7;
+lh1.EdgeColor = 'none';
+xlim([datetime(2021,12,1) weekk(end)-3])
+grid on
+set(gca,'XTick',datetime(2021,1:50,1),'layer','top')
+xtickformat('MMM')
+box off
+title('Omicron sub-variants in Israel (%, stacked)')
+hold on
+ylabel('%')
+
+subplot(2,1,2)
+hol = plot(weekk,100*omi);
+lh = legend(flipud(hol),tit);
+lh.Position(1) = 0.6; 
+lh.Position(2) = 0.2;
+lh.EdgeColor = 'none';
+xlim([datetime(2021,12,1) weekk(end)-3])
+grid on
+set(gca,'XTick',datetime(2021,1:50,1),'layer','top')
+xtickformat('MMM')
+box off
+title('Omicron sub-variants in Israel (%)')
+hold on
+set(gcf,'Color','w')
+ylabel('%')
+%%
 
 %%
 
