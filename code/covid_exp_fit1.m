@@ -59,6 +59,9 @@ exp_date(c,:) = [datetime(2022,3,16) datetime(2022,3,21)]; % wave V up
 
 c = c+1;
 exp_date(c,:) = [datetime(2022,4,6) datetime(2022,4,14)]; % wave V up
+
+c = c+1;
+exp_date(c,:) = [datetime(2022,6,3) datetime(2022,6,10)]; % wave VI up
 %%
 figure('units','normalized','position',[0,0,1,1]);
 hh = plot(list.date(1:end-3), yy(1:end-3,:), 'linewidth', 1.5);
