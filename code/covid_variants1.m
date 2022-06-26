@@ -6,15 +6,10 @@ week = cellfun(@datetime, isr.week);
 
 variant = fieldnames(isr.stand_estimated_cases);
 tt = struct2table(isr.stand_estimated_cases(:));
-
-prc = tt{:,:};
-prc(prc < 0) = 0;
-prc = prc./sum(prc,2);
-prc(isnan(prc)) = 0;
-json = urlread('https://datadashboardapi.health.gov.il/api/queries/deadPatientsPerDate');
-json = jsondecode(json);
-death = struct2table(json);
-death.date = datetime(strrep(death.date,'T00:00:00.000Z',''));
+if tt.x22A_Omicron_(12) == 1005  % too early for omicron
+    tt.x22A_Omicron_(12) = 0;
+    tt.x22C_Omicron_(12) = 0;
+end
 
 
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedPerDate');
