@@ -45,7 +45,7 @@ for subp = 1:2
     subplot(1,2,subp)
     hh = plot(dateH,yy);
     hold on
-    ha = plot(cases.date,movmean(cases.amount,[3 3]),'k');
+    ha = plot(cases.date(1:end-4),movmean(cases.amount(1:end-4),[3 3]),'k');
     for it = 1:length(thick)
         hh(thick(it)).LineWidth = 2;
     end

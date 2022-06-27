@@ -16,6 +16,8 @@ def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
     #  to get smoothing of 3 samples back and 3 samples forward use win=7
+    if type(vec) == list:
+        vec = np.asarray(vec)
     vec = vec.astype('float')
     smooth = vec.copy()
     if win > 1:
@@ -118,6 +120,7 @@ layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', 
 # layout1 = go.Layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 fig1 = go.Figure(layout=layout)
 for source in ['JH', 'WHO', 'MOH']:
+    fig1.add_trace(go.Scatter(x=date, y=movmean(deaths[source],7), mode='lines', name=source))
     fig1.add_trace(go.Scatter(x=date, y=deaths[source], mode='lines', name=source))
 fig1.show()
 # fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
