@@ -1,4 +1,5 @@
 ## How to get the data from the dashboard
+
 The dashboard has an API. to send queries and get the data in json format you can use a curl command, or just use a url with the query.
 ### curl query
 Here are two examples for downloading data with curl.<br>1. Calling curl on linux via a [Matlab](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/covid_Israel_moh_dashboard.m) function on Linux<br>2. To call curl with Python you can use dancarmoz's [code](https://github.com/dancarmoz/israel_moh_covid_dashboard_data/blob/master/mohdashboardapi.py), or use my simplified version [here](https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/code/get_dashboard_data.py)
