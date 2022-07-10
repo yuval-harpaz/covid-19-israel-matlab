@@ -4,7 +4,7 @@ cd ~/covid-19-israel-matlab
 region = readtable('dpc-covid19-ita-regioni.csv');
 !rm 'dpc-covid19-ita-'*
 
-dateReg = datetime(cellfun(@(x) x(1:10),region.data,'UniformOutput',false));
+dateReg = datetime(cellfun(@(x) x(1:10),region.x_data,'UniformOutput',false));
 Date = unique(dateReg); %#ok<NASGU>
 regName = strrep(strrep(unique(region.denominazione_regione),'P.A. ',''),' ','_');
 regName = strrep(regName,'-','_');

@@ -17,10 +17,10 @@ json = jsondecode(json);
 cases = struct2table(json);
 cases.date = datetime(strrep(cases.date,'T00:00:00.000Z',''));
 
-
-dateH = week+5;
+norm2daily = 9291000/10^6/14;
+dateH = week+7;
 figure;
-plot(dateH,sum(tt{:,:},2)*0.75,'r')
+plot(dateH,sum(tt{:,:},2)*norm2daily,'r')
 hold on
 plot(cases.date,movmean(cases.amount,[3 3]),'k')
 grid on
@@ -31,7 +31,7 @@ legend('sum(variants)*0.75','daily cases','location','northwest')
 % thick = [22,7,16,17,18,21,19,20];
 varName = {'Others','Alpha','Delta','Omicron BA.1','Omicron BA.2','Omicron BA.2.12.1','Omicron BA.4','Omicron BA.5','Daily cases'};
 [~,thick] = ismember({'others','x20I_Alpha_V1_','x21J_Delta_','x21K_Omicron_','x21L_Omicron_','x22C_Omicron_','x22A_Omicron_','x22B_Omicron_'},tt.Properties.VariableNames);
-yy = tt{:,:}*0.75;
+yy = tt{:,:}*norm2daily;
 yy(yy < 30) = nan;
 
 eventDate = [datetime(2021,02,7), datetime(2021,01,10), datetime(2021,08,1), datetime(2022,3,16)]';
