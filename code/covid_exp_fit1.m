@@ -104,7 +104,7 @@ for iPoint = 1:size(exp_date,1)
         end
     end
 end
-title({'קצב הכפלה שבועי עבור מאומתים וחולים חדשים','Weekly multiplication factor for new cases and patients'})
+title({'Cases and new hospitalizations   מאומתים ומאושפזים חדשים','המספרים על הגרף מייצגים קצב הכפלה שבועי עבור מאומתים וחולים חדשים','Weekly multiplication factor for new cases and patients'})
 legend('cases            מאומתים','cases   60+  מאומתים','hospitalized מאושפזים','severe                קשה',...
     'ventilated      מונשמים','deceased        נפטרים','location','northwest')
 grid on
@@ -116,4 +116,5 @@ xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
 set(gca, 'YScale', 'log')
 ylim([1 100000])
-
+xlim([datetime(2021,12,1) datetime('today')])
+ylabel('Cases, patients  מאומתים, מאושפזים')
