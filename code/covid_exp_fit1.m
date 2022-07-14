@@ -1,4 +1,7 @@
-function covid_exp_fit1
+function covid_exp_fit1(logscale)
+if nargin == 0
+    logscale = true;
+end
 cd ~/covid-19-israel-matlab
 listName = '~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv';
 list = readtable(listName);
@@ -63,7 +66,26 @@ exp_date(c,:) = [datetime(2022,4,6) datetime(2022,4,14)]; % wave V up
 c = c+1;
 exp_date(c,:) = [datetime(2022,6,3) datetime(2022,6,10)]; % wave VI up
 %%
-figure('units','normalized','position',[0,0,1,1]);
+take_old = true; % predict deaths
+shift = 8;
+pred_idx = length(list.date)-200+shift:length(list.date)-1;
+date_death = list.date(pred_idx);
+if take_old
+    json = urlread('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily');
+    json = jsondecode(json);
+    severe = struct2table(json);
+    severe.day_date = datetime(strrep(severe.day_date,'T00:00:00.000Z',''));
+    severe.Properties.VariableNames{1} = 'date';
+    sOld = find(ismember(severe.age_group,'מעל גיל 60'));
+    dateOld = severe.date(sOld);
+    sd3 = sum([severe{sOld,6:8}],2);
+    [~, idx_sev] = ismember(date_death,dateOld);
+    pred_death = movmean(sd3(idx_sev)*0.37,[3 3]);
+else
+    pred_death = yy(pred_idx,4);
+end
+%%
+figure('units','normalized','position',[0,0,0.5,1]);
 hh = plot(list.date(1:end-3), yy(1:end-3,:), 'linewidth', 1.5);
 hh(1).Color = [0.106 0.62 0.467];
 hh(2).Color = hh(1).Color*1.25;
@@ -72,41 +94,17 @@ hh(4).Color = [0.851 0.373 0.008];
 hh(5).Color = ccc(1,:);
 hh(6).Color = [0 0 0];
 hold on
-
+hh(7) = plot(date_death+shift, pred_death,'k','LIneStyle',':','linewidth',2);
 hhd = plot(list.date(end-2:end), last3,'.','markersize',8);
-for ii = 1:length(hh)
+for ii = 1:length(hh)-1
     hhd(ii).Color = hh(ii).Color;
 end
 % hhd(2).Color = ccc(4,:);
 % hhd(3).Color = ccc(3,:);
 % hhd(4).Color = ccc(1,:);
 % hhd(5).Color = [0 0 0];
-bias = [0,0,0,7,7,7];
-for iPoint = 1:size(exp_date,1)
-%     if iPoint == size(exp_date,1)
-%         bias(:) = 0;  % no 7 days forward for today
-%     end
-    for pr = 1:4
-        yDot = yy(find(ismember(list.date, exp_date(iPoint,:)+bias(pr))),pr);
-        if length(yDot) == 2
-            scatter(exp_date(iPoint,:)+bias(pr),yDot,30,hh(pr).Color,'fill')
-            rat = (yDot(2)/yDot(1))^(1/days(diff(exp_date(iPoint,:))))^7;
-            aln = 'right';
-            %     pref = '+';
-            txt = str(round(rat,1));
-            if rat < 1
-                %         pref = '+';
-                aln = 'left';
-                txt = [str(round(1/rat,1)),'^{-1}'];
-            end
-            
-            text(mean(exp_date(iPoint,:))+bias(pr),mean(yDot),txt,'HorizontalAlignment', aln,'Color',hh(pr).Color)
-        end
-    end
-end
-title({'Cases and new hospitalizations   מאומתים ומאושפזים חדשים','המספרים על הגרף מייצגים קצב הכפלה שבועי עבור מאומתים וחולים חדשים','Weekly multiplication factor for new cases and patients'})
-legend('cases            מאומתים','cases   60+  מאומתים','hospitalized מאושפזים','severe                קשה',...
-    'ventilated      מונשמים','deceased        נפטרים','location','northwest')
+
+
 grid on
 box off
 set(gcf,'Color','w')
@@ -114,7 +112,43 @@ grid minor
 set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
-set(gca, 'YScale', 'log')
-ylim([1 100000])
 xlim([datetime(2021,12,1) datetime('today')])
 ylabel('Cases, patients  מאומתים, מאושפזים')
+if logscale
+    bias = [0,0,0,7,7,7];
+    for iPoint = 1:size(exp_date,1)
+        %     if iPoint == size(exp_date,1)
+        %         bias(:) = 0;  % no 7 days forward for today
+        %     end
+        for pr = 1:4
+            yDot = yy(find(ismember(list.date, exp_date(iPoint,:)+bias(pr))),pr);
+            if length(yDot) == 2
+                scatter(exp_date(iPoint,:)+bias(pr),yDot,30,hh(pr).Color,'fill')
+                rat = (yDot(2)/yDot(1))^(1/days(diff(exp_date(iPoint,:))))^7;
+                aln = 'right';
+                %     pref = '+';
+                txt = str(round(rat,1));
+                if rat < 1
+                    %         pref = '+';
+                    aln = 'left';
+                    txt = [str(round(1/rat,1)),'^{-1}'];
+                end
+                
+                text(mean(exp_date(iPoint,:))+bias(pr),mean(yDot),txt,'HorizontalAlignment', aln,'Color',hh(pr).Color)
+            end
+        end
+    end
+    set(gca, 'YScale', 'log')
+    ylim([1 100000])
+    title({'Cases and new hospitalizations   מאומתים ומאושפזים חדשים','המספרים על הגרף מייצגים קצב הכפלה שבועי עבור מאומתים וחולים חדשים','Weekly multiplication factor for new cases and patients'})
+    legend('cases            מאומתים','cases   60+  מאומתים','hospitalized מאושפזים','severe                קשה',...
+        'ventilated      מונשמים','deceased        נפטרים','location','northeast')
+else
+    ylim([0 250])
+    title('Cases and new hospitalizations   מאומתים ומאושפזים חדשים')
+    
+    hh(1).LineStyle = 'None';
+    hh(2).LineStyle = 'None';
+    legend(hh(3:end),'hospitalized מאושפזים','severe                קשה',...
+        'ventilated      מונשמים','deceased        נפטרים','location','north')
+end
