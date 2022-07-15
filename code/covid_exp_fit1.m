@@ -68,7 +68,7 @@ exp_date(c,:) = [datetime(2022,6,3) datetime(2022,6,10)]; % wave VI up
 %%
 take_old = true; % predict deaths
 shift = 8;
-pred_idx = length(list.date)-200+shift:length(list.date)-1;
+pred_idx = length(list.date)-45+shift:length(list.date)-1;
 date_death = list.date(pred_idx);
 if take_old
     json = urlread('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily');
@@ -112,7 +112,7 @@ grid minor
 set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
 xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
-xlim([datetime(2021,12,1) datetime('today')])
+xlim([datetime(2021,12,1) datetime('today')+14])
 ylabel('Cases, patients  מאומתים, מאושפזים')
 if logscale
     bias = [0,0,0,7,7,7];
@@ -142,7 +142,7 @@ if logscale
     ylim([1 100000])
     title({'Cases and new hospitalizations   מאומתים ומאושפזים חדשים','המספרים על הגרף מייצגים קצב הכפלה שבועי עבור מאומתים וחולים חדשים','Weekly multiplication factor for new cases and patients'})
     legend('cases            מאומתים','cases   60+  מאומתים','hospitalized מאושפזים','severe                קשה',...
-        'ventilated      מונשמים','deceased        נפטרים','location','northeast')
+        'ventilated      מונשמים','deceased        נפטרים','estimated deaths   הערכת תמותה','location','northeast')
 else
     ylim([0 250])
     title('Cases and new hospitalizations   מאומתים ומאושפזים חדשים')
@@ -150,5 +150,5 @@ else
     hh(1).LineStyle = 'None';
     hh(2).LineStyle = 'None';
     legend(hh(3:end),'hospitalized מאושפזים','severe                קשה',...
-        'ventilated      מונשמים','deceased        נפטרים','location','north')
+        'ventilated      מונשמים','deceased        נפטרים','estimated deaths   הערכת תמותה','location','north')
 end
