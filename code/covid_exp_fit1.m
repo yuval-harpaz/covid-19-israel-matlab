@@ -68,7 +68,7 @@ exp_date(c,:) = [datetime(2022,6,3) datetime(2022,6,10)]; % wave VI up
 %%
 take_old = true; % predict deaths
 shift = 8;
-pred_idx = length(list.date)-45+shift:length(list.date)-1;
+pred_idx = length(list.date)-40+shift:length(list.date)-1;
 date_death = list.date(pred_idx);
 if take_old
     json = urlread('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily');
