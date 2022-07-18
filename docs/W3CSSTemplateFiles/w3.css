@@ -231,3 +231,9 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .w3-border-pale-red,.w3-hover-border-pale-red:hover{border-color:#ffe7e7!important}.w3-border-pale-green,.w3-hover-border-pale-green:hover{border-color:#e7ffe7!important}
 .w3-border-pale-yellow,.w3-hover-border-pale-yellow:hover{border-color:#ffffcc!important}.w3-border-pale-blue,.w3-hover-border-pale-blue:hover{border-color:#e7ffff!important}
 .icon1 {background: url('./moh.jpg');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
+.icon2 {background: url('./waste.jpg');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
+.icon3 {background: url('./variants.jpg');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
+.icon4 {background: url('./daily.png');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
+.iconyh {background: url('https://pbs.twimg.com/profile_images/1271715952409837569/pltdkSEr_400x400.jpg');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
+.icongf {background: url('./gil.png');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
+.iconeg {background: url('eran.jpg');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
