@@ -23,35 +23,26 @@
           
         .section {
             width: 100vw;
-            height: 40vh;
+            height: 20vh;
             background-color: #EF5354;
             font-size: 50px;
             color: white;
             text-align: center;
             margin: 10px 5px;
+            justify-content: center;
+            display: flex;
         }
           
         .one,
         .three {
             background-color: #E03B8B;
+            height: 5vh;
+            font-size: 30px;
         }
-          
-        .navo {
-            width: 100vw;
-            height: 40vh;
-            background-color: #3944F7;
-            font-size: x-large;
-            color: white;
-            text-align: center;
-            margin: 1000px 500px;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            place-items: center;
-        }
+
         .nav {
             width: 100vw;
-            height: 40vh;
+            height: 30vh;
             background-color: #3944F7;
             font-size: x-large;
             color: white;
@@ -76,6 +67,7 @@
 </head>
   
 <body>
+    <div class="section three" id="section3">משרד הבריאות</div>
     <div class="nav">
         <a  style="color:black" 
             href="https://datadashboard.health.gov.il/COVID-19/general?utm_source=go.gov.il&utm_medium=referral" 
@@ -96,9 +88,13 @@
             <a  style="color:black" 
             href="https://www.gov.il/he/departments/publications/reports/vaccine-efficacy-safety-follow-up-committee"
             <span class='icon1'></span>בטיחות</a>
+            <a  style="color:black" 
+            href="https://www.gov.il/he/departments/guides/disease-monkeypox?chapterIndex=1"
+            <span class='icon5'></span></a>
         
         <!-- a href="#section1" class="btn">1</a -->
     </div>
+    <div class="section three" id="section3">עוד לוחות בקרה</div>
     <div class="nav" id="section1">
         <a  href="https://covid-israel.herokuapp.com/" 
             <span class='iconyh'></span>יובל</a>
@@ -106,16 +102,27 @@
             <span class='icongf'></span>גיל</a>
         <a  href="https://covid.eran.dev/"
             <span class='iconeg'></span>ערן גבע</a>
+            <a  href="https://ourworldindata.org/explorers/coronavirus-data-explorer?zoomToSelection=true&time=2021-11-02..latest&uniformYAxis=0&pickerSort=asc&pickerMetric=location&Metric=Cases+and+deaths&Interval=7-day+rolling+average&Relative+to+Population=true&Color+by+test+positivity=false&country=USA~GBR~CAN~DEU~ITA~IND~ISR"
+            <span class='iconowid'></span></a>
+            <a  style="color:black"  href="https://covid19.who.int/"
+            <span class='iconwho'>WHO</span></a>
     </div>
+    <div class="section three" id="section3">גיטהאב</div>
     <div class="section two" id="section2">
-        section 2
+        <a  href="https://github.com/dancarmoz/israel_moh_covid_dashboard_data" 
+            <span class='icongithub'></span>דן כרמון</a>
+            <a  href="https://github.com/erasta/CovidDataIsrael/tree/master/out/csv" 
+            <span class='icongithub'></span>ערן גבע</a>
+            <a  href="https://github.com/yuval-harpaz/covid-19-israel-matlab/tree/master/data/Israel" 
+            <span class='icongithub'></span>יובל הרפז</a>
+            <a  href="https://github.com/Mike-Honey/covid-19-genomes" 
+            <span class='icongithub'></span>mike honey</a>
+            <a  href="https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_time_series"
+            <span class='icongithub'></span>JHU</a>
+            <a  href="https://github.com/owid/covid-19-data/tree/master/public/data"
+            <span class='icongithub'></span>OWID</a>
     </div>
-    <div class="section three" id="section3">
-        section 3
-    </div>
-    <div class="section four" id="section4">
-        section 4
-    </div>
+ 
 </body>
   
 </html>

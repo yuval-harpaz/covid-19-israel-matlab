@@ -234,6 +234,11 @@ hr{border:0;border-top:1px solid #eee;margin:20px 0}
 .icon2 {background: url('./waste.jpg');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
 .icon3 {background: url('./variants.jpg');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
 .icon4 {background: url('./daily.png');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
+.icon5 {background: url('https://humanergy.com/wp-content/uploads/2014/08/monkey-150x150-1.jpg');height: 100px;width: 100px;display: block;margin-bottom:-65px;}
 .iconyh {background: url('https://pbs.twimg.com/profile_images/1271715952409837569/pltdkSEr_400x400.jpg');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
 .icongf {background: url('./gil.png');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
 .iconeg {background: url('eran.jpg');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
+.iconowid {background: url('owid.png');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
+.iconwho {background: url('who.png');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
+.icongithub {background: url('github.png');height: 150px;width: 150px;display: block;margin-bottom:-65px;}
+
