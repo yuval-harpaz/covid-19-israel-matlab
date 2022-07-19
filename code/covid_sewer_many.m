@@ -1,7 +1,9 @@
 function covid_sewer_many
 cd ~/Downloads/
 fName = dir('Waste*');
-fName = {fName(:).name}';
+creation = datetime({fName(:).date}');
+[creation, order] = sort(creation);
+fName = {fName(order).name}';
 % figure;
 for iWaste = 2:length(fName)
     T = readtable(fName{iWaste});
@@ -17,26 +19,54 @@ for iWaste = 2:length(fName)
         end
     end
             
-    date = unique(Start_Week_Date);
-    disp(date(end))
-%     town = unique(T.SE_Name);
-%     NVL = cellfun(@str2num, T.NVL);
-%     % NVL = strrep(T.NVL,'NULL','nan');
-%     % NVL = cellfun(@str2num, NVL);
-% %     nvl = nan(size(date));
-% %     nvln = nan(size(date));
-% %     nNan = nan(size(date));
-%     for ii = 1:length(date)
-%         rows = Start_Week_Date == date(ii);
-% %         nvl(ii,1) = nanmean(NVL(rows));
-%         pop = cellfun(@str2num, T.Population_For_Normalization(rows));
-%         nvln(ii,iWaste-1) = nansum(NVL(rows).*pop)/sum(pop);
-%         nNan(ii,iWaste-1) = sum(isnan(NVL(rows)).*pop)/sum(pop);
-%     end
+    date_current = unique(Start_Week_Date);
+%     disp(date(1))
+    if iWaste == 2
+        date = Start_Week_Date(1);
+        date = date:7:datetime('today');
+    end
+    
+
+
+    town = unique(T.SE_Name);
+    NVL = cellfun(@str2num, T.NVL);
+    % NVL = strrep(T.NVL,'NULL','nan');
+    % NVL = cellfun(@str2num, NVL);
+%     nvl = nan(size(date));
+%     nvln = nan(size(date));
+%     nNan = nan(size(date));
+    for ii = 1:length(date_current)
+        rows = Start_Week_Date == date_current(ii);
+%         nvl(ii,1) = nanmean(NVL(rows));
+        pop = cellfun(@str2num, T.Population_For_Normalization(rows));
+        nvln(ii,iWaste-1) = nansum(NVL(rows).*pop)/sum(pop);
+        nNan(ii,iWaste-1) = sum(isnan(NVL(rows)).*pop)/sum(pop);
+    end
     
 %     plot(date,nvln,'linewidth',5-iWaste,'DisplayName',fName{iWaste})
 %     hold on
 end
+nvln(nvln == 0) = nan;
+figure;
+plot(date,nvln)
+% bar(date,nvln,0.75, 'EdgeColor','none')
+set(gca,'YScale','log')
+ylim([70000 10^7])
+
+figure;
+bar(nvln(date == datetime(2022, 7, 10),:))
+set(gca,'XTickLabel',datestr(creation(2:end)))
+xtickangle(45)
+
+figure;
+% plot(date,nvln)
+bar(date,nvln(:,end),0.75, 'EdgeColor','none')
+set(gca,'YScale','log')
+ylim([70000 10^7])
+
+% grid on
+% box off
+
 % figure;
 % bar(nNan)
 % %%
