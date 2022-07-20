@@ -8,7 +8,7 @@ severe = struct2table(json);
 severe.day_date = datetime(strrep(severe.day_date,'T00:00:00.000Z',''));
 severe.Properties.VariableNames{1} = 'date';
 idx = ismember(severe.age_group,'כלל האוכלוסיה');
-sevAll = sum(severe.sta
+sevAll = sum(severe.sta)
 figure;
 plot(listD.date,listD.CountDeath,'.k')
 hold on
