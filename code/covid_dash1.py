@@ -154,7 +154,7 @@ def make_ratios(age=1):
     figOmi.layout['yaxis']['title']['text'] = 'patients'+ag
     figOmi.layout['xaxis']['title']['text'] = ''
     figOmi['data'][0]['marker']['color'] = 'black'
-    figOmi['layout']['title'] = 'Wave V'
+    figOmi['layout']['title'] = 'Wave V + VI'
     figOmi['layout']['title']['x'] = 0.45
     figOmi['layout']['title']['font_color'] = "purple"
     figOmi['layout']['title']['xanchor'] = 'center'
@@ -340,8 +340,9 @@ for iage, age in enumerate(ages2):
 #             vem = 1-dfve['vaccinated'][month_u == mon].sum() / dfve['unvaccinated'][month_u == mon].sum()
 #             ve_by_month[iage]['data'][mea].append(vem)
 
-figW60 = px.histogram(dfVE2[0], x="Date", y='patients', color='measure', barmode='group', nbins=len(date_m))
-figW60.update_layout(bargap=0.2)
+# figW60 = px.histogram(dfVE2[0], x="Date", y='patients', color='measure', barmode='group', nbins=len(date_m))
+# figW60.update_layout(bargap=0.2)
+
 # figW60.show()
 # print('okay')
 
@@ -710,7 +711,7 @@ app.layout = html.Div([
             )], lg=2),
         ]),
         html.Br(), html.Br(), html.Br(),
-        html.A('Deaths for wave IV (11-Jul-2021 to 11-Nov-2021) and V (1-Jan-22 to present) vs new severe cases, 10 days earlier.'),
+        html.A('Deaths for wave IV (11-Jul-2021 to 11-Nov-2021) and V + VI (1-Jan-22 to present) vs new severe cases, 10 days earlier.'),
         html.Br(),
         html.A('Ratio plot is black/red for Delta wave IV and (mainly) Omicron wave V.'),
         dbc.Row([
@@ -782,19 +783,19 @@ app.layout = html.Div([
         value=[161, len(dateW) - 1],
         allowCross=False
     ), lg=6, md=12),
-    dbc.Row([
-        html.Div([
-            dcc.RadioItems(id='age60w',
-                           options=[
-                               {'label': '60+', 'value': 'מעל גיל 60'},
-                               {'label': '<60', 'value': 'מתחת לגיל 60'}
-                           ],
-                           value='מעל גיל 60',
-                           labelStyle={'display': 'inline-block'}
-                           )
-        ]),
-        dbc.Col(dcc.Graph(id='gw60'), lg=8, md=12)
-    ]),
+    # dbc.Row([
+    #     html.Div([
+    #         dcc.RadioItems(id='age60w',
+    #                        options=[
+    #                            {'label': '60+', 'value': 'מעל גיל 60'},
+    #                            {'label': '<60', 'value': 'מתחת לגיל 60'}
+    #                        ],
+    #                        value='מעל גיל 60',
+    #                        labelStyle={'display': 'inline-block'}
+    #                        )
+    #     ]),
+    #     dbc.Col(dcc.Graph(id='gw60'), lg=8, md=12)
+    # ]),
     # dbc.Row([dbc.Col(dcc.Graph(id='gw'), lg=8, md=12)]),
 ])
 @app.callback(
@@ -802,7 +803,7 @@ app.layout = html.Div([
     Output('severe', 'figure'),
     Output('death', 'figure'),
     # Output('gw', 'figure'),
-    Output('gw60', 'figure'),
+    # Output('gw60', 'figure'),
     Output('frat1', 'figure'),
     Output('frat2', 'figure'),
     Output('frat3', 'figure'),
@@ -810,12 +811,12 @@ app.layout = html.Div([
     Input('doNorm', 'value'),
     Input('smoo', 'value'),
     Input('loglin', 'value'),
-    Input('age60w', 'value'),
+    # Input('age60w', 'value'),
     Input('date-picker', 'start_date'),
     Input('date-picker', 'end_date'),
     )
 
-def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date):
+def update_graph(age_group, norm_abs, smoo, loglin, start_date, end_date):
     if norm_abs == 'normalized':
         figb = make_figs3(dfsNorm[0], measure[0], age_group, smoo, ', per 100k ', start_date, end_date, loglin)
         figc = make_figs3(dfsNorm[1], measure[1], age_group, smoo, ', per 100k ', start_date, end_date, loglin)
@@ -825,13 +826,13 @@ def update_graph(age_group, norm_abs, smoo, loglin, age60w, start_date, end_date
         figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date, loglin)
         figd = make_figs3(dfsAbs[2], measure[2], age_group, smoo, ' ', start_date, end_date, loglin)
     # fige = make_wane(dfAge.copy())
-    figf = makeVE(age60w)
+    # figf = makeVE(age60w)
     if age_group == 'מעל גיל 60':
         age = 1
     else:
         age = 0
     figG, figH, figI = make_ratios(age=age)
-    return figb, figc, figd, figf, figG, figH, figI
+    return figb, figc, figd, figG, figH, figI
 
 @app.callback(
     Output("download-text", "data"),
