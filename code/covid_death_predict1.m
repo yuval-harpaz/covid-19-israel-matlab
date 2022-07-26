@@ -51,75 +51,76 @@ set(gca,'FontSize',13)
 grid on
 set(gcf,'Color','w')
 
+plt = false;
+if plt
+    ratioSev =  sd3(:,1)./sd3(:,2);
+    ratioDeath = dd3(:,1)./dd3(:,2);
+    tonan = find(sd3(:,1) < 3);
+    tonan(tonan > length(dd3)-7) = [];
+    ratioDeath(tonan+7) = nan;
+    ratioSev(tonan) = nan;
+    ratioDeath = movmean(ratioDeath,[3 3],'omitnan');
+    ratioSev = movmean(ratioSev,[3 3],'omitnan');
 
-ratioSev =  sd3(:,1)./sd3(:,2);
-ratioDeath = dd3(:,1)./dd3(:,2);
-tonan = find(sd3(:,1) < 3);
-tonan(tonan > length(dd3)-7) = [];
-ratioDeath(tonan+7) = nan;
-ratioSev(tonan) = nan;
-ratioDeath = movmean(ratioDeath,[3 3],'omitnan');
-ratioSev = movmean(ratioSev,[3 3],'omitnan');
-
-figure;
-plot(severe.date(ages{1,1}),ratioDeath,'k')
-hold on
-plot(severe.date(ages{1,1})+7,ratioSev,'r')
-idx = [1,142;143, 336; 337, 422; 423,496;497,length(sd3)-7];
-d = severe.date(ages{1,1});
-figure;
-plot(d,sd3(:,2));
-hold on;
-plot(d,sd3(:,1))
-%plot(d(idx(:,1)),sd3(idx(:,1),2),'.g');
-plot(d(idx(:,2)),sd3(idx(:,2),2),'.r','markersize',10);
-grid on
-title('new severe')
-legend('old','young')
-text(d([50,200,365,440,510]),[40, 40, 40,40,40],{'Alpha','Delta','BA.1','BA.2','BA.5'})
-ylabel('new patients')
-for iWave = 1:length(idx) 
-    ratio(iWave,1) = sum(sev(idx(iWave,1):idx(iWave,2),1))/sum(sum(sev(idx(iWave,1):idx(iWave,2),:)));
-    ratio(iWave,2) = sum(det(idx(iWave,1):idx(iWave,2),1))/sum(sum(det(idx(iWave,1):idx(iWave,2),:)));
-    sumS(iWave,1:2) = [sum(sev(idx(iWave,1):idx(iWave,2),2)),sum(sev(idx(iWave,1):idx(iWave,2),1))];
-    sumD(iWave,1:2) = [sum(det(idx(iWave,1):idx(iWave,2),2)),sum(det(idx(iWave,1):idx(iWave,2),1))];
-end
-ratio = round(100*ratio,1);
-
-figure;
-bar(ratio)
-legend('Severe','Deaths')
-set(gca,'XTickLabel',{'Alpha','Delta','BA.1','BA.2','BA.5'},'FontSize',13)
-ylabel('% young')
-title('younger than 60 / all')
-grid on
-set(gcf,'COLOR','W')
-predSev = sum(sd3.*facSev,2);
-sd6 = [severe{ages{2,2},6:8},severe{ages{1,2},6:8}];
-sd6(end,:) = nan;
-sd6 = movmean(sd6,[3 3],'omitnan');
-dd6 = [deathsm{ages{2,1},3:5},deathsm{ages{1,1},3:5}];
-dd6(end,:) = nan;
-dd6 = movmean(dd6,[3 3],'omitnan');
-text((1:5)-0.33,ratio(:,1)+2,str(ratio(:,1)))
-text((1:5),ratio(:,2)+2,str(ratio(:,2)))
-
-data = {sumS,sumD};
-tit = {'severe','deaths'};
-figure;
-for ip = 1:2
-    subplot(1,2,ip)
-    bar(data{ip}(2:end,:))
-    set(gca,'XTickLabel',{'Delta','BA.1','BA.2','BA.5'},'FontSize',13)
-    ylabel(tit{ip})
-    title(tit{ip})
+    figure;
+    plot(severe.date(ages{1,1}),ratioDeath,'k')
+    hold on
+    plot(severe.date(ages{1,1})+7,ratioSev,'r')
+    idx = [1,142;143, 336; 337, 422; 423,496;497,length(sd3)-7];
+    d = severe.date(ages{1,1});
+    figure;
+    plot(d,sd3(:,2));
+    hold on;
+    plot(d,sd3(:,1))
+    %plot(d(idx(:,1)),sd3(idx(:,1),2),'.g');
+    plot(d(idx(:,2)),sd3(idx(:,2),2),'.r','markersize',10);
     grid on
-    text((1:4)-0.25,data{ip}(2:end,1)+(3-ip)*40,str(data{ip}(2:end,1)))
-    text((1:4),data{ip}(2:end,2)+(3-ip)*40,str(data{ip}(2:end,2)))
-end
-legend('60+','<60')
-set(gcf,'COLOR','W')
+    title('new severe')
+    legend('old','young')
+    text(d([50,200,365,440,510]),[40, 40, 40,40,40],{'Alpha','Delta','BA.1','BA.2','BA.5'})
+    ylabel('new patients')
+    for iWave = 1:length(idx) 
+        ratio(iWave,1) = sum(sev(idx(iWave,1):idx(iWave,2),1))/sum(sum(sev(idx(iWave,1):idx(iWave,2),:)));
+        ratio(iWave,2) = sum(det(idx(iWave,1):idx(iWave,2),1))/sum(sum(det(idx(iWave,1):idx(iWave,2),:)));
+        sumS(iWave,1:2) = [sum(sev(idx(iWave,1):idx(iWave,2),2)),sum(sev(idx(iWave,1):idx(iWave,2),1))];
+        sumD(iWave,1:2) = [sum(det(idx(iWave,1):idx(iWave,2),2)),sum(det(idx(iWave,1):idx(iWave,2),1))];
+    end
+    ratio = round(100*ratio,1);
 
+    figure;
+    bar(ratio)
+    legend('Severe','Deaths')
+    set(gca,'XTickLabel',{'Alpha','Delta','BA.1','BA.2','BA.5'},'FontSize',13)
+    ylabel('% young')
+    title('younger than 60 / all')
+    grid on
+    set(gcf,'COLOR','W')
+    predSev = sum(sd3.*facSev,2);
+    sd6 = [severe{ages{2,2},6:8},severe{ages{1,2},6:8}];
+    sd6(end,:) = nan;
+    sd6 = movmean(sd6,[3 3],'omitnan');
+    dd6 = [deathsm{ages{2,1},3:5},deathsm{ages{1,1},3:5}];
+    dd6(end,:) = nan;
+    dd6 = movmean(dd6,[3 3],'omitnan');
+    text((1:5)-0.33,ratio(:,1)+2,str(ratio(:,1)))
+    text((1:5),ratio(:,2)+2,str(ratio(:,2)))
+
+    data = {sumS,sumD};
+    tit = {'severe','deaths'};
+    figure;
+    for ip = 1:2
+        subplot(1,2,ip)
+        bar(data{ip}(2:end,:))
+        set(gca,'XTickLabel',{'Delta','BA.1','BA.2','BA.5'},'FontSize',13)
+        ylabel(tit{ip})
+        title(tit{ip})
+        grid on
+        text((1:4)-0.25,data{ip}(2:end,1)+(3-ip)*40,str(data{ip}(2:end,1)))
+        text((1:4),data{ip}(2:end,2)+(3-ip)*40,str(data{ip}(2:end,2)))
+    end
+    legend('60+','<60')
+    set(gcf,'COLOR','W')
+end
 predSev = sum(sd3.*facSev,2);
 sd6 = [severe{ages{2,2},6:8},severe{ages{1,2},6:8}];
 sd6(end,:) = nan;
