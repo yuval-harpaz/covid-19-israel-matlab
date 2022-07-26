@@ -53,7 +53,7 @@ set(gcf,'Color','w')
 
 plt = false;
 if plt
-    ratioSev =  sd3(:,1)./sd3(:,2);
+    ratioSev = sd3(:,1)./sd3(:,2);
     ratioDeath = dd3(:,1)./dd3(:,2);
     tonan = find(sd3(:,1) < 3);
     tonan(tonan > length(dd3)-7) = [];

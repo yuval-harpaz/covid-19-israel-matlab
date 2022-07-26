@@ -9,13 +9,24 @@ json = jsondecode(json);
 severe = struct2table(json);
 severe.day_date = datetime(strrep(severe.day_date,'T00:00:00.000Z',''));
 severe.Properties.VariableNames{1} = 'date';
+noempty = severe.new_serious_vaccinated_normalized;
+noempty(cellfun(@isempty, noempty)) = {nan};
+severe.new_serious_vaccinated_normalized = [noempty{:}]';
+noempty = severe.new_serious_expired_normalized;
+noempty(cellfun(@isempty, noempty)) = {nan};
+severe.new_serious_expired_normalized = [noempty{:}]';
 
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
 json = jsondecode(json);
 cases = struct2table(json);
 cases.day_date = datetime(strrep(cases.day_date,'T00:00:00.000Z',''));
 cases.Properties.VariableNames{1} = 'date';
-
+noempty = cases.verified_vaccinated_normalized;
+noempty(cellfun(@isempty, noempty)) = {nan};
+cases.verified_vaccinated_normalized = [noempty{:}]';
+noempty = cases.verified_expired_normalized;
+noempty(cellfun(@isempty, noempty)) = {nan};
+cases.verified_expired_normalized = [noempty{:}]';
 dOld = ismember(severe.age_group,'מעל גיל 60');
 cOld = ismember(cases.age_group,'מעל גיל 60');
 dYoung = ismember(severe.age_group,'מתחת לגיל 60');
