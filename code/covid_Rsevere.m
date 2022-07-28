@@ -24,7 +24,7 @@ for ll = 1:4
 end
 line([listD.date(1) listD.date(end)], [1 1],'Color','k','linestyle','--')
 % xlim([datetime(2021,7,1) datetime('today')])
-xlim([datetime('today')-170 datetime('today')])
+xlim([datetime(2021,12,1) datetime('today')+14])
 grid on
 ylabel('R');
 %     xlabel('Date');

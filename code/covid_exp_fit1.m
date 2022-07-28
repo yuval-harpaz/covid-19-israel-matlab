@@ -55,35 +55,34 @@ exp_date(c,:) = [datetime(2021,10,3) datetime(2021,10,25)]; % wavr IV down
 c = c+1;
 exp_date(c,:) = [datetime(2021,12,24) datetime(2022,1,7)]; % wave V up
 c = c+1;
-% exp_date(c,:) = [datetime(2022,2,7) datetime('today')-4]; % wave V up
 exp_date(c,:) = [datetime(2022,2,3) datetime(2022,2,25)]; % wave V down
 c = c+1;
 exp_date(c,:) = [datetime(2022,3,16) datetime(2022,3,21)]; % wave V up
-
 c = c+1;
 exp_date(c,:) = [datetime(2022,4,6) datetime(2022,4,14)]; % wave V up
-
 c = c+1;
 exp_date(c,:) = [datetime(2022,6,3) datetime(2022,6,10)]; % wave VI up
+c = c+1;
+exp_date(c,:) = [datetime('today')-11 datetime('today')-4]; % wave VI down
 %%
-take_old = true; % predict deaths
-shift = 8;
-pred_idx = length(list.date)-40+shift:length(list.date)-1;
-date_death = list.date(pred_idx);
-if take_old
-    json = urlread('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily');
-    json = jsondecode(json);
-    severe = struct2table(json);
-    severe.day_date = datetime(strrep(severe.day_date,'T00:00:00.000Z',''));
-    severe.Properties.VariableNames{1} = 'date';
-    sOld = find(ismember(severe.age_group,'מעל גיל 60'));
-    dateOld = severe.date(sOld);
-    sd3 = sum([severe{sOld,6:8}],2);
-    [~, idx_sev] = ismember(date_death,dateOld);
-    pred_death = movmean(sd3(idx_sev)*0.37,[3 3]);
-else
-    pred_death = yy(pred_idx,4);
-end
+% take_old = true; % predict deaths
+% shift = 8;
+% pred_idx = length(list.date)-40+shift:length(list.date)-1;
+% date_death = list.date(pred_idx);
+% if take_old
+%     json = urlread('https://datadashboardapi.health.gov.il/api/queries/SeriousVaccinationStatusDaily');
+%     json = jsondecode(json);
+%     severe = struct2table(json);
+%     severe.day_date = datetime(strrep(severe.day_date,'T00:00:00.000Z',''));
+%     severe.Properties.VariableNames{1} = 'date';
+%     sOld = find(ismember(severe.age_group,'מעל גיל 60'));
+%     dateOld = severe.date(sOld);
+%     sd3 = sum([severe{sOld,6:8}],2);
+%     [~, idx_sev] = ismember(date_death,dateOld);
+%     pred_death = movmean(sd3(idx_sev)*0.37,[3 3]);
+% else
+%     pred_death = yy(pred_idx,4);
+% end
 %%
 figure('units','normalized','position',[0,0,0.5,1]);
 hh = plot(list.date(1:end-3), yy(1:end-3,:), 'linewidth', 1.5);
@@ -94,9 +93,9 @@ hh(4).Color = [0.851 0.373 0.008];
 hh(5).Color = ccc(1,:);
 hh(6).Color = [0 0 0];
 hold on
-hh(7) = plot(date_death+shift, pred_death,'k','LIneStyle',':','linewidth',2);
+% hh(7) = plot(date_death+shift, pred_death,'k','LIneStyle',':','linewidth',2);
 hhd = plot(list.date(end-2:end), last3,'.','markersize',8);
-for ii = 1:length(hh)-1
+for ii = 1:length(hh)
     hhd(ii).Color = hh(ii).Color;
 end
 % hhd(2).Color = ccc(4,:);
@@ -110,9 +109,10 @@ box off
 set(gcf,'Color','w')
 grid minor
 set(gca,'fontsize',13,'XTick',datetime(2020,3:50,1))
-xlim([list.date(1) datetime('tomorrow')+14])
+% xlim([list.date(1) datetime('tomorrow')+14])
 xtickformat('MMM')
-xlim([datetime(2021,12,1) datetime('today')+14])
+x1 = datetime(2021,12,1);
+xlim([x1 datetime('today')+14])
 ylabel('Cases, patients  מאומתים, מאושפזים')
 if logscale
     bias = [0,0,0,7,7,7];
@@ -140,15 +140,19 @@ if logscale
     end
     set(gca, 'YScale', 'log')
     ylim([1 100000])
-    title({'Cases and new hospitalizations   מאומתים ומאושפזים חדשים','המספרים על הגרף מייצגים קצב הכפלה שבועי עבור מאומתים וחולים חדשים','Weekly multiplication factor for new cases and patients'})
+    title('Cases and new hospitalizations   מאומתים ומאושפזים חדשים')
     legend('cases            מאומתים','cases   60+  מאומתים','hospitalized מאושפזים','severe                קשה',...
-        'ventilated      מונשמים','deceased        נפטרים','estimated deaths   הערכת תמותה','location','northeast')
+        'ventilated      מונשמים','deceased        נפטרים','location','northeast')
+    text(x1,0.3,['המספרים על הגרף מייצגים קצב הכפלה שבועי עבור מאומתים וחולים חדשים',newline,'Weekly multiplication factor for new cases and patients'],'FontSize',13);
 else
     ylim([0 250])
-    title('Cases and new hospitalizations   מאומתים ומאושפזים חדשים')
-    
+    title('New hospitalizations   מאושפזים חדשים')
     hh(1).LineStyle = 'None';
     hh(2).LineStyle = 'None';
     legend(hh(3:end),'hospitalized מאושפזים','severe                קשה',...
-        'ventilated      מונשמים','deceased        נפטרים','estimated deaths   הערכת תמותה','location','north')
+        'ventilated      מונשמים','deceased        נפטרים','location','north')
+    ylabel('patients')
+end
+for ii = 1:size(yy,2)
+    text(datetime('today')+ii, yy(end-3,ii),str(round(yy(end-3,ii),1)),'Color',hh(ii).Color);
 end
