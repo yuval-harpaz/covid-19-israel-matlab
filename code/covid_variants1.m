@@ -6,11 +6,10 @@ week = cellfun(@datetime, isr.week);
 
 variant = fieldnames(isr.stand_estimated_cases);
 tt = struct2table(isr.stand_estimated_cases(:));
-if tt.x22A_Omicron_(12) == 1005  % too early for omicron
-    tt.x22A_Omicron_(12) = 0;
-    tt.x22C_Omicron_(12) = 0;
-end
-
+% if tt.x22A_Omicron_(12) == 1005  % too early for omicron
+%     tt.x22A_Omicron_(12) = 0;
+%     tt.x22C_Omicron_(12) = 0;
+% end
 
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedPerDate');
 json = jsondecode(json);
@@ -26,11 +25,11 @@ plot(cases.date,movmean(cases.amount,[3 3]),'k')
 grid on
 box off
 title('rescaling hodcroftlab to MOH')
-legend('sum(variants)*0.75','daily cases','location','northwest')
+legend(['sum(variants)*',str(round(norm2daily,2))],'daily cases','location','northwest')
 
 % thick = [22,7,16,17,18,21,19,20];
-varName = {'Others','Alpha','Delta','Omicron BA.1','Omicron BA.2','Omicron BA.2.12.1','Omicron BA.4','Omicron BA.5','Daily cases'};
-[~,thick] = ismember({'others','x20I_Alpha_V1_','x21J_Delta_','x21K_Omicron_','x21L_Omicron_','x22C_Omicron_','x22A_Omicron_','x22B_Omicron_'},tt.Properties.VariableNames);
+varName = {'Others','Alpha','Delta','Omicron BA.1','Omicron BA.2','Omicron BA.2.12.1','Omicron BA.2.75','Omicron BA.4','Omicron BA.5','Daily cases'};
+[~,thick] = ismember({'others','x20I_Alpha_V1_','x21J_Delta_','x21K_Omicron_','x21L_Omicron_','x22C_Omicron_','x22D_Omicron_','x22A_Omicron_','x22B_Omicron_'},tt.Properties.VariableNames);
 yy = tt{:,:}*norm2daily;
 yy(yy < 30) = nan;
 
@@ -49,6 +48,7 @@ for subp = 1:2
     for it = 1:length(thick)
         hh(thick(it)).LineWidth = 2;
     end
+    hh(thick(1)).Color = [0.7 0.7 0.7];
     % legend(num2str((1:size(tt,2))'))
     if subp == 2
         line([datetime(2022,3,16) datetime(2022,3,16)],[0 10000],'Color','k','LineStyle','--')
@@ -86,6 +86,10 @@ for subp = 1:2
     clear hh ha lh
 end
 set(gcf,'Color','w')
+text(datetime('today')-140,4e4,['BA.2.75 total: ',str(sum(tt.x22D_Omicron_)),...
+    ', last measure was ',str(tt.x22D_Omicron_(end)),...
+    ' (',str(round(tt.x22D_Omicron_(end)/sum(tt{end,:})*100,2)),'%)'],...
+    'FontSize',13,'Color','r')
 % set(gca,'YScale','log'); ylim([20 10^5])
 
 %%
