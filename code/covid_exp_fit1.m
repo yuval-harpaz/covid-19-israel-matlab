@@ -156,3 +156,35 @@ end
 for ii = 1:size(yy,2)
     text(datetime('today')+ii, yy(end-3,ii),str(round(yy(end-3,ii),1)),'Color',hh(ii).Color);
 end
+%%
+if ~logscale
+    rt = yy(end-3,2)./yy(end-10,2);
+    pred = yy(end-3,1:2).*(((rt)^(1/7)).^(0:110)');
+    figure('units','normalized','position',[0.5,0,0.5,1]);
+    hhc = plot(list.date(1:end-3), yy(1:end-3,1:2), 'linewidth', 1.5);
+    hold on
+    datePred = list.date(end-3);
+    datePred = datePred:datePred+length(pred)-1;
+    hhc(3) = plot(datePred,pred(:,1),':', 'linewidth', 1.5);
+    hhc(4) = plot(datePred,pred(:,2),':', 'linewidth', 1.5);
+    hhc(1).Color = [0.106 0.62 0.467];
+    hhc(2).Color = hhc(1).Color*1.25;
+    hhc(3).Color = [0.106 0.62 0.467];
+    hhc(4).Color = hhc(1).Color*1.25;
+    legend(hhc(1:2),'cases            מאומתים','cases   60+  מאומתים')
+    xlim([datetime(2021,12,1) datePred(end)+1])
+    ylim([0 15000])
+    xtickangle(30)
+    grid on
+    iText = find(ismember(datePred,datetime(2022,9:11,1)));
+    text(datePred(iText),pred(iText,1)+150,str(round(pred(iText,1))),'Color',hhc(1).Color)
+    title(['Cases prediction by current weekly multiplication factor (',str(round(100*rt,1)),'%)'])
+    ylabel('cases')
+    ax = gca;
+    ax.YRuler.Exponent = 0;
+    ax.YAxis.TickLabelFormat = '%,.0g';
+    set(gca,'ytick',0:1000:15000)
+end
+
+    
+end
