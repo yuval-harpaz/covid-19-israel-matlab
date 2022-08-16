@@ -10,6 +10,12 @@ tt = struct2table(isr.stand_estimated_cases(:));
 %     tt.x22A_Omicron_(12) = 0;
 %     tt.x22C_Omicron_(12) = 0;
 % end
+txt = urlread('https://raw.githubusercontent.com/hodcroftlab/covariants/master/web/data/perCountryData.json');
+json = jsondecode(txt);
+iIsr = find(ismember({json.regions(1).distributions(:).country}','Israel'));
+isrData = struct2table(json.regions(1).distributions(iIsr).distribution);
+weekData = cellfun(@datetime, isr.week);
+ttData = struct2table(isrData.cluster_counts(:));
 
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/infectedPerDate');
 json = jsondecode(json);
@@ -86,9 +92,9 @@ for subp = 1:2
     clear hh ha lh
 end
 set(gcf,'Color','w')
-text(datetime('today')-140,4e4,['BA.2.75 total: ',str(sum(tt.x22D_Omicron_)),...
-    ', last measure was ',str(tt.x22D_Omicron_(end)),...
-    ' (',str(round(tt.x22D_Omicron_(end)/sum(tt{end,:})*100,2)),'%)'],...
+text(datetime('today')-140,4e4,['BA.2.75 total: ',str(sum(ttData.x22D_Omicron_)),...
+    ', last measure was ',str(ttData.x22D_Omicron_(end)),...
+    ' (',str(round(ttData.x22D_Omicron_(end)/sum(tt{end,:})*100,2)),'%)'],...
     'FontSize',13,'Color','r')
 % set(gca,'YScale','log'); ylim([20 10^5])
 
