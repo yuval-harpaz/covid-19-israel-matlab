@@ -64,7 +64,9 @@ c = c+1;
 exp_date(c,:) = [datetime(2022,6,3) datetime(2022,6,10)]; % wave VI up
 c = c+1;
 % exp_date(c,:) = [datetime(2022,7,15) datetime('today')-4]; % wave VI down
-exp_date(c,:) = [datetime(2022,7,15) datetime(2022,8,7)]; % wave VI down
+exp_date(c,:) = [datetime(2022,7,15) datetime(2022,7,31)]; % wave VI down
+c = c+1;
+exp_date(c,:) = [datetime(2022,8,10) datetime(2022,8,22)]; % wave VI down
 % exp_date(c,:) = [datetime('today')-11 datetime('today')-4]; % wave VI down
 %%
 % take_old = true; % predict deaths
