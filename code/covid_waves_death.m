@@ -13,7 +13,7 @@ dp = listD.date(1);
 dp = dp:dp+length(deathPredCum)-1;
 
 wi = [34;128;290;507;681;842;height(listD)+1];
-wx = [67;240;349;568;757;870];
+wx = [67;240;349;568;757;883];
 for iw = 1:length(wx)
     wd(iw,1) = sum(listD.CountDeath(wi(iw):wi(iw+1)-1));
 end
