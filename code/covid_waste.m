@@ -26,10 +26,7 @@ popAll = T.Population_For_Normalization;
 nvl = nan(size(date));
 
 for ii = 1:length(date)
-%     rows = dateAll == date(ii);
-%     nvl(ii,1) = nanmean(NVL(rows));
-%     pop =popAll(rows);
-%     nvln(ii,1) = nansum(NVL(rows).*pop)/sum(pop);
+    popAllDate(ii,1) = sum(popAll(dateAll == date(ii)));
     for jj = 1:length(town)
         row = find(dateAll == date(ii) & ismember(T.SE_Name,town{jj}));
         if length(row) == 1
@@ -65,6 +62,15 @@ set(gca,'XTick',date,'layer','top')
 xtickangle(90)
 xtickformat('dd.MM.yy')
 xlabel('Start week date')
+
+figure
+for ii = 1:size(nvlnorm,2)
+    bar(ii,nvlnorm(end,ii)/sum(popt))
+    hold on
+end
+set(gca,'Xtick',1:ii,'XTickLabel',town)
+xtickangle(90)
+
 count = [];
 nvln = [];
 firstOnly = [];
