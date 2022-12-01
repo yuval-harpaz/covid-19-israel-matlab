@@ -34,8 +34,8 @@ title('rescaling hodcroftlab to MOH')
 legend(['sum(variants)*',str(round(norm2daily,2))],'daily cases','location','northwest')
 
 % thick = [22,7,16,17,18,21,19,20];
-varName = {'Others','Alpha','Delta','Omicron BA.1','Omicron BA.2','Omicron BA.2.12.1','Omicron BA.2.75','Omicron BA.4','Omicron BA.5','Daily cases'};
-[~,thick] = ismember({'others','x20I_Alpha_V1_','x21J_Delta_','x21K_Omicron_','x21L_Omicron_','x22C_Omicron_','x22D_Omicron_','x22A_Omicron_','x22B_Omicron_'},tt.Properties.VariableNames);
+varName = {'Others','Alpha','Delta','Omicron BA.1','Omicron BA.2','Omicron BA.2.12.1','Omicron BA.2.75','Omicron BA.4','Omicron BA.5','Omicron BQ.1','Omicron XBB','Daily cases'};
+[~,thick] = ismember({'others','x20I_Alpha_V1_','x21J_Delta_','x21K_Omicron_','x21L_Omicron_','x22C_Omicron_','x22D_Omicron_','x22A_Omicron_','x22B_Omicron_','x22E_Omicron_','x22F_Omicron_'},tt.Properties.VariableNames);
 yy = tt{:,:}*norm2daily;
 yy(yy < 30) = nan;
 
