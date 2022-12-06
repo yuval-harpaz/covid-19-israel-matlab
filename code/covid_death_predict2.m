@@ -40,7 +40,7 @@ plot(sevDate+3,predSev,'r')
 hl = legend('deaths','old severe*0.22 + young severe*0.04, 3 days later','location','northwest');
 hl.Box = 'off';
 grid on
-title('predict deaths by cases or new severe patients')
+title('predict deaths by new severe patients')
 set(gcf,'Color','w')
 set(gca,'FontSize',17)
 ylabel('deaths')
