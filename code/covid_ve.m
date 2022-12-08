@@ -26,6 +26,29 @@ if ~isequal(ccc,ddd) && ~isequal(ccc,sss)
 end
 mn = dateshift(cases.date,'start','month');
 mnu = unique(mn);
+
+emp = cellfun(@isempty, cases.verified_expired_normalized);
+cases.verified_expired_normalized(emp) = {nan};
+cases.verified_expired_normalized = cellfun(@(x) x,cases.verified_expired_normalized);
+emp = cellfun(@isempty, cases.verified_vaccinated_normalized);
+cases.verified_vaccinated_normalized(emp) = {nan};
+cases.verified_vaccinated_normalized = cellfun(@(x) x,cases.verified_vaccinated_normalized);
+
+emp = cellfun(@isempty, severe.serious_expired_normalized);
+severe.serious_expired_normalized(emp) = {nan};
+severe.serious_expired_normalized = cellfun(@(x) x,severe.serious_expired_normalized);
+emp = cellfun(@isempty, severe.serious_vaccinated_normalized);
+severe.serious_vaccinated_normalized(emp) = {nan};
+severe.serious_vaccinated_normalized = cellfun(@(x) x,severe.serious_vaccinated_normalized);
+
+emp = cellfun(@isempty, deathsm.death_expired_normalized);
+deathsm.death_expired_normalized(emp) = {nan};
+deathsm.death_expired_normalized = cellfun(@(x) x,deathsm.death_expired_normalized);
+emp = cellfun(@isempty, deathsm.death_vaccinated_normalized);
+deathsm.death_vaccinated_normalized(emp) = {nan};
+deathsm.death_vaccinated_normalized = cellfun(@(x) x,deathsm.death_vaccinated_normalized);
+
+
 clear ve2 ve3
 for ii = 1:12+month(datetime('today'))
     im = ismember(mn,mnu(ii));
