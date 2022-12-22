@@ -16,9 +16,24 @@ fclose(fid);
 txt = native2unicode(txt);
 listE = list;
 list = listE(1:end-1,:);
-ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,0.5560;0.4660,0.6740,0.1880;0.3010,0.7450,0.9330;0.6350,0.07800,0.1840];
+% ccc = [0,0.4470,0.7410;0.8500,0.3250,0.09800;0.9290,0.6940,0.1250;0.4940,0.1840,0.5560;0.4660,0.6740,0.1880;0.3010,0.7450,0.9330;0.6350,0.07800,0.1840];
 % severe = movmean((1:end),[3 3]);
 
+cco = [91, 163, 0; 137, 206, 0; 0, 115, 230; 230, 48, 148; 181, 25, 99; 0,0,0]/255;
+% cco = [0.106 0.62 0.467;...
+%        1.25*[0.106 0.62 0.467];...
+%        0.455 0.435 0.698;...
+%        0.851 0.373 0.008;...
+%        0,0.4470,0.7410;...
+%        0,0,0];
+
+% hh = plot(list.date(1:end-3), yy(1:end-3,:), 'linewidth', 1.5);
+% hh(1).Color = [0.106 0.62 0.467];
+% hh(2).Color = hh(1).Color*1.25;
+% hh(3).Color = [0.455 0.435 0.698];
+% hh(4).Color = [0.851 0.373 0.008];
+% hh(5).Color = ccc(1,:);
+% hh(6).Color = [0 0 0];
 % hh(9) = scatter(list.date(list.CountDeath > 0),list.CountDeath(list.CountDeath > 0),'k.','MarkerEdgeAlpha',alf);
 json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
 json = jsondecode(json);
@@ -92,12 +107,15 @@ exp_date(c,:) = [datetime(2022,11,4) datetime(2022,11,20)]; % wave VI down
 %%
 figure('units','normalized','position',[0,0,0.5,1]);
 hh = plot(list.date(1:end-3), yy(1:end-3,:), 'linewidth', 1.5);
-hh(1).Color = [0.106 0.62 0.467];
-hh(2).Color = hh(1).Color*1.25;
-hh(3).Color = [0.455 0.435 0.698];
-hh(4).Color = [0.851 0.373 0.008];
-hh(5).Color = ccc(1,:);
-hh(6).Color = [0 0 0];
+for ii = 1:6
+    hh(ii).Color = cco(ii,:);
+end
+% hh(1).Color = [0.106 0.62 0.467];
+% hh(2).Color = hh(1).Color*1.25;
+% hh(3).Color = [0.455 0.435 0.698];
+% hh(4).Color = [0.851 0.373 0.008];
+% hh(5).Color = ccc(1,:);
+% hh(6).Color = [0 0 0];
 hold on
 % hh(7) = plot(date_death+shift, pred_death,'k','LIneStyle',':','linewidth',2);
 hhd = plot(list.date(end-2:end), last3,'.','markersize',8);
@@ -122,7 +140,7 @@ xlim([x1 datetime('today')+14])
 ylabel('Cases, patients  מאומתים, מאושפזים')
 if logscale
     bias = [0,0,0,7,7,7];
-    for iPoint = 1:size(exp_date,1)
+    for iPoint = 8:size(exp_date,1)
         %     if iPoint == size(exp_date,1)
         %         bias(:) = 0;  % no 7 days forward for today
         %     end
@@ -173,10 +191,12 @@ if ~logscale
     datePred = datePred:datePred+length(pred)-1;
     hhc(3) = plot(datePred,pred(:,1),':', 'linewidth', 1.5);
     hhc(4) = plot(datePred,pred(:,2),':', 'linewidth', 1.5);
-    hhc(1).Color = [0.106 0.62 0.467];
-    hhc(2).Color = hhc(1).Color*1.25;
-    hhc(3).Color = [0.106 0.62 0.467];
-    hhc(4).Color = hhc(1).Color*1.25;
+    for ii = 1:4
+        hhc(ii).Color = cco(ii,:);
+%     hhc(1).Color = [0.106 0.62 0.467];
+%     hhc(2).Color = hhc(1).Color*1.25;
+%     hhc(3).Color = [0.106 0.62 0.467];
+%     hhc(4).Color = hhc(1).Color*1.25;
     legend(hhc(1:2),'cases            מאומתים','cases   60+  מאומתים')
     xlim([datetime(2021,12,1) datePred(end)+1])
     ylim([0 15000])
