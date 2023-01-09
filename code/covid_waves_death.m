@@ -12,8 +12,8 @@ deathPredCum = cumsum(deathPred);
 dp = listD.date(1);
 dp = dp:dp+length(deathPredCum)-1;
 
-wi = [34;128;290;507;681;842;height(listD)+1];
-wx = [67;240;349;568;757;883];
+wi = [34;128;290;507;681;842;993;height(listD)+1];
+wx = [67;240;349;568;757;900;1037];
 for iw = 1:length(wx)
     wd(iw,1) = sum(listD.CountDeath(wi(iw):wi(iw+1)-1));
 end
@@ -31,8 +31,10 @@ hold on
 ylabel('cumulative deaths')
 ylim([0 14000])
 grid on
+types = {'Wild Type','WT','WT + Alpha', 'Delta','BA.1+BA.2','BA.5','BQ.1'};
 for iw = 1:length(wx)
     text(listD.date(wx(iw)),400,str(wd(iw)),'FontSize',12,'HorizontalAlignment','Center');
+    text(listD.date(wx(iw)),2000,types{iw},'FontSize',12,'HorizontalAlignment','Center');
 end
 set(gca,'XTick',datetime(2020,3:50,1),'FontSize',13)
 xtickangle(90)
