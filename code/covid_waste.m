@@ -63,6 +63,23 @@ xtickangle(90)
 xtickformat('dd.MM.yy')
 xlabel('Start week date')
 
+
+d = nvlnorm/sum(popt);
+means = nanmean(d,2);
+medians = nanmedian(d,2);
+count = sum(isnan(d),2);
+figure;
+plot(date,[means.*count,medians.*count])
+set(gca,'YScale','log')
+ylabel('NVL')
+set(gcf,'Color','w')
+set(gca,'XTick',date,'layer','top')
+xtickangle(90)
+xtickformat('dd.MM.yy')
+xlabel('Start week date')
+ylim([10000 10^7])
+grid
+
 figure
 for ii = 1:size(nvlnorm,2)
     bar(ii,nvlnorm(end,ii)/sum(popt))
@@ -93,6 +110,10 @@ set(gca,'XTick',date,'layer','top')
 xtickangle(90)
 xtickformat('dd.MM.yy')
 xlabel('Start week date')
+hold on
+% plot(date,means.*count,'r')
+% plot(date,medians.*count,'k')
+
 
 figure;
 hb = bar(date,[present,firstOnly,count],'stacked');
