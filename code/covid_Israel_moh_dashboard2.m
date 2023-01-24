@@ -15,10 +15,24 @@ txt = fread(fid)';
 fclose(fid);
 txt = native2unicode(txt);
 json = jsondecode(txt);
+%% bug with test results
 
+!wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/testResultsPerDate
+fid = fopen('tmp.json','r');
+txt = fread(fid)';
+fclose(fid);
+txt = native2unicode(txt);
+json3 = jsondecode(txt);
+json(3).data = json3; % bug
 %%
-json1 = urlread('https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus');
-json1 = jsondecode(json1);
+!wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus 
+fid = fopen('tmp.json','r');
+txt = fread(fid)';
+fclose(fid);
+txt = native2unicode(txt);
+json1 = jsondecode(txt);
+% json1 = urlread('https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus');
+% json1 = jsondecode(json1);
 hosp = struct2table(json1);
 hosp.dayDate = datetime(strrep(hosp.dayDate,'T00:00:00.000Z',''));
 if ~isequal(hosp.dayDate,unique(hosp.dayDate))
@@ -32,6 +46,7 @@ vars1 = {'countHospitalized','CountHospitalized';'countHospitalizedWithoutReleas
 col = find(~cellfun(@isempty, vars1(:,2)));
 hosp.countEcmo(cellfun(@isempty, hosp.countEcmo)) = {nan};
 hosp.countEcmo = [hosp.countEcmo{:}]';
+
 %%
 % confirmed = struct2table(json(2).data);
 % confirmed.date = cellfun(@(x) datetime(x(1:10)),confirmed.date);
@@ -64,10 +79,21 @@ hosp.Properties.VariableNames{1} = 'date';
 if any(idx == 0)
     error('missing dates')
 end
-death1 = urlread('https://datadashboardapi.health.gov.il/api/queries/deadPatientsPerDate');
-death1 = struct2table(jsondecode(death1));
-dateDeaths = datetime(strrep(death1.date,'T00:00:00.000Z',''));
-death1 = death1.amount;
+
+
+% !wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/https://datadashboardapi.health.gov.il/api/queries/deadPatientsPerDate
+% fid = fopen('tmp.json','r');
+% txt = fread(fid)';
+% fclose(fid);
+% txt = native2unicode(txt);
+% json4 = jsondecode(txt);
+% !rm tmp.json
+% % options=weboptions; 
+% % options.CertificateFilename=''; 
+% % death1 = urlread('https://datadashboardapi.health.gov.il/api/queries/deadPatientsPerDate', options);
+% death1 = struct2table(json4);
+% dateDeaths = datetime(strrep(death1.date,'T00:00:00.000Z',''));
+% death1 = death1.amount;
 
 data.CountDeath(idx) = hosp.countDeath;
 for ii = 2:length(vars)
@@ -148,14 +174,14 @@ if ~isequal(data(end,1:4),dataPrev(end,1:4))
 %         end
 %     end
     %
-    if sum(hosp.countDeath) < sum(death1)
-        warning(['hospitalizationStatus not up to date? ',str(sum(hosp.countDeath)),...
-            ' instead of ',str(sum(death1)),' deaaths'])
-        iStart = find(ismember(dataPrev.date,data.date),1);
-        [isx,idx] = ismember(dataNew.date,dateDeaths);
-        data.CountDeath(idx(isx)) = death1;
-        %     hosp.countDeath(idx) = death1;
-    end
+%     if sum(hosp.countDeath) < sum(death1)
+%         warning(['hospitalizationStatus not up to date? ',str(sum(hosp.countDeath)),...
+%             ' instead of ',str(sum(death1)),' deaaths'])
+%         iStart = find(ismember(dataPrev.date,data.date),1);
+%         [isx,idx] = ismember(dataNew.date,dateDeaths);
+%         data.CountDeath(idx(isx)) = death1;
+%         %     hosp.countDeath(idx) = death1;
+%     end
     nanwritetable(dataNew,'data/Israel/dashboard_timeseries.csv');
 end
 
