@@ -35,7 +35,12 @@ cco = [91, 163, 0; 137, 206, 0; 0, 115, 230; 230, 48, 148; 181, 25, 99; 0,0,0]/2
 % hh(5).Color = ccc(1,:);
 % hh(6).Color = [0 0 0];
 % hh(9) = scatter(list.date(list.CountDeath > 0),list.CountDeath(list.CountDeath > 0),'k.','MarkerEdgeAlpha',alf);
-json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
+!wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily 
+fid = fopen('tmp.json','r');
+txt = fread(fid)';
+fclose(fid);
+json = native2unicode(txt);
+% json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
 json = jsondecode(json);
 cases = struct2table(json);
 cases.day_date = datetime(strrep(cases.day_date,'T00:00:00.000Z',''));
