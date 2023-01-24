@@ -4,7 +4,14 @@ death = listD.CountDeath;
 death(end) = nan;
 death = movmean(death,[3 3],'omitnan');
 
-json = urlread('https://datadashboardapi.health.gov.il/api/queries/newHospitalizationDaily');
+!wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/newHospitalizationDaily 
+fid = fopen('tmp.json','r');
+txt = fread(fid)';
+fclose(fid);
+json = native2unicode(txt);
+% options = weboptions;
+% % options.CertificateFilename = '';
+% json = urlread('https://datadashboardapi.health.gov.il/api/queries/newHospitalizationDaily', options);
 json = jsondecode(json);
 hosp = struct2table(json);
 hosp.dayDate = datetime(strrep(hosp.dayDate,'T00:00:00.000Z',''));
