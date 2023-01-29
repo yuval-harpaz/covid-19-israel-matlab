@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from dash import dcc, callback_context, html, Dash
@@ -7,8 +8,11 @@ import plotly.express as px
 import plotly.graph_objects as go
 import urllib.request
 import json
+import requests
 
-
+local = '/home/innereye/apps/covid-israel'
+if os.path.isdir(local):
+    os.chdir(local)
 def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
@@ -28,16 +32,28 @@ def movmean(vec, win, nanTail=False):
 #         '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
 # else:
 api = 'https://datadashboardapi.health.gov.il/api/queries/'
-dfAge = pd.read_csv('https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
-dfTS = pd.read_json(api+'hospitalizationStatus')
-cn = list(dfTS.columns)
-cn[0] = 'date'
-dfTS.columns = cn
-# dfTS = dfTS[dfTS.duplicated(['date'], keep=False)]
-dfTS = dfTS.drop_duplicates(subset=['date'], keep='first')
-dfTS.sort_values('date')
-dfTS['date'] = dfTS['date'].str.slice(start=None, stop=10)
+warning = ''
+try:
+    dfAge = pd.read_csv('https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
+    dfAge.to_csv('cases_by_age.csv', index=False, sep=',')
+except:
+    warning += ' | download cases_by_age failed'
+    dfAge = pd.read_csv('cases_by_age.csv')
+try:
+    dfTS = pd.read_json(requests.get(api+'hospitalizationStatus', verify=False).text)
+    cn = list(dfTS.columns)
+    cn[0] = 'date'
+    dfTS.columns = cn
+    # dfTS = dfTS[dfTS.duplicated(['date'], keep=False)]
+    dfTS = dfTS.drop_duplicates(subset=['date'], keep='first')
+    dfTS.sort_values('date')
+    dfTS['date'] = dfTS['date'].str.slice(start=None, stop=10)
+    dfTS.to_csv('hospitalizationStatus.csv', index=False, sep=',')
+except:
+    warning += ' | download hospitalizationStatus failed'
+    dfTS = pd.read_csv('hospitalizationStatus.csv')
 hospitalizationStatus = dfTS.to_csv(index=False)
+
 
 url = [api+'VerfiiedVaccinationStatusDaily',
        api+'SeriousVaccinationStatusDaily',
@@ -54,12 +70,19 @@ dfsNorm = [[], [], []]
 dfsAbs = [[], [], []]
 downloads = []
 for ii in [0, 1, 2]:
-    dfs = pd.read_json(url[ii])
+    opfn = url[ii][len(api):]
+    try:
+        dfs = pd.read_json(requests.get(url[ii], verify=False).text)
+        dfs.to_csv(opfn+'.csv', sep=',', index=False)
+    except:
+        warning += ' | download '+opfn+' failed'
+        dfs = pd.read_csv(opfn+'.csv')
     downloads.append(dfs.copy())
     downloads[-1]['day_date'] = downloads[-1]['day_date'].str.slice(0, 10)
     downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('מעל גיל 60', 'over 60')
     downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('מתחת לגיל 60', 'under 60')
     downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('כלל האוכלוסיה', 'all')
+
     dfs['date'] = pd.to_datetime(dfs['day_date'])
     dfsNorm[ii] = dfs.rename(columns={varsNorm[ii][0]: 'vaccinated', varsNorm[ii][1]: 'expired', varsNorm[ii][2]: 'unvaccinated'})
     dfsNorm[ii] = dfsNorm[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
@@ -252,15 +275,23 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
 
 ## waning
 url1 = 'https://data.gov.il/api/3/action/datastore_search?resource_id=e4bf0ab8-ec88-4f9b-8669-f2cc78273edd&limit=10000'
-with urllib.request.urlopen(url1) as api1:
-    data1 = json.loads(api1.read().decode())
+try:
+    with urllib.request.urlopen(url1) as api1:
+        data1 = json.loads(api1.read().decode())
+        df1 = pd.DataFrame(data1['result']['records'])
+        df1.to_csv('datagov.csv', sep=',', index=False)
+except:
+    df1 = pd.read_csv('datagov.csv')
+    warning += ' | download from data.gov failed'
 win = 7
-
-
-df1 = pd.DataFrame(data1['result']['records'])
 date1 = np.asarray(pd.to_datetime(df1['תאריך']))
 url2 = 'https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily'
-df2 = pd.read_json(url2)
+try:
+    df2 = pd.read_json(requests.get(url2, verify=False).text)
+    df2.to_csv('VerfiiedVaccinationStatusDaily.csv', index=False, sep=',')
+except:
+    df2 = pd.read_csv('VerfiiedVaccinationStatusDaily.csv')
+    warning += ' | download VerfiiedVaccinationStatusDaily failed'
 df2 = df2.loc[df2["age_group"] == 'מעל גיל 60']
 df2 = df2.reset_index()
 date2 = np.asarray(pd.to_datetime(df2['day_date'].str.slice(0,10)))
@@ -268,8 +299,17 @@ date = np.concatenate([date1, date2])
 date = np.unique(date)
 date = np.sort(date)
 url3 = 'https://datadashboardapi.health.gov.il/api/queries/infectedPerDate'
-df3 = pd.read_json(url3)
-date3 = list(pd.to_datetime(df3['date'].dt.strftime('%Y-%m-%d')))
+# df3 = pd.read_json(url3)
+try:
+    df3 = pd.read_json(requests.get(url3, verify=False).text)
+    df3['date'] = df3['date'].dt.strftime('%Y-%m-%d')
+    df3.to_csv('infectedPerDate.csv', index=False, sep=',')
+except:
+    df3 = pd.read_csv('infectedPerDate.csv')
+    # pd.to_datetime(df3['date'], format='%H:%M:%S').dt.time
+    warning += ' | download infectedPerDate failed'
+date3 = list(pd.to_datetime(df3['date']))
+# date3 = list(pd.to_datetime(df3['date'].dt.strftime('%Y-%m-%d')))
 casesAll = np.zeros((len(date)))
 casesAll[:] = np.nan
 for ii, _ in enumerate(date3):
@@ -405,10 +445,22 @@ def makeVE(age_gr):
     # figW60.add_trace(go.Scatter(x=date2ve, y=unvaccW60, yaxis='y2', name='unvaccinated', line_color='#ff9999'))
     return figW60
 #%% world
-JH = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
-JHC = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+try:
+    JH = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv')
+    JH.to_csv('JHU_deaths.csv', sep=',', index=False)
+except:
+    JH = pd.read_csv('JHU_deaths.csv')
+try:
+    JHC = pd.read_csv('https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv')
+    JHC.to_csv('JHU_cases.csv', sep=',', index=False)
+except:
+    JHC = pd.read_csv('JHU_cases.csv')
 
-pop = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/scripts/input/un/population_latest.csv')
+try:
+    pop = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/master/scripts/input/un/population_latest.csv')
+    pop.to_csv('pop_owid.csv', sep=',', index=False)
+except:
+    pop = pd.read_csv('pop_owid.csv')
 JHT = JH.T
 jhn = JHT.to_numpy()
 jhc = JHC.T.to_numpy()
@@ -426,7 +478,12 @@ for ii, dd in enumerate(date_str):
             parsed[dm] = '0'+parsed[dm]
     dateW.append(np.datetime64('20'+parsed[2]+'-'+parsed[0]+'-'+parsed[1]))
 dateW = np.asarray(dateW)
-WHO = pd.read_csv('https://covid19.who.int/WHO-COVID-19-global-data.csv')
+try:
+    WHO = pd.read_csv('https://covid19.who.int/WHO-COVID-19-global-data.csv')
+    WHO.to_csv('WHO.csv', sep=',', index=False)
+except:
+    WHO = pd.read_csv('WHO.csv')
+
 wc = np.unique(np.asarray(WHO['Country']))
 WHOisr = WHO[WHO['Country'] == 'Israel']
 dateWho = np.asarray(list(WHOisr['Date_reported']))
@@ -901,3 +958,4 @@ def update_world(src, cum, smoot, rangeslider, checklist, clear, sortD, sortC, s
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+

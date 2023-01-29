@@ -1,6 +1,12 @@
 
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
-json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
+
+!wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily 
+fid = fopen('tmp.json','r');
+txt = fread(fid)';
+fclose(fid);
+json = native2unicode(txt);
+% json = urlread('https://datadashboardapi.health.gov.il/api/queries/VerfiiedVaccinationStatusDaily');
 json = jsondecode(json);
 cases = struct2table(json);
 cases.day_date = datetime(strrep(cases.day_date,'T00:00:00.000Z',''));

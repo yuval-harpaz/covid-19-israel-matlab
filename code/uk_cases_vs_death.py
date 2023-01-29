@@ -24,9 +24,9 @@ date = np.datetime64('today')-np.timedelta64(1)
 metric = ['maleCases', 'femaleCases', 'newDeaths28DaysByDeathDate']
 loc = ['England', 'London']
 
-age = ['0_to_4','5_to_9','10_to_14','15_to_19','20_to_24','25_to_29','30_to_34','35_to_39',
-       '40_to_44','45_to_49','50_to_54','55_to_59','60_to_64','65_to_69','70_to_74',
-       '75_to_79','80_to_84','85_to_89','90+']
+age = ['0_to_4', '5_to_9', '10_to_14', '15_to_19', '20_to_24', '25_to_29', '30_to_34', '35_to_39',
+       '40_to_44', '45_to_49', '50_to_54', '55_to_59', '60_to_64', '65_to_69', '70_to_74',
+       '75_to_79', '80_to_84', '85_to_89', '90+']
 data = {'England': [], 'London': []}
 dates = {'England': [], 'London': []}
 dates_deaths = {'England': [], 'London': []}
