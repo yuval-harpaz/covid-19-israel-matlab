@@ -15,6 +15,8 @@ txt = fread(fid)';
 fclose(fid);
 txt = native2unicode(txt);
 json = jsondecode(txt);
+
+
 %% bug with test results
 
 !wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/testResultsPerDate
@@ -24,6 +26,16 @@ fclose(fid);
 txt = native2unicode(txt);
 json3 = jsondecode(txt);
 json(3).data = json3; % bug
+%% bug with test results
+
+!wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/infectedPerDate
+fid = fopen('tmp.json','r');
+txt = fread(fid)';
+fclose(fid);
+txt = native2unicode(txt);
+json2 = jsondecode(txt);
+json(2).data = json2; % bug
+
 %%
 !wget -O tmp.json --no-check-certificate https://datadashboardapi.health.gov.il/api/queries/hospitalizationStatus 
 fid = fopen('tmp.json','r');
