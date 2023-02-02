@@ -1,13 +1,13 @@
 import os
 import pandas as pd
 import numpy as np
-from dash import dcc, callback_context, html, Dash
-from dash.dependencies import Input, Output, State
-import dash_bootstrap_components as dbc
+# from dash import dcc, callback_context, html, Dash
+# from dash.dependencies import Input, Output, State
+# import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
-import urllib.request
-import json
+# import urllib.request
+# import json
 import requests
 
 local = '/home/innereye/covid-19-israel-matlab/docs/'
@@ -270,6 +270,8 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
                           xanchor="left",
                           x=0.05
                       ),
+                      width=1000,
+                      height=700
                       )
     return fig
 
