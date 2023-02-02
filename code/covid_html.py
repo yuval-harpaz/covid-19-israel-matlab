@@ -276,7 +276,8 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
     return fig
 
 ##
-txt = '<a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc_abs.html">absolute</a><br>\n'
+txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc_abs.html">absolute</a><br>\n'+ \
+      '<a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a><br>\n'
 fig = make_figs3(dfsNorm[0], measure[0],  age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ')
 txt = txt+fig.to_html()  # +'\n<br>\n'
 fig = make_figs3(dfsNorm[1], measure[1], age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ')
@@ -287,7 +288,8 @@ file = open("by_vacc.html", "w")
 a = file.write(txt)
 file.close()
 
-txt = '<a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc.html">per 100k</a><br>\n'
+txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc.html">per 100k</a><br>\n'+\
+      '<a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a><br>\n'
 fig = make_figs3(dfsAbs[0], measure[0],  age_gr='מעל גיל 60', smoo='sm', nrm=', absolute ')
 txt = txt+fig.to_html()  # +'\n<br>\n'
 fig = make_figs3(dfsAbs[1], measure[1], age_gr='מעל גיל 60', smoo='sm', nrm=', absolute ')
