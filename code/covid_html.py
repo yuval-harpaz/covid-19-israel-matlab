@@ -13,6 +13,8 @@ import requests
 local = '/home/innereye/covid-19-israel-matlab/docs/'
 if os.path.isdir(local):
     os.chdir(local)
+
+
 def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
@@ -26,11 +28,7 @@ def movmean(vec, win, nanTail=False):
             smooth[ii] = np.nanmean(vec[ii-int(win/2):ii+int(win/2)+1])
     return smooth
 
-# if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
-#     api = '/home/innereye/Downloads/'
-#     dfAge = pd.read_csv(
-#         '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
-# else:
+
 api = 'https://datadashboardapi.health.gov.il/api/queries/'
 warning = ''
 try:
