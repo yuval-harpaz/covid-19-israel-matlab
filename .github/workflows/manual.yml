@@ -5,8 +5,8 @@ name: manual
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: write-all
+  # contents: read
 
 jobs:
   vacc-fig:
