@@ -1,20 +1,27 @@
 import os
 import pandas as pd
 import numpy as np
-# from dash import dcc, callback_context, html, Dash
-# from dash.dependencies import Input, Output, State
-# import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
-# import urllib.request
-# import json
 import requests
+import sys
 
-local = '/home/innereye/covid-19-israel-matlab/docs/'
+
+local = '/home/innereye/covid-19-israel-matlab/'
 if os.path.isdir(local):
     os.chdir(local)
+api = 'https://datadashboardapi.health.gov.il/api/queries/'
+update = requests.get(api+'lastUpdate', verify=False).json()
+update = update[0]['lastUpdate'].replace('T', ' ')[:-5]
+with open('docs/lastUpdate.txt', 'r') as file:
+    prev_update = file.read()
+if update == prev_update:
+    print('no news')
+    sys.exit(0)
 
-
+file = open("docs/lastUpdate.txt", "w")
+a = file.write(update)
+file.close()
 def movmean(vec, win, nanTail=False):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
@@ -29,14 +36,13 @@ def movmean(vec, win, nanTail=False):
     return smooth
 
 
-api = 'https://datadashboardapi.health.gov.il/api/queries/'
 warning = ''
 try:
     dfAge = pd.read_csv('https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
-    dfAge.to_csv('cases_by_age.csv', index=False, sep=',')
+    dfAge.to_csv('data/Israel/cases_by_age.csv', index=False, sep=',')
 except:
     warning += ' | download cases_by_age failed'
-    dfAge = pd.read_csv('cases_by_age.csv')
+    dfAge = pd.read_csv('data/Israel/cases_by_age.csv')
 try:
     dfTS = pd.read_json(requests.get(api+'hospitalizationStatus', verify=False).text)
     cn = list(dfTS.columns)
@@ -46,10 +52,10 @@ try:
     dfTS = dfTS.drop_duplicates(subset=['date'], keep='first')
     dfTS.sort_values('date')
     dfTS['date'] = dfTS['date'].str.slice(start=None, stop=10)
-    dfTS.to_csv('hospitalizationStatus.csv', index=False, sep=',')
+    dfTS.to_csv('data/Israel/hospitalizationStatus.csv', index=False, sep=',')
 except:
     warning += ' | download hospitalizationStatus failed'
-    dfTS = pd.read_csv('hospitalizationStatus.csv')
+    dfTS = pd.read_csv('data/Israel/hospitalizationStatus.csv')
 hospitalizationStatus = dfTS.to_csv(index=False)
 
 
@@ -71,10 +77,10 @@ for ii in [0, 1, 2]:
     opfn = url[ii][len(api):]
     try:
         dfs = pd.read_json(requests.get(url[ii], verify=False).text)
-        dfs.to_csv(opfn+'.csv', sep=',', index=False)
+        dfs.to_csv('data/Israel/'+opfn+'.csv', sep=',', index=False)
     except:
         warning += ' | download '+opfn+' failed'
-        dfs = pd.read_csv(opfn+'.csv')
+        dfs = pd.read_csv('data/Israel/'+opfn+'.csv')
     downloads.append(dfs.copy())
     downloads[-1]['day_date'] = downloads[-1]['day_date'].str.slice(0, 10)
     downloads[-1]['age_group'] = downloads[-1]['age_group'].str.replace('מעל גיל 60', 'over 60')
@@ -88,58 +94,6 @@ for ii in [0, 1, 2]:
     dfsAbs[ii] = dfsAbs[ii][['date', 'day_date', 'age_group', 'vaccinated', 'expired', 'unvaccinated']]
 # writer = pd.ExcelWriter(engine='xlsxwriter')
 
-shifts = [0, 11, 21]
-ages2 = ['מתחת לגיל 60', 'מעל גיל 60']
-yy = np.zeros((3, 2, 2, 2))
-dd = [[], [], []]
-for im in [0, 1, 2]:  # cases, severe, deaths
-    for ia in [0, 1]:  # young, old
-        df_age1 = dfsAbs[im].loc[dfsAbs[im]['age_group'] == ages2[ia]]
-        df_age1.reset_index()
-        for iv, vax in enumerate(['vaccinated','unvaccinated']):
-            meas = np.asarray(df_age1[vax])
-            day_date = np.asarray(df_age1['day_date'])
-            d0 = np.where(day_date == '2021-06-20T00:00:00.000Z')[0][0]
-            d1 = np.where(day_date == '2021-10-21T00:00:00.000Z')[0][0]
-            d2 = np.where(day_date == '2021-12-11T00:00:00.000Z')[0][0]
-            yy[im, ia, 0, iv] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
-            yy[im, ia, 1, iv] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
-    dd[im] = [str(day_date[d0+shifts[im]])[:10],
-              str(day_date[d1+shifts[im]])[:10],
-              str(day_date[d2+shifts[im]])[:10],
-              str(day_date[-shifts[-im-1]-1])[:10]]
-
-hs = dfTS.to_numpy()
-deathTot = hs[:, np.where(dfTS.columns == 'countDeath')[0][0]]
-severeTot = hs[:, np.where(dfTS.columns == 'countSeriousCriticalCum')[0][0]]
-severeTot[1:] = np.diff(severeTot)
-dd0 = np.where(hs[:, 0] == '2021-06-20')[0][0]
-dd1 = np.where(hs[:, 0] == '2021-10-21')[0][0]
-dd2 = np.where(hs[:, 0] == '2021-12-11')[0][0]
-# yy[im, ia, 0, iv] = np.sum(meas[d0+shifts[im]:d1+shifts[im]])
-# yy[im, ia, 1, iv] = np.sum(meas[d2+shifts[im]:-shifts[-im-1]-1])
-dfWaveTot = pd.DataFrame([['Delta', 'deaths', np.sum(deathTot[dd0+shifts[2]:dd1+shifts[2]])],
-                          ['Omi', 'deaths', np.sum(deathTot[dd2+shifts[2]:])],
-                          ['Delta', 'severe', np.sum(severeTot[dd0+shifts[1]:dd1+shifts[1]])],
-                          ['Omi', 'severe', np.sum(severeTot[dd2+shifts[1]:])]],
-                         columns=['wave', 'measure', 'patients'])
-
-figWaves = px.histogram(dfWaveTot, x="measure", y="patients", color='wave', barmode='group')
-figWaves.data[0].text = np.round(figWaves.data[0]['y'], 2)
-figWaves.data[1].text = np.round(figWaves.data[1]['y'], 2)
-figWaves.layout['yaxis']['title']['text'] = 'patients'
-figWaves.layout['xaxis']['title']['text'] = ''
-figWaves['data'][0]['marker']['color'] = 'green'
-figWaves['data'][1]['marker']['color'] = 'purple'
-figWaves['layout']['title'] = 'Deaths and severe patients (all ages)'
-figWaves['layout']['title']['x'] = 0.45
-figWaves['layout']['title']['font_color'] = "black"
-figWaves['layout']['title']['xanchor'] = 'center'
-
-# dfWaveTot = pd.DataFrame([['Delta', 'deaths', yy[2, 0, 0, 0]+yy[2, 1, 0, 0]+],
-#                           ['Omi', 'vaccinated', yy[2, age, 1, 0]/yy[1, age, 1, 0]],
-#                           ['Delta', 'unvaccinated', yy[2, age, 0, 1]/yy[1, age, 0, 1]],
-#                           ['Omi', 'unvaccinated', yy[2, age, 1, 1]/yy[1, age, 1, 1]]],
 def make_ratios(age=1):
     dfRat = pd.DataFrame([['Delta', 'vaccinated', yy[2, age, 0, 0]/yy[1, age, 0, 0]],
                           ['Omi', 'vaccinated', yy[2, age, 1, 0]/yy[1, age, 1, 0]],
@@ -231,7 +185,7 @@ fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
 fig1.update_yaxes(range=(20, int(10000*np.ceil(np.nanmax(yyAge)/10000))))
 fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%b\n%Y")
 fig1.update_layout(title_text="Weekly cases by age", font_size=15, updatemenus=updatemenus)
-fig1.write_html('cases_by_age.html')
+fig1.write_html('docs/cases_by_age.html')
 
 def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ', start_date=[], end_date=[], loglin='linear'):
     df_age = df_in.loc[df_in["age_group"] == age_gr]
@@ -274,7 +228,8 @@ def make_figs3(df_in, meas, age_gr='מעל גיל 60', smoo='sm', nrm=', per 100
     return fig
 
 ##
-txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc_abs.html">absolute</a><br>\n'+ \
+txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc_abs.html">absolute</a>, '+ \
+      '<a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc_young.html">younger than 60</a><br>\n'+\
       '<a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a><br>\n'
 fig = make_figs3(dfsNorm[0], measure[0],  age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ')
 txt = txt+fig.to_html()  # +'\n<br>\n'
@@ -282,11 +237,12 @@ fig = make_figs3(dfsNorm[1], measure[1], age_gr='מעל גיל 60', smoo='sm', n
 txt = txt+fig.to_html()
 fig = make_figs3(dfsNorm[2], measure[2], age_gr='מעל גיל 60', smoo='sm', nrm=', per 100k ')
 txt = txt+fig.to_html()
-file = open("by_vacc.html", "w")
+file = open("docs/by_vacc.html", "w")
 a = file.write(txt)
 file.close()
 
-txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc.html">per 100k</a><br>\n'+\
+txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc.html">per 100k</a>, '+\
+      '<a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc_abs_young.html">younger than 60</a><br>\n'+\
       '<a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a><br>\n'
 fig = make_figs3(dfsAbs[0], measure[0],  age_gr='מעל גיל 60', smoo='sm', nrm=', absolute ')
 txt = txt+fig.to_html()  # +'\n<br>\n'
@@ -294,10 +250,35 @@ fig = make_figs3(dfsAbs[1], measure[1], age_gr='מעל גיל 60', smoo='sm', nr
 txt = txt+fig.to_html()
 fig = make_figs3(dfsAbs[2], measure[2], age_gr='מעל גיל 60', smoo='sm', nrm=', absolute ')
 txt = txt+fig.to_html()
-file = open("by_vacc_abs.html", "w")
+file = open("docs/by_vacc_abs.html", "w")
 a = file.write(txt)
 file.close()
 
+txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc_abs_young.html">absolute</a>, '+ \
+      '<a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc.html">older than 60</a><br>\n'+\
+      '<a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a><br>\n'
+fig = make_figs3(dfsNorm[0], measure[0],  age_gr='מתחת לגיל 60', smoo='sm', nrm=', per 100k ')
+txt = txt+fig.to_html()  # +'\n<br>\n'
+fig = make_figs3(dfsNorm[1], measure[1], age_gr='מתחת לגיל 60', smoo='sm', nrm=', per 100k ')
+txt = txt+fig.to_html()
+fig = make_figs3(dfsNorm[2], measure[2], age_gr='מתחת לגיל 60', smoo='sm', nrm=', per 100k ')
+txt = txt+fig.to_html()
+file = open("docs/by_vacc_young.html", "w")
+a = file.write(txt)
+file.close()
+
+txt = 'Switch to <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc_young.html">per 100k</a>, '+\
+      '<a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/docs/by_vacc_abs.html">older than 60</a><br>\n'+\
+      '<a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a><br>\n'
+fig = make_figs3(dfsAbs[0], measure[0],  age_gr='מתחת לגיל 60', smoo='sm', nrm=', absolute ')
+txt = txt+fig.to_html()  # +'\n<br>\n'
+fig = make_figs3(dfsAbs[1], measure[1], age_gr='מתחת לגיל 60', smoo='sm', nrm=', absolute ')
+txt = txt+fig.to_html()
+fig = make_figs3(dfsAbs[2], measure[2], age_gr='מתחת לגיל 60', smoo='sm', nrm=', absolute ')
+txt = txt+fig.to_html()
+file = open("docs/by_vacc_abs_young.html", "w")
+a = file.write(txt)
+file.close()
 #
 # figb = make_figs3(dfsAbs[0], measure[0], age_group, smoo,  ' ', start_date, end_date, loglin)
 # figc = make_figs3(dfsAbs[1], measure[1], age_group, smoo,  ' ', start_date, end_date, loglin)
