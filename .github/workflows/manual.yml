@@ -1,10 +1,9 @@
 # download data and make figures as html using python
 
-name: Python application
+name: manual
 
 on:
-  schedule:
-    - cron: '0 14 * * *'
+  workflow_dispatch:
 
 permissions:
   contents: read
