@@ -1,5 +1,5 @@
 
-import colorsys
+from matplotlib import cm
 import folium
 import pandas as pd
 # df = pd.read_csv('/home/innereye/Documents/earthquake2000.csv')
