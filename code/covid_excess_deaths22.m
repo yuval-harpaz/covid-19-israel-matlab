@@ -1,13 +1,13 @@
 cd ~/covid-19-israel-matlab/data/Israel
 [~,msg] = system('wget -O lmsMonth.xlsx https://www.cbs.gov.il/he/publications/LochutTlushim/2020/%D7%A4%D7%98%D7%99%D7%A8%D7%95%D7%AA-%D7%A9%D7%A0%D7%94-%D7%97%D7%95%D7%93%D7%A9.xlsx');
-monthAll = readtable('lmsMonth.xlsx','Range','B11:X22','ReadVariableNames',false);
-monthAll = xlsread('lmsMonth.xlsx','B11:X22');
-month70 = xlsread('lmsMonth.xlsx','B30:X41');
+% monthAll = readtable('lmsMonth.xlsx','Range','B11:X22','ReadVariableNames',false);
+monthAll = xlsread('lmsMonth.xlsx','B11:Y22');
+% month70 = xlsread('lmsMonth.xlsx','B30:X41');
 % https://docs.google.com/spreadsheets/d/1GHeY4KtT_7gw1L2-00Xj_2vbeA6uYozf2uX1BIf-o30/edit#gid=0
 
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 covid = [];
-for yea = 2020:2022
+for yea = 2020:2023
     for mon = 1:12
         idx = dateshift(listD.date,'start','month') == datetime(yea,mon,1);
         covid(mon,yea-2019) = nansum(listD.CountDeath(idx)); %/pop.Var2(end)*10^6;
