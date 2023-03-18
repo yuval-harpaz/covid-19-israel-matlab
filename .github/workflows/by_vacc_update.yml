@@ -22,9 +22,12 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-    - name: run script
+    - name: run vaccination status
       run: |
         python code/covid_html.py
+    - name: run hospitalizations
+      run: |
+        python code/covid_logscale.py
     - name: commit files
       run: |
         git config --global user.name "actions"
