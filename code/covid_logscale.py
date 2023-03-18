@@ -1,13 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
-from dash import dcc, callback_context, html, Dash
-from dash.dependencies import Input, Output, State
-import dash_bootstrap_components as dbc
-import plotly.express as px
+import sys
 import plotly.graph_objects as go
-import urllib.request
-import json
 import requests
 api = 'https://datadashboardapi.health.gov.il/api/queries/'
 local = '/home/innereye/covid-19-israel-matlab/'
@@ -26,6 +21,8 @@ if update == prev_update:
     print('no news')
     if remote:
         sys.exit(0)
+
+
 def movmean(vec, win, nanTail=False, round=0):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
@@ -40,18 +37,6 @@ def movmean(vec, win, nanTail=False, round=0):
     smooth = np.round(smooth, round)
     return smooth
 
-# if os.path.isfile('/home/innereye/Downloads/VerfiiedVaccinationStatusDaily'):
-#     api = '/home/innereye/Downloads/'
-#     dfAge = pd.read_csv(
-#         '/home/innereye/covid-19-israel-matlab/data/Israel/cases_by_age.csv')
-# else:
-
-# try:
-#     dfAge = pd.read_csv('https://raw.githubusercontent.com/yuval-harpaz/covid-19-israel-matlab/master/data/Israel/cases_by_age.csv')
-#     dfAge.to_csv('cases_by_age.csv', index=False, sep=',')
-# except:
-#     warning += ' | download cases_by_age failed'
-#     dfAge = pd.read_csv('cases_by_age.csv')
 try:
     dfTS = pd.read_json(requests.get(api+'hospitalizationStatus', verify=False).text)
     prev = pd.read_csv('data/Israel/hospitalizationStatus.csv')
@@ -69,6 +54,31 @@ try:
 except:
     raise Exception('download hospitalizationStatus failed')
 
+# try:
+#     dfInfected = pd.read_json(requests.get(api + 'infectedPerDate', verify=False).text)
+#     dfCases = pd.read_json(requests.get(api + 'testResultsPerDate', verify=False).text)
+#     # dfTS = dfTS[dfTS.duplicated(['date'], keep=False)]
+#     dfCases = dfCases.drop_duplicates(subset=['date'], keep='first')
+#     dfCases.sort_values('date')
+#     # dfCases['date'] = dfCases['date'].str.slice(start=None, stop=10)
+#     dfCases.to_csv('data/Israel/testResultsPerDate.csv', index=False, sep=',', date_format='%Y-%m-%d')
+# except:
+#     raise Exception('download cases failed')
+
+try:
+    dfCases = pd.read_json(requests.get(api + 'infectedPerDate', verify=False).text)
+    # dfCases = pd.read_json(requests.get(api + 'testResultsPerDate', verify=False).text)
+    # dfTS = dfTS[dfTS.duplicated(['date'], keep=False)]
+    dfCases = dfCases.drop_duplicates(subset=['date'], keep='first')
+    dfCases = dfCases.sort_values('date')
+    # dfCases['date'] = dfCases['date'].str.slice(start=None, stop=10)
+    dfCases.to_csv('data/Israel/infectedPerDate.csv', index=False, sep=',', date_format='%Y-%m-%d')
+except:
+    raise Exception('download cases failed')
+
+
+dfCases = dfCases[0:len(dfCases)-1]
+
 dfTS = dfTS[0:len(dfTS)-1]
 dfTS['date'] = pd.to_datetime(dfTS['date'])
 dfTS['vent'] = dfTS['countBreathCum'].to_numpy()
@@ -82,31 +92,36 @@ columns = ['newHospitalized', 'newSevere','vent','countDeath']
 label = ['מאושפזים', 'חולים-קשה' , 'מונשמים','נפטרים']
 round = [0, 0, 1, 1]
 fig1 = go.Figure(layout=layout1)
+fig1.add_trace(go.Scatter(x=dfCases['date'], y=movmean(dfCases['amount'].to_numpy(), 7, True, 0),
+                          mode='lines', line_color='#%02x%02x%02x' % cco[0], name='מאומתים'))
 for ii in range(len(columns)):
     fig1.add_trace(go.Scatter(x=dfTS['date'], y=movmean(dfTS[columns[ii]].to_numpy(), 7, True, round[ii]),
                               mode='lines', line_color='#%02x%02x%02x' % cco[ii+2], name=label[ii]))
 fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', type='log', side='right')
 # fig1.update_yaxes(range=(-0.25, 3), minor_ticks=dict(ticks="inside", ticklen=6, showgrid=True))
-fig1.update_yaxes(range=(-0.25, 3), tickmode='array',
-                  tickvals=[1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000],
-                  ticktext=['1','','','','','','','','','10','','','','','','','','','100','','','','','','','','','1000'])
+fig1.update_yaxes(range=(-0.25, 5), tickmode='array',
+                  tickvals=[1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000,2000,300,4000,5000,6000,7000,8000,9000,10000,20000,30000,40000,50000,60000,70000,80000,90000,100000],
+                  ticktext=['1',
+                            '','','','','','','','','10',
+                            '','','','','','','','','100',
+                            '','','','','','','','','1,000',
+                            '','','','','','','','','10,000',
+                            '','','','','','','','','100,0000'])
 fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%d/%m\n%Y")
-fig1.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.85, font=dict(size=20)))
-fig1.update_layout(title=dict(text="קורונה בישראל, מקרים חדשים לפי חומרה", font_size=40, xanchor='center', x=0.5), font_size=20)
-# fig1.show()
-
-
-txt0 = '<!last update: '+update+'>\n' #+ \
-    #   '<h1>תחלואת קורונה בישראל, מנתוני משרד הבריאות</h1>'
+fig1.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.85, font=dict(size=20)),
+                   margin=dict(l=0, r=0, t=0, b=0))
+# fig1.update_layout(title=dict(text="קורונה בישראל, מקרים חדשים לפי חומרה", font_size=40, xanchor='center', yanchor='bottom', x=0.5, y=0.8),
+#                    font_size=20)
+txt0 = '<!last update: '+update+'>\n'
     # '<h2>New cases by condition</h2>'
 txt = txt0+'by <a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a>. ' + \
       ' <a href='+api+'hospitalizationStatus>source</a>, ' + \
       '<a href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/hospitalizationStatus.csv">sheet</a>'
 txt = txt+'. see also <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc_abs.html" target="_blank">Cases by Vaccination Status</a><br>'
+txt = txt+'<h1><center>קורונה בישראל, מקרים חדשים לפי חומרה</center></h1>'
 txt = txt+fig1.to_html()
 file = open("docs/hospitalizations.html", "w")
 a = file.write(txt)
 file.close()
 print('tada')
-#     dfTS = pd.read_csv('hospitalizationStatus.csv')
-# hospitalizationStatus = dfTS.to_csv(index=False)
+
