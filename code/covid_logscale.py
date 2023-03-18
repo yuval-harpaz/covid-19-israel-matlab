@@ -87,7 +87,9 @@ for ii in range(len(columns)):
                               mode='lines', line_color='#%02x%02x%02x' % cco[ii+2], name=label[ii]))
 fig1.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', type='log', side='right')
 # fig1.update_yaxes(range=(-0.25, 3), minor_ticks=dict(ticks="inside", ticklen=6, showgrid=True))
-fig1.update_yaxes(range=(-0.25, 3), tickmode='array', tickvals=[1,10,100,1000])
+fig1.update_yaxes(range=(-0.25, 3), tickmode='array',
+                  tickvals=[1,2,3,4,5,6,7,8,9,10,20,30,40,50,60,70,80,90,100,200,300,400,500,600,700,800,900,1000],
+                  ticktext=['1','','','','','','','','','10','','','','','','','','','100','','','','','','','','','1000'])
 fig1.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray', dtick="M1", tickformat="%d/%m\n%Y")
 fig1.update_layout(legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.85, font=dict(size=20)))
 fig1.update_layout(title=dict(text="קורונה בישראל, מקרים חדשים לפי חומרה", font_size=40, xanchor='center', x=0.5), font_size=20)
