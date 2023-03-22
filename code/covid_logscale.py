@@ -121,7 +121,7 @@ txt0 = '<!last update: '+update+'>\n'
 txt = txt0+'by <a href="https://twitter.com/yuvharpaz" target="_blank">@yuvharpaz</a>. ' + \
       ' <a href='+api+'hospitalizationStatus>source</a>, ' + \
       '<a href="https://github.com/yuval-harpaz/covid-19-israel-matlab/blob/master/data/Israel/hospitalizationStatus.csv">sheet</a>'
-txt = txt+'. see also <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc_abs.html" target="_blank">Cases by Vaccination Status</a><br>'
+txt = txt+'. see also <a href="https://yuval-harpaz.github.io/covid-19-israel-matlab/by_vacc.html" target="_blank">Cases by Vaccination Status</a><br>'
 txt = txt+'<h1><center>קורונה בישראל, מקרים חדשים לפי חומרה</center></h1>'
 txt = txt+fig1.to_html()
 file = open("docs/hospitalizations.html", "w")
