@@ -40,10 +40,11 @@ jobs:
         fi
     - name: commit files
       run: |
-        if: env.NEWS
         git add -A
         git commit -m "manual update"
+      if: env.NEWS
     - name: push files
       uses: ad-m/github-push-action@master
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
+      if: env.NEWS
