@@ -46,7 +46,7 @@ jobs:
     - name: debug false
       run: |
         echo "NEWS false"
-      if: env.NEWS == {{ false }}      
+      if: env.NEWS == false      
     - name: commit files
       run: |
         git add -A
