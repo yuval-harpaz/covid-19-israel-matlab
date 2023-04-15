@@ -11,7 +11,7 @@ permissions: write-all
 jobs:
   vacc-fig:
     runs-on: ubuntu-latest
-
+    environment: make html
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
