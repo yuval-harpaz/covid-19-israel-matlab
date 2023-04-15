@@ -39,6 +39,14 @@ jobs:
         else
           echo "no changes"
         fi
+    - name: debug
+      run: |
+        echo "NEWS true"
+      if: env.NEWS
+    - name: debug false
+      run: |
+        echo "NEWS false"
+      if: env.NEWS == {{ false }}      
     - name: commit files
       run: |
         git add -A
