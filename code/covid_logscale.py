@@ -50,6 +50,7 @@ try:
     dfTS.sort_values('date')
     dfTS['date'] = dfTS['date'].str.slice(start=None, stop=10)
     dfTS.to_csv('data/Israel/hospitalizationStatus.csv', index=False, sep=',')
+    print(f"saved data/Israel/hospitalizationStatus.csv , last date is {dfTS['date'].to_numpy()[-1]}")
     # dfTS.to_csv('hospitalizationStatus.csv', index=False, sep=',')
 except:
     raise Exception('download hospitalizationStatus failed')
@@ -73,6 +74,7 @@ try:
     dfCases = dfCases.sort_values('date')
     # dfCases['date'] = dfCases['date'].str.slice(start=None, stop=10)
     dfCases.to_csv('data/Israel/infectedPerDate.csv', index=False, sep=',', date_format='%Y-%m-%d')
+    print(f"saved data/Israel/infectedPerDate.csv , last date is {str(dfCases['date'].to_numpy()[-1])[:10]}")
 except:
     raise Exception('download cases failed')
 
