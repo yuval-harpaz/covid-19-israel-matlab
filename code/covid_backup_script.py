@@ -4,10 +4,7 @@ import numpy as np
 import sys
 import plotly.graph_objects as go
 import requests
-
-# api = 'https://datadashboardapi.health.gov.il/api/queries/'
-api = 'https://datadashboard.health.gov.il/api/corona/hospitalization/'
-
+api = 'https://datadashboardapi.health.gov.il/api/queries/'
 local = '/home/innereye/covid-19-israel-matlab/'
 if os.path.isdir(local):
     os.chdir(local)
@@ -15,61 +12,8 @@ if os.path.isdir(local):
 else:
     remote = True
 
-''' new API fields:
-"activeKidsSickCity",
-"arrivingAboardCountry",
-"arrivingAboardDaily",
-"dailyReturnSick",
-"deadPatientsPerDate",
-"deathDailyGraph",
-"deathVaccinationStatusDaily",
-"hardPatient",
-"headlight",
-"hospitalizationStatusDaily",
-"hospitalizedKidsAgeDaily",
-"infectedByAgeAndGender",
-"infectionFactorKPI",
-"infectionFactor",
-"isolatedDaily",
-"isolated",
-"newHospitalizationDaily",
-"newVaccinatedDaily",
-"newVerifiedDaily",
-"occupanciesDaily",
-"occupancies",
-"positiveArrivingAboardDaily",
-"positiveTestsDaily",
-"positiveTestsPercentage",
-"recoveredDailyGraph",
-"researchGraph",
-"SeriousVaccinationStatusDaily",
-"sickPerLocation",
-"sickReturnsAgeVaccination",
-"sumSettlementsByColor",
-"summary7deceased",
-"summary7severe",
-"summary7tests",
-"summary7verified",
-"tempList",
-"testedByAge",
-"testsTaken",
-"totalVaccinatedDaily",
-"vaccinatedByAge",
-"vaccinated",
-"vaccinationStatusAgg",
-"verifiedAverageWeek",
-"verifiedKidsAgeDaily",
-"verifiedSmall",
-"verifiedVaccinationStatusDaily",
-
-'''
-
 update = requests.get(api+'lastUpdate', verify=False).json()
-update = pd.DataFrame(update)
-update = update['lastUpdate'][update['projectName'] == 'corona'].tolist()[0]
-update = update.replace('T', ' ')[:-5]
-# update = requests.get(api+'lastUpdate', verify=False).json()
-# update = update[0]['lastUpdate'].replace('T', ' ')[:-5]
+update = update[0]['lastUpdate'].replace('T', ' ')[:-5]
 with open('docs/hospitalizations.html', 'r') as file:
     prev_update = file.read()[15:34]
 
@@ -94,9 +38,7 @@ def movmean(vec, win, nanTail=False, round=0):
     return smooth
 
 try:
-    dfTS = pd.read_json(requests.get(api + 'hospitalizationStatusDaily', verify=False).text)
-    nhd = pd.read_json('https://datadashboard.health.gov.il/api/corona/hospitalization/newHospitalizationDaily')
-    # dfTS = pd.read_json(requests.get(api+'hospitalizationStatus', verify=False).text)
+    dfTS = pd.read_json(requests.get(api+'hospitalizationStatus', verify=False).text)
     prev = pd.read_csv('data/Israel/hospitalizationStatus.csv')
     # if prev.loc[len(prev)-1, 'date'] == dfTS.loc[len(dfTS)-1, 'dayDate'][:10]:
     #     raise Exception('no new dates')
