@@ -4,7 +4,7 @@ cd ~/covid-19-israel-matlab/data/Israel
 monthAll = xlsread('lmsMonth.xlsx','B11:Y22');
 % month70 = xlsread('lmsMonth.xlsx','B30:X41');
 % https://docs.google.com/spreadsheets/d/1GHeY4KtT_7gw1L2-00Xj_2vbeA6uYozf2uX1BIf-o30/edit#gid=0
-
+dashboard = 'https://datadashboard.health.gov.il/api/corona/hospitalization/hospitalizationStatusDaily'
 listD = readtable('~/covid-19-israel-matlab/data/Israel/dashboard_timeseries.csv');
 covid = [];
 for yea = 2020:2023
