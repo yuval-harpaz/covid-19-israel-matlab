@@ -1,10 +1,8 @@
-# download data and make figures as html using python
-
-name: Python application
+name: Daily update hospitalizations
 
 on:
   schedule:
-    - cron: '0 14 * * *'
+    - cron: '0 16 * * *'
 
 permissions: write-all
   # contents: read
@@ -22,9 +20,9 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-    - name: run vaccination status
-      run: |
-        python code/covid_html.py
+    # - name: run vaccination status
+    # run: |
+    #   python code/covid_html.py
     - name: run hospitalizations
       run: |
         python code/covid_logscale.py
