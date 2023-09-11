@@ -123,7 +123,7 @@ fig1.add_trace(go.Scatter(x=dfSerious['date'], y=movmean(newSevere, 7, True, 1),
 
 fig1.add_trace(go.Scatter(x=dead['date'], y=movmean(dead['amount'], 7, True, 1),
                           mode='lines', line_color='#%02x%02x%02x' % cco[-1], name='נפטרים'))
-#
+# comment
 # for ii in range(len(columns)):
 #     fig1.add_trace(go.Scatter(x=dfTS['date'], y=movmean(dfTS[columns[ii]].to_numpy(), 7, True, round[ii]),
 #                               mode='lines', line_color='#%02x%02x%02x' % cco[ii+2], name=label[ii]))
