@@ -73,13 +73,14 @@ try:
     sheet = 'general/verifiedKidsAgeDaily'
     json = requests.get(f'{api}{sheet}', verify=False).json()
     dfKids = pd.DataFrame(json)
-    dfKids = dfKids.drop_duplicates(subset=['date'], keep='first')
+    dfKids = dfKids.drop_duplicates(subset=['dayDate'], keep='first')
     csv_name = f'data/Israel/{sheet.split("/")[-1]}.csv'
     dfKids.to_csv(csv_name, index=False, sep=',', date_format='%Y-%m-%d')
     dfKids = dfKids[dfKids['ageGroup'] == '0-4']
     dfKids = dfKids.sort_values('dayDate')
+    dfKids['date'] = pd.to_datetime(dfKids['dayDate']) - np.timedelta64(3, 'D')  # change from -7:0 rolling window to -3:3
     print(f"saved {csv_name} , last date is {str(dfKids['dayDate'].to_numpy()[-1])[:10]}")
-    
+
 except:
     raise Exception('download kids failed')
 
@@ -115,7 +116,8 @@ round = [0, 0, 1, 1]
 fig1 = go.Figure(layout=layout1)
 fig1.add_trace(go.Scatter(x=dfCases['date'], y=movmean(dfCases['amount'].to_numpy(), 7, True, 0),
                           mode='lines', line_color='#%02x%02x%02x' % cco[0], name='מאומתים'))
-
+fig1.add_trace(go.Scatter(x=dfKids['date'], y=dfKids['avgVerifiedAmount7Days'],
+                          mode='lines', line_color='#%02x%02x%02x' % cco[1], name='מאומתים 0-4'))
 fig1.add_trace(go.Scatter(x=dfSerious['date'], y=movmean(newSevere, 7, True, 1),
                           mode='lines', line_color='#%02x%02x%02x' % cco[3], name='חולים קשה'))
 
