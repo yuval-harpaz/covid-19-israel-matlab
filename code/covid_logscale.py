@@ -69,6 +69,21 @@ except:
     raise Exception('download severe failed')
 
 
+try:
+    sheet = 'general/verifiedKidsAgeDaily'
+    json = requests.get(f'{api}{sheet}', verify=False).json()
+    dfKids = pd.DataFrame(json)
+    dfKids = dfKids.drop_duplicates(subset=['date'], keep='first')
+    csv_name = f'data/Israel/{sheet.split("/")[-1]}.csv'
+    dfKids.to_csv(csv_name, index=False, sep=',', date_format='%Y-%m-%d')
+    dfKids = dfKids[dfKids['ageGroup'] == '0-4']
+    dfKids = dfKids.sort_values('dayDate')
+    print(f"saved {csv_name} , last date is {str(dfKids['dayDate'].to_numpy()[-1])[:10]}")
+    
+except:
+    raise Exception('download kids failed')
+
+
 def movmean(vec, win, nanTail=False, round=0):
     #  smooth a vector with a moving average. win should be an odd number of samples.
     #  vec is np.ndarray size (N,) or (N,0)
