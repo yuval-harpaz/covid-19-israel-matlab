@@ -14,29 +14,36 @@ if os.path.isdir(local):
     remote = False
 else:
     remote = True
-
+update = ''
+dead = []
 try:
     sheet = 'hospitalization/deadPatientsPerDate'
     json = requests.get(f'{api}{sheet}', verify=False).json()
-    dead = pd.DataFrame(json)
+    if len(json) == 0:
+        print('failed to download deadPatientsPerDate')
+    else:
+        dead = pd.DataFrame(json)
+    # except:
+    #     raise Exception('failed to download deadPatientsPerDate')
+        try:
+            update = json[-1]['date']
+        except:
+            raise Exception('failed to read last update date from json:\n'+json)
+        update = update.replace('T', ' ')[:10]
 except:
-    raise Exception('failed to download deadPatientsPerDate')
-try:
-    update = json[-1]['date']
-except:
-    raise Exception('failed to read last update date from json:\n'+json)
-update = update.replace('T', ' ')[:10]
+    print('failed deadPatientsPerDate')
 with open('docs/hospitalizations.html', 'r') as file:
     prev_update = file.read()[15:25]
-if update == prev_update:
+if len(update) > 0 and update == prev_update:
     print('no news')
     if remote:
         sys.exit(0)
-
 csv_name = f'data/Israel/{sheet.split("/")[-1]}.csv'
-dead.to_csv(csv_name, index=False, sep=',', date_format='%Y-%m-%d')
-print(f"saved {csv_name} , last date is {str(dead['date'].to_numpy()[-1])[:10]}")
-
+if len(dead) > 0:
+    dead.to_csv(csv_name, index=False, sep=',', date_format='%Y-%m-%d')
+    print(f"saved {csv_name} , last date is {str(dead['date'].to_numpy()[-1])[:10]}")
+else:
+    dead = pd.read_csv(csv_name)
 
 try:
     sheet = 'general/infectedPerDate'
